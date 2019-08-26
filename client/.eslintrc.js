@@ -26,7 +26,9 @@ module.exports = {
     'ga': true, // Google Analytics
     'cordova': true,
     '__statics': true,
-    'process': true
+    'process': true,
+    'devlog': true,
+    '_': true,
   },
 
   // add your custom rules here
@@ -55,4 +57,4 @@ module.exports = {
       // allow debugger during development only
       'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }
-}
+};
