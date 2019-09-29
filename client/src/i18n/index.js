@@ -1,5 +1,9 @@
-import enUS from './en-us';
+import en from './en';
+import tr from './tr';
+import ru from './ru';
 
 export default {
-  'en-us': enUS,
+    en,
+    tr,
+    ru,
 };

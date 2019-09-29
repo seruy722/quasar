@@ -11,6 +11,7 @@ module.exports = function (ctx) {
             'i18n',
             'axios',
             'lodash',
+            'filters',
         ],
 
         css: [
@@ -33,7 +34,7 @@ module.exports = function (ctx) {
             // iconSet: 'ionicons-v4',
             // lang: 'de', // Quasar language
 
-            // all: true, // --- includes everything; for dev only!
+            all: true, // --- includes everything; for dev only!
 
             components: [
                 'QLayout',
@@ -49,6 +50,23 @@ module.exports = function (ctx) {
                 'QItem',
                 'QItemSection',
                 'QItemLabel',
+                'QCard',
+                'QCardSection',
+                'QCardActions',
+                'QSeparator',
+                'QInput',
+                'QSelect',
+                'QBanner',
+                'QMenu',
+                'QSpace',
+                'QScrollArea',
+                'QTable',
+                'QTh',
+                'QTr',
+                'QTd',
+                'QToggle',
+                'QBadge',
+                'QCheckbox',
             ],
 
             directives: [
@@ -59,12 +77,13 @@ module.exports = function (ctx) {
             plugins: [
                 'Notify',
                 'Loading',
+                'LocalStorage',
+                'Cookies',
             ],
             config: {
                 loading: {
                     spinnerColor: 'blue',
                     spinnerSize: 60,
-                    backgroundColor: 'purple',
                 },
             },
         },
@@ -85,13 +104,15 @@ module.exports = function (ctx) {
                     loader: 'eslint-loader',
                     exclude: /node_modules/,
                     options: {
-                        formatter: require('eslint').CLIEngine.getFormatter('stylish'),
+                        formatter: require('eslint')
+                          .CLIEngine
+                          .getFormatter('stylish'),
                     },
                 });
                 cfg.plugins.push(
-                    new webpack.ProvidePlugin({
-                        devlog: 'src/tools/devlog',
-                    }),
+                  new webpack.ProvidePlugin({
+                      devlog: 'src/tools/devlog',
+                  }),
                 );
             },
         },
@@ -103,7 +124,7 @@ module.exports = function (ctx) {
         },
 
         // animations: 'all', // --- includes all animations
-        animations: [],
+        animations: 'all',
 
         ssr: {
             pwa: false,
