@@ -17,18 +17,18 @@ const routes = [
     },
     {
         path: '/moder',
-        component: () => import('layouts/ModerLayout.vue'),
+        component: () => import('layouts/AdminLayout.vue'),
         children: [
             {
-                path: 'warehouse',
-                name: 'warehouse',
+                path: 'storehouse',
+                name: 'storehouse',
                 meta: {
-                    title: 'warehouse',
+                    title: 'storehouse',
                     middleware: [
                         auth,
                     ],
                 },
-                component: () => import('pages/Moder/Warehouse.vue'),
+                component: () => import('pages/Moder/Storehouse.vue'),
             },
             {
                 path: 'customers',

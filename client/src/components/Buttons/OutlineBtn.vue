@@ -1,19 +1,34 @@
 <template>
-    <div
-        data-vue-component-name="BaseBtn"
-    >
-        <q-btn outline :label="$t(btnData.title)" :color="btnData.color || 'primary'"
-               @click="$emit('clickOutlineBtn')"/>
-    </div>
+    <q-btn
+        outline
+        :label="label"
+        :color="color"
+        :size="size"
+        :dense="dense"
+        data-vue-component-name="OutlineBtn"
+        @click="$emit('clickOutlineBtn')"
+    />
 </template>
 
 <script>
     export default {
-        name: 'BaseBtn',
+        name: 'OutlineBtn',
         props: {
-            btnData: {
-                type: Object,
-                default: () => ({}),
+            label: {
+                type: String,
+                default: 'OK',
+            },
+            color: {
+                type: String,
+                default: 'primary',
+            },
+            size: {
+                type: String,
+                default: 'md',
+            },
+            dense: {
+                type: Boolean,
+                default: false,
             },
         },
     };

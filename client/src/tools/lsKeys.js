@@ -6,4 +6,4 @@ const keys = {
     moderDrawerItem: 'moderActiveMenuItem',
 };
 
-export const getLSKey = (value => _.get(keys, value));
+export const getLSKey = ((value) => _.get(keys, value));

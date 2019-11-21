@@ -1,34 +1,32 @@
 <template>
-    <div
+    <q-input
+        dense
+        debounce="500"
+        clearable
+        clear-icon="close"
+        :value="value"
+        :placeholder="$t('search')"
         data-vue-component-name="Search"
+        @input="$emit('input', $event)"
+        @focus="focusInput"
+        @blur="blurInput"
     >
-        <q-input
-            v-model="filter.value"
-            dense
-            debounce="500"
-            clearable
-            clear-icon="close"
-            :placeholder="$t('search')"
-            @focus="focusInput"
-            @blur="blurInput"
-        >
-            <template v-slot:append>
-                <q-icon
-                    name="search"
-                    :color="iconColor"
-                />
-            </template>
-        </q-input>
-    </div>
+        <template v-slot:append>
+            <q-icon
+                name="search"
+                :color="iconColor"
+            />
+        </template>
+    </q-input>
 </template>
 
 <script>
     export default {
         name: 'Search',
         props: {
-            filter: {
-                type: Object,
-                default: () => ({}),
+            value: {
+                type: String,
+                default: '',
             },
         },
         data() {

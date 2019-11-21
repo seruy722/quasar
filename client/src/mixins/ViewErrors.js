@@ -31,21 +31,23 @@ export default {
         };
     },
     watch: {
-        'errors.errors': function error(val) {
-            this.isError = !!_.get(val, [this.inputData.field]);
+        errors: {
+            handler: 'setIsError',
+            deep: true,
         },
     },
     methods: {
+        setIsError(val) {
+            devlog.log('VASDF', _.get(val, `errors.${[this.field]}`));
+            this.isError = !!_.get(val, `errors.${[this.field]}`);
+        },
         viewError() {
-            return _.join(_.get(this.errors, `errors['${this.inputData.field}']`), ',');
+            return _.join(_.get(this.errors, `errors['${this.field}']`), ',');
         },
         changeErrors() {
-            this.inputData.changed = true;
             this.isError = false;
-            _.set(this.objIndex, 'index', this.index);
-            // this.objIndex.index = this.index;
             if (!_.isEmpty(this.errors.errors)) {
-                delete this.errors.errors[this.inputData.field];
+                delete this.errors.errors[this.field];
             }
         },
     },

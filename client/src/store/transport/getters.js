@@ -1,1 +1,1 @@
-export const getTransports = state => state.transports;
+export const getTransports = (state) => state.transports;

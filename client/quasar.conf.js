@@ -1,7 +1,7 @@
 // Configuration for your app
 // https://quasar.dev/quasar-cli/quasar-conf-js
-
 const webpack = require('webpack');
+
 
 module.exports = function (ctx) {
     return {
@@ -36,54 +36,18 @@ module.exports = function (ctx) {
 
             all: true, // --- includes everything; for dev only!
 
-            components: [
-                'QLayout',
-                'QHeader',
-                'QDrawer',
-                'QPageContainer',
-                'QPage',
-                'QToolbar',
-                'QToolbarTitle',
-                'QBtn',
-                'QIcon',
-                'QList',
-                'QItem',
-                'QItemSection',
-                'QItemLabel',
-                'QCard',
-                'QCardSection',
-                'QCardActions',
-                'QSeparator',
-                'QInput',
-                'QSelect',
-                'QBanner',
-                'QMenu',
-                'QSpace',
-                'QScrollArea',
-                'QTable',
-                'QTh',
-                'QTr',
-                'QTd',
-                'QToggle',
-                'QBadge',
-                'QCheckbox',
-            ],
+            components: [],
 
-            directives: [
-                'Ripple',
-            ],
+            directives: [],
 
             // Quasar plugins
-            plugins: [
-                'Notify',
-                'Loading',
-                'LocalStorage',
-                'Cookies',
-            ],
+            plugins: [],
             config: {
                 loading: {
-                    spinnerColor: 'blue',
-                    spinnerSize: 60,
+                    spinner: 'QSpinnerFacebook',
+                    spinnerColor: 'yellow',
+                    spinnerSize: 140,
+                    backgroundColor: 'blue',
                 },
             },
         },

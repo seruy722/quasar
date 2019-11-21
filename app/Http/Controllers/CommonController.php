@@ -13,6 +13,7 @@ use App\Http\Resources\FaxResource;
 use App\Http\Resources\SkladResource;
 use App\Imports\ImportData;
 use App\Sklad;
+use App\Test;
 use function foo\func;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -143,15 +144,104 @@ class CommonController extends Controller
     {
         $cargo = cargoTable::where('code_id', $codeID)->get();
         $debts = debtsTable::where('code_id', $codeID)->get();
-        $sklad = SkladResource::collection(Sklad::with(['customer','category'])->get());
+        $sklad = SkladResource::collection(Sklad::with(['customer', 'category'])->get());
 //        $faxesData = FaxDataResource::collection(FaxData::where('code_id', $codeID)->orderBy('created_at', 'DESC')->get());
-        $faxesData = FaxDataResource::collection(FaxData::with(['customer','category', 'fax'])->where('code_id', $codeID)->orderBy('id', 'DESC')->get());
+        $faxesData = FaxDataResource::collection(FaxData::with(['customer', 'category', 'fax'])->where('code_id', $codeID)->orderBy('id', 'DESC')->get());
         $faxesData = $faxesData->groupBy('category_id')->map(function (\Illuminate\Support\Collection $category) {
             return $category->groupBy(function ($kg) {
                 return (string)$kg->for_kg;
             });
         });
 
-        return response(['cargo' => $cargo, 'debts' => $debts, 'warehouse' => $sklad, 'faxes' => $faxesData, 'faxesCount' => FaxData::where('code_id', $codeID)->count(), 'sumCargo' => $cargo->sum('sum'), 'sumDebts' => $debts->sum('sum')]);
+        return response(['cargo' => $cargo, 'debts' => $debts, 'storehouse' => $sklad, 'faxes' => $faxesData, 'faxesCount' => FaxData::where('code_id', $codeID)->count(), 'sumCargo' => $cargo->sum('sum'), 'sumDebts' => $debts->sum('sum')]);
+    }
+
+    public function uploadFaxes(Request $request)
+    {
+        foreach ($request->files as $file) {
+            $ImportedFaxArray = Excel::toArray(new ImportData, $file);
+
+            foreach ($ImportedFaxArray[0] as $key => $elem) {
+                $trimElem = array_map('trim', $elem);
+
+                if (count($elem) === 8) {
+                    if ($key === 0) {
+                        continue;
+                    }
+
+                    if (!$trimElem[0]) {
+                        break;
+                    }
+
+                    $arr2 = [
+                        'code' => $trimElem[0],
+                        'client' => $trimElem[1],
+                        'place' => 1,
+//                        'kg' => $trimElem[3],
+                        'shop' => $trimElem[4],
+                        'category' => $trimElem[5],
+                        'things' => $trimElem[7],
+                        'brand' => $trimElem[5] === 'Бренд',
+                        'fax_name' => $file->getClientOriginalName(),
+                    ];
+                    if ($trimElem[3]) {
+                        $arr2['kg'] = $trimElem[3];
+                    }
+
+                    Test::create($arr2);
+                } else {
+                    // Загрузка данных файла на сервер_2
+                    // Пропускаем первые 2 строки
+                    if ($key === 0 || $key === 1) {
+                        continue;
+                    }
+                    // Если все поля пустые выходим из итерации
+                    if (!$trimElem[0] && !$trimElem[1] && !$trimElem[2] && !$trimElem[3] && !$trimElem[4] && !$trimElem[5]) {
+                        break;
+                    }
+                    // Если первые 5 полей пустые - то дописываем к предыдущей записи товары
+                    if (!$trimElem[0] && !$trimElem[1] && !$trimElem[2] && !$trimElem[3] && !$trimElem[4]) {
+                        $lastEntry = Test::orderBy('id', 'desc')->first();
+                        $things = $lastEntry->things;
+//                    $things->{$trimElem[5]} = $trimElem[6];
+                        $lastEntry->things = $things . ',' . $trimElem[5] . ':' . $trimElem[6];
+                        $lastEntry->save();
+                    } else {
+                        // Обрезаем из имени клиента приставку 007/
+                        $startPos = stripos($trimElem[1], '007/');
+                        $userName = substr($trimElem[1], $startPos + 4);
+                        if (!is_numeric($startPos)) {
+                            $userName = $trimElem[1];
+                        }
+                        $arr = [
+                            'code' => $trimElem[0],
+                            'client' => $userName,
+                            'place' => 1,
+//                        'kg' => $trimElem[3],
+                            'shop' => $trimElem[4],
+//                        'category' => $trimElem[5],
+                            'things' => $trimElem[5],
+//                        'brand' => $trimElem[5] === 'Бренд',
+                            'fax_name' => $file->getClientOriginalName(),
+                        ];
+
+                        if ($trimElem[3]) {
+                            $arr['kg'] = $trimElem[3];
+                        }
+
+                        Test::create($arr);
+                    }
+                }
+            }
+        }
+
+
+        return response(['files' => $request->files]);
+    }
+
+    public function searchInFaxes(Request $request)
+    {
+        $s = $request->search;
+        return response(['searchData' => Test::where('client', $s)->get()]);
     }
 }

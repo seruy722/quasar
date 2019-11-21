@@ -1,34 +1,62 @@
 <template>
-    <div
-        data-vue-component-name="UploadFileDialog"
+    <q-dialog
+        v-model="modelData"
+        :persistent="persistent"
+        data-vue-component-name="Dialog"
     >
-        <slot name="button">
-            <RoundBtn :roundBtnData="{label: dialog.labelBtn}" @roundBtnClick="dialog.value = true" />
-        </slot>
-        <q-dialog v-model="dialog.value" :persistent="dialog.persistent">
-            <q-card :style="`min-width: ${dialog.minWidth || '250px'}`">
-                <q-card-section class="row justify-between bg-primary text-white">
-                    <div class="text-h5">{{ $t(dialog.title) }}</div>
-                </q-card-section>
+        <q-card style="min-width: 250px; width: 100%; max-width: 1200px;">
+            <q-card-section class="row justify-between bg-primary text-white items-center">
+                <div class="text-h6">
+                    {{ title }}
+                </div>
 
-                <q-separator />
+                <div>
+                    <IconBtn
+                        icon="close"
+                        color="white"
+                        :dense="$q.screen.xs || $q.screen.sm"
+                        :tooltip="$t('close')"
+                        @iconBtnClick="modelData = false" />
+                </div>
+            </q-card-section>
 
-                <slot name="body"></slot>
-            </q-card>
-        </q-dialog>
-    </div>
+            <slot name="body"></slot>
+
+            <q-separator />
+
+            <slot name="actions"></slot>
+        </q-card>
+    </q-dialog>
 </template>
 
 <script>
     export default {
-        name: 'UploadFileDialog',
+        name: 'Dialog',
         components: {
-            RoundBtn: () => import('src/components/Buttons/RoundBtn.vue'),
+            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
         props: {
             dialog: {
-                type: Object,
-                default: () => ({}),
+                type: Boolean,
+                default: false,
+            },
+            title: {
+                type: String,
+                default: 'Dialog',
+            },
+            persistent: {
+                type: Boolean,
+                default: false,
+            },
+        },
+        computed: {
+            modelData: {
+                get: function getValue() {
+                    return this.dialog;
+                },
+                set: function setValue(newValue) {
+                    this.$emit('update:dialog', newValue);
+                },
             },
         },
     };

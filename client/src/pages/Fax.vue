@@ -1,519 +1,519 @@
 <template>
-    <div
-        data-vue-component-name="Fax"
+  <div
+    data-vue-component-name="Fax"
+  >
+    <Table
+      :table-data="faxDataTable"
+      :table-data-s="faxDataList"
     >
-        <Table
-            :table-data="faxDataTable"
-            :table-data-s="faxDataList"
+      <template v-slot:top-buttons>
+        <IconBtn
+          color="positive"
+          icon="save"
+          tooltip="save"
+          :disable="!arrayToUpdate.length"
+          @iconBtnClick="updateFaxData"
+        />
+
+        <IconBtn
+          color="positive"
+          icon="explicit"
+          tooltip="excel"
+          @iconBtnClick="exportFaxData(currentFaxItem)"
+        />
+
+        <IconBtn
+          color="primary"
+          icon="update"
+          tooltip="update"
+          @iconBtnClick="updateAllPriceInFaxData(currentFaxItem.id)"
+        />
+      </template>
+
+      <template v-slot:inner-body="{props}">
+        <q-tr
+          :props="props"
+          :class="{table__tr_bold_text: props.row.category === 'Бренд'}"
         >
-            <template v-slot:top-buttons>
-                <IconBtn
-                    :icon-btn-data="{
-                        color: 'positive',
-                        icon: 'save',
-                        tooltip: 'save',
-                        disable: !arrayToUpdate.length
-                    }"
-                    @iconBtnClick="updateFaxData"
-                />
+          <q-td auto-width>
+            <q-checkbox
+              v-model="props.selected"
+              :dense="$q.screen.xs || $q.screen.sm"
+            />
+          </q-td>
 
-                <IconBtn
-                    :icon-btn-data="{
-                        color: 'positive',
-                        icon: 'explicit',
-                        tooltip: 'excel'
-                    }"
-                    @iconBtnClick="exportFaxData(currentFaxItem)"
-                />
+          <q-td
+            key="customer_code"
+            :props="props"
+          >
+            {{ props.row.customer_code }}
+            <Icon
+              :name="props.expand ? 'arrow_drop_up' : 'arrow_drop_down'"
+              :tooltip="props.expand ? 'hide' : 'reveal'"
+              class="cursor-pointer"
+              @iconClick="props.expand = !props.expand"
+            />
+          </q-td>
 
-                <IconBtn
-                    :icon-btn-data="{
-                        color: 'primary',
-                        icon: 'update',
-                        tooltip: 'update'
-                    }"
-                    @iconBtnClick="updateAllPriceInFaxData(currentFaxItem.id)"
-                />
-            </template>
+          <q-td
+            key="place"
+            :props="props"
+          >
+            {{ props.row.place }}
+          </q-td>
 
-            <template v-slot:inner-body="{props}">
-                <q-tr :props="props">
-                    <q-td auto-width>
-                        <q-checkbox
-                            v-model="props.selected"
-                            :dense="$q.screen.xs || $q.screen.sm"
-                        />
-                    </q-td>
+          <q-td
+            key="kg"
+            :props="props"
+          >
+            {{ props.row.kg }}
+          </q-td>
 
-                    <q-td
-                        key="customer_code"
-                        :props="props"
+          <q-td
+            key="category"
+            :props="props"
+          >
+            {{ props.row.category }}
+          </q-td>
+
+          <q-td
+            key="for_kg"
+            :props="props"
+            class="cursor-pointer"
+          >
+            {{ props.row.for_kg }}
+            <PopupEdit
+              :value.sync="props.row.for_kg"
+              :popup-settings="{type: 'number'}"
+              @addToSave="addToSaveMultiply(props.row.arr, props.row.for_kg, 'for_kg')"
+            />
+          </q-td>
+
+          <q-td
+            key="for_place"
+            :props="props"
+            class="cursor-pointer"
+          >
+            {{ props.row.for_place }}
+            <PopupEdit
+              :value.sync="props.row.for_place"
+              :popup-settings="{type: 'number'}"
+              @addToSave="addToSaveMultiply(props.row.arr, props.row.for_place, 'for_place')"
+            />
+          </q-td>
+
+          <q-td
+            key="sum"
+            :props="props"
+          >
+            {{ (props.row.for_kg * props.row.kg + props.row.for_place * props.row.place).toFixed(1) }}
+          </q-td>
+        </q-tr>
+        <q-tr
+          v-show="props.expand"
+          :props="props"
+        >
+          <q-td colspan="100%">
+            <Table
+              :table-data="faxExpandDataTable"
+              :table-data-s="props.row.arr"
+            >
+              <template v-slot:inner-body="{props}">
+                <q-tr
+                  :props="props"
+                  :class="{table__tr_bold_text: props.row.category === 'Бренд'}"
+                >
+                  <q-td auto-width>
+                    <q-checkbox
+                      v-model="props.selected"
+                      :dense="$q.screen.xs || $q.screen.sm"
+                    />
+                  </q-td>
+
+                  <q-td
+                    key="code"
+                    :props="props"
+                    class="cursor-pointer"
+                  >
+                    {{ props.row.code }}
+                    <PopupEdit
+                      :value.sync="props.row.code"
+                      @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                    />
+                  </q-td>
+
+                  <q-td
+                    key="code_id"
+                    :props="props"
+                    class="cursor-pointer"
+                  >
+                    {{ props.row.code_id | filterFromSelectData(customerCodes) }}
+                    <PopupEdit
+                      :value.sync="props.row.code_id"
+                      @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
                     >
-                        {{ props.row.customer_code }}
-                        <Icon
-                            :name="props.expand ? 'arrow_drop_up' : 'arrow_drop_down'"
-                            :tooltip="props.expand ? 'hide' : 'reveal'"
-                            class="cursor-pointer"
-                            @iconClick="props.expand = !props.expand"
+                      <template v-slot:body>
+                        <SelectWithSearchInput
+                          :value.sync="props.row.code_id"
+                          :options="customerCodes"
+                          :search-options="customerCodes"
+                          :input-data="selectCustomerCode"
                         />
-                    </q-td>
+                      </template>
+                    </PopupEdit>
+                  </q-td>
 
-                    <q-td
+                  <q-td
+                    key="place"
+                    :props="props"
+                    class="cursor-pointer"
+                  >
+                    {{ props.row.place }}
+                    <PopupEdit
+                      :value.sync="props.row.place"
+                      :popup-settings="{type: 'number'}"
+                      @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                    />
+                  </q-td>
+
+                  <q-td
+                    key="kg"
+                    :props="props"
+                    class="cursor-pointer"
+                  >
+                    {{ props.row.kg }}
+                    <PopupEdit
+                      :value.sync="props.row.kg"
+                      :popup-settings="{type: 'number'}"
+                      @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                    />
+                  </q-td>
+
+                  <q-td
+                    key="for_kg"
+                    :props="props"
+                    class="cursor-pointer"
+                  >
+                    {{ props.row.for_kg }}
+                    <PopupEdit
+                      :value.sync="props.row.for_kg"
+                      :popup-settings="{type: 'number'}"
+                      @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                    />
+                  </q-td>
+
+                  <q-td
+                    key="for_place"
+                    :props="props"
+                    class="cursor-pointer"
+                  >
+                    {{ props.row.for_place }}
+                    <PopupEdit
+                      :value.sync="props.row.for_place"
+                      :popup-settings="{type: 'number'}"
+                      @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                    />
+                  </q-td>
+
+                  <q-td
+                    key="category_id"
+                    :props="props"
+                    class="cursor-pointer"
+                  >
+                    {{ props.row.category_id | filterFromSelectData(categories) }}
+                    <PopupEdit
+                      :value.sync="props.row.category_id"
+                      @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                    >
+                      <template v-slot:body>
+                        <SelectWithSearchInput
+                          :value.sync="props.row.category_id"
+                          :options="categories"
+                          :search-options="categories"
+                          :input-data="selectCategoryData"
+                        />
+                      </template>
+                    </PopupEdit>
+                  </q-td>
+
+                  <q-td
+                    key="shop"
+                    :props="props"
+                    class="cursor-pointer"
+                  >
+                    {{ props.row.shop }}
+                    <PopupEdit
+                      :value.sync="props.row.shop"
+                      @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                    />
+                  </q-td>
+
+                  <q-td
+                    key="notation"
+                    :props="props"
+                    class="cursor-pointer"
+                  >
+                    {{ props.row.notation }}
+                    <PopupEdit
+                      :value.sync="props.row.notation"
+                      @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                    />
+                  </q-td>
+
+
+                  <q-td
+                    key="things"
+                    :props="props"
+                    class="cursor-pointer"
+                  >
+                    {{ props.row.things }}
+                    <PopupEdit
+                      :value.sync="props.row.things"
+                    />
+                  </q-td>
+                </q-tr>
+                <!--                                <q-tr v-show="props.expand" :props="props">-->
+                <!--                                    <q-td colspan="100%">-->
+                <!--                                    </q-td>-->
+                <!--                                </q-tr>-->
+              </template>
+            </Table>
+          </q-td>
+        </q-tr>
+      </template>
+      <template v-slot:inner-bottom-row>
+        <Table
+          :table-data="faxCategoriesTable"
+          :table-data-s="faxCategoriesDataList"
+        >
+          <template v-slot:inner-body="{props}">
+            <q-tr :props="props">
+              <q-td
+                key="category_id"
+                :props="props"
+              >
+                {{ props.row.category_id | filterFromSelectData(categories) }}
+              </q-td>
+
+              <q-td
+                key="place"
+                :props="props"
+              >
+                {{ props.row.place }}
+              </q-td>
+
+              <q-td
+                key="kg"
+                :props="props"
+              >
+                {{ props.row.kg }}
+              </q-td>
+
+              <q-td
+                key="for_kg"
+                :props="props"
+                class="cursor-pointer"
+              >
+                {{ props.row.for_kg }}
+                <PopupEdit
+                  :value.sync="props.row.for_kg"
+                  :popup-settings="{type: 'number'}"
+                  @addToSave="addToUpdateArray(props.row, 'arrayToUpdateTransporterPriceData')"
+                />
+              </q-td>
+
+              <q-td
+                key="sum"
+                :props="props"
+              >
+                {{ (props.row.for_kg * props.row.kg).toFixed(1) }}
+              </q-td>
+            </q-tr>
+            <q-tr
+              v-show="props.expand"
+              :props="props"
+            >
+              <q-td colspan="100%">
+                <Table
+                  :table-data="faxExpandDataTable"
+                  :table-data-s="props.row.arr"
+                >
+                  <template v-slot:inner-body="{props}">
+                    <q-tr :props="props">
+                      <q-td auto-width>
+                        <q-checkbox
+                          v-model="props.selected"
+                          :dense="$q.screen.xs || $q.screen.sm"
+                        />
+                      </q-td>
+
+                      <q-td
+                        key="code"
+                        :props="props"
+                        class="cursor-pointer"
+                      >
+                        {{ props.row.code }}
+                        <PopupEdit
+                          :value.sync="props.row.code"
+                          @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                        />
+                      </q-td>
+
+                      <q-td
+                        key="code_id"
+                        :props="props"
+                        class="cursor-pointer"
+                      >
+                        {{ props.row.code_id | filterFromSelectData(customerCodes) }}
+                        <PopupEdit
+                          :value.sync="props.row.code_id"
+                          @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                        >
+                          <template v-slot:body>
+                            <SelectWithSearchInput
+                              :value.sync="props.row.code_id"
+                              :options="customerCodes"
+                              :search-options="customerCodes"
+                              :input-data="selectCustomerCode"
+                            />
+                          </template>
+                        </PopupEdit>
+                      </q-td>
+
+                      <q-td
                         key="place"
                         :props="props"
-                    >
+                        class="cursor-pointer"
+                      >
                         {{ props.row.place }}
-                    </q-td>
+                        <PopupEdit
+                          :value.sync="props.row.place"
+                          :popup-settings="{type: 'number'}"
+                          @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                        />
+                      </q-td>
 
-                    <q-td
+                      <q-td
                         key="kg"
                         :props="props"
-                    >
+                        class="cursor-pointer"
+                      >
                         {{ props.row.kg }}
-                    </q-td>
+                        <PopupEdit
+                          :value.sync="props.row.kg"
+                          :popup-settings="{type: 'number'}"
+                          @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                        />
+                      </q-td>
 
-                    <q-td
-                        key="category"
-                        :props="props"
-                    >
-                        {{ props.row.category }}
-                    </q-td>
-
-                    <q-td
+                      <q-td
                         key="for_kg"
                         :props="props"
                         class="cursor-pointer"
-                    >
+                      >
                         {{ props.row.for_kg }}
                         <PopupEdit
-                            :value.sync="props.row.for_kg"
-                            :popup-settings="{type: 'number'}"
-                            @addToSave="addToSaveMultiply(props.row.arr, props.row.for_kg, 'for_kg')"
+                          :value.sync="props.row.for_kg"
+                          :popup-settings="{type: 'number'}"
+                          @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
                         />
-                    </q-td>
+                      </q-td>
 
-                    <q-td
+                      <q-td
                         key="for_place"
                         :props="props"
                         class="cursor-pointer"
-                    >
+                      >
                         {{ props.row.for_place }}
                         <PopupEdit
-                            :value.sync="props.row.for_place"
-                            :popup-settings="{type: 'number'}"
-                            @addToSave="addToSaveMultiply(props.row.arr, props.row.for_place, 'for_place')"
+                          :value.sync="props.row.for_place"
+                          :popup-settings="{type: 'number'}"
+                          @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
                         />
-                    </q-td>
+                      </q-td>
 
-                    <q-td
-                        key="sum"
+                      <q-td
+                        key="category_id"
                         :props="props"
-                    >
-                        {{ (props.row.for_kg * props.row.kg + props.row.for_place * props.row.place).toFixed(1) }}
-                    </q-td>
-                </q-tr>
-                <q-tr
-                    v-show="props.expand"
-                    :props="props"
-                >
-                    <q-td colspan="100%">
-                        <Table
-                            :table-data="faxExpandDataTable"
-                            :table-data-s="props.row.arr"
+                        class="cursor-pointer"
+                      >
+                        {{ props.row.category_id | filterFromSelectData(categories) }}
+                        <PopupEdit
+                          :value.sync="props.row.category_id"
+                          @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
                         >
-                            <template v-slot:inner-body="{props}">
-                                <q-tr :props="props">
-                                    <q-td auto-width>
-                                        <q-checkbox
-                                            v-model="props.selected"
-                                            :dense="$q.screen.xs || $q.screen.sm"
-                                        />
-                                    </q-td>
+                          <template v-slot:body>
+                            <SelectWithSearchInput
+                              :value.sync="props.row.category_id"
+                              :options.sync="categories"
+                              :search-options="categories"
+                              :input-data="selectCategoryData"
+                            />
+                          </template>
+                        </PopupEdit>
+                      </q-td>
 
-                                    <q-td
-                                        key="code"
-                                        :props="props"
-                                        class="cursor-pointer"
-                                    >
-                                        {{ props.row.code }}
-                                        <PopupEdit
-                                            :value.sync="props.row.code"
-                                            @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                        />
-                                    </q-td>
+                      <q-td
+                        key="shop"
+                        :props="props"
+                        class="cursor-pointer"
+                      >
+                        {{ props.row.shop }}
+                        <PopupEdit
+                          :value.sync="props.row.shop"
+                          @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                        />
+                      </q-td>
 
-                                    <q-td
-                                        key="code_id"
-                                        :props="props"
-                                        class="cursor-pointer"
-                                    >
-                                        {{ props.row.code_id | filterFromSelectData(customerCodes) }}
-                                        <PopupEdit
-                                            :value.sync="props.row.code_id"
-                                            @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                        >
-                                            <template v-slot:body>
-                                                <SelectWithSearchInput
-                                                    :value.sync="props.row.code_id"
-                                                    :options="customerCodes"
-                                                    :search-options="customerCodes"
-                                                    :input-data="selectCustomerCode"
-                                                />
-                                            </template>
-                                        </PopupEdit>
-                                    </q-td>
-
-                                    <q-td
-                                        key="place"
-                                        :props="props"
-                                        class="cursor-pointer"
-                                    >
-                                        {{ props.row.place }}
-                                        <PopupEdit
-                                            :value.sync="props.row.place"
-                                            :popup-settings="{type: 'number'}"
-                                            @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                        />
-                                    </q-td>
-
-                                    <q-td
-                                        key="kg"
-                                        :props="props"
-                                        class="cursor-pointer"
-                                    >
-                                        {{ props.row.kg }}
-                                        <PopupEdit
-                                            :value.sync="props.row.kg"
-                                            :popup-settings="{type: 'number'}"
-                                            @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                        />
-                                    </q-td>
-
-                                    <q-td
-                                        key="for_kg"
-                                        :props="props"
-                                        class="cursor-pointer"
-                                    >
-                                        {{ props.row.for_kg }}
-                                        <PopupEdit
-                                            :value.sync="props.row.for_kg"
-                                            :popup-settings="{type: 'number'}"
-                                            @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                        />
-                                    </q-td>
-
-                                    <q-td
-                                        key="for_place"
-                                        :props="props"
-                                        class="cursor-pointer"
-                                    >
-                                        {{ props.row.for_place }}
-                                        <PopupEdit
-                                            :value.sync="props.row.for_place"
-                                            :popup-settings="{type: 'number'}"
-                                            @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                        />
-                                    </q-td>
-
-                                    <q-td
-                                        key="category_id"
-                                        :props="props"
-                                        class="cursor-pointer"
-                                    >
-                                        {{ props.row.category_id | filterFromSelectData(categories) }}
-                                        <PopupEdit
-                                            :value.sync="props.row.category_id"
-                                            @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                        >
-                                            <template v-slot:body>
-                                                <SelectWithSearchInput
-                                                    :value.sync="props.row.category_id"
-                                                    :options="categories"
-                                                    :search-options="categories"
-                                                    :input-data="selectCategoryData"
-                                                />
-                                            </template>
-                                        </PopupEdit>
-                                    </q-td>
-
-                                    <q-td
-                                        key="shop"
-                                        :props="props"
-                                        class="cursor-pointer"
-                                    >
-                                        {{ props.row.shop }}
-                                        <PopupEdit
-                                            :value.sync="props.row.shop"
-                                            @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                        />
-                                    </q-td>
-
-                                    <q-td
-                                        key="notation"
-                                        :props="props"
-                                        class="cursor-pointer"
-                                    >
-                                        {{ props.row.notation }}
-                                        <PopupEdit
-                                            :value.sync="props.row.notation"
-                                            @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                        />
-                                    </q-td>
+                      <q-td
+                        key="notation"
+                        :props="props"
+                        class="cursor-pointer"
+                      >
+                        {{ props.row.notation }}
+                        <PopupEdit
+                          :value.sync="props.row.notation"
+                          @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
+                        />
+                      </q-td>
 
 
-                                    <q-td
-                                        key="things"
-                                        :props="props"
-                                        class="cursor-pointer"
-                                    >
-                                        {{ props.row.things }}
-                                        <PopupEdit
-                                            :value.sync="props.row.things"
-                                        />
-                                    </q-td>
-                                </q-tr>
-                                <!--                                <q-tr v-show="props.expand" :props="props">-->
-                                <!--                                    <q-td colspan="100%">-->
-                                <!--                                    </q-td>-->
-                                <!--                                </q-tr>-->
-                            </template>
-                        </Table>
-                    </q-td>
-                </q-tr>
-            </template>
-            <template v-slot:inner-bottom-row>
-                <Table
-                    :table-data="faxCategoriesTable"
-                    :table-data-s="faxCategoriesDataList"
-                >
-                    <template v-slot:inner-body="{props}">
-                        <q-tr :props="props">
-                            <q-td
-                                key="category_id"
-                                :props="props"
-                            >
-                                {{ props.row.category_id | filterFromSelectData(categories) }}
-                            </q-td>
+                      <q-td
+                        key="things"
+                        :props="props"
+                        class="cursor-pointer"
+                      >
+                        {{ props.row.things }}
+                        <PopupEdit
+                          :value.sync="props.row.things"
+                        />
+                      </q-td>
+                    </q-tr>
+                    <!--                                <q-tr v-show="props.expand" :props="props">-->
+                    <!--                                    <q-td colspan="100%">-->
+                    <!--                                    </q-td>-->
+                    <!--                                </q-tr>-->
+                  </template>
 
-                            <q-td
-                                key="place"
-                                :props="props"
-                            >
-                                {{ props.row.place }}
-                            </q-td>
-
-                            <q-td
-                                key="kg"
-                                :props="props"
-                            >
-                                {{ props.row.kg }}
-                            </q-td>
-
-                            <q-td
-                                key="for_kg"
-                                :props="props"
-                                class="cursor-pointer"
-                            >
-                                {{ props.row.for_kg }}
-                                <PopupEdit
-                                    :value.sync="props.row.for_kg"
-                                    :popup-settings="{type: 'number'}"
-                                    @addToSave="addToUpdateArray(props.row, 'arrayToUpdateTransporterPriceData')"
-                                />
-                            </q-td>
-
-                            <q-td
-                                key="sum"
-                                :props="props"
-                            >
-                                {{ (props.row.for_kg * props.row.kg).toFixed(1) }}
-                            </q-td>
-                        </q-tr>
-                        <q-tr
-                            v-show="props.expand"
-                            :props="props"
-                        >
-                            <q-td colspan="100%">
-                                <Table
-                                    :table-data="faxExpandDataTable"
-                                    :table-data-s="props.row.arr"
-                                >
-                                    <template v-slot:inner-body="{props}">
-                                        <q-tr :props="props">
-                                            <q-td auto-width>
-                                                <q-checkbox
-                                                    v-model="props.selected"
-                                                    :dense="$q.screen.xs || $q.screen.sm"
-                                                />
-                                            </q-td>
-
-                                            <q-td
-                                                key="code"
-                                                :props="props"
-                                                class="cursor-pointer"
-                                            >
-                                                {{ props.row.code }}
-                                                <PopupEdit
-                                                    :value.sync="props.row.code"
-                                                    @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                                />
-                                            </q-td>
-
-                                            <q-td
-                                                key="code_id"
-                                                :props="props"
-                                                class="cursor-pointer"
-                                            >
-                                                {{ props.row.code_id | filterFromSelectData(customerCodes) }}
-                                                <PopupEdit
-                                                    :value.sync="props.row.code_id"
-                                                    @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                                >
-                                                    <template v-slot:body>
-                                                        <SelectWithSearchInput
-                                                            :value.sync="props.row.code_id"
-                                                            :options="customerCodes"
-                                                            :search-options="customerCodes"
-                                                            :input-data="selectCustomerCode"
-                                                        />
-                                                    </template>
-                                                </PopupEdit>
-                                            </q-td>
-
-                                            <q-td
-                                                key="place"
-                                                :props="props"
-                                                class="cursor-pointer"
-                                            >
-                                                {{ props.row.place }}
-                                                <PopupEdit
-                                                    :value.sync="props.row.place"
-                                                    :popup-settings="{type: 'number'}"
-                                                    @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                                />
-                                            </q-td>
-
-                                            <q-td
-                                                key="kg"
-                                                :props="props"
-                                                class="cursor-pointer"
-                                            >
-                                                {{ props.row.kg }}
-                                                <PopupEdit
-                                                    :value.sync="props.row.kg"
-                                                    :popup-settings="{type: 'number'}"
-                                                    @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                                />
-                                            </q-td>
-
-                                            <q-td
-                                                key="for_kg"
-                                                :props="props"
-                                                class="cursor-pointer"
-                                            >
-                                                {{ props.row.for_kg }}
-                                                <PopupEdit
-                                                    :value.sync="props.row.for_kg"
-                                                    :popup-settings="{type: 'number'}"
-                                                    @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                                />
-                                            </q-td>
-
-                                            <q-td
-                                                key="for_place"
-                                                :props="props"
-                                                class="cursor-pointer"
-                                            >
-                                                {{ props.row.for_place }}
-                                                <PopupEdit
-                                                    :value.sync="props.row.for_place"
-                                                    :popup-settings="{type: 'number'}"
-                                                    @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                                />
-                                            </q-td>
-
-                                            <q-td
-                                                key="category_id"
-                                                :props="props"
-                                                class="cursor-pointer"
-                                            >
-                                                {{ props.row.category_id | filterFromSelectData(categories) }}
-                                                <PopupEdit
-                                                    :value.sync="props.row.category_id"
-                                                    @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                                >
-                                                    <template v-slot:body>
-                                                        <SelectWithSearchInput
-                                                            :value.sync="props.row.category_id"
-                                                            :options.sync="categories"
-                                                            :search-options="categories"
-                                                            :input-data="selectCategoryData"
-                                                        />
-                                                    </template>
-                                                </PopupEdit>
-                                            </q-td>
-
-                                            <q-td
-                                                key="shop"
-                                                :props="props"
-                                                class="cursor-pointer"
-                                            >
-                                                {{ props.row.shop }}
-                                                <PopupEdit
-                                                    :value.sync="props.row.shop"
-                                                    @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                                />
-                                            </q-td>
-
-                                            <q-td
-                                                key="notation"
-                                                :props="props"
-                                                class="cursor-pointer"
-                                            >
-                                                {{ props.row.notation }}
-                                                <PopupEdit
-                                                    :value.sync="props.row.notation"
-                                                    @addToSave="addToUpdateArray(props.row, 'arrayToUpdate')"
-                                                />
-                                            </q-td>
-
-
-                                            <q-td
-                                                key="things"
-                                                :props="props"
-                                                class="cursor-pointer"
-                                            >
-                                                {{ props.row.things }}
-                                                <PopupEdit
-                                                    :value.sync="props.row.things"
-                                                />
-                                            </q-td>
-                                        </q-tr>
-                                        <!--                                <q-tr v-show="props.expand" :props="props">-->
-                                        <!--                                    <q-td colspan="100%">-->
-                                        <!--                                    </q-td>-->
-                                        <!--                                </q-tr>-->
-                                    </template>
-
-                                </Table>
-                            </q-td>
-                        </q-tr>
-                    </template>
-                    <template v-slot:inner-bottom-row>
-                        <IconBtn
-                            v-if="arrayToUpdateTransporterPriceData.length"
-                            :icon-btn-data="{
+                </Table>
+              </q-td>
+            </q-tr>
+          </template>
+          <template v-slot:inner-bottom-row>
+            <IconBtn
+              v-if="arrayToUpdateTransporterPriceData.length"
+              :icon-btn-data="{
                                 color: 'positive',
                                 icon: 'save',
                                 tooltip: 'save'
                             }"
-                            @iconBtnClick="updateTransporterPriceData"
-                        />
-                    </template>
-                </Table>
-            </template>
+              @iconBtnClick="updateTransporterPriceData"
+            />
+          </template>
         </Table>
-    </div>
+      </template>
+    </Table>
+  </div>
 </template>
 
 <script>
@@ -545,7 +545,7 @@
                 },
                 faxDataList: [],
                 faxDataTable: {
-                    title: this.$t('warehouse'),
+                    title: this.$t('storehouse'),
                     viewBody: true,
                     viewTop: true,
                     hideBottom: false,
@@ -581,14 +581,14 @@
                         },
                         {
                             name: 'for_kg',
-                            label: this.$t('for_kg'),
+                            label: this.$t('forKg'),
                             field: 'for_kg',
                             align: 'center',
                             sortable: true,
                         },
                         {
                             name: 'for_place',
-                            label: this.$t('for_place'),
+                            label: this.$t('forPlace'),
                             field: 'for_place',
                             align: 'center',
                             sortable: true,
@@ -604,7 +604,7 @@
                     visibleColumns: ['customer_code', 'place', 'kg', 'category', 'for_kg', 'for_place', 'sum'],
                 },
                 faxExpandDataTable: {
-                    title: this.$t('warehouse'),
+                    title: this.$t('storehouse'),
                     viewBody: true,
                     viewTop: true,
                     hideBottom: false,
@@ -640,14 +640,14 @@
                         },
                         {
                             name: 'for_kg',
-                            label: this.$t('for_kg'),
+                            label: this.$t('forKg'),
                             field: 'for_kg',
                             align: 'center',
                             sortable: true,
                         },
                         {
                             name: 'for_place',
-                            label: this.$t('for_place'),
+                            label: this.$t('forPlace'),
                             field: 'for_place',
                             align: 'center',
                             sortable: true,
@@ -684,7 +684,7 @@
                     visibleColumns: ['code', 'code_id', 'place', 'kg', 'for_kg', 'for_place', 'category_id', 'shop', 'notation', 'things'],
                 },
                 faxCategoriesTable: {
-                    title: this.$t('warehouse'),
+                    title: this.$t('storehouse'),
                     viewBody: true,
                     viewTop: false,
                     hideBottom: true,
@@ -714,7 +714,7 @@
                         },
                         {
                             name: 'for_kg',
-                            label: this.$t('for_kg'),
+                            label: this.$t('forKg'),
                             field: 'for_kg',
                             align: 'center',
                             sortable: true,
@@ -738,7 +738,7 @@
         computed: {
             ...mapGetters({
                 categories: 'category/getCategories',
-                customerCodes: 'customer/getCodes',
+                customerCodes: 'clientCodes/getCodes',
                 currentFaxItem: 'faxes/getCurrentFaxItem',
                 faxData: 'faxes/getFaxData',
                 faxCategoriesData: 'faxes/getFaxCategoriesData',
@@ -801,25 +801,25 @@
                   });
             },
             async getFaxData(id) {
-                if (this.currentFaxItem.id !== id) {
-                    this.$q.loading.show();
-                    try {
-                        const { data } = await this.$axios.get(`${getUrl('faxData')}/${id}`);
-                        this.faxDataList = await this.prepareFaxTableData(data.faxData);
-                        this.faxCategoriesDataList = await this.prepareFaxCategoriesData(this.faxData, this.transporterPriceData, _.get(data.fax, 'transporter_id'));
-                        // await this.$store.dispatch('faxes/setFaxData', this.prepareFaxTableData(data.faxData));
-                        // // this.faxData = this.prepareFaxTableData(data.faxData);
-                        // await this.$store.dispatch('faxes/setCurrentFaxItem', data.fax);
-                        // await this.$store.dispatch('transporter/setTransporterPrice', data.transporterPriceData);
-                        // // this.prepareTransporterPriceData(this.faxData, data.transporterPriceData, _.get(this.currentFaxItem, 'transporter_id'));
-                        // await this.$store.dispatch('faxes/setFaxCategoriesData', this.prepareFaxCategoriesData(this.faxData, this.transporterPriceData, _.get(this.currentFaxItem, 'transporter_id')));
-                        // this.transporterCategoriesDataList = this.prepareTransporterPriceData(this.faxData, this.transporterPriceData, _.get(this.currentFaxItem, 'transporter_id'));
-                        this.$q.loading.hide();
-                    } catch (e) {
-                        devlog.log(e);
-                        this.$q.loading.hide();
-                    }
+                // if (this.currentFaxItem.id !== id) {
+                this.$q.loading.show();
+                try {
+                    const { data } = await this.$axios.get(`${getUrl('faxData')}/${id}`);
+                    this.faxDataList = await this.prepareFaxTableData(data.faxData);
+                    this.faxCategoriesDataList = await this.prepareFaxCategoriesData(this.faxData, this.transporterPriceData, _.get(data.fax, 'transporter_id'));
+                    // await this.$store.dispatch('faxes/setFaxData', this.prepareFaxTableData(data.faxData));
+                    // // this.faxData = this.prepareFaxTableData(data.faxData);
+                    await this.$store.dispatch('faxes/setCurrentFaxItem', data.fax);
+                    // await this.$store.dispatch('transporter/setTransporterPrice', data.transporterPriceData);
+                    // // this.prepareTransporterPriceData(this.faxData, data.transporterPriceData, _.get(this.currentFaxItem, 'transporter_id'));
+                    // await this.$store.dispatch('faxes/setFaxCategoriesData', this.prepareFaxCategoriesData(this.faxData, this.transporterPriceData, _.get(this.currentFaxItem, 'transporter_id')));
+                    // this.transporterCategoriesDataList = this.prepareTransporterPriceData(this.faxData, this.transporterPriceData, _.get(this.currentFaxItem, 'transporter_id'));
+                    this.$q.loading.hide();
+                } catch (e) {
+                    devlog.log(e);
+                    this.$q.loading.hide();
                 }
+                // }
             },
             async updateAllPriceInFaxData(id) {
                 this.$q.loading.show();
@@ -844,9 +844,9 @@
                     this.$store.dispatch('customer/getCodes');
                 }
             },
-            countSum(arr, key) {
-                return _.sumBy(arr, key);
-            },
+            // countSum(arr, key) {
+            //     return _.sumBy(arr, key);
+            // },
             prepareFaxCategoriesData(data, price, transporterID) {
                 // devlog.log('PRICE', price);
                 const categoriesArr = [];
@@ -880,27 +880,27 @@
 
                 return categoriesArr;
             },
-            prepareFaxTableData(data) {
-                const newArr = [];
-                _.forEach(data, (value) => {
-                    if (_.isObject(value)) {
-                        _.forEach(value, (item) => {
-                            _.forEach(item, (elem) => {
-                                const obj2 = {};
-                                _.assign(obj2, _.first(elem), {
-                                    arr: elem,
-                                    kg: this.countSum(elem, 'kg'),
-                                    place: this.countSum(elem, 'place'),
-                                    sum: 0,
-                                });
-                                newArr.push(obj2);
-                            });
-                        });
-                    }
-                });
-                // devlog.log('newArr', newArr);
-                return newArr;
-            },
+            // prepareFaxTableData(data) {
+            //     const newArr = [];
+            //     _.forEach(data, (value) => {
+            //         if (_.isObject(value)) {
+            //             _.forEach(value, (item) => {
+            //                 _.forEach(item, (elem) => {
+            //                     const obj2 = {};
+            //                     _.assign(obj2, _.first(elem), {
+            //                         arr: elem,
+            //                         kg: this.countSum(elem, 'kg'),
+            //                         place: this.countSum(elem, 'place'),
+            //                         sum: 0,
+            //                     });
+            //                     newArr.push(obj2);
+            //                 });
+            //             });
+            //         }
+            //     });
+            //     // devlog.log('newArr', newArr);
+            //     return newArr;
+            // },
             addToSaveMultiply(arr, price, key) {
                 _.forEach(arr, (item) => {
                     item[key] = price;
@@ -908,10 +908,10 @@
                 });
             },
             exportFaxData(fax) {
-                devlog.log('EXPORT');
+                devlog.log('EXPORT', fax);
                 this.exportDataToExcel(getUrl('exportFaxData'), {
-                    faxID: fax.id,
-                    transporterID: fax.transporter_id,
+                    faxID: 1,
+                    transporterID: 1,
                 }, 'epo.xlsx');
             },
         },

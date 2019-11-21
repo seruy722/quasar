@@ -16,18 +16,19 @@ class CreateStorehouseDataTable extends Migration
         Schema::create('storehouse_data', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('code_place')->nullable();
-            $table->integer('code_client_id')->unsigned();
-            $table->integer('place')->unsigned()->default(0);
+            $table->unsignedInteger('code_client_id');
+            $table->unsignedInteger('place')->default(1);
             $table->float('kg', 10, 2)->unsigned()->default(0);
             $table->string('shop')->nullable();
-            $table->text('things')->nullable();
+            $table->json('things')->nullable();
             $table->boolean('brand')->default(false);
             $table->string('notation')->nullable();
             $table->float('for_kg', 10, 2)->default(0);
             $table->float('for_place', 10, 2)->default(0);
-            $table->integer('fax_id')->unsigned()->default(0);
-            $table->integer('category_id')->unsigned();
-            $table->integer('storehouse_id')->unsigned();
+            $table->unsignedInteger('fax_id')->default(0);
+            $table->unsignedInteger('category_id');
+            $table->unsignedInteger('storehouse_id');
+            $table->unsignedTinyInteger('status')->default(0);
             $table->timestamps();
         });
     }

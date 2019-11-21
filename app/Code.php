@@ -8,7 +8,7 @@ class Code extends Model
 {
     protected $fillable = ['code', 'user_id'];
 
-    public function customers()
+    public function clients()
     {
         return $this->hasMany('App\Customer', 'code_id');
     }

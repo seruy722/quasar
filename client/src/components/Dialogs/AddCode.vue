@@ -198,7 +198,6 @@
         },
         created() {
             this.onKeyUpFunc = this.checkCodeExist;
-            // this.$q.cookies.remove(getLSKey('authToken'));
         },
         methods: {
             removeCustomerFromList(index) {

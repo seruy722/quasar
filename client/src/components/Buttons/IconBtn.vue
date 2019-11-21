@@ -1,28 +1,47 @@
 <template>
-    <div
+    <q-btn
+        flat
+        round
+        :color="color"
+        :icon="icon"
+        :disable="disable"
+        :size="size"
+        :dense="dense"
         data-vue-component-name="IconBtn"
+        @click.stop="$emit('iconBtnClick')"
     >
-        <q-btn
-            flat
-            round
-            dense
-            :color="iconBtnData.color || 'black'"
-            :icon="iconBtnData.icon || 'menu'"
-            :disable="iconBtnData.disable"
-            @click="$emit('iconBtnClick')"
-        >
-            <q-tooltip>{{ $t(iconBtnData.tooltip) }}</q-tooltip>
-        </q-btn>
-    </div>
+        <slot></slot>
+        <q-tooltip>{{ tooltip }}</q-tooltip>
+    </q-btn>
 </template>
 
 <script>
     export default {
         name: 'IconBtn',
         props: {
-            iconBtnData: {
-                type: Object,
-                default: () => ({}),
+            color: {
+                type: String,
+                default: 'primary',
+            },
+            icon: {
+                type: String,
+                default: 'add_box',
+            },
+            disable: {
+                type: Boolean,
+                default: false,
+            },
+            dense: {
+                type: Boolean,
+                default: false,
+            },
+            tooltip: {
+                type: String,
+                default: 'add',
+            },
+            size: {
+                type: String,
+                default: 'md',
             },
         },
     };

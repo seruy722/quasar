@@ -1,13 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-// import example from './module-example'
 import auth from './auth';
 import faxes from './faxes';
 import category from './category';
-import customer from './customer';
+import clientCodes from './client-codes';
 import transporter from './transporter';
 import transport from './transport';
+import storehouse from './storehouse';
+import cities from './cities';
 
 Vue.use(Vuex);
 
@@ -17,20 +18,22 @@ Vue.use(Vuex);
  */
 
 export default function (/* { ssrContext } */) {
-    const Store = new Vuex.Store({
-        modules: {
-            auth,
-            faxes,
-            category,
-            customer,
-            transporter,
-            transport,
-        },
+  const Store = new Vuex.Store({
+    modules: {
+      auth,
+      faxes,
+      category,
+      clientCodes,
+      transporter,
+      transport,
+      storehouse,
+      cities,
+    },
 
-        // enable strict mode (adds overhead!)
-        // for dev mode only
-        strict: process.env.DEV,
-    });
+    // enable strict mode (adds overhead!)
+    // for dev mode only
+    strict: process.env.DEV,
+  });
 
-    return Store;
+  return Store;
 }

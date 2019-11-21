@@ -71,11 +71,11 @@
                             @addToSave="addToUpdateArray(props.row, 'arrayToUpdateFax')"
                         >
                             <template v-slot:body>
-                                <DatePicker
-                                    :value.sync="props.row.departure_date"
-                                    :input-data="datePickerData"
-                                    :errors="{}"
-                                />
+<!--                                <DatePicker-->
+<!--                                    :value.sync="props.row.departure_date"-->
+<!--                                    :input-data="datePickerData"-->
+<!--                                    :errors="{}"-->
+<!--                                />-->
                             </template>
                         </PopupEdit>
                     </q-td>
@@ -171,7 +171,7 @@
             PopupEdit: () => import('src/components/PopupEdit.vue'),
             SelectWithSearchInput: () => import('src/components/Elements/SelectWithSearchInput.vue'),
             BaseSelect: () => import('src/components/Elements/BaseSelect.vue'),
-            DatePicker: () => import('src/components/Elements/DatePicker.vue'),
+            // DatePicker: () => import('src/components/Elements/DatePicker.vue'),
         },
         filters: {
             viewYesNo(val) {
@@ -199,7 +199,7 @@
                 ],
                 faxesTableData: {
                     data: this.faxes || [],
-                    title: this.$t('warehouse'),
+                    title: this.$t('storehouse'),
                     viewBody: true,
                     viewTop: true,
                     selected: [],

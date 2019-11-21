@@ -11,7 +11,7 @@
             :dense="$q.screen.xs || $q.screen.sm"
             row-key="id"
             :selected.sync="selected"
-            :filter="filter.value"
+            :filter="search"
             :rows-per-page-options="[10, 20, 50, 100, 0]"
             separator="cell"
             :hide-bottom="tableData.hideBottom"
@@ -36,14 +36,12 @@
                 />
                 <q-space />
 
-                <Search :filter="filter" />
+                <Search v-model="search" />
 
                 <q-space />
                 <IconBtn
-                    :iconBtnData="{
-                        icon: props.inFullscreen ? 'fullscreen_exit' : 'fullscreen',
-                        tooltip: props.inFullscreen ? $t('hide') : 'reveal'
-                    }"
+                    :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                    :tooltip="$t(props.inFullscreen ? 'hide' : 'reveal')"
                     @iconBtnClick="props.toggleFullscreen"
                 />
                 <slot name="top-buttons"></slot>
@@ -84,12 +82,10 @@
         },
         data() {
             return {
-                filter: {
-                    value: '',
-                },
+               search: '',
                 selected: [],
                 pagination: {
-                    rowsPerPage: 10,
+                    rowsPerPage: 20,
                 },
             };
         },

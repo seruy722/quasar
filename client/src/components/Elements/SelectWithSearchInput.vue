@@ -1,41 +1,40 @@
 <template>
-    <div
-        data-vue-component-name="SelectWithSearchInput"
-    >
-        <q-select
-            v-model="modelData"
-            filled
-            use-input
-            input-debounce="0"
-            :label="inputData.label"
-            emit-value
-            map-options
-            :options="opt"
-            :error-message="viewError()"
-            :error="isError"
-            @filter="filterFn"
-            @input="inputEvent"
-        >
-            <template v-slot:prepend>
-                <q-icon :name="inputData.icon" />
-            </template>
-            <template v-slot:no-option>
-                <q-item>
-                    <q-item-section class="text-grey">
-                        Нет результатов
-                    </q-item-section>
-                </q-item>
-            </template>
-        </q-select>
-    </div>
+  <q-select
+    v-model="modelData"
+    filled
+    use-input
+    input-debounce="0"
+    :label="label"
+    emit-value
+    map-options
+    :options="localOptions"
+    :value="value"
+    :dense="dense"
+    :error-message="viewError()"
+    :error="isError"
+    data-vue-component-name="SelectWithSearchInput"
+    @filter="filterFn"
+    @input="inputEvent"
+  >
+    <template v-slot:prepend>
+      <q-icon :name="icon" />
+    </template>
+    <template v-slot:no-option>
+      <q-item>
+        <q-item-section class="text-grey">
+          Нет результатов
+        </q-item-section>
+      </q-item>
+    </template>
+  </q-select>
 </template>
 
 <script>
-    import ErrorsServerMixin from 'src/mixins/ViewErrors';
+    import ViewErrorsMixin from 'src/mixins/ViewErrors';
 
     export default {
         name: 'SelectWithSearchInput',
-        mixins: [ErrorsServerMixin],
+        mixins: [ViewErrorsMixin],
         props: {
             value: {
                 type: [String, Number],
@@ -45,13 +44,21 @@
                 type: Array,
                 default: () => [],
             },
-            searchOptions: {
-                type: Array,
-                default: () => [],
+            label: {
+                type: String,
+                default: '',
             },
-            inputData: {
-                type: Object,
-                default: () => ({}),
+            icon: {
+                type: String,
+                default: '',
+            },
+            dense: {
+                type: Boolean,
+                default: false,
+            },
+            field: {
+                type: String,
+                default: '',
             },
             errors: {
                 type: Object,
@@ -59,7 +66,7 @@
             },
         },
         data: () => ({
-            opt: [],
+            localOptions: [],
         }),
         computed: {
             modelData: {
@@ -71,36 +78,41 @@
                 },
             },
         },
+        watch: {
+            localOptions(val) {
+                devlog.log(val);
+            },
+        },
         created() {
-            this.opt = this.searchOptions;
+            this.localOptions = this.options;
         },
         methods: {
             filterFn(val, update) {
                 devlog.log('valSE', val);
                 if (!val) {
                     update(() => {
-                        this.opt = this.searchOptions;
-                        // this.$emit('update:options', this.searchOptions);
-                        // this.options = this.searchOptions;
+                        this.localOptions = this.options;
+                        // this.$emit('update:options', this.options);
+                        // this.options = this.options;
                     });
                     return;
                 }
 
                 update(() => {
                     const needle = val.toLowerCase();
-                    // devlog.log('NEEDLE', this.searchOptions.filter(v => v.label.toLowerCase()
+                    // devlog.log('NEEDLE', this.options.filter(v => v.label.toLowerCase()
                     //   .indexOf(needle) > -1));
-                    // this.$emit('update:options', this.searchOptions.filter(v => v.label.toLowerCase()
+                    // this.$emit('update:options', this.options.filter(v => v.label.toLowerCase()
                     //   .indexOf(needle) > -1));
-                    // this.$emit('update:options', this.searchOptions.filter(v => v.label.toLowerCase()
+                    // this.$emit('update:options', this.options.filter(v => v.label.toLowerCase()
                     //   .indexOf(needle) > -1));
-                    this.opt = this.searchOptions.filter(v => v.label.toLowerCase()
+                    this.localOptions = this.options.filter((v) => v.label.toLowerCase()
                       .indexOf(needle) > -1);
                 });
             },
-            inputEvent() {
+            inputEvent($event) {
                 this.changeErrors();
-                this.$emit('selectSearchInput');
+                this.$emit('input', $event);
             },
         },
     };

@@ -3,7 +3,7 @@
  * @param input
  * @returns boolean
  */
-export const checkDate = (input => _.isString(input) && !!new Date(input).getTime());
+export const checkDate = ((input) => _.isString(input) && !!new Date(input).getTime());
 
 
 export const today = () => new Date()

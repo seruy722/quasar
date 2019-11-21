@@ -1,19 +1,19 @@
 import axios from 'axios';
 import { getUrl } from 'src/tools/url';
-import { Cookies } from 'quasar';
+import { LocalStorage } from 'quasar';
 import { getLSKey } from 'src/tools/lsKeys';
 
 // devlog.log('navigator.connection.type', navigator.connection.type);
 const axiosInstance = axios.create(getUrl('axiosData'));
 export default ({ Vue, router }) => {
     axiosInstance.interceptors.request.use((request) => {
-        const token = Cookies.get(getLSKey('authToken'));
+        const token = LocalStorage.getItem(getLSKey('authToken'));
         devlog.log('token', token);
         if (token) {
             request.headers.Authorization = `Bearer ${token}`;
         }
 
-        const locale = Cookies.get(getLSKey('lang'));
+        const locale = LocalStorage.getItem(getLSKey('lang'));
         devlog.log('loc', locale);
         if (!_.isEmpty(locale)) {
             request.headers.Locale = locale.value;
@@ -22,7 +22,7 @@ export default ({ Vue, router }) => {
         return request;
     });
 
-    axiosInstance.interceptors.response.use(response => response, (error) => {
+    axiosInstance.interceptors.response.use((response) => response, (error) => {
         // const token = Cookies.get(getLSKey('authToken'));
         const { status } = error.response;
         devlog.log('response_status', status);

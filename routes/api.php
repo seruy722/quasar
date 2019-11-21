@@ -6,6 +6,7 @@ use App\Http\Resources\CodeResource;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CommonExport;
+use GuzzleHttp\Client;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,13 +32,20 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
         return CodeResource::collection(Code::with('customers', 'user')->get());
     });
     Route::get('/codes-list', function () {
-        return Code::select('id as value', 'code as label')->orderBy('label')->get();
+        return Code::select('id as value', 'code as label')->orderBy('value')->get();
     });
     Route::post('/upload-codes', 'Api\CodesController@uploadCodesData');
     Route::get('/check-code-exist/{code}', 'Api\CodesController@checkCodeExist');
     Route::post('/store-code', 'Api\CodesController@storeCode');
 
-    // CUSTOMERS
+    // STOREHOUSE
+    Route::get('/store-house-data/{id}', 'Api\StorehouseDataController@getStorehouseData');
+
+    // STOREHOUSE_DATA
+    Route::post('/add-storehouse-data', 'Api\StorehouseDataController@store');
+    Route::post('/update-storehouse-data', 'Api\StorehouseDataController@update');
+
+    // CLIENTS
     Route::post('/valid-customer-data', 'Api\CustomersController@checkValidCustomerData');
     Route::post('/store-customers', 'Api\CustomersController@storeCustomers');
 
@@ -66,16 +74,23 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::get('/update-all-price-in-fax-data/{id}', 'Api\FaxDataController@updatePrice');
 
     // CATEGORIES
-    Route::get('/categories', 'Api\CategoryController@getCategories');
+    Route::get('/categories', 'Api\CategoryController@index');
+    Route::post('/add-category', 'Api\CategoryController@store');
 
     // TRANSPORTERS
     Route::get('/transporters', 'Api\TransporterController@index');
+    Route::post('/add-transporter', 'Api\TransporterController@store');
 
     // TRANSPORTS
     Route::get('/transports', 'Api\TransportController@index');
 
     // TRANSPORTER_PRICE
     Route::post('/update-transporter-price-data', 'Api\TransporterPriceController@updateData');
+
+    // CITIES
+    Route::get('/cities', function (){
+        return \App\City::select('id as value', 'name as label')->orderBy('name')->get();
+    });
     // AUXILIARY REQUESTS
     // Кода без информации о клиентах
     Route::get('/export-codes-without-customers', function () {
@@ -90,6 +105,23 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 //        return response(['ok' => $arrCodesWithoutCustomers]);
         return Excel::download(new CommonExport($arrCodesWithoutCustomers, 'codes'), 'codes.xlsx');
     });
+
+    Route::post('/upload-faxes', 'CommonController@uploadFaxes');
+    Route::post('/search-in-faxes', 'CommonController@searchInFaxes');
+    Route::get('/areas', function () {
+        $client = new Client();
+        return $client->get("https://api.hh.ru/areas/5");
+    });
+    // Загрузка городов Украины
+//    Route::post('/store-areas', function (Request $request) {
+//        foreach ($request->areas as $area) {
+//            $areaM = \App\Region::create(['name' => $area['name'], 'parent_id' => 1]);
+//            foreach ($area['areas'] as $item) {
+//                \App\City::create(['name' => $item['name'], 'parent_id' => $areaM->id]);
+//            }
+//        }
+//        return $request->areas;
+//    });
 });
 
 

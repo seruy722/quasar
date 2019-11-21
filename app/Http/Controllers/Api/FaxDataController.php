@@ -11,6 +11,7 @@ use App\FaxData;
 use App\TransporterPrice;
 use App\Http\Resources\FaxDataResource;
 use App\Imports\ImportData;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -168,6 +169,7 @@ class FaxDataController extends Controller
 
     public function export(Request $request)
     {
+//        return response(['answ' => new FaxDataExport($request->faxID, $request->transporterID)]);
         return Excel::download(new FaxDataExport($request->faxID, $request->transporterID), 'users.xlsx');
     }
 

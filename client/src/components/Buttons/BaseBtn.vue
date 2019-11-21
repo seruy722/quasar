@@ -5,7 +5,7 @@
         <q-btn
             :color="color"
             :label="$t(label)"
-            @click="$emit('clickBaseBtn')"
+            @click.stop="$emit('clickBaseBtn')"
         />
     </div>
 </template>

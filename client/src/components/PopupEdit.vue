@@ -2,25 +2,18 @@
     <q-popup-edit
         v-model.trim="modelData"
         data-vue-component-name="PopupEdit"
-        :title="$t(popupSettings.title || 'edit')"
+        :title="$t(title)"
         buttons
-        :label-set="$t(popupSettings.labelSet || 'save')"
-        :label-cancel="$t(popupSettings.labelCancel || 'cancel')"
+        :label-set="$t(labelSet)"
+        :label-cancel="$t(labelCancel)"
         dense
         @save="$emit('addToSave')"
     >
         <slot name="body">
             <q-input
-                v-if="popupSettings.type === 'text'"
                 v-model.trim="modelData"
-                type="text"
-                dense
-                autofocus
-            />
-            <q-input
-                v-else-if="popupSettings.type === 'number'"
-                v-model.number="modelData"
-                type="number"
+                :type="inputType"
+                :mask="mask"
                 dense
                 autofocus
             />
@@ -36,9 +29,25 @@
                 type: [String, Number],
                 default: '',
             },
-            popupSettings: {
-                type: Object,
-                default: () => ({}),
+            title: {
+                type: String,
+                default: 'edit',
+            },
+            labelSet: {
+                type: String,
+                default: 'save',
+            },
+            labelCancel: {
+                type: String,
+                default: 'cancel',
+            },
+            inputType: {
+                type: String,
+                default: 'text',
+            },
+            mask: {
+                type: String,
+                default: '',
             },
         },
         computed: {
@@ -50,6 +59,9 @@
                     this.$emit('update:value', newValue);
                 },
             },
+            // isValid() {
+            //     return this.modelData.length <= 3;
+            // },
         },
     };
 </script>

@@ -41,15 +41,14 @@ class FaxController extends Controller
                 $join->on('codes.id', '=', 'fax_data.code_id');
             })
             ->where('fax_id', 1)
-            ->orderBy(DB::raw('customer_code + 0'))
+            ->orderByRaw('customer_code + 0')
             ->get();
 
         $data = FaxDataCommonExportResource::collection($queryData);
         $data = $data->collection;
 
 
-
-        return response(['faxesList' => $this->faxesList(), 'res'=>$data]);
+        return response(['faxesList' => $this->faxesList(), 'res' => $data]);
     }
 
     public function getOptionsData()
@@ -61,18 +60,24 @@ class FaxController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|max:255|unique:faxes',
-            'departure_date' => 'required|date',
             'transport_id' => 'required|numeric',
             'transporter_id' => 'required|numeric',
+            'status' => 'required|numeric',
         ]);
 
-        $fax = Fax::create([
+        $arr = [
             'name' => $request->name,
-            'departure_date' => $request->departure_date,
             'transport_id' => $request->transport_id,
             'transporter_id' => $request->transporter_id,
+            'status' => $request->status,
             'user_id' => auth()->user()->id,
-        ]);
+        ];
+
+        if ($request->status === 2) {
+            $arr['departure_date'] = date('Y-m-d H:i:s');
+        }
+
+        $fax = Fax::create($arr);
 
         return response(['status' => true, 'faxID' => $fax->id, 'fax' => new FaxResource($fax)]);
     }
@@ -91,24 +96,28 @@ class FaxController extends Controller
     {
         $this->validate($request, [
             '*.name' => 'required|max:255',
-            '*.departure_date' => 'required|date',
-//            '*.delivered' => 'boolean',
             '*.transport_id' => 'required|numeric',
             '*.transporter_id' => 'required|numeric',
-//            '*.user_id' => 'required|numeric',
         ]);
 
         $data = $request->all();
 
+
         foreach ($data as $item) {
-            Fax::where('id', $item['id'])->update([
+            $arr = [
                 'name' => $item['name'],
-                'departure_date' => $item['departure_date'],
-                'delivered' => !!$item['delivered'],
                 'transport_id' => $item['transport_id'],
                 'transporter_id' => $item['transporter_id'],
-//                'user_id' => $item['user_id'],
-            ]);
+                'user_id' => auth()->user()->id,
+            ];
+
+            if ($item['departure_date']) {
+                $arr['departure_date'] = \Illuminate\Support\Carbon::parse($item['departure_date'])->format('Y-m-d H:i:s');
+            } else {
+                $arr['departure_date'] = null;
+            }
+
+            Fax::where('id', $item['id'])->update($arr);
         }
         return response(['faxesList' => $this->faxesList()]);
     }

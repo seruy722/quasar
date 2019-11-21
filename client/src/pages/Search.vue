@@ -27,8 +27,8 @@
                     <q-tab name="debts" icon="alarm" label="ДОЛГИ">
                         <Badge :badgeData="{value: badges.debts}" />
                     </q-tab>
-                    <q-tab name="warehouse" icon="movie" label="СКЛАД">
-                        <Badge :badgeData="{value: badges.warehouse}" />
+                    <q-tab name="storehouse" icon="movie" label="СКЛАД">
+                        <Badge :badgeData="{value: badges.storehouse}" />
                     </q-tab>
                     <q-tab name="faxes" icon="movie" label="ФАКСЫ">
                         <Badge :badgeData="{value: badges.faxes}" />
@@ -65,7 +65,7 @@
                         </Table>
                     </q-tab-panel>
 
-                    <q-tab-panel name="warehouse">
+                    <q-tab-panel name="storehouse">
                         <Table
                             :table-data-s="skladTableData.data"
                             :tableData="skladTableData"
@@ -139,7 +139,7 @@
                 badges: {
                     cargo: 0,
                     debts: 0,
-                    warehouse: 0,
+                    storehouse: 0,
                     faxes: 0,
                 },
                 inputData: {
@@ -230,7 +230,7 @@
                 },
                 skladTableData: {
                     data: [],
-                    title: this.$t('warehouse'),
+                    title: this.$t('storehouse'),
                     viewBody: false,
                     viewTop: true,
                     selected: [],
@@ -303,7 +303,7 @@
                 },
                 faxesTableData: {
                     data: [],
-                    title: this.$t('warehouse'),
+                    title: this.$t('storehouse'),
                     viewBody: true,
                     viewTop: true,
                     selected: [],
@@ -338,14 +338,14 @@
                         },
                         {
                             name: 'for_kg',
-                            label: this.$t('for_kg'),
+                            label: this.$t('forKg'),
                             field: 'for_kg',
                             align: 'center',
                             sortable: true,
                         },
                         {
                             name: 'for_place',
-                            label: this.$t('for_place'),
+                            label: this.$t('forPlace'),
                             field: 'for_place',
                             align: 'center',
                             sortable: true,
@@ -399,11 +399,11 @@
                   .then(({ data }) => {
                       this.cargoTableData.data = data.cargo;
                       this.debtsTableData.data = data.debts;
-                      this.skladTableData.data = data.warehouse;
+                      this.skladTableData.data = data.storehouse;
                       this.faxesTableData.data = this.prepareFaxesTableData(data.faxes);
                       this.badges.cargo = data.sumCargo;
                       this.badges.debts = data.sumDebts;
-                      this.badges.warehouse = data.warehouse.length;
+                      this.badges.storehouse = data.storehouse.length;
                       this.badges.faxes = data.faxesCount;
                       this.$q.loading.hide();
                   })

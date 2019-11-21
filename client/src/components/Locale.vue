@@ -27,7 +27,7 @@
                         @click="setLocale(item)"
                     >
                         <q-item-section avatar>
-                            <q-icon :name="item.icon"/>
+                            <q-icon :name="item.icon" />
                         </q-item-section>
                         <q-item-section>{{ item.label }}</q-item-section>
                     </q-item>
@@ -69,8 +69,7 @@
         },
         created() {
             // this.$q.localStorage.remove(getLSKey('lang'));
-            // this.$q.cookies.remove(getLSKey('lang'));
-            const langFromLs = this.$q.cookies.get(getLSKey('lang'));
+            const langFromLs = this.$q.localStorage.getItem(getLSKey('lang'));
             if (!_.isEmpty(langFromLs)) {
                 this.setLocale(langFromLs);
             } else {
@@ -84,7 +83,7 @@
                 this.setActive(this.langs, item.value);
                 this.$i18n.locale = item.value;
                 this.icon = item.icon;
-                this.$q.cookies.set(getLSKey('lang'), item);
+                this.$q.localStorage.set(getLSKey('lang'), item);
             },
             setActive(arr, lang) {
                 _.forEach(arr, (item) => {

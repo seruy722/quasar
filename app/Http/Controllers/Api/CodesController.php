@@ -67,7 +67,7 @@ class CodesController extends Controller
     public function storeCode(Request $request)
     {
         $this->validate($request, [
-            'code' => 'required|max:255',
+            'code' => 'required|unique:codes|max:255',
         ]);
 
         $code = Code::create([
@@ -75,7 +75,7 @@ class CodesController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
-        return response(['status' => true, 'codeID' => $code->id]);
+        return response(['status' => true, 'code' => ['label' => $code->code, 'value' => $code->id]]);
 
     }
 }

@@ -22,6 +22,7 @@ class FaxDataCommonExport implements FromCollection, ShouldAutoSize, WithTitle, 
     protected $sumKg;
     protected $moreEntries = 2;
     protected $categories;
+    protected $brands;
 
     public function __construct($faxID)
     {
@@ -38,7 +39,7 @@ class FaxDataCommonExport implements FromCollection, ShouldAutoSize, WithTitle, 
         );
         $this->data = $data->collection;
 
-        $this->countEntries = $this->countEntries();
+        $this->countEntries = $this->countEntriesFunc();
         $this->sumPlace = $this->countSum($this->data, 'place');
         $this->sumKg = $this->countSum($this->data, 'kg');
 
@@ -52,7 +53,7 @@ class FaxDataCommonExport implements FromCollection, ShouldAutoSize, WithTitle, 
             ->get();
     }
 
-    public function countEntries()
+    public function countEntriesFunc()
     {
         return $this->data->count();
     }
@@ -122,6 +123,13 @@ class FaxDataCommonExport implements FromCollection, ShouldAutoSize, WithTitle, 
                 $event->sheet->getDelegate()->getStyle($categoriesCellRange)->getAlignment()->applyFromArray(array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
                 $event->sheet->getDelegate()->getStyle($cellCategoriesFooter)->getFont()->setBold(500);
                 $event->sheet->getDelegate()->getStyle($categoriesCellRange)->getFont()->setSize(10);
+
+                $rows = $event->sheet->getDelegate()->toArray();
+                foreach ($rows as $key => $value) {
+                    if ($value[5] == 'Бренд') {
+                        $event->sheet->getDelegate()->getStyle('A' . ($key + 1) . ':W' . ($key + 1))->getFont()->setBold(500);
+                    }
+                }
             }
         ];
     }

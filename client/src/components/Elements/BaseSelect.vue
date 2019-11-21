@@ -1,23 +1,22 @@
 <template>
-    <div
+    <q-select
+        :filled="filled"
+        :options="options"
+        :label="label"
+        :error-message="viewError()"
+        :error="isError"
+        :value="value"
+        :dense="dense"
+        :no-error-icon="noErrorIcon"
         data-vue-component-name="BaseSelect"
+        emit-value
+        map-options
+        @input="inputEvent"
     >
-        <q-select
-            v-model="modelData"
-            filled
-            :options="options"
-            :label="$t(inputData.label)"
-            :error-message="viewError()"
-            :error="isError"
-            emit-value
-            map-options
-            @input="changeErrors"
-        >
-            <template v-slot:prepend>
-                <q-icon :name="inputData.icon" />
-            </template>
-        </q-select>
-    </div>
+        <template v-slot:prepend>
+            <q-icon :name="icon" />
+        </template>
+    </q-select>
 </template>
 
 <script>
@@ -27,31 +26,51 @@
         name: 'BaseSelect',
         mixins: [ErrorsServerMixin],
         props: {
-            inputData: {
-                type: Object,
-                default: () => ({}),
-            },
             value: {
                 type: [String, Number],
-                default: '',
+                default: 0,
             },
             options: {
                 type: Array,
                 default: () => [],
+            },
+            field: {
+                type: String,
+                default: '',
+            },
+            label: {
+                type: String,
+                default: '',
+            },
+            icon: {
+                type: String,
+                default: '',
+            },
+            dense: {
+                type: Boolean,
+                default: false,
+            },
+            noErrorIcon: {
+                type: Boolean,
+                default: true,
+            },
+            filled: {
+                type: Boolean,
+                default: false,
+            },
+            dark: {
+                type: Boolean,
+                default: false,
             },
             errors: {
                 type: Object,
                 default: () => ({}),
             },
         },
-        computed: {
-            modelData: {
-                get: function getData() {
-                    return this.value;
-                },
-                set: function setData(newValue) {
-                    this.$emit('update:value', newValue);
-                },
+        methods: {
+            inputEvent($event) {
+                this.$emit('input', $event);
+                this.changeErrors();
             },
         },
     };

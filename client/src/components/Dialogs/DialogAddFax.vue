@@ -1,238 +1,218 @@
 <template>
-    <div
-        data-vue-component-name="DialogAddFax"
+  <div
+    data-vue-component-name="DialogAddFax"
+  >
+    <Dialog
+      :dialog.sync="show"
+      title="Fax"
+      :persistent="true"
     >
-        <Dialog :dialog.sync="dialogUploadFaxData">
+      <template v-slot:body>
+        <q-card-section class="q-mt-md">
+          <!--          <BaseInput-->
+          <!--            v-model="faxData.departureDate.value"-->
+          <!--            label="Дата отправления"-->
+          <!--            type="text"-->
+          <!--            filled-->
+          <!--            :field="faxData.departureDate.field"-->
+          <!--            :dense="$q.screen.xs || $q.screen.sm"-->
+          <!--            :errors="errorsData"-->
+          <!--          >-->
+          <!--            <template v-slot:append>-->
+          <!--              <Date :value.sync="faxData.departureDate.value" />-->
+          <!--            </template>-->
+          <!--          </BaseInput>-->
 
-            <template v-slot:body>
-                <q-card-section>
-                    <div
-                        v-for="(input, index) in inputs"
-                        :key="index"
-                    >
-                        <SelectWithSearchInput
-                            v-if="input.type==='select'"
-                            :input-data="input"
-                            :search-options="input.searchOptions"
-                            :options="input.options"
-                            :errors="errorsData"
-                            :value.sync="input.value"
-                        />
-                        <DatePicker
-                            v-else-if="input.type==='date'"
-                            :input-data="input"
-                            :value.sync="input.value"
-                            :errors="errorsData"
-                        />
-                        <BaseInput
-                            v-else
-                            :input-data.sync="input"
-                            :errors="errorsData"
-                        />
-                    </div>
-                </q-card-section>
+          <BaseInput
+            v-model="faxData.name.value"
+            :label="faxData.name.label"
+            :type="faxData.name.type"
+            filled
+            :autofocus="true"
+            :field="faxData.name.field"
+            :dense="$q.screen.xs || $q.screen.sm"
+            :errors="errorsData"
+          />
 
-                <q-card-section>
-                    <UploadFileToServer :upload-data="uploadFaxData" />
-                </q-card-section>
+          <SelectWithSearchInput
+            v-model="faxData.transporter_id.value"
+            :label="faxData.transporter_id.label"
+            :dense="$q.screen.xs || $q.screen.sm"
+            :field="faxData.transporter_id.field"
+            :options="transporters"
+            :errors="errorsData"
+          />
 
-                <q-separator />
+          <SelectWithSearchInput
+            v-model="faxData.transport_id.value"
+            :label="faxData.transport_id.label"
+            :dense="$q.screen.xs || $q.screen.sm"
+            :field="faxData.transport_id.field"
+            :options="transport"
+            :errors="errorsData"
+          />
 
-                <q-card-actions align="right">
-                    <OutlineBtn
-                        :btn-data="cancelBtnData"
-                        @clickOutlineBtn="dialogUploadFaxData.value = false"
-                    />
-                    <OutlineBtn
-                        :btn-data="btnData"
-                        @clickOutlineBtn="saveFaxOnServer"
-                    />
-                </q-card-actions>
-            </template>
-        </Dialog>
-    </div>
+          <SelectWithSearchInput
+            v-model="faxData.status.value"
+            :label="faxData.status.label"
+            :dense="$q.screen.xs || $q.screen.sm"
+            :field="faxData.status.field"
+            :options="faxData.status.options"
+            :errors="errorsData"
+          />
+
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-actions align="right">
+          <OutlineBtn
+            label="Сохранить"
+            color="positive"
+            @clickOutlineBtn="checkErrors(faxData, saveFax)"
+          />
+
+          <OutlineBtn
+            label="Закрыть"
+            color="negative"
+            @clickOutlineBtn="show = false"
+          />
+        </q-card-actions>
+      </template>
+    </Dialog>
+  </div>
 </template>
 
 <script>
     import { getUrl } from 'src/tools/url';
     import showNotif from 'src/mixins/showNotif';
-    import { mapGetters } from 'vuex';
+    import CheckErrorsMixin from 'src/mixins/CheckErrors';
+    import getFromSettings from 'src/tools/settings';
 
     export default {
         name: 'DialogAddFax',
         components: {
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            UploadFileToServer: () => import('src/components/Upload/UploadFileToServer.vue'),
             OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
             BaseInput: () => import('src/components/Elements/BaseInput.vue'),
             SelectWithSearchInput: () => import('src/components/Elements/SelectWithSearchInput.vue'),
-            DatePicker: () => import('src/components/Elements/DatePicker.vue'),
         },
-        mixins: [showNotif],
+        mixins: [showNotif, CheckErrorsMixin],
+        props: {
+            showDialog: {
+                type: Boolean,
+                default: false,
+            },
+        },
         data() {
-            this.$_emptyInputs = [
-                {
-                    type: 'date',
-                    value: '',
-                    field: 'departure_date',
-                    icon: 'person',
-                    autofocus: true,
-                    placeholder: this.$t('date'),
-                },
-                {
-                    type: 'select',
-                    field: 'transporter_id',
-                    icon: 'local_shipping',
-                    lang: 'transporter',
-                    options: [],
-                    objectOptions: [],
-                    value: null,
-                    label: this.$t('code.one'),
-                    selected: [],
-                },
-                {
-                    type: 'text',
-                    value: '',
-                    field: 'name',
-                    icon: 'list',
-                    lang: 'fax',
-                    autofocus: true,
-                },
-                {
-                    type: 'select',
-                    value: null,
-                    field: 'transport_id',
-                    icon: 'wc',
-                    options: [],
-                    objectOptions: [],
-                    label: this.$t('transport'),
-                },
-            ];
             return {
-                uploadFaxData: {
-                    url: getUrl('uploadFaxData'),
-                    accept: '.xlsx, .xls, .csv',
-                    faxID: 0,
-                    hideUploadButton: true,
-                },
-                btnData: {
-                    title: 'add',
-                },
-                cancelBtnData: {
-                    title: 'close',
-                    color: 'red',
-                },
-                dialogUploadFaxData: {
-                    title: 'Добавление факса',
-                    value: false,
-                    labelBtn: 'Загрузить файл',
-                    persistent: true,
-                    minWidth: '350px',
-                },
-                errorsData: {
-                    errors: {},
-                },
-                inputs: [
-                    {
-                        type: 'date',
-                        value: '',
-                        field: 'departure_date',
-                        icon: 'person',
-                        autofocus: true,
-                        placeholder: this.$t('date'),
-                    },
-                    {
-                        type: 'select',
-                        field: 'transporter_id',
-                        icon: 'local_shipping',
-                        lang: 'transporter',
-                        searchOptions: [],
-                        options: [],
-                        value: null,
-                        label: this.$t('code.one'),
-                    },
-                    {
+                value: '',
+                show: false,
+                faxData: {
+                    name: {
                         type: 'text',
-                        value: '',
+                        label: 'Название',
                         field: 'name',
-                        icon: 'list',
-                        lang: 'fax',
                         autofocus: true,
+                        rules: [
+                            {
+                                name: 'isLength',
+                                error: 'Минимальное количество символов 2.',
+                                options: {
+                                    min: 2,
+                                    max: 100,
+                                },
+                            },
+                        ],
+                        require: true,
+                        requireError: 'Поле обьзательное для заполнения.',
+                        default: '',
+                        value: '',
                     },
-                    {
+                    status: {
                         type: 'select',
-                        value: null,
-                        field: 'transport_id',
-                        icon: 'wc',
-                        label: this.$t('transport'),
-                        searchOptions: [],
-                        options: [],
+                        label: 'Статус',
+                        field: 'status',
+                        options: getFromSettings('transportOptionsData'),
+                        require: true,
+                        requireError: 'Поле обьзательное для заполнения.',
+                        default: 0,
+                        value: 0,
                     },
-                ],
+                    transporter_id: {
+                        type: 'number',
+                        label: 'Перевожчик',
+                        field: 'transporter_id',
+                        require: true,
+                        requireError: 'Поле обьзательное для заполнения.',
+                        default: 0,
+                        value: 0,
+                    },
+                    transport_id: {
+                        type: 'number',
+                        label: 'Транспорт',
+                        field: 'transport_id',
+                        require: true,
+                        requireError: 'Поле обьзательное для заполнения.',
+                        default: 0,
+                        value: 0,
+                    },
+                },
             };
         },
         computed: {
-            ...mapGetters({
-                transporters: 'transporter/getTransporters',
-                transport: 'transport/getTransports',
-            }),
+            transporters() {
+                return this.$store.getters['transporter/getTransporters'];
+            },
+            transport() {
+                return this.$store.getters['transport/getTransports'];
+            },
         },
         watch: {
-            'uploadFaxData.faxID': function faxId(val) {
-                if (!val) {
-                    this.dialogUploadFaxData.value = false;
-                    this.$q.loading.hide();
-                    this.showNotif('success', 'Факс успешно добавлен.', 'center');
-                }
+            showDialog(val) {
+                this.show = val;
             },
-            transporters(val) {
-                const transporter = _.find(this.inputs, { field: 'transporter_id' });
-                transporter.searchOptions = val;
-                transporter.options = val;
-            },
-            transport(val) {
-                const transport = _.find(this.inputs, { field: 'transport_id' });
-                transport.options = val;
-                transport.searchOptions = val;
+            show(val) {
+                this.$emit('update:showDialog', val);
             },
         },
         created() {
-            this.$store.dispatch('transporter/fetchTransporters');
-            this.$store.dispatch('transport/fetchTransports');
+            this.getTransporters();
+            this.getTransports();
         },
         methods: {
+            getTransports() {
+                if (_.isEmpty(this.transport)) {
+                    this.$store.dispatch('transport/fetchTransports');
+                }
+            },
+            getTransporters() {
+                if (_.isEmpty(this.transporters)) {
+                    this.$store.dispatch('transporter/fetchTransporters');
+                }
+            },
             collectData() {
-                return _.reduce(this.inputs, (result, item) => {
-                    if (item.type === 'date') {
-                        result[item.field] = this.formatDate(item.value);
-                    } else {
-                        result[item.field] = item.value;
+                return _.reduce(this.faxData, (result, item, index) => {
+                    if (index === 'name') {
+                        result[item.field] = _.upperFirst(item.value);
                     }
+                    result[item.field] = item.value;
 
                     return result;
                 }, {});
             },
-            saveFaxOnServer() {
-                if (this.uploadFaxData.canUpload) {
-                    this.$q.loading.show();
-                    devlog.log('SDS', this.collectData());
-                    this.$axios.post(getUrl('addFax'), this.collectData())
-                      .then(({ data }) => {
-                          this.uploadFaxData.faxID = data.faxID;
-                          this.$store.dispatch('faxes/addFax', data.fax);
-                      })
-                      .catch(({ response }) => {
-                          this.errorsData.errors = _.get(response, 'data.errors');
-                          this.$q.loading.hide();
-                      });
-                } else {
-                    this.showNotif('warning', 'Добавте файл!', 'center');
-                }
-            },
-            formatDate(date) {
-                return date.split('.')
-                  .reverse()
-                  .join('/');
+            saveFax() {
+                this.$q.loading.show();
+                this.$axios.post(getUrl('addFax'), this.collectData())
+                  .then(({ data }) => {
+                      this.$q.loading.hide();
+                      this.$store.dispatch('faxes/addFax', data.fax);
+                      this.showNotif('success', 'Факс успешно добавлен.', 'center');
+                  })
+                  .catch(({ response }) => {
+                      this.errorsData.errors = _.get(response, 'data.errors');
+                      this.$q.loading.hide();
+                  });
             },
         },
     };

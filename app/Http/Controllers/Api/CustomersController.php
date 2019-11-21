@@ -36,23 +36,20 @@ class CustomersController extends Controller
     public function storeCustomers(Request $request)
     {
         $this->validate($request, [
-            '*.phone' => 'required|unique:customers|max:13',
-            '*.name' => 'required|unique:customers|max:255',
-            '*.city' => 'required|max:255',
-            '*.sex' => 'required|numeric|max:2',
-            '*.codeId' => 'required|max:255',
+            'phone' => 'required|unique:customers|max:20',
+            'name' => 'required|unique:customers|max:255',
+//            'city' => 'required|max:255',
+            'sex' => 'required|numeric|max:2',
+            'codeId' => 'required|numeric|max:20000',
         ]);
 
-        foreach ($request->toArray() as $item) {
-            Customer::create([
-                'name' => $item['name'],
-                'phone' => $item['phone'],
-                'notify' => 1,
-                'code_id' => $item['codeId'],
-                'user_id' => $request->user()->id,
-            ]);
-        }
+        $customer = Customer::create([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'code_id' => $request->codeId,
+            'user_id' => auth()->user()->id,
+        ]);
 
-        return response(['status' => true]);
+        return response(['status' => true, 'customer' => $customer]);
     }
 }

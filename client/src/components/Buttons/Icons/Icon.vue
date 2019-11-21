@@ -1,7 +1,7 @@
 <template>
     <q-icon
         data-vue-component-name="Icon"
-        :size="size || 'sm'"
+        :size="size"
         :name="name"
         @click.stop="$emit('iconClick')"
     >

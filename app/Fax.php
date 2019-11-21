@@ -6,11 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Fax extends Model
 {
-    protected $fillable = ['name', 'departure_date', 'transport_id', 'transporter_id', 'delivered', 'user_id'];
+    protected $fillable = ['name', 'departure_date', 'transport_id', 'transporter_id', 'status', 'user_id'];
 
     public function getDepartureDateAttribute($value)
     {
-        return \Illuminate\Support\Carbon::parse($value)->format('Y/m/d');
+        if ($value) {
+            return \Illuminate\Support\Carbon::parse($value)->toAtomString();
+        }
+        return null;
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        if ($value) {
+            return \Illuminate\Support\Carbon::parse($value)->toAtomString();
+        }
+        return null;
     }
 
 //    public function setDepartureDateAttribute($value)

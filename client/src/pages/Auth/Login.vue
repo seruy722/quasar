@@ -14,12 +14,24 @@
 
             <q-card-section>
                 <BaseInput
-                    :inputData.sync="inputEmail"
+                    v-model.trim="loginData.email.value"
+                    type="email"
+                    field="email"
+                    icon="person"
+                    label="Email"
+                    :dense="$q.screen.xs || $q.screen.sm"
+                    :autofocus="true"
                     :errors="errorsData"
+                    @onKeyUp="keyUp"
                 />
 
                 <BaseInput
-                    :inputData.sync="inputPassword"
+                    v-model.trim="loginData.password.value"
+                    type="password"
+                    field="password"
+                    icon="person"
+                    :label="this.$t('password')"
+                    :dense="$q.screen.xs || $q.screen.sm"
                     :errors="errorsData"
                     @onKeyUp="keyUp"
                 />
@@ -29,8 +41,8 @@
 
             <q-card-actions align="left">
                 <OutlineBtn
-                    :btnData="btnData"
-                    @clickOutlineBtn="login"
+                    :label="this.$t('enter')"
+                    @clickOutlineBtn="checkErrors(loginData, login)"
                 />
             </q-card-actions>
         </q-card>
@@ -42,6 +54,7 @@
     import { getUrl } from 'src/tools/url';
     import { getLSKey } from 'src/tools/lsKeys';
     import OnKeyUp from 'src/mixins/OnKeyUp';
+    import CheckErrorsMixin from 'src/mixins/CheckErrors';
 
     export default {
         name: 'Login',
@@ -50,33 +63,39 @@
             OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
             Locale: () => import('src/components/Locale.vue'),
         },
-        mixins: [OnKeyUp],
+        mixins: [OnKeyUp, CheckErrorsMixin],
         data() {
             return {
                 errorsData: {
                     errors: {},
                 },
-                inputEmail: {
-                    type: 'email',
-                    value: '',
-                    field: 'email',
-                    lang: 'email',
-                    icon: 'person',
-                    autofocus: true,
-                    dark: false,
-                },
-                inputPassword: {
-                    type: 'password',
-                    value: '',
-                    field: 'password',
-                    lang: 'password',
-                    icon: 'lock',
-                    dark: false,
-                },
-                btnData: {
-                    title: 'enter',
-                    icon: 'lock',
-                    dark: false,
+                loginData: {
+                    email: {
+                        rules: [
+                            {
+                                name: 'isEmail',
+                                error: 'Поле «E-mail» должно содержать символы “@” и “.”',
+                            },
+                        ],
+                        require: true,
+                        requireError: 'Поле обьязательное для заполнения.',
+                        value: '',
+                    },
+                    password: {
+                        rules: [
+                            {
+                                name: 'isLength',
+                                error: 'Минимальное количество символов 6.',
+                                options: {
+                                    min: 6,
+                                    max: 150,
+                                },
+                            },
+                        ],
+                        require: true,
+                        requireError: 'Поле обьязательное для заполнения.',
+                        value: '',
+                    },
                 },
             };
         },
@@ -88,9 +107,9 @@
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                // vm.$q.cookies.remove(getLSKey('authToken'));
                 vm.$q.loading.show();
-                const token = vm.$q.cookies.get(getLSKey('authToken'));
+                // vm.$q.localStorage.clear();
+                const token = vm.$q.localStorage.getItem(getLSKey('authToken'));
                 devlog.log('tt', token);
                 if (!vm.isUserAuth && token) {
                     vm.$store.dispatch('auth/getUserModel')
@@ -100,14 +119,13 @@
                                   devlog.log('TOPATH', vm.toPath);
                                   vm.$router.push(vm.toPath);
                               } else {
-                                  vm.$router.push({ name: 'warehouse' });
+                                  vm.$router.push({ name: 'storehouse' });
                               }
-                              // vm.$router.push({ name: 'warehouse' });
                           }
                           vm.$q.loading.hide();
                       });
                 } else {
-                    vm.$router.push({ name: 'warehouse' });
+                    vm.$router.push({ name: 'storehouse' });
                     vm.$q.loading.hide();
                 }
             });
@@ -123,14 +141,13 @@
                 this.errorsData.errors = {};
                 this.$q.loading.show();
                 await this.$axios.post(getUrl('login'), {
-                    email: this.inputEmail.value,
-                    password: this.inputPassword.value,
+                    email: this.loginData.email.value,
+                    password: this.loginData.password.value,
                 })
                   .then(({ data }) => {
                       this.$store.dispatch('auth/setUser', _.get(data, 'user'));
-                      this.$q.cookies.set(getLSKey('authToken'), _.get(data, 'access_token'));
-                      this.$router.push({ name: 'warehouse' });
-                      // devlog.log('LN', this.$q.cookies.get(getLSKey('authToken')));
+                      this.$q.localStorage.set(getLSKey('authToken'), _.get(data, 'access_token'));
+                      this.$router.push({ name: 'storehouse' });
                   })
                   .catch((errors) => {
                       devlog.log(errors);
@@ -139,7 +156,7 @@
                   });
             },
             isToken() {
-                return this.$q.cookies.get(getLSKey('authToken'));
+                return this.$q.localStorage.getItem(getLSKey('authToken'));
             },
         },
     };
