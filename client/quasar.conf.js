@@ -32,7 +32,7 @@ module.exports = function (ctx) {
 
         framework: {
             // iconSet: 'ionicons-v4',
-            // lang: 'de', // Quasar language
+            lang: 'ru', // Quasar language
 
             all: true, // --- includes everything; for dev only!
 
@@ -49,6 +49,9 @@ module.exports = function (ctx) {
                     spinnerSize: 140,
                     backgroundColor: 'blue',
                 },
+              screen: {
+                bodyClasses: true,
+              },
             },
         },
 
