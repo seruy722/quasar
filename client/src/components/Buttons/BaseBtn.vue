@@ -1,13 +1,11 @@
 <template>
-    <div
-        data-vue-component-name="BaseBtn"
-    >
-        <q-btn
-            :color="color"
-            :label="$t(label)"
-            @click.stop="$emit('clickBaseBtn')"
-        />
-    </div>
+  <q-btn
+    :color="color"
+    :label="label"
+    :push="push"
+    data-vue-component-name="BaseBtn"
+    @click.stop="$emit('clickBaseBtn')"
+  />
 </template>
 
 <script>
@@ -21,6 +19,10 @@
             label: {
                 type: String,
                 default: 'Ok',
+            },
+            push: {
+                type: Boolean,
+                default: false,
             },
         },
     };

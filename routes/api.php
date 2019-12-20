@@ -86,12 +86,27 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 
     // TRANSPORTER_PRICE
     Route::post('/update-transporter-price-data', 'Api\TransporterPriceController@updateData');
+    Route::post('/update-transporter-faxes-price', 'Api\TransporterFaxesPriceController@updateData');
 
     // CITIES
-    Route::get('/cities', function (){
+    Route::get('/cities', function () {
         return \App\City::select('id as value', 'name as label')->orderBy('name')->get();
     });
+    // THINGSLIST
+    Route::get('/thingsList', function () {
+        $things = \App\Thingslist::orderBy('name')->get();
+        return $things->pluck('name');
+    });
+    // SHOPSLIST
+    Route::get('/shopsList', function () {
+        return \App\Shop::select('id as value', 'name as label')->orderBy('name')->get();
+    });
     // AUXILIARY REQUESTS
+    // Клиенты котрые получают бренды
+    Route::get('/export-brands-customers', function () {
+        return Excel::download(new CommonExport([], 'brands'), 'brands.xlsx');
+    });
+
     // Кода без информации о клиентах
     Route::get('/export-codes-without-customers', function () {
         $codes = Code::all();

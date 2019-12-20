@@ -20,6 +20,7 @@ const urls = {
   categories: 'api/categories',
   addCategory: 'api/add-category',
   updateTransporterPriceData: 'api/update-transporter-price-data',
+  updateTransporterFaxesPrice: 'api/update-transporter-faxes-price',
   addFax: '/api/add-fax',
   codeList: '/api/codes-list',
   clientData: '/api/client-data',
@@ -34,6 +35,8 @@ const urls = {
   addStorehouseData: '/api/add-storehouse-data',
   updateStorehouseData: '/api/update-storehouse-data',
   cities: '/api/cities',
+  thingsList: '/api/thingsList',
+  shopsList: '/api/shopsList',
   axiosData: {
     baseURL: 'http://sp.com.ua',
     // headers: {
@@ -42,6 +45,7 @@ const urls = {
   },
   drafts: {
     codesWithoutInfo: '/api/export-codes-without-customers',
+    brandsCustomers: '/api/export-brands-customers',
   },
 };
 

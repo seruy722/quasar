@@ -25,7 +25,7 @@ class FaxDataResource extends JsonResource
             'kg' => $this->kg,
             'for_kg' => $this->for_kg,
             'for_place' => $this->for_place,
-            'shop' => $this->shop,
+            'shop_id' => $this->shop_id,
             'things' => $this->things,
             'category' => $this->category->name,
             'category_id' => $this->category_id,

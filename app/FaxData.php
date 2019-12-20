@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FaxData extends Model
 {
-    protected $fillable = ['code', 'fax_id', 'code_id', 'place', 'kg', 'shop', 'things', 'city', 'notation', 'category_id', 'brand', 'for_kg', 'for_place'];
+    protected $fillable = ['code', 'fax_id', 'code_id', 'place', 'kg', 'shop_id', 'things', 'notation', 'category_id', 'brand', 'for_kg', 'for_place'];
 
     public function fax()
     {

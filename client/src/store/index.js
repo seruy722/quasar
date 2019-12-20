@@ -9,6 +9,8 @@ import transporter from './transporter';
 import transport from './transport';
 import storehouse from './storehouse';
 import cities from './cities';
+import thingsList from './things-list';
+import shopsList from './shop-list';
 
 Vue.use(Vuex);
 
@@ -28,6 +30,8 @@ export default function (/* { ssrContext } */) {
       transport,
       storehouse,
       cities,
+      thingsList,
+      shopsList,
     },
 
     // enable strict mode (adds overhead!)

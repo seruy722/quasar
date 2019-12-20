@@ -83,6 +83,7 @@
                 this.setActive(this.langs, item.value);
                 this.$i18n.locale = item.value;
                 this.icon = item.icon;
+                this.$q.lang.set(item.value);
                 this.$q.localStorage.set(getLSKey('lang'), item);
             },
             setActive(arr, lang) {

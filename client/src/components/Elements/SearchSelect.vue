@@ -1,29 +1,28 @@
 <template>
-    <q-select
-        filled
-        :options="duplicateOptions"
-        :label="label"
-        :error-message="viewError()"
-        :error="isError"
-        :value="value"
-        :dense="dense"
-        use-input
-        data-vue-component-name="SearchSelect"
-        emit-value
-        map-options
-        @filter="filterFn"
-        @input="inputEvent"
-    >
-        <template v-slot:prepend>
-            <q-icon :name="icon" />
-        </template>
-    </q-select>
+  <q-select
+    filled
+    :options="duplicateOptions"
+    :label="label"
+    :error-message="viewError()"
+    :error="isError"
+    :value="value"
+    :dense="dense"
+    use-input
+    data-vue-component-name="SearchSelect"
+    emit-value
+    map-options
+    @filter="filterFn"
+    @input="inputEvent"
+  >
+    <template v-slot:prepend>
+      <q-icon :name="icon" />
+    </template>
+  </q-select>
 </template>
 
 <script>
     import ErrorsServerMixin from 'src/mixins/ViewErrors';
 
-    // let duplicateOptions = [];
     export default {
         name: 'SearchSelect',
         mixins: [ErrorsServerMixin],

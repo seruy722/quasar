@@ -41,7 +41,7 @@
     export default {
         name: 'Customers',
         components: {
-            Table: () => import('src/components/Table.vue'),
+            Table: () => import('src/components/Elements/Table/Table.vue'),
             Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
         },
         data() {

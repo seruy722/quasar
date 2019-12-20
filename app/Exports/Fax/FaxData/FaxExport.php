@@ -27,6 +27,7 @@ class FaxExport implements FromCollection, ShouldAutoSize, WithTitle, WithEvents
     protected $yellow = 'FFFF00';
     protected $green = '92D050';
     protected $brands;
+    protected $data2;
 
     public function __construct($faxID)
     {
@@ -66,6 +67,21 @@ class FaxExport implements FromCollection, ShouldAutoSize, WithTitle, WithEvents
             ->orderBy('kg', 'DESC')
             ->groupBy('category_id')
             ->get();
+
+        $this->data2 = FaxData::select('codes.code')
+            ->selectRaw('SUM(fax_data.place) as place')
+            ->selectRaw('SUM(fax_data.kg) as kg')
+            ->selectRaw('SUM(fax_data.kg) * AVG(fax_data.for_kg) + AVG(fax_data.for_place) * SUM(fax_data.place)  as sum')
+            ->leftJoin('codes', 'codes.id', '=', 'fax_data.code_id')
+            ->where('fax_data.fax_id', $this->faxID)
+            ->orderByRaw('CONVERT(codes.code, UNSIGNED INTEGER)')
+            ->groupBy('code_id', 'category_id')
+            ->get();
+
+        $this->data2->prepend(['Клиент', 'Мест', 'Вес', 'Сумма']);
+        $this->data2->prepend(['name' => null, 'code' => null]);
+        $this->data2->prepend(['name' => null, 'code' => null]);
+        $this->data2->prepend(['name' => null, 'code' => null]);
     }
 
     public function countEntries()
@@ -135,26 +151,37 @@ class FaxExport implements FromCollection, ShouldAutoSize, WithTitle, WithEvents
                 $event->sheet->getDelegate()->getStyle($callBold)->getFont()->setBold(500);
 //
 ////                // CATEGORIES
-                $categoriesCellRange = 'A' . ($this->countEntries + $this->moreEntries + 4) . ':C' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4);
-                $cellCategoriesKg = 'C' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4);
-                $cellCategoriesPlace = 'B' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4);
-                $cellCategoriesFooter = 'A' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4) . ':C' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4);
+                $categoriesCellRange = 'B' . ($this->countEntries + $this->moreEntries + 4) . ':E' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4);
+                $cellCategoriesKg = 'D' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4);
+                $cellCategoriesPlace = 'C' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4);
+                $cellCategoriesSum = 'E' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4);
+                $cellCategoriesFooter = 'A' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4) . ':E' . ($this->countEntries + $this->moreEntries + count($this->categories) + 4);
 
-                $arrCat = $this->categories->toArray();
-                foreach ($arrCat as $item) {
-                    $item['price'] = '10';
-//                    $event->sheet->getDelegate()->getCell('I5')->setValue($item->{'name'});
-                }
-                array_push($arrCat, ['price' => '', 'name' => '', 'place' => $this->countSum($this->categories, 'place'), 'kg' => $this->countSum($this->categories, 'kg')]);
-                array_unshift($arrCat, ['price' => '', 'name' => '', 'place' => ''], ['price' => '', 'name' => '', 'place' => ''], ['price' => '', 'name' => '', 'place' => '']);
-                $event->sheet->appendRows($arrCat, $event);
+
+                $foo = $this->categories;
+                $map = $foo->map(function ($item) use (&$event) {
+                    $item['price'] = 2.5;
+                    return $item;
+                })->map(function ($elem) {
+                    $elem->{'sum'} = $elem['kg'] * $elem['price'];
+                    return $elem;
+                });
+                $map->prepend(['name' => null, 'code' => null]);
+                $map->prepend(['name' => null, 'code' => null]);
+                $map->prepend(['name' => null, 'code' => null]);
+
+                $event->sheet->appendRows($map, $event);
 
                 $event->sheet->getDelegate()->getStyle($categoriesCellRange)->getBorders()->getAllBorders()->applyFromArray(array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN));
                 $event->sheet->getDelegate()->getCell($cellCategoriesKg)->setValue($this->sumKg);
                 $event->sheet->getDelegate()->getCell($cellCategoriesPlace)->setValue($this->sumPlace);
+                $event->sheet->getDelegate()->getCell($cellCategoriesSum)->setValue($map->sum('sum'));
                 $event->sheet->getDelegate()->getStyle($categoriesCellRange)->getAlignment()->applyFromArray(array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
                 $event->sheet->getDelegate()->getStyle($cellCategoriesFooter)->getFont()->setBold(500);
                 $event->sheet->getDelegate()->getStyle($categoriesCellRange)->getFont()->setSize(10);
+
+                // DATA_2
+                $event->sheet->appendRows($this->data2, $event);
 
                 // Выделение брендовых клиетов жирным шрифтом
                 if ($this->brands->isNotEmpty()) {

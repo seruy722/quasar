@@ -30,7 +30,7 @@ class FaxDataCommonExport implements FromCollection, ShouldAutoSize, WithTitle, 
 
         $data = FaxDataCommonExportResource::collection(
             FaxData::select('fax_data.code', 'fax_data.place', 'fax_data.kg',
-                'fax_data.shop', 'fax_data.things', 'fax_data.category_id', 'fax_data.notation')
+                'fax_data.shop_id', 'fax_data.things', 'fax_data.category_id', 'fax_data.notation')
                 ->selectRaw('codes.code as codesCode')
                 ->where('fax_data.fax_id', $this->faxID)
                 ->join('codes', 'codes.id', '=', 'fax_data.code_id')

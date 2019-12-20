@@ -1,24 +1,26 @@
 <template>
-    <q-popup-edit
+  <q-popup-edit
+    v-model.trim="modelData"
+    data-vue-component-name="PopupEdit"
+    :title="title"
+    buttons
+    :label-set="labelSet"
+    :label-cancel="labelCancel"
+    dense
+    @save="$emit('addToSave')"
+    @show="$emit('update:edit', true)"
+    @hide="$emit('update:edit', false)"
+  >
+    <slot :dd="value">
+      <q-input
         v-model.trim="modelData"
-        data-vue-component-name="PopupEdit"
-        :title="$t(title)"
-        buttons
-        :label-set="$t(labelSet)"
-        :label-cancel="$t(labelCancel)"
+        :type="type"
+        :mask="mask"
         dense
-        @save="$emit('addToSave')"
-    >
-        <slot name="body">
-            <q-input
-                v-model.trim="modelData"
-                :type="inputType"
-                :mask="mask"
-                dense
-                autofocus
-            />
-        </slot>
-    </q-popup-edit>
+        autofocus
+      />
+    </slot>
+  </q-popup-edit>
 </template>
 
 <script>
@@ -33,6 +35,10 @@
                 type: String,
                 default: 'edit',
             },
+            rowProps: {
+                type: Object,
+                default: () => ({}),
+            },
             labelSet: {
                 type: String,
                 default: 'save',
@@ -41,13 +47,17 @@
                 type: String,
                 default: 'cancel',
             },
-            inputType: {
+            type: {
                 type: String,
                 default: 'text',
             },
             mask: {
                 type: String,
                 default: '',
+            },
+            edit: {
+                type: Boolean,
+                default: false,
             },
         },
         computed: {
@@ -59,9 +69,6 @@
                     this.$emit('update:value', newValue);
                 },
             },
-            // isValid() {
-            //     return this.modelData.length <= 3;
-            // },
         },
     };
 </script>

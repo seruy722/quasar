@@ -1,5 +1,6 @@
 import validator from 'validator';
 import { formatToDotDate } from 'src/utils/formatDate';
+import { numberFormat } from 'src/utils/index';
 
 export default async ({ Vue }) => {
     Vue.filter('filterFromSelectData', (val, data) => _.get(_.find(data, { value: val }), 'label'));
@@ -15,4 +16,5 @@ export default async ({ Vue }) => {
         }
         return val;
     });
+  Vue.filter('numberFormatFilter', (val) => numberFormat(val));
 };

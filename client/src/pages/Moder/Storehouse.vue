@@ -403,7 +403,7 @@
     export default {
         name: 'Storehouse',
         components: {
-            Table: () => import('src/components/Table.vue'),
+            Table: () => import('src/components/Elements/Table/Table.vue'),
             AddEntryOnStorehouse: () => import('src/components/Dialogs/AddEntryOnStorehouse.vue'),
             Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),

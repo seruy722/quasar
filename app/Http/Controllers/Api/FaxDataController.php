@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\CategoriesPrice;
 use App\Category;
 use App\Code;
 use App\CodePrice;
 use App\Exports\Fax\FaxData\FaxDataExport;
 use App\Fax;
 use App\FaxData;
+use App\Shop;
+use App\Thingslist;
+use App\TransporterFaxesPrice;
 use App\TransporterPrice;
 use App\Http\Resources\FaxDataResource;
 use App\Imports\ImportData;
@@ -16,6 +20,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use function foo\func;
 
 class FaxDataController extends Controller
 {
@@ -39,10 +44,13 @@ class FaxDataController extends Controller
                     }
                     // Если первые 5 полей пустые - то дописываем к предыдущей записи товары
                     if (!$trimElem[0] && !$trimElem[1] && !$trimElem[2] && !$trimElem[3] && !$trimElem[4]) {
-                        if ($trimElem[5]) {
+                        if ($trimElem[5] || $trimElem[6]) {
+                            $this->createThingsListElem($trimElem[5]);
                             $lastEntry = FaxData::orderBy('id', 'desc')->first();
-                            $things = $lastEntry->things;
-                            $lastEntry->things = $things . ',' . $trimElem[5] . ':' . $trimElem[6];
+                            $things = json_decode($lastEntry->things, true);
+                            array_push($things, ['label' => $trimElem[5], 'value' => $trimElem[6]]);
+//                            $things[$trimElem[5]] = $trimElem[6];
+                            $lastEntry->things = json_encode($things);
                             $lastEntry->save();
                         }
                     } else {
@@ -54,16 +62,19 @@ class FaxDataController extends Controller
                         }
                         $code = Code::firstOrCreate(['code' => $codeName], ['user_id' => auth()->user()->id]);
                         // CATEGORY
-                        $category = Category::firstOrCreate(['name' => $trimElem[8]]);
+                        $category = Category::firstOrCreate(['name' => $trimElem[8]], ['user_id' => auth()->user()->id]);
                         // PRICE
-                        $price = CodePrice::firstOrCreate(['code_id' => $code->id, 'category_id' => $category->id], ['for_kg' => 0, 'for_place' => 0, 'user_id' => auth()->user()->id]);
+                        $price = CodePrice::firstOrCreate(['code_id' => $code->id, 'category_id' => $category->id], ['for_kg' => 0, 'for_place' => 5, 'user_id' => auth()->user()->id]);
+                        // SHOP
+                        $shop = Shop::firstOrCreate(['name' => $trimElem[4]]);
                         // THINGS
                         $listThings = null;
-
                         if ($trimElem[5]) {
-                            $listThings = $trimElem[5] . ':' . $trimElem[6];
+                            $listThings = json_encode([['label' => $trimElem[5], 'value' => $trimElem[6]]]);
+                            $this->createThingsListElem($trimElem[5]);
                         }
-                        FaxData::create([
+
+                        $arr = [
                             'code' => $trimElem[0],
                             'code_id' => $code->id,
                             'fax_id' => $request->fax_id,
@@ -71,12 +82,27 @@ class FaxDataController extends Controller
                             'kg' => (int)$trimElem[3],
                             'for_kg' => $price->for_kg,
                             'for_place' => $price->for_place,
-                            'shop' => $trimElem[4],
+                            'shop_id' => $shop->id,
                             'things' => $listThings,
                             'category_id' => $category->id,
                             'brand' => stripos($trimElem[8], 'Бренд') !== false,
                             'notation' => $trimElem[7],
-                        ]);
+                        ];
+                        // Если у клиента по категории нет цен то берем цену с общей таблицы цен по категориям
+                        if (!$price->for_kg) {
+                            $categoryPrice = CategoriesPrice::where('category_id', $category->id)->first();
+                            if ($categoryPrice) {
+                                $price->for_kg = $categoryPrice->category_price;
+                                if ($trimElem[3] <= 10) {
+                                    $arr['for_place'] = 0;
+                                }
+                                $arr['for_kg'] = $price->for_kg;
+
+                                $price->save();
+                            }
+                        }
+
+                        FaxData::create($arr);
                     }
                 }
             }
@@ -84,10 +110,14 @@ class FaxDataController extends Controller
         return response(['status' => true]);
     }
 
+    public function createThingsListElem($elem){
+        Thingslist::firstOrCreate(['name' => $elem]);
+    }
+
     public function groupedFaxData($id)
     {
         $faxesData = FaxDataResource::collection(FaxData::with(['customer', 'fax', 'category'])->where('fax_id', $id)->get());
-        return $faxesData = $faxesData->groupBy('code_id')->map(function (\Illuminate\Support\Collection $code) {
+        return $faxesData->groupBy('code_id')->map(function (\Illuminate\Support\Collection $code) {
             return $code->groupBy('category_id')->map(function (\Illuminate\Support\Collection $category) {
                 return $category->groupBy(function ($for_kg) {
                     return (string)$for_kg->for_kg;
@@ -99,16 +129,29 @@ class FaxDataController extends Controller
     public function getFaxData($id)
     {
         $fax = Fax::with('transporter')->find($id);
-        $fax1 = FaxData::select('categories.name')
-            ->selectRaw('SUM(fax_data.place) as place')
-            ->selectRaw('SUM(fax_data.kg) as kg')
-            ->selectRaw('categories.id as category_id')
-            ->leftJoin('categories', 'categories.id', '=', 'fax_data.category_id')
-            ->where('fax_data.fax_id', $id)
-            ->groupBy('category_id')
-            ->get();
+//        $faxCategories = FaxData::select('categories.name')
+//            ->selectRaw('SUM(fax_data.place) as place')
+//            ->selectRaw('SUM(fax_data.kg) as kg')
+//            ->selectRaw('categories.id as category_id')
+//            ->leftJoin('categories', 'categories.id', '=', 'fax_data.category_id')
+//            ->where('fax_data.fax_id', $id)
+//            ->orderBy('place', 'DESC')
+//            ->groupBy('category_id')
+//            ->get();
 
-        return response(['faxData' => $this->groupedFaxData($id), 'transporterPriceData' => TransporterPrice::where('transporter_id', $fax->transporter->id)->get(), 'fax' => $fax, 'fax1' => $fax1]);
+//        $price = TransporterFaxesPrice::where('fax_id', $id)->get();
+//
+//        $faxCategoriesWithForKg = $faxCategories->map(function ($category) use (&$price) {
+//            $priceData = $price->firstWhere('category_id', $category->category_id);
+//            if ($priceData) {
+//                $category->for_kg = $priceData->category_price;
+//            } else {
+//                $category->for_kg = 0;
+//            }
+//            return $category;
+//        });
+
+        return response(['faxData' => $this->groupedFaxData($id), 'transporterPriceData' => TransporterFaxesPrice::where('fax_id', $id)->get(), 'fax' => $fax]);
     }
 
     public function updateFaxData(Request $request)

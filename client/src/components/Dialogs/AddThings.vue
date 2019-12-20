@@ -206,6 +206,7 @@
         },
         watch: {
             showDialog(val) {
+                devlog.log('this.things', this.things);
                 if (val) {
                     this.dialog(true);
                 }

@@ -9,6 +9,8 @@ use App\Http\Resources\FaxResource;
 use App\Http\Resources\TransportResource;
 use App\Transport;
 use App\Transporter;
+use App\TransporterFaxesPrice;
+use App\TransporterPrice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -78,6 +80,14 @@ class FaxController extends Controller
         }
 
         $fax = Fax::create($arr);
+
+        // Добавление цен по категориям в зависимости от факса
+        $transporterPrice = TransporterPrice::where('transporter_id', $request->transporter_id)->get();
+        if ($transporterPrice->isNotEmpty()) {
+            $transporterPrice->each(function ($item) use (&$fax) {
+            TransporterFaxesPrice::create(['fax_id' => $fax->id, 'category_id' => $item->category_id, 'category_price' => $item->for_kg]);
+            });
+        }
 
         return response(['status' => true, 'faxID' => $fax->id, 'fax' => new FaxResource($fax)]);
     }

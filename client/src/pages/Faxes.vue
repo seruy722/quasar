@@ -164,7 +164,7 @@
     export default {
         name: 'Faxes',
         components: {
-            Table: () => import('src/components/Table.vue'),
+            Table: () => import('src/components/Elements/Table/Table.vue'),
             DialogAddFax: () => import('src/components/Dialogs/DialogAddFax.vue'),
             Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),

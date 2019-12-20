@@ -22,8 +22,8 @@ class CommonExport implements FromCollection
         switch ($this->model) {
             case 'codes':
                 return Code::whereIn('id', $this->ids)->get();
-            case 1:
-                echo "i equals 1";
+            case 'brands':
+                return \App\Test::where('brand', true)->get();
                 break;
             case 2:
                 echo "i equals 2";

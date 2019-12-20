@@ -1,97 +1,107 @@
 <template>
-    <div
-        data-vue-component-name="Drafts"
-        class="q-pa-md"
-    >
-        <div>
-            <div>Кода без информации о клиенте</div>
-            <q-btn unelevated rounded color="primary" label="Export" @click="getCodesWithoutInfo" />
-        </div>
-
-        <div>
-            <div>Загрузка карго на сервер</div>
-            <Dialog :dialog.sync="dialogUploadCargoData">
-                <template v-slot:body>
-                    <q-card-section>
-                        <UploadFileToServer :uploadData="uploadData" />
-                    </q-card-section>
-
-                    <q-separator />
-
-                    <q-card-actions align="right">
-                        <OutlineBtn
-                            :btnData="btnData"
-                            @clickOutlineBtn="dialogUploadCargoData.value = false"
-                        />
-                    </q-card-actions>
-                </template>
-            </Dialog>
-        </div>
-
-        <div>
-            <div>Загрузка долгов на сервер</div>
-            <Dialog :dialog.sync="dialogUploadDebtsData">
-                <template v-slot:body>
-                    <q-card-section>
-                        <UploadFileToServer :uploadData="uploadDebtsData" />
-                    </q-card-section>
-
-                    <q-separator />
-
-                    <q-card-actions align="right">
-                        <OutlineBtn
-                            :btnData="btnData"
-                            @clickOutlineBtn="dialogUploadDebtsData.value = false"
-                        />
-                    </q-card-actions>
-                </template>
-            </Dialog>
-        </div>
-
-        <div>
-            <div>Загрузка склада на сервер</div>
-            <Dialog :dialog.sync="dialogUploadSkladData">
-                <template v-slot:body>
-                    <q-card-section>
-                        <UploadFileToServer :uploadData="uploadSkladData" />
-                    </q-card-section>
-
-                    <q-separator />
-
-                    <q-card-actions align="right">
-                        <OutlineBtn
-                            :btnData="btnData"
-                            @clickOutlineBtn="dialogUploadSkladData.value = false"
-                        />
-                    </q-card-actions>
-                </template>
-            </Dialog>
-        </div>
-
-        <div>
-            <div>Добавление клиентов</div>
-            <AddCode />
-        </div>
-
-        <div>
-            Загрузка данных факсов
-            <input type="file" multiple @change="upFiles">
-
-            <div>
-                <q-input v-model.trim="search" type="text" label="Search" />
-                <q-btn label="Test" @click="searchData" />
-                <div class="q-pa-md">
-                    <q-table
-                        title="Treats"
-                        :data="fields"
-                        :columns="columns"
-                        row-key="name"
-                    />
-                </div>
-            </div>
-        </div>
-
+  <div
+    data-vue-component-name="Drafts"
+    class="q-pa-md"
+  >
+    <div>
+      <div>Кода без информации о клиенте</div>
+      <q-btn unelevated rounded color="primary" label="Export" @click="getCodesWithoutInfo" />
     </div>
+
+    <div>
+      <div>Загрузка карго на сервер</div>
+      <Dialog :dialog.sync="dialogUploadCargoData">
+        <template v-slot:body>
+          <q-card-section>
+            <UploadFileToServer :uploadData="uploadData" />
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions align="right">
+            <OutlineBtn
+              :btnData="btnData"
+              @clickOutlineBtn="dialogUploadCargoData.value = false"
+            />
+          </q-card-actions>
+        </template>
+      </Dialog>
+    </div>
+
+    <div>
+      <div>Загрузка долгов на сервер</div>
+      <Dialog :dialog.sync="dialogUploadDebtsData">
+        <template v-slot:body>
+          <q-card-section>
+            <UploadFileToServer :uploadData="uploadDebtsData" />
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions align="right">
+            <OutlineBtn
+              :btnData="btnData"
+              @clickOutlineBtn="dialogUploadDebtsData.value = false"
+            />
+          </q-card-actions>
+        </template>
+      </Dialog>
+    </div>
+
+    <div>
+      <div>Загрузка склада на сервер</div>
+      <Dialog :dialog.sync="dialogUploadSkladData">
+        <template v-slot:body>
+          <q-card-section>
+            <UploadFileToServer :uploadData="uploadSkladData" />
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions align="right">
+            <OutlineBtn
+              :btnData="btnData"
+              @clickOutlineBtn="dialogUploadSkladData.value = false"
+            />
+          </q-card-actions>
+        </template>
+      </Dialog>
+    </div>
+
+    <div>
+      <div>Добавление клиентов</div>
+      <AddCode />
+    </div>
+
+    <div>
+      Загрузка данных факсов
+      <input type="file" multiple @change="upFiles">
+
+      <div>
+        <q-input v-model.trim="search" type="text" label="Search" />
+        <q-btn label="Test" @click="searchData" />
+        <div class="q-pa-md">
+          <q-table
+            title="Treats"
+            :data="fields"
+            :columns="columns"
+            row-key="name"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div>
+      Клиенты которые получают бренд
+      <q-btn label="GET" @click="getBrandClients" />
+    </div>
+
+    <div>
+      Загрузка факсов
+      <input type="file" multiple @change="upFaxDataFiles">
+    </div>
+
+  </div>
 </template>
 
 <script>
@@ -236,6 +246,22 @@
                       this.showNotif('error', 'Произошла ошибка.', 'center');
                   });
             },
+            upFaxDataFiles({ target }) {
+                const formData = new FormData();
+                formData.append('upload', _.first(target.files));
+                formData.append('fax_id', 1);
+
+                this.$axios.post('/api/upload-fax-data-table', formData)
+                  .then(({ data }) => {
+                      target.value = '';
+                      devlog.log('UPLOADED', data);
+                      this.showNotif('success', 'Данные успешно добавлены.', 'center');
+                  })
+                  .catch(() => {
+                      target.value = '';
+                      this.showNotif('error', 'Произошла ошибка.', 'center');
+                  });
+            },
             searchData() {
                 this.$axios.post('/api/search-in-faxes', { search: this.search })
                   .then(({ data }) => {
@@ -244,6 +270,31 @@
                   })
                   .catch(() => {
 
+                  });
+            },
+            getBrandClients() {
+                this.$axios({
+                    url: getUrl('drafts.brandsCustomers'),
+                    method: 'GET',
+                    responseType: 'blob', // important
+                    // headers: {
+                    //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    // },
+                })
+                  .then((response) => {
+                      devlog.log('RES_BLOB', response);
+                      if (!window.navigator.msSaveOrOpenBlob) {
+                          // BLOB NAVIGATOR
+                          const url = window.URL.createObjectURL(new Blob([response.data]));
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.setAttribute('download', 'brands.xlsx');
+                          document.body.appendChild(link);
+                          link.click();
+                      } else {
+                          // BLOB FOR EXPLORER 11
+                          window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
+                      }
                   });
             },
         },

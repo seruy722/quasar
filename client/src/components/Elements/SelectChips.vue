@@ -1,52 +1,56 @@
 <template>
-  <div
+  <q-select
+    use-input
+    use-chips
+    input-debounce="0"
+    :value="value"
+    :dense="dense"
+    :options="filterOptions"
     data-vue-component-name="SelectChips"
-  >
-    <q-select
-      filled
-      v-model="model"
-      use-input
-      use-chips
-      input-debounce="0"
-      @new-value="createValue"
-      :options="filterOptions"
-      @filter="filterFn"
-      style="width: 250px"
-    />
-  </div>
+    @new-value="createValue"
+    @filter="filterFn"
+    @input="$emit('input', $event)"
+  />
 </template>
 
 <script>
-    const stringOptions = [
-        'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle',
-    ];
     export default {
         name: 'SelectChips',
+        props: {
+            value: {
+                type: [String, Number],
+                default: 0,
+            },
+            options: {
+                type: Array,
+                default: () => [],
+            },
+            dense: {
+                type: Boolean,
+                default: false,
+            },
+        },
         data() {
+            this.$_stringOptions = [];
             return {
                 model: null,
-                filterOptions: stringOptions,
+                filterOptions: [],
             };
+        },
+        watch: {
+            options: {
+                handler: function set(val) {
+                    this.$_stringOptions = _.clone(val);
+                    this.filterOptions = val;
+                },
+                immediate: true,
+            },
         },
         methods: {
             createValue(val, done) {
-                // Calling done(var) when new-value-mode is not set or "add", or done(var, "add") adds "var" content to the model
-                // and it resets the input textbox to empty string
-                // ----
-                // Calling done(var) when new-value-mode is "add-unique", or done(var, "add-unique") adds "var" content to the model
-                // only if is not already set
-                // and it resets the input textbox to empty string
-                // ----
-                // Calling done(var) when new-value-mode is "toggle", or done(var, "toggle") toggles the model with "var" content
-                // (adds to model if not already in the model, removes from model if already has it)
-                // and it resets the input textbox to empty string
-                // ----
-                // If "var" content is undefined/null, then it doesn't tampers with the model
-                // and only resets the input textbox to empty string
-
                 if (val.length > 0) {
-                    if (!stringOptions.includes(val)) {
-                        stringOptions.push(val);
+                    if (!this.$_stringOptions.includes(val)) {
+                        this.$_stringOptions.push(val);
                     }
                     done(val, 'toggle');
                 }
@@ -55,11 +59,11 @@
             filterFn(val, update) {
                 update(() => {
                     if (val === '') {
-                        this.filterOptions = stringOptions;
+                        this.filterOptions = this.$_stringOptions;
                     } else {
                         const needle = val.toLowerCase();
-                        this.filterOptions = stringOptions.filter(
-                          v => v.toLowerCase()
+                        this.filterOptions = this.$_stringOptions.filter(
+                          (v) => v.toLowerCase()
                             .indexOf(needle) > -1,
                         );
                     }

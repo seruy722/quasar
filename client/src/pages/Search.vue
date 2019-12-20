@@ -127,7 +127,7 @@
     export default {
         name: 'Search',
         components: {
-            Table: () => import('src/components/Table.vue'),
+            Table: () => import('src/components/Elements/Table/Table.vue'),
             SelectWithSearchInput: () => import('src/components/Elements/SelectWithSearchInput.vue'),
             Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
             Badge: () => import('src/components/Elements/Badge.vue'),
