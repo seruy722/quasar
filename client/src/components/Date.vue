@@ -14,7 +14,7 @@
                 <q-date
                     v-model="valueData"
                     today-btn
-                    mask="DD-MM-YYYY"
+                    mask="DD.MM.YYYY"
                     @input="() => $refs.qDateProxy.hide()"
                 />
             </q-popup-proxy>

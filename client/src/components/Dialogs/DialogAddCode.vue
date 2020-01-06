@@ -1,14 +1,26 @@
 <template>
   <div
-    data-vue-component-name="AddCategory"
+    data-vue-component-name="DialogAddCode"
   >
     <Dialog
       :dialog.sync="show"
       title="Код"
       :persistent="true"
     >
-      <template v-slot:body>
-        <q-card-section class="q-mt-md">
+      <Card style="min-width: 320px;width: 100%;max-width: 500px;">
+        <CardSection class="row justify-between bg-grey q-mb-sm">
+          <span class="text-h6">Новый код клиента</span>
+          <div>
+            <IconBtn
+              dense
+              icon="clear"
+              tooltip="Закрыть"
+              @iconBtnClick="close"
+            />
+          </div>
+        </CardSection>
+
+        <CardSection>
           <BaseInput
             v-model.trim="codeData.code.value"
             :label="codeData.code.label"
@@ -17,29 +29,29 @@
             :autofocus="codeData.code.autofocus"
             :errors="errorsData"
           />
-        </q-card-section>
+        </CardSection>
 
-        <q-separator />
+        <Separator />
 
-        <q-card-actions align="right">
-          <OutlineBtn
+        <CardActions>
+          <BaseBtn
+            label="Отмена"
+            color="negative"
+            :dense="$q.screen.xs || $q.screen.sm"
+            @clickBaseBtn="close"
+          />
+
+          <BaseBtn
             label="Сохранить"
             color="positive"
             :dense="$q.screen.xs || $q.screen.sm"
-            @clickOutlineBtn="checkErrors(codeData, saveData)"
+            @clickBaseBtn="checkErrors(codeData, saveData)"
           />
-
-          <OutlineBtn
-            label="Закрыть"
-            color="negative"
-            :dense="$q.screen.xs || $q.screen.sm"
-            @clickOutlineBtn="close"
-          />
-        </q-card-actions>
-      </template>
+        </CardActions>
+      </Card>
     </Dialog>
 
-    <DialogAddCustomer
+    <DialogAddClient
       :show-dialog.sync="showCustomerDialog"
       :code-id="codeId"
     />
@@ -55,12 +67,18 @@
     import showNotif from 'src/mixins/showNotif';
 
     export default {
-        name: 'AddCategory',
+        name: 'DialogAddCode',
         components: {
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
+            // OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
+            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-            DialogAddCustomer: () => import('src/components/Dialogs/DialogAddCustomer.vue'),
+            DialogAddClient: () => import('src/components/Dialogs/DialogAddClient.vue'),
+            Separator: () => import('src/components/Separator.vue'),
+            Card: () => import('src/components/Elements/Card/Card.vue'),
+            CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
+            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
+            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
         mixins: [OnKeyUp, showNotif, CheckErrorsMixin],
         props: {
@@ -110,12 +128,12 @@
             saveData({ code }) {
                 devlog.log('S_VAL', code.value);
                 this.$q.loading.show();
-                this.$axios.post(getUrl('storeCode'), { code: _.upperFirst(code.value) })
+                this.$axios.post(getUrl('storeCode'), { code: _.startCase(code.value) })
                   .then(({ data }) => {
+                      this.showCustomerDialog = true;
                       devlog.log('C_DATA', data);
                       this.$store.dispatch('clientCodes/addCode', data.code);
-                      this.showNotif('success', 'Код успешно добавлен.', 'center');
-                      this.showCustomerDialog = true;
+                      // this.showNotif('success', 'Код успешно добавлен.', 'center');
                       this.codeId = _.get(data, 'code.value');
                       this.$q.loading.hide();
                   })

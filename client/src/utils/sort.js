@@ -19,7 +19,7 @@ export const sortArrayCollection = ((array, field) => {
     }));
   }
   devlog.warn('Переменная ', array, ' не массив!');
-  return [];
+  return array;
 });
 
 export const sortCollection = (collection, field, order = 'asc') => _.orderBy(collection, field, [order]);

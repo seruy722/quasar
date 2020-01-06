@@ -1,57 +1,57 @@
 <template>
-    <q-layout
-        view="hHh Lpr lff"
-        class="shadow-2 rounded-borders"
+  <q-layout
+    view="hHh Lpr lff"
+    class="shadow-2 rounded-borders"
+  >
+    <q-header elevated class="bg-primary">
+      <q-toolbar>
+        <IconBtn
+          @iconBtnClick="drawer = !drawer"
+          :iconBtnData="{tooltip: 'menu', color: 'white'}"
+        />
+        <q-toolbar-title>{{ $t(pageTitle) }}</q-toolbar-title>
+      </q-toolbar>
+    </q-header>
+
+    <q-drawer
+      v-model="drawer"
+      show-if-above
+      :width="200"
+      :breakpoint="500"
+      :mini="miniState"
+      bordered
+      content-class="bg-grey-3"
+      mini-to-overlay
+      @mouseover="miniState = false"
+      @mouseout="miniState = true"
     >
-        <q-header elevated class="bg-primary">
-            <q-toolbar>
-                <IconBtn
-                    @iconBtnClick="drawer = !drawer"
-                    :iconBtnData="{tooltip: 'menu', color: 'white'}"
-                />
-                <q-toolbar-title>{{ $t(pageTitle) }}</q-toolbar-title>
-            </q-toolbar>
-        </q-header>
+      <q-scroll-area class="fit">
+        <q-list padding>
+          <q-item
+            v-for="(item, index) in menu"
+            :key="index"
+            v-ripple
+            :active="$route.name === item.field"
+            clickable
+            active-class="my-menu-link"
+            @click="onClickDrawerMenu(item)"
+          >
+            <q-item-section avatar>
+              <q-icon :name="item.icon" />
+            </q-item-section>
 
-        <q-drawer
-            v-model="drawer"
-            show-if-above
-            :width="200"
-            :breakpoint="500"
-            :mini="miniState"
-            bordered
-            content-class="bg-grey-3"
-            mini-to-overlay
-            @mouseover="miniState = false"
-            @mouseout="miniState = true"
-        >
-            <q-scroll-area class="fit">
-                <q-list padding>
-                    <q-item
-                        v-for="(item, index) in menu"
-                        :key="index"
-                        v-ripple
-                        :active="$route.name === item.field"
-                        clickable
-                        active-class="my-menu-link"
-                        @click="onClickDrawerMenu(item)"
-                    >
-                        <q-item-section avatar>
-                            <q-icon :name="item.icon" />
-                        </q-item-section>
+            <q-item-section>
+              {{ $t(item.title) }}
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
+    </q-drawer>
 
-                        <q-item-section>
-                            {{ $t(item.title) }}
-                        </q-item-section>
-                    </q-item>
-                </q-list>
-            </q-scroll-area>
-        </q-drawer>
-
-        <q-page-container>
-            <router-view />
-        </q-page-container>
-    </q-layout>
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script>
@@ -67,36 +67,41 @@
                 drawer: false,
                 miniState: true,
                 menu: [
+                    // {
+                    //     title: 'storehouse',
+                    //     field: 'storehouse',
+                    //     icon: 'store',
+                    // },
+                    // {
+                    //     title: 'customers',
+                    //     field: 'customers',
+                    //     icon: 'people',
+                    // },
+                    // {
+                    //     title: 'profile',
+                    //     field: 'profile',
+                    //     icon: 'person',
+                    // },
+                    // {
+                    //     title: 'faxes',
+                    //     field: 'faxes',
+                    //     icon: 'person',
+                    // },
                     {
-                        title: 'storehouse',
-                        field: 'storehouse',
-                        icon: 'store',
+                        title: 'transfers',
+                        field: 'transfers',
+                        icon: 'import_export',
                     },
-                    {
-                        title: 'customers',
-                        field: 'customers',
-                        icon: 'people',
-                    },
-                    {
-                        title: 'profile',
-                        field: 'profile',
-                        icon: 'person',
-                    },
-                    {
-                        title: 'faxes',
-                        field: 'faxes',
-                        icon: 'person',
-                    },
-                    {
-                        title: 'drafts',
-                        field: 'drafts',
-                        icon: 'drafts',
-                    },
-                    {
-                        title: 'search',
-                        field: 'search',
-                        icon: 'search',
-                    },
+                    // {
+                    //     title: 'drafts',
+                    //     field: 'drafts',
+                    //     icon: 'drafts',
+                    // },
+                    // {
+                    //     title: 'search',
+                    //     field: 'search',
+                    //     icon: 'search',
+                    // },
                     {
                         title: 'exit',
                         field: 'exit',
@@ -117,15 +122,22 @@
             // menuDrawer() {
             //     this.drawer = !this.drawer;
             // },
-            onClickDrawerMenu(item) {
-                this.$router.push({ name: item.field });
+            onClickDrawerMenu({ field }) {
+                if (this.$route.name !== field) {
+                    if (field === 'exit') {
+                        this.$q.localStorage.clear();
+                        this.$router.push({ name: 'login' });
+                    } else {
+                        this.$router.push({ name: field });
+                    }
+                }
             },
         },
     };
 </script>
 
 <style lang="stylus">
-    .my-menu-link
-        color white
-        background #F2C037
+  .my-menu-link
+    color white
+    background #F2C037
 </style>

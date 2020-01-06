@@ -1,22 +1,22 @@
 <template>
-    <q-select
-        :filled="filled"
-        :options="options"
-        :label="label"
-        :error-message="viewError()"
-        :error="isError"
-        :value="value"
-        :dense="dense"
-        :no-error-icon="noErrorIcon"
-        data-vue-component-name="BaseSelect"
-        emit-value
-        map-options
-        @input="inputEvent"
-    >
-        <template v-slot:prepend>
-            <q-icon :name="icon" />
-        </template>
-    </q-select>
+  <q-select
+    :filled="filled"
+    :options="options"
+    :label="label"
+    :error-message="viewError()"
+    :error="isError"
+    :value="value"
+    :dense="dense"
+    :no-error-icon="noErrorIcon"
+    data-vue-component-name="BaseSelect"
+    emit-value
+    map-options
+    @input="inputEvent"
+  >
+    <template v-slot:prepend>
+      <q-icon :name="icon" />
+    </template>
+  </q-select>
 </template>
 
 <script>
@@ -58,6 +58,10 @@
                 type: Boolean,
                 default: false,
             },
+            changeValue: {
+                type: Boolean,
+                default: false,
+            },
             dark: {
                 type: Boolean,
                 default: false,
@@ -71,6 +75,9 @@
             inputEvent($event) {
                 this.$emit('input', $event);
                 this.changeErrors();
+                if (!this.changeValue) {
+                    this.$emit('update:changeValue', true);
+                }
             },
         },
     };

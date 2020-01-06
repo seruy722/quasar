@@ -38,6 +38,52 @@ const settings = {
       value: 2,
     },
   ],
+  transferStatus: [
+    {
+      label: 'Не выбрано',
+      color: '',
+      value: 0,
+    },
+    {
+      label: 'Вопрос',
+      color: 'warning',
+      value: 1,
+    },
+    {
+      label: 'Не выдан',
+      color: 'red',
+      value: 2,
+    },
+    {
+      label: 'Выдано',
+      color: 'positive',
+      value: 3,
+    },
+    {
+      label: 'Отменен',
+      color: 'grey',
+      value: 4,
+    },
+    {
+      label: 'Возврат',
+      color: 'info',
+      value: 5,
+    },
+  ],
+  transferMethod: [
+    {
+      label: 'Не выбрано',
+      value: 0,
+    },
+    {
+      label: 'Деньги',
+      value: 1,
+    },
+    {
+      label: 'Товар деньги',
+      value: 2,
+    },
+  ],
 };
 
 export default function (value) {

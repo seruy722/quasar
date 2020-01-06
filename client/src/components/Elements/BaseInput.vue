@@ -15,6 +15,7 @@
     :filled="filled"
     :mask="mask"
     :unmasked-value="unmaskedValue"
+    :readonly="readonly"
     bottom-slots
     :input-style="{fontWeight: 'bold'}"
     data-vue-component="BaseInput"
@@ -74,6 +75,10 @@
                 type: Boolean,
                 default: false,
             },
+            readonly: {
+                type: Boolean,
+                default: false,
+            },
             filled: {
                 type: Boolean,
                 default: false,
@@ -85,6 +90,10 @@
             noErrorIcon: {
                 type: Boolean,
                 default: true,
+            },
+            changeValue: {
+                type: Boolean,
+                default: false,
             },
             errors: {
                 type: Object,
@@ -102,6 +111,9 @@
             inputEvent($event) {
                 this.$emit('input', $event);
                 this.changeErrors();
+                if (!this.changeValue) {
+                    this.$emit('update:changeValue', true);
+                }
             },
         },
     };

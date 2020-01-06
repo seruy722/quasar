@@ -7,7 +7,7 @@
         <q-card class="my-card">
             <q-card-section class="row justify-between bg-primary text-white">
                 <div class="text-h5">{{ $t('entrance') }}</div>
-                <Locale />
+<!--                <Locale />-->
             </q-card-section>
 
             <q-separator />
@@ -61,7 +61,7 @@
         components: {
             BaseInput: () => import('src/components/Elements/BaseInput.vue'),
             OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
-            Locale: () => import('src/components/Locale.vue'),
+            // Locale: () => import('src/components/Locale.vue'),
         },
         mixins: [OnKeyUp, CheckErrorsMixin],
         data() {
@@ -119,13 +119,13 @@
                                   devlog.log('TOPATH', vm.toPath);
                                   vm.$router.push(vm.toPath);
                               } else {
-                                  vm.$router.push({ name: 'storehouse' });
+                                  vm.$router.push({ name: 'transfers' });
                               }
                           }
                           vm.$q.loading.hide();
                       });
                 } else {
-                    vm.$router.push({ name: 'storehouse' });
+                    // vm.$router.push({ name: 'transfers' });
                     vm.$q.loading.hide();
                 }
             });
@@ -147,7 +147,7 @@
                   .then(({ data }) => {
                       this.$store.dispatch('auth/setUser', _.get(data, 'user'));
                       this.$q.localStorage.set(getLSKey('authToken'), _.get(data, 'access_token'));
-                      this.$router.push({ name: 'storehouse' });
+                      this.$router.push({ name: 'transfers' });
                   })
                   .catch((errors) => {
                       devlog.log(errors);

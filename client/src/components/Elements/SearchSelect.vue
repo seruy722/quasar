@@ -1,6 +1,5 @@
 <template>
   <q-select
-    filled
     :options="duplicateOptions"
     :label="label"
     :error-message="viewError()"
@@ -55,6 +54,10 @@
                 type: Boolean,
                 default: false,
             },
+            changeValue: {
+                type: Boolean,
+                default: false,
+            },
             errors: {
                 type: Object,
                 default: () => ({}),
@@ -72,6 +75,9 @@
             inputEvent($event) {
                 this.$emit('input', $event);
                 this.changeErrors();
+                if (!this.changeValue) {
+                    this.$emit('update:changeValue', true);
+                }
             },
             filterFn(val, update) {
                 devlog.log('valSE', val);

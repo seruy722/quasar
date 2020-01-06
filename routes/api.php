@@ -32,7 +32,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
         return CodeResource::collection(Code::with('customers', 'user')->get());
     });
     Route::get('/codes-list', function () {
-        return Code::select('id as value', 'code as label')->orderBy('value')->get();
+        return Code::select('id as value', 'code as label')->get();
     });
     Route::post('/upload-codes', 'Api\CodesController@uploadCodesData');
     Route::get('/check-code-exist/{code}', 'Api\CodesController@checkCodeExist');
@@ -101,6 +101,10 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::get('/shopsList', function () {
         return \App\Shop::select('id as value', 'name as label')->orderBy('name')->get();
     });
+    // TRANSFERS
+    Route::get('/transfers', 'Api\TransferController@index');
+    Route::post('/update-transfers', 'Api\TransferController@update');
+    Route::post('/store-transfers', 'Api\TransferController@store');
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды
     Route::get('/export-brands-customers', function () {
@@ -142,8 +146,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 
 Route::group(['middleware' => [\App\Http\Middleware\Localization::class]], function () {
     Route::post('/login', 'Api\AuthController@login');
-    Route::post('/register', 'Api\AuthController@register');
+//    Route::post('/register', 'Api\AuthController@register');
 
-    Route::post('/password/email', 'Api\ForgotPasswordController@sendResetLinkEmail');
-    Route::post('/password/reset', 'Api\ResetPasswordController@reset');
+//    Route::post('/password/email', 'Api\ForgotPasswordController@sendResetLinkEmail');
+//    Route::post('/password/reset', 'Api\ResetPasswordController@reset');
 });

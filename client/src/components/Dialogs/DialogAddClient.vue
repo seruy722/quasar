@@ -1,41 +1,26 @@
 <template>
   <div
-    data-vue-component-name="DialogAddCustomer"
+    data-vue-component-name="DialogAddClient"
   >
     <Dialog
       :dialog.sync="show"
       title="Клиент"
       :persistent="true"
     >
-      <template v-slot:body>
-        <q-card-section>
-          <!--          <SearchSelect-->
-          <!--            v-model.number="customerData.code_id.value"-->
-          <!--            :label="customerData.code_id.label"-->
-          <!--            :dense="$q.screen.xs || $q.screen.sm"-->
-          <!--            :field="customerData.code_id.field"-->
-          <!--            :options="clientCodes"-->
-          <!--            :errors="errorsData"-->
-          <!--          />-->
+      <Card style="min-width: 320px;width: 100%;max-width: 500px;">
+        <CardSection class="row justify-between bg-grey q-mb-sm">
+          <span class="text-h6">Информация о клиенте</span>
+          <div>
+            <IconBtn
+              dense
+              icon="clear"
+              tooltip="Закрыть"
+              @iconBtnClick="close"
+            />
+          </div>
+        </CardSection>
 
-          <!--          <BaseInput-->
-          <!--            v-model="customerData.name.value"-->
-          <!--            :label="customerData.name.label"-->
-          <!--            :dense="$q.screen.xs || $q.screen.sm"-->
-          <!--            :field="customerData.name.field"-->
-          <!--            :mask="customerData.name.mask"-->
-          <!--            :autofocus="customerData.name.autofocus"-->
-          <!--            :errors="errorsData"-->
-          <!--          />-->
-
-          <!--          <SearchSelect-->
-          <!--            v-model.number="customerData.city.value"-->
-          <!--            :label="customerData.city.label"-->
-          <!--            :dense="$q.screen.xs || $q.screen.sm"-->
-          <!--            :field="customerData.city.field"-->
-          <!--            :options="cities"-->
-          <!--            :errors="errorsData"-->
-          <!--          />-->
+        <CardSection>
           <div
             v-for="(item, index) in customerData"
             :key="index"
@@ -71,25 +56,25 @@
               :errors="errorsData"
             />
           </div>
-        </q-card-section>
+        </CardSection>
 
-        <q-separator />
-        <q-card-actions align="right">
-          <OutlineBtn
+        <Separator />
+        <CardActions>
+          <BaseBtn
+            label="Отмена"
+            color="negative"
+            :dense="$q.screen.xs || $q.screen.sm"
+            @clickBaseBtn="close"
+          />
+
+          <BaseBtn
             label="Сохранить"
             color="positive"
             :dense="$q.screen.xs || $q.screen.sm"
-            @clickOutlineBtn="checkErrors(customerData, saveData)"
+            @clickBaseBtn="checkErrors(customerData, saveData)"
           />
-
-          <OutlineBtn
-            label="Закрыть"
-            color="negative"
-            :dense="$q.screen.xs || $q.screen.sm"
-            @clickOutlineBtn="close"
-          />
-        </q-card-actions>
-      </template>
+        </CardActions>
+      </Card>
     </Dialog>
   </div>
 </template>
@@ -102,14 +87,20 @@
     import getFromSettings from 'src/tools/settings';
 
     export default {
-        name: 'DialogAddCustomer',
+        name: 'DialogAddClient',
         components: {
             BaseSelect: () => import('src/components/Elements/BaseSelect.vue'),
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
+            // OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
             BaseInput: () => import('src/components/Elements/BaseInput.vue'),
             SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
             // SelectChips: () => import('src/components/Elements/SelectChips.vue'),
+            Separator: () => import('src/components/Separator.vue'),
+            Card: () => import('src/components/Elements/Card/Card.vue'),
+            CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
+            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
+            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
         },
         mixins: [OnKeyUp, showNotif, CheckErrorsMixin],
         props: {
@@ -255,7 +246,7 @@
                 devlog.log('S_VAL', name.value);
                 this.$q.loading.show();
                 this.$axios.post(getUrl('storeCustomers'), {
-                    name: _.upperFirst(name.value),
+                    name: _.startCase(name.value),
                     sex: sex.value,
                     phone: phone.value,
                     codeId: codeId.value,

@@ -976,6 +976,12 @@
             },
         },
         created() {
+            const funcArr = ['getCategories', 'getCustomerCode', 'getThingsList', 'getShopsList'];
+            _.forEach(funcArr, (func) => {
+                if (_.isFunction(func)) {
+                    this[func]();
+                }
+            });
             this.getFaxData(this.$route.params.id);
             // this.faxTableData = _.cloneDeep(this.faxData);
             this.faxCategoriesDataList = _.cloneDeep(this.faxCategoriesData);

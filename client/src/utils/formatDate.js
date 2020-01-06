@@ -1,3 +1,11 @@
+import {
+  getHours,
+  set,
+  getMinutes,
+  getSeconds,
+} from 'date-fns';
+
+// const errorDate = 'Дата не валидная';
 /**
  * Проверяет дату на валидность
  * @param input
@@ -18,16 +26,16 @@ export const today = () => new Date()
  * @returns string
  */
 export const formatToDayMonthYear = ((date) => {
-    if (checkDate(date)) {
-        return new Intl.DateTimeFormat('ru',
-          {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-          }).format(new Date(date))
-          .replace(/ г./u, '');
-    }
-    return date;
+  if (checkDate(date)) {
+    return new Intl.DateTimeFormat('ru',
+      {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(new Date(date))
+      .replace(/ г./u, '');
+  }
+  return date;
 });
 
 /**
@@ -36,14 +44,14 @@ export const formatToDayMonthYear = ((date) => {
  * @returns string
  */
 export const formatToDayMonth = ((date) => {
-    if (checkDate(date)) {
-        return new Intl.DateTimeFormat('ru',
-          {
-              day: '2-digit',
-              month: '2-digit',
-          }).format(new Date(date));
-    }
-    return date;
+  if (checkDate(date)) {
+    return new Intl.DateTimeFormat('ru',
+      {
+        day: '2-digit',
+        month: '2-digit',
+      }).format(new Date(date));
+  }
+  return date;
 });
 
 /**
@@ -52,14 +60,14 @@ export const formatToDayMonth = ((date) => {
  * @returns string
  */
 export const formatToDayMonthLong = ((date) => {
-    if (checkDate(date)) {
-        return new Intl.DateTimeFormat('ru',
-          {
-              day: 'numeric',
-              month: 'long',
-          }).format(new Date(date));
-    }
-    return date;
+  if (checkDate(date)) {
+    return new Intl.DateTimeFormat('ru',
+      {
+        day: 'numeric',
+        month: 'long',
+      }).format(new Date(date));
+  }
+  return date;
 });
 
 /**
@@ -68,14 +76,14 @@ export const formatToDayMonthLong = ((date) => {
  * @returns string
  */
 export const formatToHoursMinutes = ((date) => {
-    if (checkDate(date)) {
-        return new Intl.DateTimeFormat('ru',
-          {
-              hour: '2-digit',
-              minute: '2-digit',
-          }).format(new Date(date));
-    }
-    return date;
+  if (checkDate(date)) {
+    return new Intl.DateTimeFormat('ru',
+      {
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(new Date(date));
+  }
+  return date;
 });
 
 /**
@@ -84,16 +92,16 @@ export const formatToHoursMinutes = ((date) => {
  * @returns string
  */
 export const formatToDotDate = ((date) => {
-    devlog.log('DDF', date);
-    if (checkDate(date)) {
-        return new Intl.DateTimeFormat('ru',
-          {
-              day: 'numeric',
-              month: 'numeric',
-              year: 'numeric',
-          }).format(new Date(date));
-    }
-    return date;
+  devlog.log('DDF', date);
+  if (checkDate(date)) {
+    return new Intl.DateTimeFormat('ru',
+      {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+      }).format(new Date(date));
+  }
+  return date;
 });
 
 /**
@@ -102,21 +110,21 @@ export const formatToDotDate = ((date) => {
  * @type Object || Boolean
  */
 export const formatTimer = ((date) => {
-    date = _.isFinite(date) ? date : Date.parse(date);
-    let result = false;
-    if (!_.isNaN(date)) {
-        const seconds = Math.floor((date / 1000) % 60);
-        const minutes = Math.floor((date / 1000 / 60) % 60);
-        const hours = Math.floor((date / (1000 * 60 * 60)) % 24);
-        const days = Math.floor(date / (1000 * 60 * 60 * 24));
-        result = {
-            days,
-            hours,
-            minutes,
-            seconds,
-        };
-    }
-    return result;
+  date = _.isFinite(date) ? date : Date.parse(date);
+  let result = false;
+  if (!_.isNaN(date)) {
+    const seconds = Math.floor((date / 1000) % 60);
+    const minutes = Math.floor((date / 1000 / 60) % 60);
+    const hours = Math.floor((date / (1000 * 60 * 60)) % 24);
+    const days = Math.floor(date / (1000 * 60 * 60 * 24));
+    result = {
+      days,
+      hours,
+      minutes,
+      seconds,
+    };
+  }
+  return result;
 });
 
 
@@ -126,13 +134,49 @@ export const formatTimer = ((date) => {
  * @returns string
  */
 export const formatToYear = ((date) => {
-    if (checkDate(date)) {
-        return new Intl.DateTimeFormat('ru',
-          {
-              year: 'numeric',
-          }).format(new Date(date));
+  if (checkDate(date)) {
+    return new Intl.DateTimeFormat('ru',
+      {
+        year: 'numeric',
+      }).format(new Date(date));
+  }
+  return date;
+});
+
+export const fullDate = ((date) => {
+  if (checkDate(date)) {
+    return new Intl.DateTimeFormat('ru',
+      {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      }).format(new Date(date));
+  }
+  return date;
+});
+
+/**
+ * @type {Function}
+ * 27.12.2019 в 2019-12-27T14:16:31.745Z
+ */
+export const isoDate = ((date) => {
+  if (_.isString(date)) {
+    const [day, month, year] = _.split(date, '.');
+    if (checkDate(`${year}-${month}-${day}`)) {
+      const step1 = new Date(`${year}-${month}-${day}`);
+      const dateNow = new Date();
+      return set(new Date(step1), {
+        hours: getHours(dateNow),
+        minutes: getMinutes(dateNow),
+        seconds: getSeconds(dateNow),
+      })
+        .toISOString();
     }
-    return date;
+  }
+  devlog.warn('Дата не валидная', date);
+  return date;
 });
 
 /**
@@ -141,10 +185,10 @@ export const formatToYear = ((date) => {
  * @returns string
  */
 export const formatToPickerDate = ((date) => {
-    if (_.isString(date) && date) {
-        return date.split('.')
-          .reverse()
-          .join('/');
-    }
-    return date;
+  if (_.isString(date) && date) {
+    return date.split('.')
+      .reverse()
+      .join('/');
+  }
+  return date;
 });

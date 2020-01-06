@@ -1,11 +1,16 @@
 <template>
-    <div
-        data-vue-component-name="Badge"
+  <div
+    data-vue-component-name="Badge"
+  >
+    <q-badge
+      :color="badgeData.color || 'red'"
+      floating
+      transparent
+      data-vue-component-name="Badge"
     >
-        <q-badge :color="badgeData.color || 'red'" floating transparent>
-            {{ badgeData.value }}
-        </q-badge>
-    </div>
+      {{ badgeData.value }}
+    </q-badge>
+  </div>
 </template>
 
 <script>

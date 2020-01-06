@@ -6,6 +6,7 @@
     :value="value"
     :dense="dense"
     :options="filterOptions"
+    :input-style="{fontWeight: 'bold'}"
     data-vue-component-name="SelectChips"
     @new-value="createValue"
     @filter="filterFn"

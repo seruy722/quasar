@@ -59,6 +59,10 @@
         <slot name="inner-body" :props="props"></slot>
       </template>
 
+      <template v-slot:item="props">
+        <slot name="inner-item" :props="props"></slot>
+      </template>
+
       <template v-slot:bottom-row>
         <q-tr>
           <q-td colspan="100%">
@@ -106,9 +110,6 @@
                     rowsPerPage: 20,
                 },
             };
-        },
-        created() {
-            devlog.log('LANG_TA', this.$q.lang);
         },
         methods: {
             filterMethod(rows, terms, cols, cellValue) {

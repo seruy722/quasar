@@ -19,7 +19,7 @@
           <!--            :errors="errorsData"-->
           <!--          >-->
           <!--            <template v-slot:append>-->
-          <!--              <Date :value.sync="faxData.departureDate.value" />-->
+            <!--              <Date :value.sync="faxData.departureDate.value" />-->
           <!--            </template>-->
           <!--          </BaseInput>-->
 

@@ -15,12 +15,12 @@ export default {
       return this.freeze(this.$store.getters['shopsList/getShopsList']);
     },
   },
-  created() {
-    this.getCategories();
-    this.getCustomerCode();
-    this.getThingsList();
-    this.getShopsList();
-  },
+  // created() {
+  //   this.getCategories();
+  //   this.getCustomerCode();
+  //   this.getThingsList();
+  //   this.getShopsList();
+  // },
   methods: {
     addToUpdateArray(item, key) {
       const add = ((elem, value) => {

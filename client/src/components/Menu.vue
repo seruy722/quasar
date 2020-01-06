@@ -31,7 +31,7 @@
     <AddTransporter :show-dialog.sync="showTransporterDialog" />
     <AddCategory :show-dialog.sync="showCategoryDialog" />
     <DialogAddFax :show-dialog.sync="showFaxDialog" />
-    <DialogAddCustomer :show-dialog.sync="showCustomerDialog" />
+    <DialogAddClient :show-dialog.sync="showCustomerDialog" />
     <DialogAddCode :show-dialog.sync="showCodeDialog" />
     <AddThings />
   </div>
@@ -46,7 +46,7 @@
             AddTransporter: () => import('src/components/Dialogs/AddTransporter.vue'),
             AddCategory: () => import('src/components/Dialogs/AddCategory.vue'),
             DialogAddFax: () => import('src/components/Dialogs/DialogAddFax.vue'),
-            DialogAddCustomer: () => import('src/components/Dialogs/DialogAddCustomer.vue'),
+            DialogAddClient: () => import('src/components/Dialogs/DialogAddClient.vue'),
             DialogAddCode: () => import('src/components/Dialogs/DialogAddCode.vue'),
             AddThings: () => import('src/components/Dialogs/AddThings.vue'),
             ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
