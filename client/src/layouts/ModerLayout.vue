@@ -6,8 +6,9 @@
     <q-header elevated class="bg-primary">
       <q-toolbar>
         <IconBtn
+          color="white"
+          icon="menu"
           @iconBtnClick="drawer = !drawer"
-          :iconBtnData="{tooltip: 'menu', color: 'white'}"
         />
         <q-toolbar-title>{{ $t(pageTitle) }}</q-toolbar-title>
       </q-toolbar>
