@@ -61,6 +61,7 @@ class TransferController extends Controller
             ->orderBy('created_at', 'DESC')
             ->where('transfers.id', $transfer->id)
             ->get();
+//        event(new \App\Events\TransferCreate($transferData));
         return response(['transfer' => $transferData]);
     }
 }

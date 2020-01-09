@@ -62,27 +62,67 @@
                 class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
                 :style="props.selected ? 'transform: scale(0.95);' : ''"
               >
-                <q-card :class="props.selected ? 'bg-grey-2' : ''" @click.stop="viewEditDialog(props)">
-                  <q-card-section>
-                    <q-checkbox dense v-model="props.selected" :label="props.row.name" />
-                  </q-card-section>
-                  <q-separator />
-                  <q-list dense bordered separator>
-                    <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
-                      <q-item-section>
-                        <q-item-label>{{ `${col.label}:` }}</q-item-label>
-                      </q-item-section>
-                      <q-item-section side>
-                        <q-item-label v-if="col.field === 'status'">
-                          <q-badge :color="statusColor(props.row.status)">
-                            {{ col.value }}
-                          </q-badge>
-                        </q-item-label>
-                        <q-item-label v-else>{{ col.value }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-card>
+                <!--                <Card-->
+                <!--                  :class="props.selected ? 'bg-grey-2' : ''"-->
+                <!--                  @clickCard="viewEditDialog(props)"-->
+                <!--                >-->
+                <!--                  <CardSection>-->
+                <!--                    <CheckBox-->
+                <!--                      v-model="props.selected"-->
+                <!--                    />-->
+                <!--                  </CardSection>-->
+                <!--                  <Separator />-->
+                <List>
+                  <q-expansion-item
+                    expand-separator
+                    class="shadow-1 overflow-hidden"
+                    style="border-radius: 30px;border: 1px solid;"
+                    :class="`border_${statusColor(props.row.status_label)}`"
+                    :header-class="`bg-${statusColor(props.row.status_label)} text-white`"
+                    expand-icon-class="text-white"
+                  >
+                    <template v-slot:header>
+                      <ItemSection avatar>
+                        <CheckBox
+                          v-model="props.selected"
+                        />
+                      </ItemSection>
+
+                      <ItemSection>
+                        {{ props.row.client_name | truncateFilter(30) }}
+                      </ItemSection>
+                    </template>
+
+                    <List
+                      separator
+                      @clickList="viewEditDialog(props)"
+                    >
+                      <ListItem
+                        v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                        :key="col.name"
+                      >
+                        <ItemSection>
+                          <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
+                        </ItemSection>
+                        <ItemSection side>
+                          <ItemLabel v-if="col.field === 'status_label'">
+                            <Badge :color="statusColor(col.value)">
+                              {{ col.value }}
+                            </Badge>
+                          </ItemLabel>
+                          <ItemLabel v-else-if="col.field === 'receiver_phone'">{{ col.value | phoneNumberFilter }}
+                          </ItemLabel>
+                          <ItemLabel v-else-if="col.field === 'receiver_name'">{{ col.value | truncateFilter(40) }}
+                          </ItemLabel>
+                          <ItemLabel v-else-if="col.field === 'notation'">{{ col.value | truncateFilter(40) }}
+                          </ItemLabel>
+                          <ItemLabel v-else>{{ col.value }}</ItemLabel>
+                        </ItemSection>
+                      </ListItem>
+                    </List>
+                  </q-expansion-item>
+                </List>
+                <!--                </Card>-->
               </div>
             </template>
 
@@ -135,9 +175,9 @@
                   key-td="status_label"
                   :props="props"
                 >
-                  <q-badge :color="statusColor(props.row.status)">
+                  <Badge :color="statusColor(props.row.status)">
                     {{ props.row.status_label }}
-                  </q-badge>
+                  </Badge>
                 </TD>
 
                 <TD
@@ -286,7 +326,11 @@
           color="positive"
           @fabActionClick="viewEditDialog"
         />
-        <PageScroller :offset="[4, 50]">
+        <FabAction
+          icon="person"
+          @fabActionClick="showCodeDialog = true"
+        />
+        <PageScroller :offset="[4, 100]">
           <FabAction icon="keyboard_arrow_up" />
         </PageScroller>
       </Fab>
@@ -313,9 +357,10 @@
             CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
             CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
             Date: () => import('src/components/Date.vue'),
-            // List: () => import('src/components/Elements/List/List.vue'),
-            // ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            // ListItem: () => import('src/components/Elements/List/ListItem.vue'),
+            List: () => import('src/components/Elements/List/List.vue'),
+            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
+            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
+            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
             BaseInput: () => import('src/components/Elements/BaseInput.vue'),
             // Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
@@ -330,6 +375,7 @@
             Fab: () => import('src/components/Elements/Fab.vue'),
             FabAction: () => import('src/components/Elements/FabAction.vue'),
             PageScroller: () => import('src/components/PageScroller.vue'),
+            Badge: () => import('src/components/Elements/Badge.vue'),
         },
         filters: {
             phoneNumberFilter(val) {
@@ -337,6 +383,16 @@
                     return `+${val.slice(0, 2)} (${val.slice(2, 5)}) ${val.slice(5, 8)}-${val.slice(8, 10)}-${val.slice(10, 12)}`;
                 }
                 return val;
+            },
+            truncateFilter(str, maxSize) {
+                if (_.isString(str) && _.size(str) > maxSize) {
+                    return _.truncate(str, {
+                        length: maxSize,
+                        separator: ' ',
+                    });
+                }
+
+                return str;
             },
         },
         mixins: [CheckErrorsMixin, showNotif],
@@ -571,6 +627,12 @@
                 immediate: true,
             },
         },
+        // mounted() {
+        //     const socket = this.$io('http://localhost:8080');
+        //     socket.on('transfer-create:App\\Events\\TransferCreate', (data) => {
+        //         devlog.log('S_DATA', data);
+        //     });
+        // },
         created() {
             this.getTransfers();
             this.getClientCodes();
@@ -586,7 +648,7 @@
                     // ДОБАВЛЕНИЕ ЗАПИСИ
                     this.$q.loading.show();
                     const values = _.mapValues(sendData, 'value');
-                    values.receiver_name = _.startCase(values.receiver_name);
+                    values.receiver_name = _.startCase(_.toLower(values.receiver_name));
                     values.issued_by = isoDate(values.issued_by);
                     this.$axios.post(getUrl('storeTransfers'), values)
                       .then(({ data: { transfer } }) => {
@@ -609,7 +671,7 @@
                                 result[index] = isoDate(value);
                             }
                             if (index === 'receiver_name') {
-                                result[index] = _.startCase(value);
+                                result[index] = _.startCase(_.toLower(value));
                             }
                             return result;
                         }, {});
@@ -704,14 +766,8 @@
                 return this.setMethodLabel(this.setStatusLabel(this.setFormatedDate(data)));
             },
             statusColor(value) {
-                if (value) {
-                    const findLabel = _.find(getFromSettings('transferStatus'), { value });
-                    if (findLabel) {
-                        return _.get(findLabel, 'color');
-                    }
-                }
-
-                return value;
+                const findLabel = _.find(getFromSettings('transferStatus'), { value }) || _.find(getFromSettings('transferStatus'), { label: value });
+                return _.get(findLabel, 'color');
             },
             openCloseDialog(val) {
                 this.dialog = val;
@@ -731,3 +787,26 @@
         },
     };
 </script>
+
+<style lang="stylus">
+  .border_red {
+    border-color $red !important
+  }
+
+  .border_positive {
+    border-color $positive !important
+  }
+
+  .border_warning {
+    border-color $warning !important
+  }
+
+  .border_grey {
+    border-color $grey !important
+  }
+
+  .border_info {
+    border-color $info !important
+  }
+
+</style>

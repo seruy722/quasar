@@ -101,6 +101,11 @@
       <input type="file" multiple @change="upFaxDataFiles">
     </div>
 
+    <div>
+      Загрузка кодов
+      <input type="file" multiple @change="upCodes">
+    </div>
+
   </div>
 </template>
 
@@ -252,6 +257,21 @@
                 formData.append('fax_id', 1);
 
                 this.$axios.post('/api/upload-fax-data-table', formData)
+                  .then(({ data }) => {
+                      target.value = '';
+                      devlog.log('UPLOADED', data);
+                      this.showNotif('success', 'Данные успешно добавлены.', 'center');
+                  })
+                  .catch(() => {
+                      target.value = '';
+                      this.showNotif('error', 'Произошла ошибка.', 'center');
+                  });
+            },
+            upCodes({ target }) {
+                const formData = new FormData();
+                formData.append('upload', _.first(target.files));
+
+                this.$axios.post('/api/upload-codes', formData)
                   .then(({ data }) => {
                       target.value = '';
                       devlog.log('UPLOADED', data);

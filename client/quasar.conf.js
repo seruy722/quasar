@@ -12,6 +12,7 @@ module.exports = function (ctx) {
       'axios',
       'lodash',
       'filters',
+      // 'io',
     ],
 
     css: [
@@ -84,10 +85,10 @@ module.exports = function (ctx) {
       },
       env: ctx.dev
         ? { // so on dev we'll have
-          API: JSON.stringify('http://sp.com.ua'),
+          API: JSON.stringify('http://sp.com.ua/'),
         }
         : { // and on build (production):
-          API: JSON.stringify('http://cargo007.net/'),
+          API: JSON.stringify('http://servercargo007.net.ua/'),
         },
     },
 

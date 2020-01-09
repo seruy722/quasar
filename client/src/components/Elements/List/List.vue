@@ -1,10 +1,11 @@
 <template>
     <q-list
-        dense
-        bordered
-        padding
-        separator
+        :dense="dense"
+        :bordered="bordered"
+        :padding="padding"
+        :separator="separator"
         data-vue-component-name="List"
+        @click.stop="$emit('clickList')"
     >
         <slot></slot>
     </q-list>

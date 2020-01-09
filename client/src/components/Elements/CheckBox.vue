@@ -1,10 +1,12 @@
 <template>
   <q-checkbox
     :value="value"
+    :label="label"
     dense
     data-vue-component-name="CheckBox"
     @input="$emit('input', $event)"
-  />
+  >
+  </q-checkbox>
 </template>
 
 <script>
@@ -14,6 +16,10 @@
             value: {
                 type: Boolean,
                 default: false,
+            },
+            label: {
+                type: String,
+                default: '',
             },
         },
     };

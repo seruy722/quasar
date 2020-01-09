@@ -25,7 +25,7 @@
         v-if="!tableProperties.hideTop"
         v-slot:top="props"
       >
-        <div class="col-2 q-table__title">{{ title }}</div>
+        <div class="col-2 q-table__title q-mr-lg">{{ title }}</div>
 
         <q-space />
 
