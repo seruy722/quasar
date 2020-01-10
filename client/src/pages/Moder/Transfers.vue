@@ -2,221 +2,225 @@
   <q-page
     data-vue-component-name="Transfers"
   >
-    <q-card>
-      <q-tabs
-        v-model="tab"
-        dense
-        class="text-grey"
-        active-color="primary"
-        indicator-color="primary"
-        align="justify"
-        narrow-indicator
-      >
-        <q-tab name="transfers" label="Все переводы" />
-        <q-tab name="alarms" label="История" />
-      </q-tabs>
+    <PullRefresh
+      @refresh="refresh"
+    >
+      <q-card>
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-grey"
+          active-color="primary"
+          indicator-color="primary"
+          align="justify"
+          narrow-indicator
+        >
+          <q-tab name="transfers" label="Все переводы" />
+          <q-tab name="alarms" label="История" />
+        </q-tabs>
 
-      <q-separator />
+        <q-separator />
 
-      <q-tab-panels v-model="tab" animated>
-        <q-tab-panel name="transfers">
-          <Table
-            :table-properties="faxTableProperties"
-            :table-data="allTransfers"
-            :table-reactive-properties="faxTableReactiveProperties"
-            title="Переводы"
-          >
-            <template v-slot:top-buttons>
-              <!--              <IconBtn-->
-              <!--                color="positive"-->
-              <!--                icon="save"-->
-              <!--                tooltip="save"-->
-              <!--                :disable="!arrayToUpdate.length"-->
-              <!--                @iconBtnClick="updateFaxData"-->
-              <!--              />-->
+        <q-tab-panels v-model="tab" animated>
+          <q-tab-panel name="transfers">
+            <Table
+              :table-properties="faxTableProperties"
+              :table-data="allTransfers"
+              :table-reactive-properties="faxTableReactiveProperties"
+              title="Переводы"
+            >
+              <template v-slot:top-buttons>
+                <!--              <IconBtn-->
+                <!--                color="positive"-->
+                <!--                icon="save"-->
+                <!--                tooltip="save"-->
+                <!--                :disable="!arrayToUpdate.length"-->
+                <!--                @iconBtnClick="updateFaxData"-->
+                <!--              />-->
 
-              <!--              <IconBtn-->
-              <!--                color="positive"-->
-              <!--                icon="explicit"-->
-              <!--                tooltip="excel"-->
-              <!--                @iconBtnClick="exportFaxData(currentFaxItem)"-->
-              <!--              />-->
+                <!--              <IconBtn-->
+                <!--                color="positive"-->
+                <!--                icon="explicit"-->
+                <!--                tooltip="excel"-->
+                <!--                @iconBtnClick="exportFaxData(currentFaxItem)"-->
+                <!--              />-->
 
-              <!--              <IconBtn-->
-              <!--                color="primary"-->
-              <!--                icon="update"-->
-              <!--                tooltip="update"-->
-              <!--                @iconBtnClick="updateAllPriceInFaxData(currentFaxItem.id)"-->
-              <!--              />-->
-              <!--              <IconBtn-->
-              <!--                color="positive"-->
-              <!--                tooltip="Добавить"-->
-              <!--                icon="add"-->
-              <!--                class="q-ml-sm"-->
-              <!--                @iconBtnClick="viewEditDialog"-->
-              <!--              />-->
-            </template>
-            <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-            <template v-slot:inner-item="{props}">
-              <div
-                class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-                :style="props.selected ? 'transform: scale(0.95);' : ''"
-              >
-                <!--                <Card-->
-                <!--                  :class="props.selected ? 'bg-grey-2' : ''"-->
-                <!--                  @clickCard="viewEditDialog(props)"-->
-                <!--                >-->
-                <!--                  <CardSection>-->
-                <!--                    <CheckBox-->
-                <!--                      v-model="props.selected"-->
-                <!--                    />-->
-                <!--                  </CardSection>-->
-                <!--                  <Separator />-->
-                <List>
-                  <q-expansion-item
-                    expand-separator
-                    class="shadow-1 overflow-hidden"
-                    style="border-radius: 30px;border: 1px solid;"
-                    :class="`border_${statusColor(props.row.status_label)}`"
-                    :header-class="`bg-${statusColor(props.row.status_label)} text-white`"
-                    expand-icon-class="text-white"
-                  >
-                    <template v-slot:header>
-                      <ItemSection avatar>
-                        <CheckBox
-                          v-model="props.selected"
-                        />
-                      </ItemSection>
-
-                      <ItemSection>
-                        {{ props.row.client_name | truncateFilter(30) }}
-                      </ItemSection>
-                    </template>
-
-                    <List
-                      separator
-                      @clickList="viewEditDialog(props)"
+                <!--              <IconBtn-->
+                <!--                color="primary"-->
+                <!--                icon="update"-->
+                <!--                tooltip="update"-->
+                <!--                @iconBtnClick="updateAllPriceInFaxData(currentFaxItem.id)"-->
+                <!--              />-->
+                <IconBtn
+                  color="positive"
+                  tooltip="Excel"
+                  icon="get_app"
+                  class="q-ml-sm"
+                  @iconBtnClick="exportTransfers"
+                />
+              </template>
+              <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
+              <template v-slot:inner-item="{props}">
+                <div
+                  class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+                  :style="props.selected ? 'transform: scale(0.95);' : ''"
+                >
+                  <!--                <Card-->
+                  <!--                  :class="props.selected ? 'bg-grey-2' : ''"-->
+                  <!--                  @clickCard="viewEditDialog(props)"-->
+                  <!--                >-->
+                  <!--                  <CardSection>-->
+                  <!--                    <CheckBox-->
+                  <!--                      v-model="props.selected"-->
+                  <!--                    />-->
+                  <!--                  </CardSection>-->
+                  <!--                  <Separator />-->
+                  <List>
+                    <q-expansion-item
+                      expand-separator
+                      class="shadow-1 overflow-hidden"
+                      style="border-radius: 30px;border: 1px solid;"
+                      :class="`border_${statusColor(props.row.status_label)}`"
+                      :header-class="`bg-${statusColor(props.row.status_label)} text-white`"
+                      expand-icon-class="text-white"
                     >
-                      <ListItem
-                        v-for="col in props.cols.filter(col => col.name !== 'desc')"
-                        :key="col.name"
-                      >
+                      <template v-slot:header>
+                        <ItemSection avatar>
+                          <CheckBox
+                            v-model="props.selected"
+                          />
+                        </ItemSection>
+
                         <ItemSection>
-                          <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
+                          {{ props.row.client_name | truncateFilter(30) }}
                         </ItemSection>
-                        <ItemSection side>
-                          <ItemLabel v-if="col.field === 'status_label'">
-                            <Badge :color="statusColor(col.value)">
-                              {{ col.value }}
-                            </Badge>
-                          </ItemLabel>
-                          <ItemLabel v-else-if="col.field === 'receiver_phone'">{{ col.value | phoneNumberFilter }}
-                          </ItemLabel>
-                          <ItemLabel v-else-if="col.field === 'receiver_name'">{{ col.value | truncateFilter(40) }}
-                          </ItemLabel>
-                          <ItemLabel v-else-if="col.field === 'notation'">{{ col.value | truncateFilter(40) }}
-                          </ItemLabel>
-                          <ItemLabel v-else>{{ col.value }}</ItemLabel>
-                        </ItemSection>
-                      </ListItem>
-                    </List>
-                  </q-expansion-item>
-                </List>
-                <!--                </Card>-->
-              </div>
-            </template>
+                      </template>
 
-            <template v-slot:inner-body="{props}">
-              <TR
-                :props="props"
-                class="text-bold cursor-pointer"
-                @trClick="viewEditDialog(props)"
-              >
-                <q-td>
-                  <CheckBox v-model="props.selected" />
-                </q-td>
+                      <List
+                        separator
+                        @clickList="viewEditDialog(props)"
+                      >
+                        <ListItem
+                          v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                          :key="col.name"
+                        >
+                          <ItemSection>
+                            <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
+                          </ItemSection>
+                          <ItemSection side>
+                            <ItemLabel v-if="col.field === 'status_label'">
+                              <Badge :color="statusColor(col.value)">
+                                {{ col.value }}
+                              </Badge>
+                            </ItemLabel>
+                            <ItemLabel v-else-if="col.field === 'receiver_phone'">{{ col.value | phoneNumberFilter }}
+                            </ItemLabel>
+                            <ItemLabel v-else-if="col.field === 'receiver_name'">{{ col.value | truncateFilter(40) }}
+                            </ItemLabel>
+                            <ItemLabel v-else-if="col.field === 'notation'">{{ col.value | truncateFilter(40) }}
+                            </ItemLabel>
+                            <ItemLabel v-else>{{ col.value }}</ItemLabel>
+                          </ItemSection>
+                        </ListItem>
+                      </List>
+                    </q-expansion-item>
+                  </List>
+                  <!--                </Card>-->
+                </div>
+              </template>
 
-                <TD
-                  key-td="client_name"
+              <template v-slot:inner-body="{props}">
+                <TR
                   :props="props"
+                  class="text-bold cursor-pointer"
+                  @trClick="viewEditDialog(props)"
                 >
-                  {{ props.row.client_name }}
-                </TD>
+                  <q-td>
+                    <CheckBox v-model="props.selected" />
+                  </q-td>
 
-                <TD
-                  key-td="receiver_name"
-                  :props="props"
-                >
-                  {{ props.row.receiver_name }}
-                </TD>
+                  <TD
+                    key-td="client_name"
+                    :props="props"
+                  >
+                    {{ props.row.client_name }}
+                  </TD>
 
-                <TD
-                  key-td="receiver_phone"
-                  :props="props"
-                >
-                  {{ props.row.receiver_phone | phoneNumberFilter }}
-                </TD>
+                  <TD
+                    key-td="receiver_name"
+                    :props="props"
+                  >
+                    {{ props.row.receiver_name }}
+                  </TD>
 
-                <TD
-                  key-td="sum"
-                  :props="props"
-                >
-                  {{ props.row.sum | numberFormatFilter }}
-                </TD>
+                  <TD
+                    key-td="receiver_phone"
+                    :props="props"
+                  >
+                    {{ props.row.receiver_phone | phoneNumberFilter }}
+                  </TD>
 
-                <TD
-                  key-td="method_label"
-                  :props="props"
-                >
-                  {{ props.row.method_label }}
-                </TD>
+                  <TD
+                    key-td="sum"
+                    :props="props"
+                  >
+                    {{ props.row.sum | numberFormatFilter }}
+                  </TD>
 
-                <TD
-                  key-td="status_label"
-                  :props="props"
-                >
-                  <Badge :color="statusColor(props.row.status)">
-                    {{ props.row.status_label }}
-                  </Badge>
-                </TD>
+                  <TD
+                    key-td="method_label"
+                    :props="props"
+                  >
+                    {{ props.row.method_label }}
+                  </TD>
 
-                <TD
-                  key-td="user_name"
-                  :props="props"
-                >
-                  {{ props.row.user_name }}
-                </TD>
+                  <TD
+                    key-td="status_label"
+                    :props="props"
+                  >
+                    <Badge :color="statusColor(props.row.status)">
+                      {{ props.row.status_label }}
+                    </Badge>
+                  </TD>
 
-                <TD
-                  key-td="created_at"
-                  :props="props"
-                >
-                  {{ props.row.created_at }}
-                </TD>
+                  <TD
+                    key-td="user_name"
+                    :props="props"
+                  >
+                    {{ props.row.user_name }}
+                  </TD>
 
-                <TD
-                  key-td="issued_by"
-                  :props="props"
-                >
-                  {{ props.row.issued_by }}
-                </TD>
+                  <TD
+                    key-td="created_at"
+                    :props="props"
+                  >
+                    {{ props.row.created_at }}
+                  </TD>
 
-                <TD
-                  key-td="notation"
-                  :props="props"
-                >
-                  {{ props.row.notation }}
-                </TD>
-              </TR>
-            </template>
-          </Table>
-        </q-tab-panel>
+                  <TD
+                    key-td="issued_by"
+                    :props="props"
+                  >
+                    {{ props.row.issued_by }}
+                  </TD>
 
-        <q-tab-panel name="alarms">
-          <div class="text-h6">Пусто</div>
-        </q-tab-panel>
-      </q-tab-panels>
-    </q-card>
+                  <TD
+                    key-td="notation"
+                    :props="props"
+                  >
+                    {{ props.row.notation }}
+                  </TD>
+                </TR>
+              </template>
+            </Table>
+          </q-tab-panel>
+
+          <q-tab-panel name="alarms">
+            <div class="text-h6">Пусто</div>
+          </q-tab-panel>
+        </q-tab-panels>
+      </q-card>
+    </PullRefresh>
     <Dialog
       :dialog="dialog"
       :persistent="true"
@@ -320,7 +324,7 @@
       </Card>
     </Dialog>
     <DialogAddCode :show-dialog.sync="showCodeDialog" />
-    <PageSticky :offset="[18, 100]">
+    <PageSticky :offset="[18, 200]">
       <Fab color="accent">
         <FabAction
           color="positive"
@@ -344,6 +348,8 @@
     import { fullDate, formatToDotDate, isoDate } from 'src/utils/formatDate';
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
     import showNotif from 'src/mixins/showNotif';
+    import { sortCollection } from 'src/utils/sort';
+    import ExportDataMixin from 'src/mixins/ExportData';
 
     export default {
         name: 'Transfers',
@@ -376,6 +382,7 @@
             FabAction: () => import('src/components/Elements/FabAction.vue'),
             PageScroller: () => import('src/components/PageScroller.vue'),
             Badge: () => import('src/components/Elements/Badge.vue'),
+            PullRefresh: () => import('src/components/PullRefresh.vue'),
         },
         filters: {
             phoneNumberFilter(val) {
@@ -395,12 +402,12 @@
                 return str;
             },
         },
-        mixins: [CheckErrorsMixin, showNotif],
+        mixins: [CheckErrorsMixin, showNotif, ExportDataMixin],
         data() {
             return {
                 tab: 'transfers',
+                // intervalFunc: null,
                 localProps: {},
-                itemID: 0,
                 showCodeDialog: false,
                 dialog: false,
                 transferData: {
@@ -444,9 +451,9 @@
                         rules: [
                             {
                                 name: 'isLength',
-                                error: 'Минимальное количество символов 11.',
+                                error: 'Минимальное количество символов 12.',
                                 options: {
-                                    min: 11,
+                                    min: 12,
                                     max: 12,
                                 },
                             },
@@ -633,9 +640,15 @@
         //         devlog.log('S_DATA', data);
         //     });
         // },
+        // beforeDestroy() {
+        //     clearInterval(this.intervalFunc);
+        // },
         created() {
             this.getTransfers();
             this.getClientCodes();
+            this.$nextTick(() => {
+                devlog.log('$nextTick');
+            });
         },
         methods: {
             updateData(data) {
@@ -716,12 +729,6 @@
                     });
                 }
             },
-            edit(val) {
-                devlog.log('edit', _.first(val));
-            },
-            add() {
-                devlog.log('ADD');
-            },
             setFormatedDate(value) {
                 _.forEach(value, (item) => {
                     _.set(item, 'created_at', fullDate(_.get(item, 'created_at')));
@@ -760,6 +767,11 @@
                   .then(({ data: { transfers } }) => {
                       this.$store.dispatch('transfers/setTransfers', this.setAdditionalData(transfers));
                       this.$q.loading.hide();
+                      // this.intervalFunc = setInterval(() => {
+                      //     devlog.log('ISO', _.get(this.allTransfers, '[0].created_at'));
+                      //     devlog.log('ISO_2', isoDate(_.get(this.allTransfers, '[2].created_at')));
+                      //     this.$axios.post(getUrl('getNewTransfers'), { created_at: isoDate(_.get(this.allTransfers, '[0].created_at')) });
+                      // }, 30000);
                   });
             },
             setAdditionalData(data) {
@@ -781,8 +793,37 @@
                     this.$store.dispatch('clientCodes/getCodes');
                 }
             },
-            cl() {
-                devlog.log('CL');
+            async refresh(done) {
+                devlog.log('CL', sortCollection(this.allTransfers, 'updated_at'));
+                await this.$axios.post(getUrl('getNewTransfers'), {
+                    created_at: isoDate(_.get(this.allTransfers, '[0].created_at')),
+                    updated_at: _.get(_.last(sortCollection(this.allTransfers, 'updated_at')), 'updated_at'),
+                })
+                  .then(({ data: { transfers } }) => {
+                      devlog.log('DTA', transfers);
+                      if (!_.isEmpty(transfers)) {
+                          _.forEach(transfers, (item) => {
+                              const find = _.some(this.allTransfers, ['id', item.id]);
+                              if (find) {
+                                  this.$store.dispatch('transfers/updateTransfer', this.setAdditionalData([item]));
+                              } else {
+                                  this.$store.dispatch('transfers/addTransfer', this.setAdditionalData([item]));
+                              }
+                          });
+                          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+                      } else {
+                          this.showNotif('info', 'Данные актуальны.', 'center');
+                      }
+                      done();
+                  })
+                  .catch(() => {
+                      done();
+                  });
+            },
+            exportTransfers() {
+                this.exportDataToExcel(getUrl('exportTransfers'), {
+                    ids: _.map(this.faxTableReactiveProperties.selected, 'id'),
+                }, 'Переводы.xlsx');
             },
         },
     };

@@ -24,10 +24,11 @@ class CommonExport implements FromCollection
                 return Code::whereIn('id', $this->ids)->get();
             case 'brands':
                 return \App\Test::where('brand', true)->get();
-                break;
-            case 2:
-                echo "i equals 2";
-                break;
+            case 'transfers':
+                if(empty($this->ids)){
+                    return \App\Transfer::all();
+                }
+                return \App\Transfer::whereIn('id', $this->ids)->get();
         }
     }
 }

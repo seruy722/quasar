@@ -13,7 +13,7 @@ class TransferController extends Controller
         $transferData = Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name')
             ->join('codes', 'transfers.client_id', '=', 'codes.id')
             ->join('users', 'transfers.user_id', '=', 'users.id')
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('id', 'DESC')
             ->get();
         return response(['transfers' => $transferData]);
     }
@@ -28,7 +28,7 @@ class TransferController extends Controller
         $transferData = Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name')
             ->join('codes', 'transfers.client_id', '=', 'codes.id')
             ->join('users', 'transfers.user_id', '=', 'users.id')
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('id', 'DESC')
             ->where('transfers.id', $request->id)
             ->get();
         return response(['transfer' => $transferData]);
@@ -58,10 +58,32 @@ class TransferController extends Controller
         $transferData = Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name')
             ->join('codes', 'transfers.client_id', '=', 'codes.id')
             ->join('users', 'transfers.user_id', '=', 'users.id')
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('id', 'DESC')
             ->where('transfers.id', $transfer->id)
             ->get();
 //        event(new \App\Events\TransferCreate($transferData));
         return response(['transfer' => $transferData]);
+    }
+
+    public function newTransfers(Request $request)
+    {
+        $this->validate($request, [
+            'created_at' => 'required|max:100',
+            'updated_at' => 'required|date',
+        ]);
+
+        $transferData = Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name')
+            ->join('codes', 'transfers.client_id', '=', 'codes.id')
+            ->join('users', 'transfers.user_id', '=', 'users.id')
+            ->orderBy('id', 'DESC')
+            ->where('transfers.created_at', '>', \Illuminate\Support\Carbon::parse($request->created_at)->toDateTimeString())
+            ->orWhere('transfers.updated_at', '>', $request->updated_at)
+            ->get();
+        return response(['transfers' => $transferData]);
+    }
+
+    public function export(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\TransfersExport($request->ids), 'transfers.xlsx');
     }
 }

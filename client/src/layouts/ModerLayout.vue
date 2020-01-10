@@ -140,5 +140,5 @@
 <style lang="stylus">
   .my-menu-link
     color white
-    background #F2C037
+    background $orange_bg
 </style>

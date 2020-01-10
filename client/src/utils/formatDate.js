@@ -152,6 +152,7 @@ export const fullDate = ((date) => {
         day: 'numeric',
         hour: 'numeric',
         minute: 'numeric',
+        second: 'numeric',
       }).format(new Date(date));
   }
   return date;
@@ -161,11 +162,18 @@ export const fullDate = ((date) => {
  * @type {Function}
  * 27.12.2019 в 2019-12-27T14:16:31.745Z
  */
-export const isoDate = ((date) => {
-  if (_.isString(date)) {
-    const [day, month, year] = _.split(date, '.');
-    if (checkDate(`${year}-${month}-${day}`)) {
-      const step1 = new Date(`${year}-${month}-${day}`);
+export const isoDate = ((str) => {
+  if (_.isString(str)) {
+    const [date, time] = _.split(str, ',');
+    const newDate = _.join(_.reverse(_.split(date, '.')), '-');
+    if (checkDate(newDate)) {
+      if (_.size(str) > 10) {
+        devlog.log('TIME', time);
+        devlog.log('Date', str);
+        const newDate2 = new Date(`${newDate}${time}`);
+        return new Date(newDate2).toISOString();
+      }
+      const step1 = new Date(newDate);
       const dateNow = new Date();
       return set(new Date(step1), {
         hours: getHours(dateNow),
@@ -175,8 +183,8 @@ export const isoDate = ((date) => {
         .toISOString();
     }
   }
-  devlog.warn('Дата не валидная', date);
-  return date;
+  devlog.warn('Дата не валидная', str);
+  return str;
 });
 
 /**

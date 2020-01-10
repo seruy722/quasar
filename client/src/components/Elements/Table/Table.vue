@@ -111,6 +111,11 @@
                 },
             };
         },
+        // created() {
+        //     const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
+        //     el.setAttribute('style', `max-height: ${document.documentElement.clientHeight - 100}px`);
+        //     devlog.log('el', el);
+        // },
         methods: {
             filterMethod(rows, terms, cols, cellValue) {
                 // devlog.log('rows', rows);
@@ -130,7 +135,7 @@
 <style lang="stylus">
   .my-sticky-virtscroll-table
     .q-table__middle
-      max-height: 600px
+      max-height: 385px
 
     .q-table__top,
     .q-table__bottom,
