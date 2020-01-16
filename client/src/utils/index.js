@@ -18,3 +18,9 @@ export const jsonDecodeThings = ((val) => {
   }
   return val;
 });
+
+export const callFunction = ((func, args) => {
+  if (_.isFunction(func)) {
+    func(args);
+  }
+});

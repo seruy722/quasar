@@ -8,6 +8,7 @@
         <IconBtn
           color="white"
           icon="menu"
+          tooltip="Меню"
           @iconBtnClick="drawer = !drawer"
         />
         <q-toolbar-title>{{ $t(pageTitle) }}</q-toolbar-title>
@@ -28,6 +29,16 @@
     >
       <q-scroll-area class="fit">
         <q-list padding>
+          <q-item>
+            <q-item-section avatar>
+              <q-icon name="account_circle" size="md"/>
+            </q-item-section>
+
+            <q-item-section class="text-bold">
+              {{ userName }}
+            </q-item-section>
+          </q-item>
+
           <q-item
             v-for="(item, index) in menu"
             :key="index"
@@ -117,6 +128,9 @@
         computed: {
             pageTitle() {
                 return this.$route.meta.title;
+            },
+            userName() {
+                return _.get(this.$store.getters['auth/getUser'], 'name');
             },
         },
         methods: {

@@ -163,7 +163,7 @@ export const fullDate = ((date) => {
  * 27.12.2019 в 2019-12-27T14:16:31.745Z
  */
 export const isoDate = ((str) => {
-  if (_.isString(str)) {
+  if (str && _.isString(str)) {
     const [date, time] = _.split(str, ',');
     const newDate = _.join(_.reverse(_.split(date, '.')), '-');
     if (checkDate(newDate)) {
@@ -184,7 +184,8 @@ export const isoDate = ((str) => {
     }
   }
   devlog.warn('Дата не валидная', str);
-  return str;
+  devlog.log('Дата не валидная_2', str);
+  return null;
 });
 
 /**

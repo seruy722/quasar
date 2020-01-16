@@ -24,33 +24,18 @@
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="transfers">
             <Table
-              :table-properties="faxTableProperties"
+              :table-properties="transferTableProperties"
               :table-data="allTransfers"
-              :table-reactive-properties="faxTableReactiveProperties"
+              :table-reactive-properties="transferTableReactiveProperties"
               title="Переводы"
             >
               <template v-slot:top-buttons>
-                <!--              <IconBtn-->
-                <!--                color="positive"-->
-                <!--                icon="save"-->
-                <!--                tooltip="save"-->
-                <!--                :disable="!arrayToUpdate.length"-->
-                <!--                @iconBtnClick="updateFaxData"-->
-                <!--              />-->
-
-                <!--              <IconBtn-->
-                <!--                color="positive"-->
-                <!--                icon="explicit"-->
-                <!--                tooltip="excel"-->
-                <!--                @iconBtnClick="exportFaxData(currentFaxItem)"-->
-                <!--              />-->
-
-                <!--              <IconBtn-->
-                <!--                color="primary"-->
-                <!--                icon="update"-->
-                <!--                tooltip="update"-->
-                <!--                @iconBtnClick="updateAllPriceInFaxData(currentFaxItem.id)"-->
-                <!--              />-->
+                <IconBtn
+                  color="primary"
+                  icon="update"
+                  tooltip="Обновить"
+                  @iconBtnClick="refresh"
+                />
                 <IconBtn
                   color="positive"
                   tooltip="Excel"
@@ -65,16 +50,6 @@
                   class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
                   :style="props.selected ? 'transform: scale(0.95);' : ''"
                 >
-                  <!--                <Card-->
-                  <!--                  :class="props.selected ? 'bg-grey-2' : ''"-->
-                  <!--                  @clickCard="viewEditDialog(props)"-->
-                  <!--                >-->
-                  <!--                  <CardSection>-->
-                  <!--                    <CheckBox-->
-                  <!--                      v-model="props.selected"-->
-                  <!--                    />-->
-                  <!--                  </CardSection>-->
-                  <!--                  <Separator />-->
                   <List>
                     <q-expansion-item
                       expand-separator
@@ -92,12 +67,15 @@
                         </ItemSection>
 
                         <ItemSection>
-                          {{ props.row.client_name | truncateFilter(30) }}
+                          <ItemLabel :lines="2">
+                            {{ props.row.client_name }}
+                          </ItemLabel>
                         </ItemSection>
                       </template>
 
                       <List
                         separator
+                        dense
                         @clickList="viewEditDialog(props)"
                       >
                         <ListItem
@@ -113,19 +91,26 @@
                                 {{ col.value }}
                               </Badge>
                             </ItemLabel>
-                            <ItemLabel v-else-if="col.field === 'receiver_phone'">{{ col.value | phoneNumberFilter }}
+                            <ItemLabel v-else-if="col.field === 'receiver_phone'">
+                              {{ col.value | phoneNumberFilter }}
                             </ItemLabel>
-                            <ItemLabel v-else-if="col.field === 'receiver_name'">{{ col.value | truncateFilter(40) }}
+                            <ItemLabel v-else-if="col.field === 'receiver_name'">
+                              {{ col.value }}
                             </ItemLabel>
-                            <ItemLabel v-else-if="col.field === 'notation'">{{ col.value | truncateFilter(40) }}
+                            <ItemLabel
+                              v-else-if="col.field === 'notation'"
+                              :lines="3"
+                            >
+                              {{ col.value }}
                             </ItemLabel>
-                            <ItemLabel v-else>{{ col.value }}</ItemLabel>
+                            <ItemLabel v-else>
+                              {{ col.value }}
+                            </ItemLabel>
                           </ItemSection>
                         </ListItem>
                       </List>
                     </q-expansion-item>
                   </List>
-                  <!--                </Card>-->
                 </div>
               </template>
 
@@ -233,7 +218,7 @@
               dense
               icon="clear"
               tooltip="Закрыть"
-              @iconBtnClick="cancel"
+              @iconBtnClick="cancel(transferData)"
             />
           </div>
         </CardSection>
@@ -302,7 +287,10 @@
               dense
             >
               <template v-slot:append>
-                <Date :value.sync="item.value" />
+                <Date
+                  :value.sync="item.value"
+                  :change-value.sync="item.changeValue"
+                />
               </template>
             </BaseInput>
           </div>
@@ -313,7 +301,7 @@
           <BaseBtn
             label="Отмена"
             color="negative"
-            @clickBaseBtn="cancel"
+            @clickBaseBtn="cancel(transferData)"
           />
           <BaseBtn
             label="Сохранить"
@@ -339,6 +327,64 @@
         </PageScroller>
       </Fab>
     </PageSticky>
+    <List
+      separator
+      bordered
+      dense
+      style="max-width: 450px;margin: 0 auto;font-weight: bold;"
+    >
+      <ListItem>
+        <ItemSection>
+          <ItemLabel>Всего переводов:</ItemLabel>
+        </ItemSection>
+        <ItemSection side>
+          <ItemLabel>
+            <Badge>
+              {{ countTransfers }}
+            </Badge>
+          </ItemLabel>
+        </ItemSection>
+      </ListItem>
+
+      <ListItem>
+        <ItemSection>
+          <ItemLabel>Сумма:</ItemLabel>
+        </ItemSection>
+        <ItemSection side>
+          <ItemLabel>
+            <Badge>
+              {{ countSumTransfers }}
+            </Badge>
+          </ItemLabel>
+        </ItemSection>
+      </ListItem>
+
+      <ListItem>
+        <ItemSection>
+          <ItemLabel>Выбранных переводов:</ItemLabel>
+        </ItemSection>
+        <ItemSection side>
+          <ItemLabel>
+            <Badge color="info">
+              {{ countCheckedTransfers }}
+            </Badge>
+          </ItemLabel>
+        </ItemSection>
+      </ListItem>
+
+      <ListItem>
+        <ItemSection>
+          <ItemLabel>Сумма выбранных переводов:</ItemLabel>
+        </ItemSection>
+        <ItemSection side>
+          <ItemLabel>
+            <Badge color="info">
+              {{ countSumCheckedTransfers }}
+            </Badge>
+          </ItemLabel>
+        </ItemSection>
+      </ListItem>
+    </List>
   </q-page>
 </template>
 
@@ -348,8 +394,8 @@
     import { fullDate, formatToDotDate, isoDate } from 'src/utils/formatDate';
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
     import showNotif from 'src/mixins/showNotif';
-    import { sortCollection } from 'src/utils/sort';
     import ExportDataMixin from 'src/mixins/ExportData';
+    import { callFunction, countSumCollection, numberFormat } from 'src/utils/index';
 
     export default {
         name: 'Transfers',
@@ -373,8 +419,6 @@
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             Separator: () => import('src/components/Separator.vue'),
             SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-            // PopupEdit: () => import('src/components/PopupEdit.vue'),
-            // SelectWithSearchInput: () => import('src/components/Elements/SelectWithSearchInput.vue'),
             BaseSelect: () => import('src/components/Elements/BaseSelect.vue'),
             DialogAddCode: () => import('src/components/Dialogs/DialogAddCode.vue'),
             PageSticky: () => import('src/components/PageSticky.vue'),
@@ -391,22 +435,21 @@
                 }
                 return val;
             },
-            truncateFilter(str, maxSize) {
-                if (_.isString(str) && _.size(str) > maxSize) {
-                    return _.truncate(str, {
-                        length: maxSize,
-                        separator: ' ',
-                    });
-                }
-
-                return str;
-            },
+            // truncateFilter(str, maxSize) {
+            //     if (_.isString(str) && _.size(str) > maxSize) {
+            //         return _.truncate(str, {
+            //             length: maxSize,
+            //             separator: ' ',
+            //         });
+            //     }
+            //
+            //     return str;
+            // },
         },
         mixins: [CheckErrorsMixin, showNotif, ExportDataMixin],
         data() {
             return {
                 tab: 'transfers',
-                // intervalFunc: null,
                 localProps: {},
                 showCodeDialog: false,
                 dialog: false,
@@ -504,7 +547,7 @@
                         require: true,
                         requireError: 'Поле обьязательное для заполнения.',
                         changeValue: false,
-                        default: formatToDotDate(new Date().toISOString()),
+                        default: null,
                         value: formatToDotDate(new Date().toISOString()),
                     },
                     notation: {
@@ -516,8 +559,7 @@
                         value: '',
                     },
                 },
-                faxTableData: [],
-                faxTableProperties: {
+                transferTableProperties: {
                     columns: [
                         {
                             name: 'client_name',
@@ -592,10 +634,9 @@
                         },
                     ],
                 },
-                faxTableReactiveProperties: {
+                transferTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'notation', 'status_label', 'created_at', 'issued_by'],
-                    title: '',
+                    visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at', 'issued_by'],
                 },
             };
         },
@@ -607,10 +648,22 @@
                 return this.$store.getters['transfers/getTransfers'];
             },
             dialogTitle() {
-                return _.get(this.localProps, 'row.client_name') || 'Новая запись';
+                return _.get(this.localProps, 'row.client_name') || 'Новый перевод';
             },
             clientCodes() {
                 return this.$store.getters['clientCodes/getCodes'];
+            },
+            countTransfers() {
+                return numberFormat(_.size(this.allTransfers));
+            },
+            countSumTransfers() {
+                return numberFormat(countSumCollection(this.allTransfers, 'sum'));
+            },
+            countCheckedTransfers() {
+                return numberFormat(_.size(this.transferTableReactiveProperties.selected));
+            },
+            countSumCheckedTransfers() {
+                return numberFormat(countSumCollection(this.transferTableReactiveProperties.selected, 'sum'));
             },
         },
         watch: {
@@ -634,21 +687,9 @@
                 immediate: true,
             },
         },
-        // mounted() {
-        //     const socket = this.$io('http://localhost:8080');
-        //     socket.on('transfer-create:App\\Events\\TransferCreate', (data) => {
-        //         devlog.log('S_DATA', data);
-        //     });
-        // },
-        // beforeDestroy() {
-        //     clearInterval(this.intervalFunc);
-        // },
         created() {
             this.getTransfers();
             this.getClientCodes();
-            this.$nextTick(() => {
-                devlog.log('$nextTick');
-            });
         },
         methods: {
             updateData(data) {
@@ -670,21 +711,23 @@
                           this.openCloseDialog(false);
                           this.$q.loading.hide();
                           this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно добавлена.`, 'center');
+                      })
+                      .catch((errors) => {
+                          this.$q.loading.hide();
+                          this.errorsData.errors = _.get(errors, 'response.data.errors');
                       });
                 } else if (_.has(this.localProps, 'row.id')) {
                     // ОБНОВЛЕНИЕ ЗАПИСИ
                     if (_.some(sendData, 'changeValue')) {
                         this.$q.loading.show();
+                        devlog.log('sendData_', sendData);
                         const dataToSend = _.reduce(sendData, (result, { value, changeValue }, index) => {
-                            if (changeValue) {
-                                result[index] = value;
-                            }
-
-                            if (index === 'issued_by') {
+                            if (changeValue && index === 'issued_by') {
                                 result[index] = isoDate(value);
-                            }
-                            if (index === 'receiver_name') {
+                            } else if (changeValue && index === 'receiver_name' && value) {
                                 result[index] = _.startCase(_.toLower(value));
+                            } else if (changeValue) {
+                                result[index] = value;
                             }
                             return result;
                         }, {});
@@ -697,7 +740,12 @@
                               this.localProps.selected = false;
                               this.$q.loading.hide();
                               this.setChangeValue(this.transferData);
+                              this.setChangeValue(this.transferData);
                               this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно обновлена.`, 'center');
+                          })
+                          .catch((errors) => {
+                              this.$q.loading.hide();
+                              this.errorsData.errors = _.get(errors, 'response.data.errors');
                           });
                     } else {
                         this.openCloseDialog(false);
@@ -709,7 +757,7 @@
                 this.openCloseDialog(true);
                 if (val) {
                     this.localProps = val;
-                    this.faxTableReactiveProperties.selected = [];
+                    this.transferTableReactiveProperties.selected = [];
                     setTimeout(() => {
                         val.selected = !val.selected;
                     }, 100);
@@ -719,6 +767,8 @@
                         if (_.has(val.row, item.field)) {
                             if (_.get(val, `row[${item.field}]`)) {
                                 _.set(item, 'value', _.get(val, `row[${item.field}]`));
+                            } else {
+                                _.set(item, 'value', item.default);
                             }
                         }
                     });
@@ -767,11 +817,9 @@
                   .then(({ data: { transfers } }) => {
                       this.$store.dispatch('transfers/setTransfers', this.setAdditionalData(transfers));
                       this.$q.loading.hide();
-                      // this.intervalFunc = setInterval(() => {
-                      //     devlog.log('ISO', _.get(this.allTransfers, '[0].created_at'));
-                      //     devlog.log('ISO_2', isoDate(_.get(this.allTransfers, '[2].created_at')));
-                      //     this.$axios.post(getUrl('getNewTransfers'), { created_at: isoDate(_.get(this.allTransfers, '[0].created_at')) });
-                      // }, 30000);
+                  })
+                  .catch(() => {
+                      this.$q.loading.hide();
                   });
             },
             setAdditionalData(data) {
@@ -784,9 +832,10 @@
             openCloseDialog(val) {
                 this.dialog = val;
             },
-            cancel() {
+            cancel(data) {
                 this.openCloseDialog(false);
                 this.localProps.selected = false;
+                this.setChangeValue(data);
             },
             getClientCodes() {
                 if (_.isEmpty(this.clientCodes)) {
@@ -794,10 +843,10 @@
                 }
             },
             async refresh(done) {
-                devlog.log('CL', sortCollection(this.allTransfers, 'updated_at'));
+                devlog.log('CL', this.allTransfers, 'updated_at');
                 await this.$axios.post(getUrl('getNewTransfers'), {
                     created_at: isoDate(_.get(this.allTransfers, '[0].created_at')),
-                    updated_at: _.get(_.last(sortCollection(this.allTransfers, 'updated_at')), 'updated_at'),
+                    updated_at: _.get(_.maxBy(this.allTransfers, 'updated_at'), 'updated_at'),
                 })
                   .then(({ data: { transfers } }) => {
                       devlog.log('DTA', transfers);
@@ -814,16 +863,18 @@
                       } else {
                           this.showNotif('info', 'Данные актуальны.', 'center');
                       }
-                      done();
+                      callFunction(done);
                   })
                   .catch(() => {
-                      done();
+                      callFunction(done);
                   });
             },
             exportTransfers() {
-                this.exportDataToExcel(getUrl('exportTransfers'), {
-                    ids: _.map(this.faxTableReactiveProperties.selected, 'id'),
-                }, 'Переводы.xlsx');
+                if (!_.isEmpty(this.allTransfers)) {
+                    this.exportDataToExcel(getUrl('exportTransfers'), {
+                        ids: _.map(this.transferTableReactiveProperties.selected, 'id'),
+                    }, 'Переводы.xlsx');
+                }
             },
         },
     };

@@ -8,30 +8,64 @@ use App\Http\Controllers\Controller;
 
 class TransferController extends Controller
 {
-    public function index()
+    protected $rules = [
+        'client_id' => 'required|numeric',
+        'receiver_name' => 'required|string|max:255',
+        'receiver_phone' => 'required|string|max:100',
+        'sum' => 'required|numeric',
+        'method' => 'required|numeric',
+        'status' => 'required|numeric',
+        'issued_by' => 'nullable|date',
+        'notation' => 'nullable|string|max:255',
+    ];
+
+    public function stripData($value)
     {
-        $transferData = Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name')
+        $func = function ($value) {
+            if (!$value) {
+                return null;
+            }
+            return $value;
+        };
+        $arr = array_map("trim", $value);
+        $arr = array_map("stripcslashes", $arr);
+        $arr = array_map("strip_tags", $arr);
+        $arr = array_map($func, $arr);
+        return $arr;
+    }
+
+    public function query()
+    {
+        return Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name')
             ->join('codes', 'transfers.client_id', '=', 'codes.id')
             ->join('users', 'transfers.user_id', '=', 'users.id')
-            ->orderBy('id', 'DESC')
-            ->get();
-        return response(['transfers' => $transferData]);
+            ->orderBy('id', 'DESC');
+    }
+
+    public function index()
+    {
+        return response(['transfers' => $this->query()->get()]);
     }
 
     public function update(Request $request)
     {
-        $data = $request->except('id');
-        if ($request->issued_by) {
-            $data['issued_by'] = date("Y-m-d H:i:s", strtotime($request->issued_by));
+        $data = $this->stripData($request->except('id'));
+        if (array_key_exists('issued_by', $data) && $data['issued_by']) {
+//            $data['issued_by'] = date("Y-m-d H:i:s", strtotime($data['issued_by']));
+            $data['issued_by'] = \Illuminate\Support\Carbon::parse(strtotime($data['issued_by']))->toDateTimeString();
         }
+
+        $rul = [];
+        foreach ($this->rules as $key => $value) {
+            if (array_key_exists($key, $data)) {
+                $rul[$key] = $value;
+            }
+        }
+
+        $this->validate($request, $rul);
+
         Transfer::where('id', $request->id)->update($data);
-        $transferData = Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name')
-            ->join('codes', 'transfers.client_id', '=', 'codes.id')
-            ->join('users', 'transfers.user_id', '=', 'users.id')
-            ->orderBy('id', 'DESC')
-            ->where('transfers.id', $request->id)
-            ->get();
-        return response(['transfer' => $transferData]);
+        return response(['transfer' => $this->query()->where('transfers.id', $request->id)->get()]);
     }
 
     public function store(Request $request)
@@ -54,32 +88,23 @@ class TransferController extends Controller
             $transferArr['notation'] = $request->notation;
         }
 
-        $transfer = Transfer::create($transferArr);
-        $transferData = Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name')
-            ->join('codes', 'transfers.client_id', '=', 'codes.id')
-            ->join('users', 'transfers.user_id', '=', 'users.id')
-            ->orderBy('id', 'DESC')
-            ->where('transfers.id', $transfer->id)
-            ->get();
+        $this->validate($request, $this->rules);
+
+        $transfer = Transfer::create($this->stripData($transferArr));
 //        event(new \App\Events\TransferCreate($transferData));
-        return response(['transfer' => $transferData]);
+        return response(['transfer' => $this->query()->where('transfers.id', $transfer->id)->get()]);
     }
 
-    public function newTransfers(Request $request)
+    public function getNewTransfers(Request $request)
     {
         $this->validate($request, [
             'created_at' => 'required|max:100',
             'updated_at' => 'required|date',
         ]);
-
-        $transferData = Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name')
-            ->join('codes', 'transfers.client_id', '=', 'codes.id')
-            ->join('users', 'transfers.user_id', '=', 'users.id')
-            ->orderBy('id', 'DESC')
+        return response(['transfers' => $this->query()
             ->where('transfers.created_at', '>', \Illuminate\Support\Carbon::parse($request->created_at)->toDateTimeString())
             ->orWhere('transfers.updated_at', '>', $request->updated_at)
-            ->get();
-        return response(['transfers' => $transferData]);
+            ->get()]);
     }
 
     public function export(Request $request)

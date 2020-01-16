@@ -8,7 +8,7 @@
       :visible-columns="tableReactiveProperties.visibleColumns"
       :pagination.sync="pagination"
       :selection="tableProperties.selection || 'multiple'"
-      :grid="$q.screen.xs"
+      :grid="$q.screen.lt.sm"
       dense
       row-key="id"
       :selected.sync="tableReactiveProperties.selected"
@@ -18,6 +18,7 @@
       :separator="tableProperties.separator || 'cell'"
       :hide-bottom="tableProperties.hideBottom"
       :virtual-scroll-sticky-start="48"
+      :sort-method="customSort"
       class="my-sticky-virtscroll-table"
       virtual-scroll
     >
@@ -45,6 +46,14 @@
         <q-space />
 
         <Search v-model="search" />
+
+        <BaseSelect
+          v-model="searchField"
+          label="Поле"
+          style="min-width: 110px;padding-bottom: 0;"
+          :dense="true"
+          :options="searchOptionsFields"
+        />
 
         <q-space />
         <IconBtn
@@ -80,6 +89,7 @@
         components: {
             Search: () => import('src/components/Search.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+            BaseSelect: () => import('src/components/Elements/BaseSelect.vue'),
         },
         props: {
             title: {
@@ -98,10 +108,10 @@
                 type: Array,
                 default: () => [],
             },
-            selected: {
-                type: Array,
-                default: () => [],
-            },
+            // selected: {
+            //     type: Array,
+            //     default: () => [],
+            // },
         },
         data() {
             return {
@@ -109,24 +119,65 @@
                 pagination: {
                     rowsPerPage: 20,
                 },
+                searchField: 'Все',
+                searchOptionsFields: [],
             };
         },
-        // created() {
-        //     const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
-        //     el.setAttribute('style', `max-height: ${document.documentElement.clientHeight - 100}px`);
-        //     devlog.log('el', el);
-        // },
+        created() {
+            // const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
+            // el.setAttribute('style', `max-height: ${document.documentElement.clientHeight - 100}px`);
+            // devlog.log('el', el);
+            this.searchOptionsFields = _.map(_.get(this.tableProperties, 'columns'), ({ label, name }) => _.assign({}, {
+                label,
+                value: name,
+            }));
+            this.$nextTick(() => {
+                this.searchOptionsFields.unshift({
+                    label: 'Все',
+                    value: 'Все',
+                });
+            });
+        },
         methods: {
             filterMethod(rows, terms, cols, cellValue) {
                 // devlog.log('rows', rows);
                 // devlog.log('cols', cols);
                 // devlog.log('cellValue', cellValue);
                 // devlog.log('terms', terms);
+                // devlog.log('this.searchField', this.searchField === 'Все');
+                const newCols = this.searchField === 'Все' ? cols : _.filter(cols, { name: this.searchField });
+                devlog.log('newCols', newCols);
                 const lowerTerms = terms ? terms.toLowerCase() : '';
                 return rows.filter(
-                  (row) => cols.some((col) => (`${cellValue(col, row)} `).toLowerCase()
+                  (row) => newCols.some((col) => (`${cellValue(col, row)} `).toLowerCase()
                     .indexOf(lowerTerms) !== -1),
                 );
+            },
+            customSort(rows, sortBy, descending) {
+                const data = [...rows];
+                devlog.log('sortBy', sortBy);
+
+                if (sortBy) {
+                    data.sort((a, b) => {
+                        const x = descending ? b : a;
+                        const y = descending ? a : b;
+                        // devlog.log('A', a[sortBy]);
+                        // devlog.log('B', b[sortBy]);
+
+                        if (_.isString(a[sortBy])) {
+                            let num = 0;
+                            if (x[sortBy] > y[sortBy]) {
+                                num = 1;
+                            } else if (x[sortBy] < y[sortBy]) {
+                                num = -1;
+                            }
+                            return num;
+                            // return x[sortBy] > y[sortBy] ? 1 : x[sortBy] < y[sortBy] ? -1 : 0;
+                        }
+                        return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
+                    });
+                }
+                return data;
             },
         },
     };
