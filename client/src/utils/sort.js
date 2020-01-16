@@ -1,5 +1,5 @@
 const checkValue = (array) => _.isArray(array);
-
+// СОРТИРОВКА МАССИВА ДАННЫХ КАК ЧИСЛА
 export const sortArray = ((array) => {
   if (checkValue(array)) {
     return array.sort((a, b) => a.localeCompare(b, undefined, {
@@ -10,7 +10,7 @@ export const sortArray = ((array) => {
   devlog.warn('Переменная ', array, ' не массив!');
   return [];
 });
-
+// СОРТИРУЕТ МАССИВ ОБЬЕКТОВ ДАННЫЕ КАК ЧИСЛА
 export const sortArrayCollection = ((array, field) => {
   if (checkValue(array)) {
     return array.sort((a, b) => a[field].localeCompare(b[field], undefined, {
@@ -21,5 +21,5 @@ export const sortArrayCollection = ((array, field) => {
   devlog.warn('Переменная ', array, ' не массив!');
   return array;
 });
-
+// СОРТИРУЕТ МАССИВ ИЛИ МАССИВ ОБЬЕКТОВ
 export const sortCollection = (collection, field, order = 'asc') => _.orderBy(collection, field, [order]);

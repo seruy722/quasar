@@ -396,6 +396,7 @@
     import showNotif from 'src/mixins/showNotif';
     import ExportDataMixin from 'src/mixins/ExportData';
     import { callFunction, countSumCollection, numberFormat } from 'src/utils/index';
+    import { sortCollection } from 'src/utils/sort';
 
     export default {
         name: 'Transfers',
@@ -852,14 +853,22 @@
                       devlog.log('DTA', transfers);
                       if (!_.isEmpty(transfers)) {
                           const { allTransfers } = this;
+                          const createdItems = [];
                           _.forEach(transfers, (item) => {
                               const find = _.some(allTransfers, ['id', item.id]);
                               if (find) {
                                   this.$store.dispatch('transfers/updateTransfer', this.setAdditionalData([item]));
                               } else {
-                                  this.$store.dispatch('transfers/addTransfer', this.setAdditionalData([item]));
+                                  createdItems.push(item);
                               }
                           });
+
+                          if (!_.isEmpty(createdItems)) {
+                              _.forEach(sortCollection(createdItems, 'id'), (elem) => {
+                                  this.$store.dispatch('transfers/addTransfer', this.setAdditionalData([elem]));
+                              });
+                          }
+
                           this.showNotif('success', 'Данные успешно обновлены.', 'center');
                       } else {
                           this.showNotif('info', 'Данные актуальны.', 'center');
