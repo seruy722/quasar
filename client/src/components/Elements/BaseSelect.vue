@@ -14,7 +14,7 @@
     @input="inputEvent"
   >
     <template v-slot:prepend>
-      <q-icon :name="icon" />
+      <slot name="prepend"></slot>
     </template>
   </q-select>
 </template>

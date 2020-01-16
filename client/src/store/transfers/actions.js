@@ -1,7 +1,10 @@
 import JobQueue from 'src/utils/JobQueue';
 
 export const setTransfers = (({ commit }, data) => {
-  const size = 5;
+  let size = 5;
+  if (_.size(data) >= 60) {
+    size = 30;
+  }
   const queue = new JobQueue();
   // devlog.log('queue', queue);
   _.forEach(_.chunk(data, _.size(data) / size), (chunk) => {
