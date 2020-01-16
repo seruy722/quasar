@@ -108,10 +108,6 @@
                 type: Array,
                 default: () => [],
             },
-            // selected: {
-            //     type: Array,
-            //     default: () => [],
-            // },
         },
         data() {
             return {
@@ -163,18 +159,20 @@
                         const y = descending ? a : b;
                         // devlog.log('A', a[sortBy]);
                         // devlog.log('B', b[sortBy]);
-
-                        if (_.isString(a[sortBy])) {
-                            let num = 0;
-                            if (x[sortBy] > y[sortBy]) {
-                                num = 1;
-                            } else if (x[sortBy] < y[sortBy]) {
-                                num = -1;
-                            }
-                            return num;
-                            // return x[sortBy] > y[sortBy] ? 1 : x[sortBy] < y[sortBy] ? -1 : 0;
+                        // devlog.log('descending', descending);
+                        if (!_.isNaN(_.toNumber(a[sortBy])) && !_.isNaN(_.toNumber(b[sortBy]))) {
+                            devlog.log('STRING_SORT', _.toNumber(a[sortBy]));
+                            return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
                         }
-                        return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
+                        let num = 0;
+                        if (x[sortBy] > y[sortBy]) {
+                            num = 1;
+                        } else if (x[sortBy] < y[sortBy]) {
+                            num = -1;
+                        }
+                        devlog.log('NUM', num);
+                        return num;
+                        // return x[sortBy] > y[sortBy] ? 1 : x[sortBy] < y[sortBy] ? -1 : 0;
                     });
                 }
                 return data;

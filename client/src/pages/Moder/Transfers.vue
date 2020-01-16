@@ -845,14 +845,15 @@
             async refresh(done) {
                 devlog.log('CL', this.allTransfers, 'updated_at');
                 await this.$axios.post(getUrl('getNewTransfers'), {
-                    created_at: isoDate(_.get(this.allTransfers, '[0].created_at')),
+                    created_at: isoDate(_.get(_.maxBy(this.allTransfers, 'created_at'), 'created_at')),
                     updated_at: _.get(_.maxBy(this.allTransfers, 'updated_at'), 'updated_at'),
                 })
                   .then(({ data: { transfers } }) => {
                       devlog.log('DTA', transfers);
                       if (!_.isEmpty(transfers)) {
+                          const { allTransfers } = this;
                           _.forEach(transfers, (item) => {
-                              const find = _.some(this.allTransfers, ['id', item.id]);
+                              const find = _.some(allTransfers, ['id', item.id]);
                               if (find) {
                                   this.$store.dispatch('transfers/updateTransfer', this.setAdditionalData([item]));
                               } else {

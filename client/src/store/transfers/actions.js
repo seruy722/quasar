@@ -1,14 +1,20 @@
+import JobQueue from 'src/utils/JobQueue';
+
 export const setTransfers = (({ commit }, data) => {
-  // const size = 10;
-  // if (!_.isEmpty(data)) {
-  //   _.forEach(_.chunk(data, _.size(data) / size), (item, index) => {
-  //     setTimeout(() => {
-  //       devlog.log('INDEX', index);
-  //       commit('SET_TRANSFERS', item);
-  //     }, 3000);
-  //   });
-  // }
-  commit('SET_TRANSFERS', data);
+  const size = 5;
+  const queue = new JobQueue();
+  // devlog.log('queue', queue);
+  _.forEach(_.chunk(data, _.size(data) / size), (chunk) => {
+    queue.addJob((done) => {
+      requestAnimationFrame(() => {
+        commit('SET_TRANSFERS', chunk);
+        // devlog.log('RF', chunk);
+        done();
+      });
+    });
+  });
+
+  queue.start();
 });
 
 export const addTransfer = (({ commit }, data) => {
