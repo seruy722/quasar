@@ -7,7 +7,7 @@ export const setTransfers = (({ commit }, data) => {
   }
   const queue = new JobQueue();
   // devlog.log('queue', queue);
-  _.forEach(_.chunk(data, _.size(data) / size), (chunk) => {
+  _.forEach(_.chunk(data, size), (chunk) => {
     queue.addJob((done) => {
       requestAnimationFrame(() => {
         commit('SET_TRANSFERS', chunk);
