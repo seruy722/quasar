@@ -711,6 +711,7 @@
                           devlog.log('DDFR', transfer);
                           this.$store.dispatch('transfers/addTransfer', this.setAdditionalData([_.first(transfer)]));
                           this.openCloseDialog(false);
+                          this.setChangeValue(this.transferData);
                           this.$q.loading.hide();
                           this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно добавлена.`, 'center');
                       })
@@ -741,7 +742,6 @@
                               this.openCloseDialog(false);
                               this.localProps.selected = false;
                               this.$q.loading.hide();
-                              this.setChangeValue(this.transferData);
                               this.setChangeValue(this.transferData);
                               this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно обновлена.`, 'center');
                           })
