@@ -65,6 +65,7 @@ class TransferController extends Controller
         $this->validate($request, $rul);
 
         Transfer::where('id', $request->id)->update($data);
+        $this->storeTransferHistory($request->id, $data);
         return response(['transfer' => $this->query()->where('transfers.id', $request->id)->get()]);
     }
 
@@ -110,5 +111,30 @@ class TransferController extends Controller
     public function export(Request $request)
     {
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\TransfersExport($request->ids), 'transfers.xlsx');
+    }
+
+    public function storeTransferHistory($id, $data)
+    {
+        if (!array_key_exists('client_id', $data)) {
+            $transfer = Transfer::find($id);
+            if ($transfer) {
+                $data['client_id'] = $transfer->client_id;
+            }
+        }
+        $data['transfer_id'] = $id;
+        $data['user_id'] = auth()->user()->id;
+        \App\TransfersActionHistory::create($data);
+    }
+
+    public function getTransferHistory($id)
+    {
+        $transfer = $this->query()->where('transfers.id', $id)->first();
+        $transfersHistory = \App\TransfersActionHistory::select('transfers_action_histories.*', 'codes.code as client_name', 'users.name as user_name')
+            ->join('codes', 'transfers_action_histories.client_id', '=', 'codes.id')
+            ->join('users', 'transfers_action_histories.user_id', '=', 'users.id')
+            ->orderBy('created_at')
+            ->where('transfers_action_histories.transfer_id', $id)
+            ->get();
+        return response(['transferHistory' => $transfersHistory, 'transfer' => $transfer]);
     }
 }

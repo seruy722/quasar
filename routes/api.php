@@ -107,6 +107,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/store-transfers', 'Api\TransferController@store');
     Route::post('/get-new-transfers', 'Api\TransferController@getNewTransfers');
     Route::post('/export-transfers', 'Api\TransferController@export');
+    // TRANSFERS HISTORY
+    Route::get('/transfers-history/{id}', 'Api\TransferController@getTransferHistory');
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды
     Route::get('/export-brands-customers', function () {

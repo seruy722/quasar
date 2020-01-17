@@ -44,6 +44,7 @@ const urls = {
   storeTransfers: `${prefix}/store-transfers`,
   getNewTransfers: `${prefix}/get-new-transfers`,
   exportTransfers: `${prefix}/export-transfers`,
+  transfersHistory: `${prefix}/transfers-history`,
   axiosData: {
     baseURL: process.env.API,
     // 'http://sp.com.ua'

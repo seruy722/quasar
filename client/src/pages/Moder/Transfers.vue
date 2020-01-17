@@ -202,6 +202,7 @@
 
           <q-tab-panel name="alarms">
             <div class="text-h6">Пусто</div>
+            <q-btn @click="getTransfersHistory(15)">GET</q-btn>
           </q-tab-panel>
         </q-tab-panels>
       </q-card>
@@ -885,6 +886,10 @@
                         ids: _.map(this.transferTableReactiveProperties.selected, 'id'),
                     }, 'Переводы.xlsx');
                 }
+            },
+            // this.$axios.get(`${getUrl('codeExist')}${this.inputCode.value}`)
+            async getTransfersHistory(transferID) {
+                await this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`);
             },
         },
     };
