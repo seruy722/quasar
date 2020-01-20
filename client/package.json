@@ -1,8 +1,8 @@
 {
   "name": "client2",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A Quasar Framework app",
-  "productName": "App",
+  "productName": "App Cargo",
   "cordovaId": "org.cordova.quasar.app",
   "author": "Den",
   "private": true,
@@ -12,7 +12,9 @@
     "dev:pwa": "quasar dev -m pwa",
     "build:pwa": "quasar build",
     "dev:web": "quasar dev",
-    "build:web": "quasar build"
+    "dev:android": "quasar dev -m cordova -T android",
+    "build:web": "quasar build",
+    "build:android": "quasar build -m android"
   },
   "dependencies": {
     "@quasar/extras": "^1.4.2",
