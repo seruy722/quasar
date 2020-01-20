@@ -4,7 +4,7 @@
     :label="label"
     :push="push"
     data-vue-component-name="BaseBtn"
-    @click="$emit('clickBaseBtn')"
+    @click.stop="$emit('clickBaseBtn')"
   />
 </template>
 

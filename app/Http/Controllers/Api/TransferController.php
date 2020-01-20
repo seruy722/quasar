@@ -92,6 +92,7 @@ class TransferController extends Controller
         $this->validate($request, $this->rules);
 
         $transfer = Transfer::create($this->stripData($transferArr));
+        $this->storeTransferHistory($transfer->id, $this->stripData($transferArr));
 //        event(new \App\Events\TransferCreate($transferData));
         return response(['transfer' => $this->query()->where('transfers.id', $transfer->id)->get()]);
     }
@@ -128,13 +129,16 @@ class TransferController extends Controller
 
     public function getTransferHistory($id)
     {
-        $transfer = $this->query()->where('transfers.id', $id)->first();
         $transfersHistory = \App\TransfersActionHistory::select('transfers_action_histories.*', 'codes.code as client_name', 'users.name as user_name')
             ->join('codes', 'transfers_action_histories.client_id', '=', 'codes.id')
             ->join('users', 'transfers_action_histories.user_id', '=', 'users.id')
-            ->orderBy('created_at')
+            ->orderBy('id')
             ->where('transfers_action_histories.transfer_id', $id)
             ->get();
-        return response(['transferHistory' => $transfersHistory, 'transfer' => $transfer]);
+//        if (!empty($transfersHistory)) {
+//            $transfer = $this->query()->where('transfers.id', $id)->first();
+//            return response(['transferHistory' => $transfersHistory, 'transfer' => $transfer]);
+//        }
+        return response(['transferHistory' => $transfersHistory]);
     }
 }

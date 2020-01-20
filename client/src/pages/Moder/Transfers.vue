@@ -88,6 +88,15 @@
                     </ItemLabel>
                   </ItemSection>
                 </ListItem>
+                <ListItem>
+                  <ItemSection>
+                    <BaseBtn
+                      label="История"
+                      color="info"
+                      @clickBaseBtn="getTransfersHistory(props.row.id, props.cols)"
+                    />
+                  </ItemSection>
+                </ListItem>
               </List>
             </q-expansion-item>
           </div>
@@ -261,6 +270,13 @@
           <div>
             <IconBtn
               dense
+              icon="history"
+              tooltip="История"
+              @iconBtnClick="getTransfersHistory(localProps.row.id, localProps.cols)"
+            />
+
+            <IconBtn
+              dense
               icon="clear"
               tooltip="Закрыть"
               @iconBtnClick="cancel(transferData)"
@@ -357,6 +373,31 @@
       </Card>
     </Dialog>
     <DialogAddCode :show-dialog.sync="showCodeDialog" />
+
+    <Dialog
+      :dialog="dialogHistory"
+      :persistent="true"
+      :maximized="true"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <Card style="max-width: 600px;">
+        <q-bar>
+          <q-space />
+          <IconBtn
+            flat
+            dense
+            icon="close"
+            tooltip="Закрыть"
+            @iconBtnClick="dialogHistory = false"
+          />
+        </q-bar>
+
+        <CardSection class="q-pt-none">
+          <Timeline :transfer-history-data="transferHistoryData" />
+        </CardSection>
+      </Card>
+    </Dialog>
   </q-page>
 </template>
 
@@ -369,6 +410,7 @@
     import ExportDataMixin from 'src/mixins/ExportData';
     import { callFunction, countSumCollection, numberFormat } from 'src/utils/index';
     import { sortCollection } from 'src/utils/sort';
+    import TransferMixin from 'src/mixins/Transfer';
 
     export default {
         name: 'Transfers',
@@ -402,6 +444,7 @@
             // PullRefresh: () => import('src/components/PullRefresh.vue'),
             // Skeleton: () => import('src/components/Elements/Skeleton.vue'),
             TransfersListSkeleton: () => import('src/components/Skeletons/Transfers/TransfersListSkeleton.vue'),
+            Timeline: () => import('src/components/Timeline/Timeline.vue'),
         },
         filters: {
             phoneNumberFilter(val) {
@@ -410,21 +453,15 @@
                 }
                 return val;
             },
-            // truncateFilter(str, maxSize) {
-            //     if (_.isString(str) && _.size(str) > maxSize) {
-            //         return _.truncate(str, {
-            //             length: maxSize,
-            //             separator: ' ',
-            //         });
-            //     }
-            //
-            //     return str;
-            // },
         },
-        mixins: [CheckErrorsMixin, showNotif, ExportDataMixin],
+        mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
         data() {
             return {
-                tab: 'transfers',
+                dialogHistory: false,
+                transferHistoryData: {
+                    cols: {},
+                    transferHistory: [],
+                },
                 viewSkeleton: true,
                 localProps: {},
                 showCodeDialog: false,
@@ -801,10 +838,10 @@
             setAdditionalData(data) {
                 return this.setMethodLabel(this.setStatusLabel(this.setFormatedDate(data)));
             },
-            statusColor(value) {
-                const findLabel = _.find(getFromSettings('transferStatus'), { value }) || _.find(getFromSettings('transferStatus'), { label: value });
-                return _.get(findLabel, 'color');
-            },
+            // statusColor(value) {
+            //     const findLabel = _.find(getFromSettings('transferStatus'), { value }) || _.find(getFromSettings('transferStatus'), { label: value });
+            //     return _.get(findLabel, 'color');
+            // },
             openCloseDialog(val) {
                 this.dialog = val;
             },
@@ -861,8 +898,26 @@
                     }, 'Переводы.xlsx');
                 }
             },
-            async getTransfersHistory(transferID) {
-                await this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`);
+            async getTransfersHistory(transferID, cols) {
+                this.$q.loading.show();
+                await this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`)
+                  .then(({ data: { transferHistory } }) => {
+                      if (_.size(transferHistory) > 1) {
+                          this.$q.loading.hide();
+                          this.dialogHistory = true;
+                          this.transferHistoryData.cols = _.reduce(cols, (result, { label, name }) => {
+                              result[name] = label;
+                              return result;
+                          }, {});
+                          this.transferHistoryData.transferHistory = this.setAdditionalData(transferHistory);
+                      } else {
+                          this.$q.loading.hide();
+                          this.showNotif('info', 'По этому переводу нет истории.', 'center');
+                      }
+                  })
+                  .catch(() => {
+                      devlog.error('Ошибка при получении данных истории.');
+                  });
             },
         },
     };

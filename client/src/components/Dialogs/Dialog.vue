@@ -1,11 +1,14 @@
 <template>
-    <q-dialog
-        v-model="modelData"
-        :persistent="persistent"
-        data-vue-component-name="Dialog"
-    >
-      <slot></slot>
-    </q-dialog>
+  <q-dialog
+    v-model="modelData"
+    :persistent="persistent"
+    :maximized="maximized"
+    :transition-show="transitionShow"
+    :transition-hide="transitionHide"
+    data-vue-component-name="Dialog"
+  >
+    <slot></slot>
+  </q-dialog>
 </template>
 
 <script>
@@ -19,6 +22,18 @@
             persistent: {
                 type: Boolean,
                 default: false,
+            },
+            maximized: {
+                type: Boolean,
+                default: false,
+            },
+            transitionShow: {
+                type: String,
+                default: 'scale',
+            },
+            transitionHide: {
+                type: String,
+                default: 'scale',
             },
         },
         computed: {

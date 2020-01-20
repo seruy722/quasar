@@ -10,8 +10,9 @@
         data-vue-component-name="IconBtn"
         @click.stop="$emit('iconBtnClick')"
     >
-        <slot></slot>
-        <q-tooltip>{{ tooltip }}</q-tooltip>
+        <slot>
+          <q-tooltip>{{ tooltip }}</q-tooltip>
+        </slot>
     </q-btn>
 </template>
 
