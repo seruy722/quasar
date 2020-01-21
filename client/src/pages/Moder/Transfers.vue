@@ -269,6 +269,7 @@
           <span class="text-h6">{{ dialogTitle }}</span>
           <div>
             <IconBtn
+              v-if="localProps.row"
               dense
               icon="history"
               tooltip="История"
@@ -822,18 +823,22 @@
                 return value;
             },
             async getTransfers() {
-                this.$q.loading.show();
-                await this.$axios.get(getUrl('transfers'))
-                  .then(({ data: { transfers } }) => {
-                      this.$store.dispatch('transfers/setTransfers', this.setAdditionalData(transfers));
-                      this.$q.loading.hide();
-                      setTimeout(() => {
-                          this.viewSkeleton = false;
-                      }, 2000);
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                  });
+                if (_.isEmpty(this.allTransfers)) {
+                    this.$q.loading.show();
+                    await this.$axios.get(getUrl('transfers'))
+                      .then(({ data: { transfers } }) => {
+                          this.$store.dispatch('transfers/setTransfers', this.setAdditionalData(transfers));
+                          this.$q.loading.hide();
+                          setTimeout(() => {
+                              this.viewSkeleton = false;
+                          }, 2000);
+                      })
+                      .catch(() => {
+                          this.$q.loading.hide();
+                      });
+                } else {
+                    this.viewSkeleton = false;
+                }
             },
             setAdditionalData(data) {
                 return this.setMethodLabel(this.setStatusLabel(this.setFormatedDate(data)));
