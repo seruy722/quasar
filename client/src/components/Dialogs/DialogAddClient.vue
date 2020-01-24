@@ -31,6 +31,7 @@
               :label="item.label"
               :dense="$q.screen.xs || $q.screen.sm"
               :field="item.field"
+              :func-load-data="item.funcLoadData"
               :options="item.options"
               :errors="errorsData"
             />
@@ -85,6 +86,7 @@
     import OnKeyUp from 'src/mixins/OnKeyUp';
     import showNotif from 'src/mixins/showNotif';
     import getFromSettings from 'src/tools/settings';
+    import FrequentlyCalledFunctions from 'src/mixins/FrequentlyCalledFunctions';
 
     export default {
         name: 'DialogAddClient',
@@ -102,7 +104,7 @@
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
         },
-        mixins: [OnKeyUp, showNotif, CheckErrorsMixin],
+        mixins: [OnKeyUp, showNotif, CheckErrorsMixin, FrequentlyCalledFunctions],
         props: {
             showDialog: {
                 type: Boolean,
@@ -125,8 +127,9 @@
                         options: [],
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
-                        default: 0,
-                        value: 0,
+                        funcLoadData: this.getClientCodes,
+                        default: null,
+                        value: null,
                     },
                     name: {
                         type: 'text',
@@ -175,8 +178,9 @@
                         options: [],
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
-                        default: 0,
-                        value: 0,
+                        funcLoadData: this.getCities,
+                        default: null,
+                        value: null,
                     },
                     sex: {
                         type: 'select',
@@ -227,16 +231,16 @@
                 immediate: true,
             },
         },
-        created() {
-            this.getCities();
-        },
+        // created() {
+        //     this.getCities();
+        // },
         methods: {
-            async getCities() {
-                await this.$axios.get(getUrl('cities'))
-                  .then(({ data }) => {
-                      this.$store.dispatch('cities/setCities', data);
-                  });
-            },
+            // async getCities() {
+            //     await this.$axios.get(getUrl('cities'))
+            //       .then(({ data }) => {
+            //           this.$store.dispatch('cities/setCities', data);
+            //       });
+            // },
             saveData({
                          name,
                          sex,

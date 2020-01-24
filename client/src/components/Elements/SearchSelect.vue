@@ -58,6 +58,11 @@
                 type: Boolean,
                 default: false,
             },
+            funcLoadData: {
+                type: Function,
+                default: () => {
+                },
+            },
             errors: {
                 type: Object,
                 default: () => ({}),
@@ -81,18 +86,23 @@
             },
             filterFn(val, update) {
                 devlog.log('valSE', val);
-                if (!val) {
+                if (!_.isEmpty(this.options) && !val) {
                     update(() => {
                         this.duplicateOptions = this.options;
                     });
-                    return;
+                } else if (_.isEmpty(this.options) && _.isFunction(this.funcLoadData)) {
+                    this.funcLoadData(() => {
+                        update(() => {
+                            this.duplicateOptions = this.options;
+                        });
+                    });
+                } else {
+                    update(() => {
+                        const needle = val.toLowerCase();
+                        this.duplicateOptions = this.options.filter((v) => v.label.toLowerCase()
+                          .indexOf(needle) > -1);
+                    });
                 }
-
-                update(() => {
-                    const needle = val.toLowerCase();
-                    this.duplicateOptions = this.options.filter((v) => v.label.toLowerCase()
-                      .indexOf(needle) > -1);
-                });
             },
         },
     };
