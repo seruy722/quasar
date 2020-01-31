@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class StorehouseData extends Model
+class History extends Model
 {
-    protected $fillable = ['code_place', 'code_client_id', 'place', 'kg', 'shop', 'things', 'brand', 'notation', 'for_kg', 'for_place', 'fax_id', 'category_id', 'storehouse_id', 'status', 'destroyed'];
+    protected $fillable = ['table', 'action', 'entry_id', 'history_data'];
 
     public function getCreatedAtAttribute($value)
     {

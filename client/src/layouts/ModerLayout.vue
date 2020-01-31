@@ -79,11 +79,11 @@
                 drawer: false,
                 miniState: true,
                 menu: [
-                    // {
-                    //     title: 'storehouse',
-                    //     field: 'storehouse',
-                    //     icon: 'store',
-                    // },
+                    {
+                        title: 'storehouse',
+                        field: 'storehouse',
+                        icon: 'store',
+                    },
                     // {
                     //     title: 'customers',
                     //     field: 'customers',

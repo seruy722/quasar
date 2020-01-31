@@ -27,13 +27,13 @@
       </q-menu>
     </IconBtn>
 
-    <AddEntryOnStorehouse :show-dialog.sync="showAddEntryOnStorehouseDialog" />
-    <AddTransporter :show-dialog.sync="showTransporterDialog" />
-    <AddCategory :show-dialog.sync="showCategoryDialog" />
+    <DialogAddEntryOnStorehouse :show-dialog.sync="showAddEntryOnStorehouseDialog" />
+    <DialogAddTransporter :show-dialog.sync="showTransporterDialog" />
+    <DialogAddCategory :show-dialog.sync="showCategoryDialog" />
     <DialogAddFax :show-dialog.sync="showFaxDialog" />
     <DialogAddClient :show-dialog.sync="showCustomerDialog" />
     <DialogAddCode :show-dialog.sync="showCodeDialog" />
-    <AddThings />
+    <DialogAddThings />
   </div>
 </template>
 
@@ -42,13 +42,13 @@
         name: 'Menu',
         components: {
             List: () => import('src/components/Elements/List/List.vue'),
-            AddEntryOnStorehouse: () => import('src/components/Dialogs/AddEntryOnStorehouse.vue'),
-            AddTransporter: () => import('src/components/Dialogs/AddTransporter.vue'),
-            AddCategory: () => import('src/components/Dialogs/AddCategory.vue'),
+            DialogAddEntryOnStorehouse: () => import('src/components/Dialogs/DialogAddEntryOnStorehouse.vue'),
+            DialogAddTransporter: () => import('src/components/Dialogs/DialogAddTransporter.vue'),
+            DialogAddCategory: () => import('src/components/Dialogs/DialogAddCategory.vue'),
             DialogAddFax: () => import('src/components/Dialogs/DialogAddFax.vue'),
             DialogAddClient: () => import('src/components/Dialogs/DialogAddClient.vue'),
             DialogAddCode: () => import('src/components/Dialogs/DialogAddCode.vue'),
-            AddThings: () => import('src/components/Dialogs/AddThings.vue'),
+            DialogAddThings: () => import('src/components/Dialogs/DialogAddThings.vue'),
             ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
             // ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
             ListItem: () => import('src/components/Elements/List/ListItem.vue'),

@@ -1,83 +1,80 @@
 <template>
-  <div
+  <Dialog
+    :dialog.sync="show"
+    title="Клиент"
+    :persistent="true"
     data-vue-component-name="DialogAddClient"
   >
-    <Dialog
-      :dialog.sync="show"
-      title="Клиент"
-      :persistent="true"
-    >
-      <Card style="min-width: 320px;width: 100%;max-width: 500px;">
-        <CardSection class="row justify-between bg-grey q-mb-sm">
-          <span class="text-h6">Информация о клиенте</span>
-          <div>
-            <IconBtn
-              dense
-              icon="clear"
-              tooltip="Закрыть"
-              @iconBtnClick="close"
-            />
-          </div>
-        </CardSection>
+    <Card style="min-width: 320px;width: 100%;max-width: 500px;">
+      <CardSection class="row justify-between bg-grey q-mb-sm">
+        <span class="text-h6">Информация о клиенте</span>
+        <div>
+          <IconBtn
+            dense
+            icon="clear"
+            tooltip="Закрыть"
+            @iconBtnClick="close(customerData)"
+          />
+        </div>
+      </CardSection>
 
-        <CardSection>
-          <div
-            v-for="(item, index) in customerData"
-            :key="index"
-          >
-            <SearchSelect
-              v-if="item.type==='searchSelect'"
-              v-model.number="item.value"
-              :label="item.label"
-              :dense="$q.screen.xs || $q.screen.sm"
-              :field="item.field"
-              :func-load-data="item.funcLoadData"
-              :options="item.options"
-              :errors="errorsData"
-            />
-
-            <BaseSelect
-              v-else-if="item.type==='select'"
-              v-model.number="item.value"
-              :label="item.label"
-              :dense="$q.screen.xs || $q.screen.sm"
-              :field="item.field"
-              :options="item.options"
-              :errors="errorsData"
-            />
-
-            <BaseInput
-              v-else
-              v-model="item.value"
-              :label="item.label"
-              :dense="$q.screen.xs || $q.screen.sm"
-              :field="item.field"
-              :mask="item.mask"
-              :autofocus="item.autofocus"
-              :errors="errorsData"
-            />
-          </div>
-        </CardSection>
-
-        <Separator />
-        <CardActions>
-          <BaseBtn
-            label="Отмена"
-            color="negative"
+      <CardSection>
+        <div
+          v-for="(item, index) in customerData"
+          :key="index"
+        >
+          <SearchSelect
+            v-if="item.type==='searchSelect'"
+            v-model.number="item.value"
+            :label="item.label"
             :dense="$q.screen.xs || $q.screen.sm"
-            @clickBaseBtn="close"
+            :field="item.field"
+            :options="item.options"
+            :func-load-data="item.funcLoadData"
+            :errors="errorsData"
           />
 
-          <BaseBtn
-            label="Сохранить"
-            color="positive"
+          <BaseSelect
+            v-else-if="item.type==='select'"
+            v-model.number="item.value"
+            :label="item.label"
             :dense="$q.screen.xs || $q.screen.sm"
-            @clickBaseBtn="checkErrors(customerData, saveData)"
+            :field="item.field"
+            :options="item.options"
+            :errors="errorsData"
           />
-        </CardActions>
-      </Card>
-    </Dialog>
-  </div>
+
+          <BaseInput
+            v-else
+            v-model="item.value"
+            :label="item.label"
+            :dense="$q.screen.xs || $q.screen.sm"
+            :field="item.field"
+            :mask="item.mask"
+            :autofocus="item.autofocus"
+            :errors="errorsData"
+          />
+        </div>
+      </CardSection>
+
+      <Separator />
+      <CardActions>
+        <BaseBtn
+          label="Отмена"
+          color="negative"
+          :dense="$q.screen.xs || $q.screen.sm"
+          @clickBaseBtn="close(customerData)"
+        />
+
+        <BaseBtn
+          label="Сохранить"
+          color="positive"
+          :dense="$q.screen.xs || $q.screen.sm"
+          @clickBaseBtn="checkErrors(customerData, saveData)"
+        />
+      </CardActions>
+    </Card>
+  </Dialog>
 </template>
 
 <script>
@@ -86,7 +83,11 @@
     import OnKeyUp from 'src/mixins/OnKeyUp';
     import showNotif from 'src/mixins/showNotif';
     import getFromSettings from 'src/tools/settings';
-    import FrequentlyCalledFunctions from 'src/mixins/FrequentlyCalledFunctions';
+    import {
+        getClientCodes,
+        setDefaultData,
+        getCities,
+    } from 'src/utils/FrequentlyCalledFunctions';
 
     export default {
         name: 'DialogAddClient',
@@ -104,7 +105,7 @@
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
         },
-        mixins: [OnKeyUp, showNotif, CheckErrorsMixin, FrequentlyCalledFunctions],
+        mixins: [OnKeyUp, showNotif, CheckErrorsMixin],
         props: {
             showDialog: {
                 type: Boolean,
@@ -126,8 +127,8 @@
                         field: 'codeId',
                         options: [],
                         require: true,
+                        funcLoadData: getClientCodes,
                         requireError: 'Поле обьзательное для заполнения.',
-                        funcLoadData: this.getClientCodes,
                         default: null,
                         value: null,
                     },
@@ -178,7 +179,7 @@
                         options: [],
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
-                        funcLoadData: this.getCities,
+                        funcLoadData: getCities,
                         default: null,
                         value: null,
                     },
@@ -197,7 +198,7 @@
         },
         computed: {
             clientCodes() {
-                return this.$store.getters['clientCodes/getCodes'];
+                return this.$store.getters['codes/getCodes'];
             },
             cities() {
                 return this.$store.getters['cities/getCities'];
@@ -224,6 +225,7 @@
             },
             codeId: {
                 handler: function set(val) {
+                    devlog.log('CODE_ID', val);
                     if (val) {
                         _.set(this.customerData, 'codeId.value', val);
                     }
@@ -231,16 +233,7 @@
                 immediate: true,
             },
         },
-        // created() {
-        //     this.getCities();
-        // },
         methods: {
-            // async getCities() {
-            //     await this.$axios.get(getUrl('cities'))
-            //       .then(({ data }) => {
-            //           this.$store.dispatch('cities/setCities', data);
-            //       });
-            // },
             saveData({
                          name,
                          sex,
@@ -257,8 +250,6 @@
                 })
                   .then(({ data }) => {
                       if (data.status) {
-                          // this.dialogAddClientData.value = false;
-                          // this.clearData();
                           this.$q.loading.hide();
                           this.showNotif('success', 'Клиент успешно добавлен.', 'center');
                       }
@@ -268,8 +259,9 @@
                       this.$q.loading.hide();
                   });
             },
-            close() {
+            close(data) {
                 this.show = false;
+                setDefaultData(data);
             },
         },
     };

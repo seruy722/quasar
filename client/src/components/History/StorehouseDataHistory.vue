@@ -1,6 +1,6 @@
 <template>
   <q-timeline
-    data-vue-component-name="Timeline"
+    data-vue-component-name="StorehouseDataHistory"
     color="secondary"
   >
     <TimelineEntry heading tag="h6">
@@ -8,10 +8,10 @@
     </TimelineEntry>
 
     <TimelineEntry
-      v-for="(transfer, index) in transferHistoryData.transferHistory"
+      v-for="(transfer, index) in storehouseHistoryData.historyData"
       :key="index"
       :subtitle="transfer.created_at"
-      :icon="index === 0 ? 'add':'update'"
+      :icon="$action[transfer.action]"
     >
       <List
         separator
@@ -22,11 +22,16 @@
           :key="i"
         >
           <ListItem
-            v-if="transferHistoryData.cols[i] && history"
+            v-if="storehouseHistoryData.cols[i] && i !== 'created_at'"
             dense
           >
             <ItemSection>
-              <ItemLabel>{{ transferHistoryData.cols[i] }}</ItemLabel>
+              <ItemLabel v-if="transfer.action !== 'create' && i !== 'created_at' && i !== 'user_name'">
+                <Badge color="warning">
+                  {{ storehouseHistoryData.cols[i] }}
+                </Badge>
+              </ItemLabel>
+              <ItemLabel v-else>{{ storehouseHistoryData.cols[i] }}</ItemLabel>
             </ItemSection>
             <ItemSection side>
               <ItemLabel
@@ -36,15 +41,22 @@
                 {{ history }}
               </ItemLabel>
               <ItemLabel
-                v-if="i === 'status_label'"
+                v-else-if="i === 'status_label'"
               >
                 <Badge :color="statusColor(history)">
                   {{ history }}
                 </Badge>
               </ItemLabel>
+              <ItemLabel
+                v-else-if="i === 'things'"
+                :lines="5"
+              >
+                {{ history | thingsFilter }}
+              </ItemLabel>
               <ItemLabel v-else>{{ history }}</ItemLabel>
             </ItemSection>
           </ListItem>
+          <Separator v-if="storehouseHistoryData.cols[i]" />
         </div>
       </List>
     </TimelineEntry>
@@ -53,9 +65,10 @@
 
 <script>
     import TransferMixin from 'src/mixins/Transfer';
+    import getFromSettings from 'src/tools/settings';
 
     export default {
-        name: 'Timeline',
+        name: 'StorehouseDataHistory',
         components: {
             TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
             List: () => import('src/components/Elements/List/List.vue'),
@@ -63,15 +76,18 @@
             ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
             ListItem: () => import('src/components/Elements/List/ListItem.vue'),
             Badge: () => import('src/components/Elements/Badge.vue'),
-            // Separator: () => import('src/components/Separator.vue'),
-            // Badge: () => import('src/components/Elements/Badge.vue'),
+            Separator: () => import('src/components/Separator.vue'),
         },
         mixins: [TransferMixin],
         props: {
-            transferHistoryData: {
+            storehouseHistoryData: {
                 type: Object,
                 default: () => ({}),
             },
+        },
+        data() {
+            this.$action = getFromSettings('historyActionForIcon');
+            return {};
         },
     };
 </script>

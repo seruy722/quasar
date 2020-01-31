@@ -4,7 +4,6 @@ import Vuex from 'vuex';
 import auth from './auth';
 import faxes from './faxes';
 import category from './category';
-import clientCodes from './client-codes';
 import transporter from './transporter';
 import transport from './transport';
 import storehouse from './storehouse';
@@ -12,6 +11,7 @@ import cities from './cities';
 import thingsList from './things-list';
 import shopsList from './shop-list';
 import transfers from './transfers';
+import codes from './codes';
 
 Vue.use(Vuex);
 
@@ -26,7 +26,6 @@ export default function (/* { ssrContext } */) {
       auth,
       faxes,
       category,
-      clientCodes,
       transporter,
       transport,
       storehouse,
@@ -34,6 +33,7 @@ export default function (/* { ssrContext } */) {
       thingsList,
       shopsList,
       transfers,
+      codes,
     },
 
     // enable strict mode (adds overhead!)

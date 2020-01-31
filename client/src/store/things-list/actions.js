@@ -1,11 +1,10 @@
 import { getUrl } from 'src/tools/url';
 import { axiosInstance } from 'boot/axios';
 
-export const setThingsList = (async ({ commit }) => {
-  try {
-    const { data } = await axiosInstance.get(getUrl('thingsList'));
+export const setThingsList = (({ commit }) => axiosInstance.get(getUrl('thingsList'))
+  .then(({ data }) => {
     commit('SET_THINGS_LIST', data);
-  } catch (e) {
-    devlog.log(e);
-  }
-});
+  })
+  .catch(() => {
+    devlog.warn('Ошибка - setThingsList');
+  }));

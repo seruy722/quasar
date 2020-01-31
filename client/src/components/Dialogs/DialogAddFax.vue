@@ -1,86 +1,78 @@
 <template>
-  <div
+  <Dialog
+    :dialog.sync="show"
+    title="Fax"
+    :persistent="true"
     data-vue-component-name="DialogAddFax"
   >
-    <Dialog
-      :dialog.sync="show"
-      title="Fax"
-      :persistent="true"
-    >
-      <template v-slot:body>
-        <q-card-section class="q-mt-md">
-          <!--          <BaseInput-->
-          <!--            v-model="faxData.departureDate.value"-->
-          <!--            label="Дата отправления"-->
-          <!--            type="text"-->
-          <!--            filled-->
-          <!--            :field="faxData.departureDate.field"-->
-          <!--            :dense="$q.screen.xs || $q.screen.sm"-->
-          <!--            :errors="errorsData"-->
-          <!--          >-->
-          <!--            <template v-slot:append>-->
-            <!--              <Date :value.sync="faxData.departureDate.value" />-->
-          <!--            </template>-->
-          <!--          </BaseInput>-->
-
-          <BaseInput
-            v-model="faxData.name.value"
-            :label="faxData.name.label"
-            :type="faxData.name.type"
-            filled
-            :autofocus="true"
-            :field="faxData.name.field"
-            :dense="$q.screen.xs || $q.screen.sm"
-            :errors="errorsData"
+    <Card style="min-width: 320px;width: 100%;max-width: 500px;">
+      <CardSection class="row justify-between bg-grey q-mb-sm">
+        <span class="text-h6">Новый факс</span>
+        <div>
+          <IconBtn
+            dense
+            icon="clear"
+            tooltip="Закрыть"
+            @iconBtnClick="close(faxData)"
           />
+        </div>
+      </CardSection>
+      <CardSection>
+        <BaseInput
+          v-model="faxData.name.value"
+          :label="faxData.name.label"
+          :type="faxData.name.type"
+          :autofocus="true"
+          :field="faxData.name.field"
+          :dense="$q.screen.xs || $q.screen.sm"
+          :errors="errorsData"
+        />
 
-          <SelectWithSearchInput
-            v-model="faxData.transporter_id.value"
-            :label="faxData.transporter_id.label"
-            :dense="$q.screen.xs || $q.screen.sm"
-            :field="faxData.transporter_id.field"
-            :options="transporters"
-            :errors="errorsData"
-          />
+        <SearchSelect
+          v-model="faxData.transporter_id.value"
+          :label="faxData.transporter_id.label"
+          :dense="$q.screen.xs || $q.screen.sm"
+          :field="faxData.transporter_id.field"
+          :func-load-data="faxData.transporter_id.funcLoadData"
+          :options="transporters"
+          :errors="errorsData"
+        />
 
-          <SelectWithSearchInput
-            v-model="faxData.transport_id.value"
-            :label="faxData.transport_id.label"
-            :dense="$q.screen.xs || $q.screen.sm"
-            :field="faxData.transport_id.field"
-            :options="transport"
-            :errors="errorsData"
-          />
+        <BaseSelect
+          v-model="faxData.transport_id.value"
+          :label="faxData.transport_id.label"
+          :dense="$q.screen.xs || $q.screen.sm"
+          :field="faxData.transport_id.field"
+          :options="transport"
+          :errors="errorsData"
+        />
 
-          <SelectWithSearchInput
-            v-model="faxData.status.value"
-            :label="faxData.status.label"
-            :dense="$q.screen.xs || $q.screen.sm"
-            :field="faxData.status.field"
-            :options="faxData.status.options"
-            :errors="errorsData"
-          />
+        <BaseSelect
+          v-model="faxData.status.value"
+          :label="faxData.status.label"
+          :dense="$q.screen.xs || $q.screen.sm"
+          :field="faxData.status.field"
+          :options="faxData.status.options"
+          :errors="errorsData"
+        />
+      </CardSection>
 
-        </q-card-section>
+      <Separator />
+      <CardActions>
+        <OutlineBtn
+          label="Сохранить"
+          color="positive"
+          @clickOutlineBtn="checkErrors(faxData, saveFax)"
+        />
 
-        <q-separator />
-
-        <q-card-actions align="right">
-          <OutlineBtn
-            label="Сохранить"
-            color="positive"
-            @clickOutlineBtn="checkErrors(faxData, saveFax)"
-          />
-
-          <OutlineBtn
-            label="Закрыть"
-            color="negative"
-            @clickOutlineBtn="show = false"
-          />
-        </q-card-actions>
-      </template>
-    </Dialog>
-  </div>
+        <OutlineBtn
+          label="Закрыть"
+          color="negative"
+          @clickOutlineBtn="close(faxData)"
+        />
+      </CardActions>
+    </Card>
+  </Dialog>
 </template>
 
 <script>
@@ -88,6 +80,7 @@
     import showNotif from 'src/mixins/showNotif';
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
     import getFromSettings from 'src/tools/settings';
+    import { setDefaultData, getTransports, getTransporters } from 'src/utils/FrequentlyCalledFunctions';
 
     export default {
         name: 'DialogAddFax',
@@ -95,7 +88,13 @@
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
             OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
             BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-            SelectWithSearchInput: () => import('src/components/Elements/SelectWithSearchInput.vue'),
+            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+            Card: () => import('src/components/Elements/Card/Card.vue'),
+            CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
+            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
+            Separator: () => import('src/components/Separator.vue'),
+            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+            BaseSelect: () => import('src/components/Elements/BaseSelect.vue'),
         },
         mixins: [showNotif, CheckErrorsMixin],
         props: {
@@ -145,8 +144,9 @@
                         field: 'transporter_id',
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
-                        default: 0,
-                        value: 0,
+                        funcLoadData: getTransporters,
+                        default: null,
+                        value: null,
                     },
                     transport_id: {
                         type: 'number',
@@ -154,8 +154,8 @@
                         field: 'transport_id',
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
-                        default: 0,
-                        value: 0,
+                        default: null,
+                        value: null,
                     },
                 },
             };
@@ -170,49 +170,43 @@
         },
         watch: {
             showDialog(val) {
-                this.show = val;
+                if (val) {
+                    getTransports(this.$store);
+                    this.show = val;
+                }
             },
             show(val) {
                 this.$emit('update:showDialog', val);
             },
         },
-        created() {
-            this.getTransporters();
-            this.getTransports();
-        },
         methods: {
-            getTransports() {
-                if (_.isEmpty(this.transport)) {
-                    this.$store.dispatch('transport/fetchTransports');
-                }
-            },
-            getTransporters() {
-                if (_.isEmpty(this.transporters)) {
-                    this.$store.dispatch('transporter/fetchTransporters');
-                }
-            },
-            collectData() {
-                return _.reduce(this.faxData, (result, item, index) => {
+            saveFax(faxData) {
+                this.$q.loading.show();
+                const sendData = _.reduce(faxData, (result, item, index) => {
                     if (index === 'name') {
-                        result[item.field] = _.upperFirst(item.value);
+                        result[item.field] = _.startCase(item.value);
                     }
                     result[item.field] = item.value;
 
                     return result;
                 }, {});
-            },
-            saveFax() {
-                this.$q.loading.show();
-                this.$axios.post(getUrl('addFax'), this.collectData())
-                  .then(({ data }) => {
+
+                this.$axios.post(getUrl('addFax'), sendData)
+                  .then(({ data: { fax } }) => {
                       this.$q.loading.hide();
-                      this.$store.dispatch('faxes/addFax', data.fax);
+                      if (!_.isEmpty(this.$store.getters['faxes/getFaxes'])) {
+                          this.$store.dispatch('faxes/addFax', fax);
+                      }
                       this.showNotif('success', 'Факс успешно добавлен.', 'center');
                   })
-                  .catch(({ response }) => {
-                      this.errorsData.errors = _.get(response, 'data.errors');
+                  .catch(({ response: { data: { errors } } }) => {
+                      this.errorsData.errors = errors;
                       this.$q.loading.hide();
                   });
+            },
+            close(data) {
+                this.show = false;
+                setDefaultData(data);
             },
         },
     };

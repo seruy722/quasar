@@ -84,6 +84,12 @@ const settings = {
       value: 2,
     },
   ],
+  historyActionForIcon: {
+    create: 'add',
+    update: 'update',
+    destroy: 'delete',
+    move: 'move_to_inbox',
+  },
 };
 
 export default function (value) {

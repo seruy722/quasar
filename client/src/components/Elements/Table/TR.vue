@@ -2,7 +2,7 @@
   <q-tr
     :props="props"
     data-vue-component-name="TR"
-    @click="$emit('trClick')"
+    @click="$emit('trClick', $event)"
   >
     <slot></slot>
   </q-tr>

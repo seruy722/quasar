@@ -2,416 +2,510 @@
   <q-page
     data-vue-component-name="Transfers"
   >
-    <!--    <TransfersListSkeleton v-if="viewSkeleton" />-->
-    <Table
-      :table-properties="transferTableProperties"
-      :table-data="allTransfers"
-      :table-reactive-properties="transferTableReactiveProperties"
-      title="Переводы"
-    >
-      <template v-slot:top-buttons>
-        <IconBtn
-          color="primary"
-          icon="update"
-          tooltip="Обновить"
-          @iconBtnClick="refresh"
-        />
-        <IconBtn
-          color="positive"
-          tooltip="Excel"
-          icon="get_app"
-          class="q-ml-sm"
-          @iconBtnClick="exportTransfers"
-        />
-      </template>
-      <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-      <template v-slot:inner-item="{props}">
-        <div
-          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-          :style="props.selected ? 'transform: scale(0.95);' : ''"
-        >
-          <q-expansion-item
-            expand-separator
-            class="shadow-1 overflow-hidden"
-            style="border-radius: 30px;border: 1px solid;"
-            :class="`border_${statusColor(props.row.status_label)}`"
-            :header-class="`bg-${statusColor(props.row.status_label)} text-white`"
-            expand-icon-class="text-white"
+    <PullRefresh @refresh="refresh">
+      <!--    <TransfersListSkeleton v-if="viewSkeleton" />-->
+      <Table
+        :table-properties="transferTableProperties"
+        :table-data="allTransfers"
+        :table-reactive-properties="transferTableReactiveProperties"
+        title="Переводы"
+      >
+        <template v-slot:top-buttons>
+          <IconBtn
+            color="primary"
+            icon="update"
+            tooltip="Обновить"
+            @iconBtnClick="refresh"
+          />
+          <IconBtn
+            color="positive"
+            tooltip="Excel"
+            icon="explicit"
+            class="q-ml-sm"
+            @iconBtnClick="exportTransfers"
+          />
+        </template>
+        <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
+        <template v-slot:inner-item="{props}">
+          <div
+            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+            :style="props.selected ? 'transform: scale(0.95);' : ''"
           >
-            <template v-slot:header>
-              <ItemSection avatar>
-                <CheckBox
-                  v-model="props.selected"
-                />
-              </ItemSection>
-
-              <ItemSection>
-                <ItemLabel :lines="2">
-                  {{ props.row.client_name }}
-                </ItemLabel>
-              </ItemSection>
-            </template>
-
-            <List
-              separator
-              dense
-              @clickList="viewEditDialog(props)"
+            <q-expansion-item
+              expand-separator
+              class="shadow-1 overflow-hidden"
+              style="border-radius: 30px;border: 1px solid;"
+              :class="`border_${statusColor(props.row.status_label)}`"
+              :header-class="`bg-${statusColor(props.row.status_label)} text-white`"
+              expand-icon-class="text-white"
             >
-              <ListItem
-                v-for="col in props.cols.filter(col => col.name !== 'desc')"
-                :key="col.name"
-              >
-                <ItemSection>
-                  <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
-                </ItemSection>
-                <ItemSection side>
-                  <ItemLabel v-if="col.field === 'status_label'">
-                    <Badge :color="statusColor(col.value)">
-                      {{ col.value }}
-                    </Badge>
-                  </ItemLabel>
-                  <ItemLabel v-else-if="col.field === 'receiver_phone'">
-                    {{ col.value | phoneNumberFilter }}
-                  </ItemLabel>
-                  <ItemLabel v-else-if="col.field === 'receiver_name'">
-                    {{ col.value }}
-                  </ItemLabel>
-                  <ItemLabel
-                    v-else-if="col.field === 'notation'"
-                    :lines="3"
-                  >
-                    {{ col.value }}
-                  </ItemLabel>
-                  <ItemLabel v-else>
-                    {{ col.value }}
-                  </ItemLabel>
-                </ItemSection>
-              </ListItem>
-              <ListItem>
-                <ItemSection>
-                  <BaseBtn
-                    label="История"
-                    color="info"
-                    @clickBaseBtn="getTransfersHistory(props.row.id, props.cols)"
+              <template v-slot:header>
+                <ItemSection avatar>
+                  <CheckBox
+                    v-model="props.selected"
                   />
                 </ItemSection>
-              </ListItem>
-            </List>
-          </q-expansion-item>
-        </div>
-      </template>
 
-      <template v-slot:inner-body="{props}">
-        <TR
-          :props="props"
-          class="text-bold cursor-pointer"
-          @trClick="viewEditDialog(props)"
-        >
-          <q-td>
-            <CheckBox v-model="props.selected" />
-          </q-td>
-
-          <TD
-            key-td="client_name"
-            :props="props"
-          >
-            {{ props.row.client_name }}
-          </TD>
-
-          <TD
-            key-td="receiver_name"
-            :props="props"
-          >
-            {{ props.row.receiver_name }}
-          </TD>
-
-          <TD
-            key-td="receiver_phone"
-            :props="props"
-          >
-            {{ props.row.receiver_phone | phoneNumberFilter }}
-          </TD>
-
-          <TD
-            key-td="sum"
-            :props="props"
-          >
-            {{ props.row.sum | numberFormatFilter }}
-          </TD>
-
-          <TD
-            key-td="method_label"
-            :props="props"
-          >
-            {{ props.row.method_label }}
-          </TD>
-
-          <TD
-            key-td="status_label"
-            :props="props"
-          >
-            <Badge :color="statusColor(props.row.status)">
-              {{ props.row.status_label }}
-            </Badge>
-          </TD>
-
-          <TD
-            key-td="user_name"
-            :props="props"
-          >
-            {{ props.row.user_name }}
-          </TD>
-
-          <TD
-            key-td="created_at"
-            :props="props"
-          >
-            {{ props.row.created_at }}
-          </TD>
-
-          <TD
-            key-td="issued_by"
-            :props="props"
-          >
-            {{ props.row.issued_by }}
-          </TD>
-
-          <TD
-            key-td="notation"
-            :props="props"
-          >
-            {{ props.row.notation }}
-          </TD>
-        </TR>
-      </template>
-    </Table>
-    <List
-      separator
-      bordered
-      dense
-      style="max-width: 450px;margin: 20px auto;font-weight: bold;"
-    >
-      <ListItem>
-        <ItemSection>
-          <ItemLabel>Всего переводов:</ItemLabel>
-        </ItemSection>
-        <ItemSection side>
-          <ItemLabel>
-            <Badge>
-              {{ countTransfers }}
-            </Badge>
-          </ItemLabel>
-        </ItemSection>
-      </ListItem>
-
-      <ListItem>
-        <ItemSection>
-          <ItemLabel>Сумма:</ItemLabel>
-        </ItemSection>
-        <ItemSection side>
-          <ItemLabel>
-            <Badge>
-              {{ countSumTransfers }}
-            </Badge>
-          </ItemLabel>
-        </ItemSection>
-      </ListItem>
-
-      <ListItem>
-        <ItemSection>
-          <ItemLabel>Выбранных переводов:</ItemLabel>
-        </ItemSection>
-        <ItemSection side>
-          <ItemLabel>
-            <Badge color="info">
-              {{ countCheckedTransfers }}
-            </Badge>
-          </ItemLabel>
-        </ItemSection>
-      </ListItem>
-
-      <ListItem>
-        <ItemSection>
-          <ItemLabel>Сумма выбранных переводов:</ItemLabel>
-        </ItemSection>
-        <ItemSection side>
-          <ItemLabel>
-            <Badge color="info">
-              {{ countSumCheckedTransfers }}
-            </Badge>
-          </ItemLabel>
-        </ItemSection>
-      </ListItem>
-    </List>
-    <PageSticky :offset="[18, 200]">
-      <Fab color="accent">
-        <FabAction
-          color="positive"
-          @fabActionClick="viewEditDialog"
-        />
-        <FabAction
-          icon="person"
-          @fabActionClick="showCodeDialog = true"
-        />
-        <PageScroller :offset="[4, 100]">
-          <FabAction icon="keyboard_arrow_up" />
-        </PageScroller>
-      </Fab>
-    </PageSticky>
-    <Dialog
-      :dialog="dialog"
-      :persistent="true"
-    >
-      <Card style="min-width: 320px;width: 100%;max-width: 500px;">
-        <CardSection class="row justify-between bg-grey q-mb-sm">
-          <span class="text-h6">{{ dialogTitle }}</span>
-          <div>
-            <IconBtn
-              v-if="localProps.row"
-              dense
-              icon="history"
-              tooltip="История"
-              @iconBtnClick="getTransfersHistory(localProps.row.id, localProps.cols)"
-            />
-
-            <IconBtn
-              dense
-              icon="clear"
-              tooltip="Закрыть"
-              @iconBtnClick="cancel(transferData)"
-            />
-          </div>
-        </CardSection>
-        <CardSection>
-          <div
-            v-for="(item, index) in transferData"
-            :key="index"
-          >
-            <BaseInput
-              v-if="item.type === 'text'"
-              v-model.trim="item.value"
-              :label="item.label"
-              :type="item.type"
-              :mask="item.mask"
-              :unmasked-value="item.unmaskedValue"
-              :change-value.sync="item.changeValue"
-              dense
-              :field="item.field"
-              :errors="errorsData"
-            />
-
-            <BaseInput
-              v-else-if="item.type === 'number'"
-              v-model.number="item.value"
-              :label="item.label"
-              :type="item.type"
-              :mask="item.mask"
-              :unmasked-value="item.unmaskedValue"
-              :change-value.sync="item.changeValue"
-              dense
-              :field="item.field"
-              :errors="errorsData"
-            />
-
-            <SearchSelect
-              v-else-if="item.type === 'searchSelect'"
-              v-model="item.value"
-              dense
-              :options="item.options"
-              :label="item.label"
-              :field="item.field"
-              :func-load-data="item.funcLoadData"
-              :change-value.sync="item.changeValue"
-              :errors="errorsData"
-            />
-
-            <BaseSelect
-              v-else-if="item.type === 'select'"
-              v-model="item.value"
-              :label="item.label"
-              :dense="true"
-              :options="item.options"
-              :field="item.field"
-              :change-value.sync="item.changeValue"
-              :errors="errorsData"
-            />
-
-            <BaseInput
-              v-else-if="item.type === 'date'"
-              v-model="item.value"
-              :label="item.label"
-              :errors="errorsData"
-              :field="item.field"
-              :readonly="item.readonly"
-              :mask="item.mask"
-              :change-value.sync="item.changeValue"
-              dense
-            >
-              <template v-slot:append>
-                <Date
-                  :value.sync="item.value"
-                  :change-value.sync="item.changeValue"
-                />
+                <ItemSection>
+                  <ItemLabel :lines="2">
+                    {{ props.row.client_name }}
+                  </ItemLabel>
+                </ItemSection>
               </template>
-            </BaseInput>
+
+              <List
+                separator
+                dense
+                @clickList="viewEditDialog(props)"
+              >
+                <ListItem
+                  v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                  :key="col.name"
+                >
+                  <ItemSection>
+                    <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
+                  </ItemSection>
+                  <ItemSection side>
+                    <ItemLabel v-if="col.field === 'status_label'">
+                      <Badge :color="statusColor(col.value)">
+                        {{ col.value }}
+                      </Badge>
+                    </ItemLabel>
+                    <ItemLabel v-else-if="col.field === 'receiver_phone'">
+                      {{ col.value | phoneNumberFilter }}
+                    </ItemLabel>
+                    <ItemLabel v-else-if="col.field === 'receiver_name'">
+                      {{ col.value }}
+                    </ItemLabel>
+                    <ItemLabel
+                      v-else-if="col.field === 'notation'"
+                      :lines="3"
+                    >
+                      {{ col.value }}
+                    </ItemLabel>
+                    <ItemLabel v-else>
+                      {{ col.value }}
+                    </ItemLabel>
+                  </ItemSection>
+                </ListItem>
+                <ListItem>
+                  <ItemSection>
+                    <BaseBtn
+                      label="История"
+                      color="info"
+                      style="max-width: 100px;margin: 0 auto;"
+                      @clickBaseBtn="getTransfersHistory(props.row.id, props.cols)"
+                    />
+                  </ItemSection>
+                </ListItem>
+              </List>
+            </q-expansion-item>
           </div>
-        </CardSection>
+        </template>
 
-        <Separator />
-        <CardActions>
-          <BaseBtn
-            label="Отмена"
-            color="negative"
-            @clickBaseBtn="cancel(transferData)"
-          />
-          <BaseBtn
-            label="Сохранить"
+        <template v-slot:inner-body="{props}">
+          <q-tr
+            :props="props"
+            class="text-bold cursor-pointer"
+            @click.stop="viewEditDialog(props, $event)"
+          >
+            <q-td
+              auto-width
+              class="select_checkbox"
+            >
+              <CheckBox v-model="props.selected" />
+            </q-td>
+
+            <q-td
+              key="client_name"
+              :props="props"
+            >
+              {{ props.row.client_name }}
+            </q-td>
+
+            <q-td
+              key="receiver_name"
+              :props="props"
+            >
+              {{ props.row.receiver_name }}
+            </q-td>
+
+            <q-td
+              key="receiver_phone"
+              :props="props"
+            >
+              {{ props.row.receiver_phone | phoneNumberFilter }}
+            </q-td>
+
+            <q-td
+              key="sum"
+              :props="props"
+            >
+              {{ props.row.sum | numberFormatFilter }}
+            </q-td>
+
+            <q-td
+              key="method_label"
+              :props="props"
+            >
+              {{ props.row.method_label }}
+            </q-td>
+
+            <q-td
+              key="status_label"
+              :props="props"
+            >
+              <Badge :color="statusColor(props.row.status)">
+                {{ props.row.status_label }}
+              </Badge>
+            </q-td>
+
+            <q-td
+              key="user_name"
+              :props="props"
+            >
+              {{ props.row.user_name }}
+            </q-td>
+
+            <q-td
+              key="created_at"
+              :props="props"
+            >
+              {{ props.row.created_at }}
+            </q-td>
+
+            <q-td
+              key="issued_by"
+              :props="props"
+            >
+              {{ props.row.issued_by }}
+            </q-td>
+
+            <q-td
+              key="notation"
+              :props="props"
+            >
+              {{ props.row.notation }}
+            </q-td>
+          </q-tr>
+        </template>
+      </Table>
+      <List
+        separator
+        bordered
+        dense
+        style="max-width: 450px;margin: 20px auto;font-weight: bold;"
+      >
+        <ListItem>
+          <ItemSection>
+            <ItemLabel>Статус</ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>Количество</ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel> Сумма</ItemLabel>
+          </ItemSection>
+        </ListItem>
+
+        <ListItem>
+          <ItemSection>
+            <ItemLabel>
+              <Badge :color="statusColor(3)">
+                Выдано
+              </Badge>
+            </ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.issued }}</ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.issuedSum }}</ItemLabel>
+          </ItemSection>
+        </ListItem>
+
+        <ListItem>
+          <ItemSection>
+            <ItemLabel>
+              <Badge :color="statusColor(2)">
+                Не выдан
+              </Badge>
+            </ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.notIssued }}</ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.notIssuedSum }}</ItemLabel>
+          </ItemSection>
+        </ListItem>
+
+        <ListItem>
+          <ItemSection>
+            <ItemLabel>
+              <Badge :color="statusColor(1)">
+                Вопрос
+              </Badge>
+            </ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.question }}</ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.questionSum }}</ItemLabel>
+          </ItemSection>
+        </ListItem>
+
+        <ListItem>
+          <ItemSection>
+            <ItemLabel>
+              <Badge :color="statusColor(4)">
+                Отменен
+              </Badge>
+            </ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.cancel }}</ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.cancelSum }}</ItemLabel>
+          </ItemSection>
+        </ListItem>
+
+        <ListItem>
+          <ItemSection>
+            <ItemLabel>
+              <Badge :color="statusColor(5)">
+                Возврат
+              </Badge>
+            </ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.returned }}</ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.returnedSum }}</ItemLabel>
+          </ItemSection>
+        </ListItem>
+
+        <ListItem>
+          <ItemSection>
+            <ItemLabel>
+              Всего
+            </ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.all }}</ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>{{ countTransfers.allSum }}</ItemLabel>
+          </ItemSection>
+        </ListItem>
+
+        <ListItem>
+          <ItemSection>
+            <ItemLabel>Выбранных</ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>
+              <Badge color="info">
+                {{ countCheckedTransfers }}
+              </Badge>
+            </ItemLabel>
+          </ItemSection>
+          <ItemSection>
+            <ItemLabel>
+              <Badge color="info">
+                {{ countSumCheckedTransfers }}
+              </Badge>
+            </ItemLabel>
+          </ItemSection>
+        </ListItem>
+      </List>
+      <PageSticky :offset="[18, 200]">
+        <Fab color="accent">
+          <FabAction
             color="positive"
-            @clickBaseBtn="checkErrors(transferData, updateData)"
+            @fabActionClick="viewEditDialog"
           />
-        </CardActions>
-      </Card>
-    </Dialog>
-    <DialogAddCode :show-dialog.sync="showCodeDialog" />
-
-    <Dialog
-      :dialog="dialogHistory"
-      :persistent="true"
-      :maximized="true"
-      transition-show="slide-up"
-      transition-hide="slide-down"
-    >
-      <Card style="max-width: 600px;">
-        <q-bar>
-          <q-space />
-          <IconBtn
-            flat
-            dense
-            icon="close"
-            tooltip="Закрыть"
-            @iconBtnClick="dialogHistory = false"
+          <FabAction
+            icon="person"
+            @fabActionClick="showCodeDialog = true"
           />
-        </q-bar>
+          <PageScroller :offset="[4, 100]">
+            <FabAction icon="keyboard_arrow_up" />
+          </PageScroller>
+        </Fab>
+      </PageSticky>
+      <Dialog
+        :dialog="dialog"
+        :persistent="true"
+      >
+        <Card style="min-width: 320px;width: 100%;max-width: 500px;">
+          <CardSection class="row justify-between bg-grey q-mb-sm">
+            <span class="text-h6">{{ dialogTitle }}</span>
+            <div>
+              <IconBtn
+                v-if="localProps.row"
+                dense
+                icon="history"
+                tooltip="История"
+                @iconBtnClick="getTransfersHistory(localProps.row.id, localProps.cols)"
+              />
 
-        <CardSection class="q-pt-none">
-          <Timeline :transfer-history-data="transferHistoryData" />
-        </CardSection>
-      </Card>
-    </Dialog>
+              <IconBtn
+                dense
+                icon="clear"
+                tooltip="Закрыть"
+                @iconBtnClick="cancel(transferData)"
+              />
+            </div>
+          </CardSection>
+          <CardSection>
+            <div
+              v-for="(item, index) in transferData"
+              :key="index"
+            >
+              <BaseInput
+                v-if="item.type === 'text'"
+                v-model.trim="item.value"
+                :label="item.label"
+                :type="item.type"
+                :mask="item.mask"
+                :unmasked-value="item.unmaskedValue"
+                :change-value.sync="item.changeValue"
+                dense
+                :field="item.field"
+                :errors="errorsData"
+              />
+
+              <BaseInput
+                v-else-if="item.type === 'number'"
+                v-model.number="item.value"
+                :label="item.label"
+                :type="item.type"
+                :mask="item.mask"
+                :unmasked-value="item.unmaskedValue"
+                :change-value.sync="item.changeValue"
+                dense
+                :field="item.field"
+                :errors="errorsData"
+              />
+
+              <SearchSelect
+                v-else-if="item.type === 'searchSelect'"
+                v-model="item.value"
+                dense
+                :options="item.options"
+                :label="item.label"
+                :field="item.field"
+                :func-load-data="item.funcLoadData"
+                :change-value.sync="item.changeValue"
+                :errors="errorsData"
+              />
+
+              <BaseSelect
+                v-else-if="item.type === 'select'"
+                v-model="item.value"
+                :label="item.label"
+                :dense="true"
+                :options="item.options"
+                :field="item.field"
+                :change-value.sync="item.changeValue"
+                :errors="errorsData"
+              />
+
+              <BaseInput
+                v-else-if="item.type === 'date'"
+                v-model="item.value"
+                :label="item.label"
+                :errors="errorsData"
+                :field="item.field"
+                :readonly="item.readonly"
+                :mask="item.mask"
+                :change-value.sync="item.changeValue"
+                dense
+              >
+                <template v-slot:append>
+                  <Date
+                    :value.sync="item.value"
+                    :change-value.sync="item.changeValue"
+                  />
+                </template>
+              </BaseInput>
+            </div>
+          </CardSection>
+
+          <Separator />
+          <CardActions>
+            <BaseBtn
+              label="Отмена"
+              color="negative"
+              @clickBaseBtn="cancel(transferData)"
+            />
+            <BaseBtn
+              label="Сохранить"
+              color="positive"
+              @clickBaseBtn="checkErrors(transferData, updateData)"
+            />
+          </CardActions>
+        </Card>
+      </Dialog>
+      <DialogAddCode :show-dialog.sync="showCodeDialog" />
+
+      <Dialog
+        :dialog="dialogHistory"
+        :persistent="true"
+        :maximized="true"
+        transition-show="slide-up"
+        transition-hide="slide-down"
+      >
+        <Card style="max-width: 600px;">
+          <q-bar>
+            <q-space />
+            <IconBtn
+              flat
+              dense
+              icon="close"
+              tooltip="Закрыть"
+              @iconBtnClick="dialogHistory = false"
+            />
+          </q-bar>
+
+          <CardSection class="q-pt-none">
+            <TransferHistory :transfer-history-data="transferHistoryData" />
+          </CardSection>
+        </Card>
+      </Dialog>
+    </PullRefresh>
   </q-page>
 </template>
 
 <script>
     import { getUrl } from 'src/tools/url';
     import getFromSettings from 'src/tools/settings';
-    import { fullDate, formatToDotDate, isoDate } from 'src/utils/formatDate';
+    import {
+        formatToDotDate,
+        isoDate,
+        toDate,
+        formatToMysql,
+    } from 'src/utils/formatDate';
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
     import showNotif from 'src/mixins/showNotif';
     import ExportDataMixin from 'src/mixins/ExportData';
     import { callFunction, countSumCollection, numberFormat } from 'src/utils/index';
     import { sortCollection } from 'src/utils/sort';
     import TransferMixin from 'src/mixins/Transfer';
-    import FrequentlyCalledFunctions from 'src/mixins/FrequentlyCalledFunctions';
+    import {
+        setMethodLabel,
+        setStatusLabel,
+        setFormatedDate,
+        prepareHistoryData,
+        setChangeValue,
+        setDefaultData,
+        getClientCodes,
+    } from 'src/utils/FrequentlyCalledFunctions';
+    import { max } from 'date-fns';
 
     export default {
         name: 'Transfers',
@@ -419,8 +513,6 @@
             Table: () => import('src/components/Elements/Table/Table.vue'),
             CheckBox: () => import('src/components/Elements/CheckBox.vue'),
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            TR: () => import('src/components/Elements/Table/TR.vue'),
-            TD: () => import('src/components/Elements/Table/TD.vue'),
             Card: () => import('src/components/Elements/Card/Card.vue'),
             CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
             CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
@@ -430,7 +522,6 @@
             ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
             ListItem: () => import('src/components/Elements/List/ListItem.vue'),
             BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-            // Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             Separator: () => import('src/components/Separator.vue'),
@@ -442,20 +533,12 @@
             FabAction: () => import('src/components/Elements/FabAction.vue'),
             PageScroller: () => import('src/components/PageScroller.vue'),
             Badge: () => import('src/components/Elements/Badge.vue'),
-            // PullRefresh: () => import('src/components/PullRefresh.vue'),
+            PullRefresh: () => import('src/components/PullRefresh.vue'),
             // Skeleton: () => import('src/components/Elements/Skeleton.vue'),
             // TransfersListSkeleton: () => import('src/components/Skeletons/Transfers/TransfersListSkeleton.vue'),
-            Timeline: () => import('src/components/Timeline/Timeline.vue'),
+            TransferHistory: () => import('src/components/History/TransferHistory.vue'),
         },
-        filters: {
-            phoneNumberFilter(val) {
-                if (_.isString(val)) {
-                    return `+${val.slice(0, 2)} (${val.slice(2, 5)}) ${val.slice(5, 8)}-${val.slice(8, 10)}-${val.slice(10, 12)}`;
-                }
-                return val;
-            },
-        },
-        mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin, FrequentlyCalledFunctions],
+        mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
         data() {
             return {
                 dialogHistory: false,
@@ -463,7 +546,6 @@
                     cols: {},
                     transferHistory: [],
                 },
-                // viewSkeleton: true,
                 localProps: {},
                 showCodeDialog: false,
                 dialog: false,
@@ -476,8 +558,9 @@
                         requireError: 'Выберите клиента.',
                         options: [],
                         changeValue: false,
-                        default: 0,
-                        value: 0,
+                        funcLoadData: getClientCodes,
+                        default: null,
+                        value: null,
                     },
                     receiver_name: {
                         type: 'text',
@@ -537,7 +620,7 @@
                         field: 'method',
                         require: true,
                         requireError: 'Поле обьязательное для заполнения.',
-                        options: Object.freeze(getFromSettings('transferMethod')),
+                        options: getFromSettings('transferMethod'),
                         changeValue: false,
                         default: 0,
                         value: 0,
@@ -546,7 +629,7 @@
                         type: 'select',
                         label: 'Статус',
                         field: 'status',
-                        options: Object.freeze(getFromSettings('transferStatus')),
+                        options: getFromSettings('transferStatus'),
                         require: true,
                         requireError: 'Поле обьязательное для заполнения.',
                         changeValue: false,
@@ -662,13 +745,23 @@
                 return _.get(this.localProps, 'row.client_name') || 'Новый перевод';
             },
             clientCodes() {
-                return this.$store.getters['clientCodes/getCodes'];
+                return this.$store.getters['codes/getCodes'];
             },
             countTransfers() {
-                return numberFormat(_.size(this.allTransfers));
-            },
-            countSumTransfers() {
-                return numberFormat(countSumCollection(this.allTransfers, 'sum'));
+                return {
+                    all: numberFormat(_.size(this.allTransfers)),
+                    allSum: numberFormat(countSumCollection(this.allTransfers, 'sum')),
+                    notIssued: numberFormat(_.size(_.filter(this.allTransfers, { status: 2 }))),
+                    notIssuedSum: numberFormat(countSumCollection(_.filter(this.allTransfers, { status: 2 }), 'sum')),
+                    issued: numberFormat(_.size(_.filter(this.allTransfers, { status: 3 }))),
+                    issuedSum: numberFormat(countSumCollection(_.filter(this.allTransfers, { status: 3 }), 'sum')),
+                    question: numberFormat(_.size(_.filter(this.allTransfers, { status: 1 }))),
+                    questionSum: numberFormat(countSumCollection(_.filter(this.allTransfers, { status: 1 }), 'sum')),
+                    cancel: numberFormat(_.size(_.filter(this.allTransfers, { status: 4 }))),
+                    cancelSum: numberFormat(countSumCollection(_.filter(this.allTransfers, { status: 4 }), 'sum')),
+                    returned: numberFormat(_.size(_.filter(this.allTransfers, { status: 5 }))),
+                    returnedSum: numberFormat(countSumCollection(_.filter(this.allTransfers, { status: 5 }), 'sum')),
+                };
             },
             countCheckedTransfers() {
                 return numberFormat(_.size(this.transferTableReactiveProperties.selected));
@@ -682,7 +775,6 @@
                 handler: function setCodes(val) {
                     devlog.log('CLIENT_CODES');
                     _.set(this.transferData, 'client_id.options', val);
-                    // _.set(this.transferData, 'client.options[0].label', 'Новый');
                 },
                 immediate: true,
             },
@@ -719,7 +811,7 @@
                           devlog.log('DDFR', transfer);
                           this.$store.dispatch('transfers/addTransfer', this.setAdditionalData([_.first(transfer)]));
                           this.openCloseDialog(false);
-                          this.setChangeValue(this.transferData);
+                          setChangeValue(this.transferData);
                           this.$q.loading.hide();
                           this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно добавлена.`, 'center');
                       })
@@ -750,7 +842,7 @@
                               this.openCloseDialog(false);
                               this.localProps.selected = false;
                               this.$q.loading.hide();
-                              this.setChangeValue(this.transferData);
+                              setChangeValue(this.transferData);
                               this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно обновлена.`, 'center');
                           })
                           .catch((errors) => {
@@ -763,70 +855,46 @@
                     devlog.log('item_DDD_FFF', data);
                 }
             },
-            viewEditDialog(val) {
-                this.openCloseDialog(true);
-                if (val) {
-                    this.localProps = val;
-                    this.transferTableReactiveProperties.selected = [];
-                    setTimeout(() => {
-                        val.selected = !val.selected;
-                    }, 100);
-                    devlog.log('SEL', val);
+            viewEditDialog(val, event) {
+                devlog.log('EVENT', event);
+                devlog.log('EVENT_get', _.get(event, 'target.classList'));
+                devlog.log('val', val);
+                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
+                    if (val) {
+                        this.localProps = val;
+                        this.transferTableReactiveProperties.selected = [];
+                        setTimeout(() => {
+                            val.selected = !val.selected;
+                        }, 100);
+                        devlog.log('SEL', val);
+                        this.$q.loading.show();
+                        Promise.all([getClientCodes(this.$store)])
+                          .then(() => {
+                              this.openCloseDialog(true);
+                              this.$q.loading.hide();
+                          });
 
-                    _.forEach(this.transferData, (item) => {
-                        if (_.has(val.row, item.field)) {
-                            if (_.get(val, `row[${item.field}]`)) {
-                                _.set(item, 'value', _.get(val, `row[${item.field}]`));
-                            } else {
-                                _.set(item, 'value', item.default);
+                        _.forEach(this.transferData, (item) => {
+                            if (_.has(val.row, item.field)) {
+                                if (_.get(val, `row[${item.field}]`)) {
+                                    _.set(item, 'value', _.get(val, `row[${item.field}]`));
+                                } else {
+                                    _.set(item, 'value', item.default);
+                                }
                             }
-                        }
-                    });
-                } else {
-                    this.localProps = {};
-                    _.forEach(this.transferData, (item) => {
-                        _.set(item, 'value', item.default);
-                    });
+                        });
+                    } else {
+                        this.openCloseDialog(true);
+                        this.localProps = {};
+                        setDefaultData(this.transferData);
+                    }
                 }
-            },
-            setFormatedDate(value) {
-                _.forEach(value, (item) => {
-                    _.set(item, 'created_at', fullDate(_.get(item, 'created_at')));
-                    _.set(item, 'issued_by', fullDate(_.get(item, 'issued_by')));
-                });
-                return value;
-            },
-            setChangeValue(data) {
-                _.forEach(data, (elem) => {
-                    if (_.get(elem, 'changeValue')) {
-                        _.set(elem, 'changeValue', false);
-                    }
-                });
-            },
-            setStatusLabel(value) {
-                _.forEach(value, (item) => {
-                    const findLabel = _.find(getFromSettings('transferStatus'), { value: item.status });
-                    if (findLabel) {
-                        _.set(item, 'status_label', _.get(findLabel, 'label'));
-                    }
-                });
-                return value;
-            },
-            setMethodLabel(value) {
-                _.forEach(value, (item) => {
-                    const findLabel = _.find(getFromSettings('transferMethod'), { value: item.method });
-                    if (findLabel) {
-                        _.set(item, 'method_label', _.get(findLabel, 'label'));
-                    }
-                });
-                return value;
             },
             async getTransfers() {
                 if (_.isEmpty(this.allTransfers)) {
                     this.$q.loading.show();
                     await this.$axios.get(getUrl('transfers'))
                       .then(({ data: { transfers } }) => {
-                          this.getClientCodes();
                           this.$store.dispatch('transfers/setTransfers', this.setAdditionalData(transfers));
                           this.$q.loading.hide();
                       })
@@ -836,7 +904,7 @@
                 }
             },
             setAdditionalData(data) {
-                return this.setMethodLabel(this.setStatusLabel(this.setFormatedDate(data)));
+                return setMethodLabel(setStatusLabel(setFormatedDate(data)));
             },
             openCloseDialog(val) {
                 this.dialog = val;
@@ -844,18 +912,17 @@
             cancel(data) {
                 this.openCloseDialog(false);
                 this.localProps.selected = false;
-                this.setChangeValue(data);
+                setChangeValue(data);
             },
             async refresh(done) {
-                devlog.log('CL', this.allTransfers, 'updated_at');
+                const { allTransfers } = this;
                 await this.$axios.post(getUrl('getNewTransfers'), {
-                    created_at: isoDate(_.get(_.maxBy(this.allTransfers, 'created_at'), 'created_at')),
-                    updated_at: _.get(_.maxBy(this.allTransfers, 'updated_at'), 'updated_at'),
+                    created_at: isoDate(max(_.map(allTransfers, (item) => new Date(toDate(item.created_at))))),
+                    updated_at: formatToMysql(max(_.map(allTransfers, (item) => new Date(item.updated_at)))),
                 })
                   .then(({ data: { transfers } }) => {
                       devlog.log('DTA', transfers);
                       if (!_.isEmpty(transfers)) {
-                          const { allTransfers } = this;
                           const createdItems = [];
                           _.forEach(transfers, (item) => {
                               const find = _.some(allTransfers, ['id', item.id]);
@@ -893,14 +960,12 @@
                 this.$q.loading.show();
                 await this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`)
                   .then(({ data: { transferHistory } }) => {
-                      if (_.size(transferHistory) > 1) {
+                      if (!_.isEmpty(transferHistory)) {
                           this.$q.loading.hide();
                           this.dialogHistory = true;
-                          this.transferHistoryData.cols = _.reduce(cols, (result, { label, name }) => {
-                              result[name] = label;
-                              return result;
-                          }, {});
-                          this.transferHistoryData.transferHistory = this.setAdditionalData(transferHistory);
+                          const historyData = prepareHistoryData(cols, transferHistory);
+                          historyData.historyData = this.setAdditionalData(historyData.historyData);
+                          this.transferHistoryData = historyData;
                       } else {
                           this.$q.loading.hide();
                           this.showNotif('info', 'По этому переводу нет истории.', 'center');

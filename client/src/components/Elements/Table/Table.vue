@@ -51,7 +51,8 @@
           v-model="searchField"
           label="Поле"
           style="min-width: 110px;padding-bottom: 0;"
-          :dense="true"
+          dense
+          options-dense
           :options="searchOptionsFields"
         />
 

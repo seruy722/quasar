@@ -124,17 +124,17 @@ const routes = [
         },
         component: () => import('src/pages/Moder/Transfers.vue'),
       },
-      // {
-      //   path: 'storehouse',
-      //   name: 'storehouse',
-      //   meta: {
-      //     title: 'storehouse',
-      //     middleware: [
-      //       auth,
-      //     ],
-      //   },
-      //   component: () => import('pages/Moder/Storehouse.vue'),
-      // },
+      {
+        path: 'storehouse',
+        name: 'storehouse',
+        meta: {
+          title: 'storehouse',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('pages/Moder/Storehouse.vue'),
+      },
       // {
       //   path: 'customers',
       //   name: 'customers',

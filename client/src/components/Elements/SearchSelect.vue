@@ -91,11 +91,13 @@
                         this.duplicateOptions = this.options;
                     });
                 } else if (_.isEmpty(this.options) && _.isFunction(this.funcLoadData)) {
-                    this.funcLoadData(() => {
-                        update(() => {
-                            this.duplicateOptions = this.options;
-                        });
-                    });
+                    devlog.log('funcLoadData', this.funcLoadData);
+                    this.funcLoadData(this.$store)
+                      .then(() => {
+                          update(() => {
+                              this.duplicateOptions = this.options;
+                          });
+                      });
                 } else {
                     update(() => {
                         const needle = val.toLowerCase();

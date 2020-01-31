@@ -3,16 +3,16 @@ import { countSumCollection, round, numberFormat } from 'src/utils/index';
 export default {
   computed: {
     categories() {
-      return this.freeze(this.$store.getters['category/getCategories']);
+      return this.$store.getters['category/getCategories'];
     },
     clientCodes() {
-      return this.freeze(this.$store.getters['clientCodes/getCodes']);
+      return this.$store.getters['clientCodes/getCodes'];
     },
     thingsList() {
-      return this.freeze(this.$store.getters['thingsList/getThingsList']);
+      return this.$store.getters['thingsList/getThingsList'];
     },
     shopsList() {
-      return this.freeze(this.$store.getters['shopsList/getShopsList']);
+      return this.$store.getters['shopsList/getShopsList'];
     },
   },
   // created() {
@@ -164,9 +164,6 @@ export default {
       if (_.isEmpty(this.shopsList)) {
         this.$store.dispatch('shopsList/setShopsList');
       }
-    },
-    freeze(data) {
-      return Object.freeze(data);
     },
     formatNumber(num) {
       return numberFormat(num);

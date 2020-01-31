@@ -7,6 +7,7 @@
     :error="isError"
     :value="value"
     :dense="dense"
+    :options-dense="optionsDense"
     :no-error-icon="noErrorIcon"
     data-vue-component-name="BaseSelect"
     emit-value
@@ -47,6 +48,10 @@
                 default: '',
             },
             dense: {
+                type: Boolean,
+                default: false,
+            },
+            optionsDense: {
                 type: Boolean,
                 default: false,
             },

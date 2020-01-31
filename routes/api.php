@@ -31,12 +31,10 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::get('/codes', function () {
         return CodeResource::collection(Code::with('customers', 'user')->get());
     });
-    Route::get('/codes-list', function () {
-        return Code::select('id as value', 'code as label')->get();
-    });
     Route::post('/upload-codes', 'Api\CodesController@uploadCodesData');
     Route::get('/check-code-exist/{code}', 'Api\CodesController@checkCodeExist');
     Route::post('/store-code', 'Api\CodesController@storeCode');
+    Route::get('/codes-list', 'Api\CodesController@index');
 
     // STOREHOUSE
     Route::get('/store-house-data/{id}', 'Api\StorehouseDataController@getStorehouseData');
@@ -44,6 +42,12 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     // STOREHOUSE_DATA
     Route::post('/add-storehouse-data', 'Api\StorehouseDataController@store');
     Route::post('/update-storehouse-data', 'Api\StorehouseDataController@update');
+    Route::get('/shop-names', 'Api\StorehouseDataController@getShopNames');
+    Route::get('/thing-list', 'Api\StorehouseDataController@getThingsList');
+    Route::post('/export-storehouse-data', 'Api\StorehouseDataController@export');
+    Route::post('/destroy-storehouse-data', 'Api\StorehouseDataController@destroy');
+    Route::get('/storehouse-data-history/{id}', 'Api\StorehouseDataController@getStorehouseDataHistory');
+    Route::post('/get-new-storehouseData', 'Api\StorehouseDataController@getNewStorehouseData');
 
     // CLIENTS
     Route::post('/valid-customer-data', 'Api\CustomersController@checkValidCustomerData');

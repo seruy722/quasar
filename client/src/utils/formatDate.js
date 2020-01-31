@@ -1,11 +1,9 @@
 import {
-  getHours,
-  set,
-  getMinutes,
-  getSeconds,
+  formatISO,
+  isDate,
+  format,
 } from 'date-fns';
 
-// const errorDate = 'Дата не валидная';
 /**
  * Проверяет дату на валидность
  * @param input
@@ -142,51 +140,60 @@ export const formatToYear = ((date) => {
   }
   return date;
 });
-
+/**
+ * Преобразовывает дату формата 2020-02-01T14:35:46+00:00 в 01-02-2020 14:35:46
+ * @type {Function}
+ */
 export const fullDate = ((date) => {
-  if (checkDate(date)) {
-    return new Intl.DateTimeFormat('ru',
-      {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-      }).format(new Date(date));
+  if (isDate(new Date(date)) && date) {
+    return format(new Date(date), 'dd-MM-yyyy HH:mm:ss');
   }
   return date;
 });
 
 /**
+ * Преобразовывает дату формата 31-01-2020 16:35:21 или Fri Jan 31 2020 13:43:56 GMT+0200 (Восточная Европа, стандартное время) в 2020-01-31 16:35:46
+ * @param str
+ * @return {string|*}
+ */
+export const toDate = (str) => {
+  devlog.log('STR_DATE', _.size(str));
+  if (str && _.size(str) === 19) {
+    const [date, time] = _.split(str, ' ');
+    const parseDate = _.join(_.reverse(_.split(date, '-')), '-');
+    return `${parseDate} ${time}`;
+  }
+  if (isDate(new Date(str))) {
+    toDate(fullDate(str));
+  }
+
+  return str;
+};
+
+/**
+ * Преобразовывает дату формата 31-01-2020 16:35:21 в 2020-01-31T16:35:46+02:00
  * @type {Function}
- * 27.12.2019 в 2019-12-27T14:16:31.745Z
  */
 export const isoDate = ((str) => {
-  if (str && _.isString(str)) {
-    const [date, time] = _.split(str, ',');
-    const newDate = _.join(_.reverse(_.split(date, '.')), '-');
-    if (checkDate(newDate)) {
-      if (_.size(str) > 10) {
-        devlog.log('TIME', time);
-        devlog.log('Date', str);
-        const newDate2 = new Date(`${newDate}${time}`);
-        return new Date(newDate2).toISOString();
-      }
-      const step1 = new Date(newDate);
-      const dateNow = new Date();
-      return set(new Date(step1), {
-        hours: getHours(dateNow),
-        minutes: getMinutes(dateNow),
-        seconds: getSeconds(dateNow),
-      })
-        .toISOString();
-    }
+  const date = toDate(str);
+  if (isDate(new Date(date))) {
+    devlog.log('F_I_D', formatISO(new Date(date)));
+    return formatISO(new Date(date));
   }
-  devlog.warn('Дата не валидная', str);
-  devlog.log('Дата не валидная_2', str);
   return null;
 });
+
+/**
+ * Принимает дату вызова new Date();
+ * @param date // Fri Jan 31 2020 13:43:56 GMT+0200 (Восточная Европа, стандартное время)
+ * @return {string|*} // 2020-01-31 13:43:56
+ */
+export const formatToMysql = (date) => {
+  if (isDate(date) && date) {
+    return format(new Date(date), 'yyyy-MM-dd HH:mm:ss');
+  }
+  return date;
+};
 
 /**
  * Преобразует дату к формату: 2019/08/21

@@ -1,11 +1,10 @@
 <template>
-  <div
-    data-vue-component-name="DialogAddCode"
-  >
+  <div>
     <Dialog
       :dialog.sync="show"
       title="Код"
       :persistent="true"
+      data-vue-component-name="DialogAddCode"
     >
       <Card style="min-width: 320px;width: 100%;max-width: 500px;">
         <CardSection class="row justify-between bg-grey q-mb-sm">
@@ -15,7 +14,7 @@
               dense
               icon="clear"
               tooltip="Закрыть"
-              @iconBtnClick="close"
+              @iconBtnClick="close(codeData)"
             />
           </div>
         </CardSection>
@@ -38,7 +37,7 @@
             label="Отмена"
             color="negative"
             :dense="$q.screen.xs || $q.screen.sm"
-            @clickBaseBtn="close"
+            @clickBaseBtn="close(codeData)"
           />
 
           <BaseBtn
@@ -52,19 +51,20 @@
     </Dialog>
 
     <DialogAddClient
-      :show-dialog.sync="showCustomerDialog"
+      :show-dialog.sync="showClientDialog"
       :code-id="codeId"
     />
   </div>
 </template>
 
 <script>
-    // import { mapGetters } from 'vuex';
     import { getUrl } from 'src/tools/url';
-    // import { getLSKey } from 'src/tools/lsKeys';
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
-    import OnKeyUp from 'src/mixins/OnKeyUp';
     import showNotif from 'src/mixins/showNotif';
+    import {
+        getClientCodes,
+        setDefaultData,
+    } from 'src/utils/FrequentlyCalledFunctions';
 
     export default {
         name: 'DialogAddCode',
@@ -80,7 +80,7 @@
             CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
-        mixins: [OnKeyUp, showNotif, CheckErrorsMixin],
+        mixins: [showNotif, CheckErrorsMixin],
         props: {
             showDialog: {
                 type: Boolean,
@@ -112,39 +112,45 @@
                         value: '',
                     },
                 },
-                showCustomerDialog: false,
+                showClientDialog: false,
                 codeId: 0,
             };
         },
         watch: {
             showDialog(val) {
-                this.show = val;
+                if (val) {
+                    this.$q.loading.show();
+                    Promise.all([getClientCodes(this.$store)])
+                      .then(() => {
+                          this.show = val;
+                          this.$q.loading.hide();
+                      });
+                }
             },
             show(val) {
                 this.$emit('update:showDialog', val);
             },
         },
         methods: {
-            saveData({ code }) {
-                devlog.log('S_VAL', code.value);
+            saveData({ code: { value } }) {
+                devlog.log('S_VAL', value);
                 this.$q.loading.show();
-                this.$axios.post(getUrl('storeCode'), { code: _.startCase(code.value) })
-                  .then(({ data }) => {
-                      this.showCustomerDialog = true;
-                      devlog.log('C_DATA', data);
-                      this.$store.dispatch('clientCodes/addCode', data.code);
-                      // this.showNotif('success', 'Код успешно добавлен.', 'center');
-                      this.codeId = _.get(data, 'code.value');
+                this.$axios.post(getUrl('storeCode'), { code: _.startCase(value) })
+                  .then(({ data: { code: addedCode } }) => {
+                      devlog.log('C_DATA', addedCode);
+                      this.$store.dispatch('codes/addCode', addedCode);
+                      this.codeId = addedCode.value;
+                      this.showClientDialog = true;
                       this.$q.loading.hide();
                   })
-                  .catch((errors) => {
-                      this.errorsData.errors = _.get(errors, 'response.data.errors');
+                  .catch(({ response: { data: { errors } } }) => {
+                      this.errorsData.errors = errors;
                       this.$q.loading.hide();
                   });
             },
-            close() {
-                this.codeData.code.value = '';
+            close(data) {
                 this.show = false;
+                setDefaultData(data);
             },
         },
     };
