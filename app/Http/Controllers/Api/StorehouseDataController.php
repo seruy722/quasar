@@ -64,7 +64,6 @@ class StorehouseDataController extends Controller
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
             ->where('storehouse_data.storehouse_id', $id)
-            ->where('storehouse_data.fax_id', 0)
             ->where('storehouse_data.destroyed', false)
             ->orderBy('storehouse_data.created_at', 'desc');
 
@@ -134,7 +133,7 @@ class StorehouseDataController extends Controller
 
         $arrData = $this->storehouseDataList(1);
 
-        return response(['storehouseData' => $arrData->where('storehouse_data.id', $storehouse->id)->first()]);
+        return response(['storehouseData' => $arrData->where('storehouse_data.id', $storehouse->id)->where('storehouse_data.fax_id', 0)->first()]);
     }
 
     public function update(Request $request)
@@ -164,7 +163,12 @@ class StorehouseDataController extends Controller
 
         $arrData = $this->storehouseDataList(1);
 
-        return response(['storehouseData' => $arrData->where('storehouse_data.id', $request->id)->first()]);
+        $entry = StorehouseData::find($request->id);
+        if ($entry && $entry->fax_id > 0) {
+            return response(['storehouseData' => $arrData->where('storehouse_data.id', $request->id)->first()]);
+        }
+
+        return response(['storehouseData' => $arrData->where('storehouse_data.id', $request->id)->where('storehouse_data.fax_id', 0)->first()]);
     }
 
     public function getShopNames()
@@ -243,8 +247,17 @@ class StorehouseDataController extends Controller
         ]);
 //        return response(['asc' => date("Y-m-d H:i:s", strtotime($request->created_at))]);
         return response(['newData' => $this->storehouseDataList(1)
+            ->where('storehouse_data.fax_id', 0)
             ->where('storehouse_data.created_at', '>', date("Y-m-d H:i:s", strtotime($request->created_at)))
             ->orWhere('storehouse_data.updated_at', '>', $request->updated_at)
             ->get()]);
+    }
+
+    public function setTransfersStorehouseFax(Request $request)
+    {
+        $d1 = StorehouseData::whereIn('id', $request->storehouseIds)->update(['fax_id' => 0]);
+        $d2 = StorehouseData::whereIn('id', $request->faxIds)->update(['fax_id' => $request->id]);
+
+        return response(['status' => true, 'd1' => $d1, 'd2' => $d2]);
     }
 }

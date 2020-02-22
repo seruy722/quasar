@@ -1,56 +1,54 @@
 <template>
-    <div
-        v-if="!isToken()"
-        data-vue-component-name="Login"
-        class="q-pa-md row items-center justify-center q-gutter-md"
-    >
-        <q-card class="my-card">
-            <q-card-section class="row justify-between bg-primary text-white">
-                <div class="text-h5">{{ $t('entrance') }}</div>
-<!--                <Locale />-->
-            </q-card-section>
+  <div
+    data-vue-component-name="Login"
+    class="q-pa-md row items-center justify-center q-gutter-md"
+  >
+    <q-card class="my-card">
+      <q-card-section class="row justify-between bg-primary text-white">
+        <div class="text-h5">{{ $t('entrance') }}</div>
+        <!--                <Locale />-->
+      </q-card-section>
 
-            <q-separator />
+      <q-separator />
 
-            <q-card-section>
-                <BaseInput
-                    v-model.trim="loginData.email.value"
-                    type="email"
-                    field="email"
-                    icon="person"
-                    label="Email"
-                    :dense="$q.screen.xs || $q.screen.sm"
-                    :autofocus="true"
-                    :errors="errorsData"
-                    @onKeyUp="keyUp"
-                />
+      <q-card-section>
+        <BaseInput
+          v-model.trim="loginData.email.value"
+          type="email"
+          field="email"
+          icon="person"
+          label="Email"
+          :dense="$q.screen.xs || $q.screen.sm"
+          :autofocus="true"
+          :errors="errorsData"
+          @onKeyUp="keyUp"
+        />
 
-                <BaseInput
-                    v-model.trim="loginData.password.value"
-                    type="password"
-                    field="password"
-                    icon="person"
-                    :label="this.$t('password')"
-                    :dense="$q.screen.xs || $q.screen.sm"
-                    :errors="errorsData"
-                    @onKeyUp="keyUp"
-                />
-            </q-card-section>
+        <BaseInput
+          v-model.trim="loginData.password.value"
+          type="password"
+          field="password"
+          icon="person"
+          :label="this.$t('password')"
+          :dense="$q.screen.xs || $q.screen.sm"
+          :errors="errorsData"
+          @onKeyUp="keyUp"
+        />
+      </q-card-section>
 
-            <q-separator />
+      <q-separator />
 
-            <q-card-actions align="left">
-                <OutlineBtn
-                    :label="this.$t('enter')"
-                    @clickOutlineBtn="checkErrors(loginData, login)"
-                />
-            </q-card-actions>
-        </q-card>
-    </div>
+      <q-card-actions align="left">
+        <OutlineBtn
+          :label="this.$t('enter')"
+          @clickOutlineBtn="checkErrors(loginData, login)"
+        />
+      </q-card-actions>
+    </q-card>
+  </div>
 </template>
 
 <script>
-    import { mapGetters } from 'vuex';
     import { getUrl } from 'src/tools/url';
     import { getLSKey } from 'src/tools/lsKeys';
     import OnKeyUp from 'src/mixins/OnKeyUp';
@@ -100,32 +98,41 @@
             };
         },
         computed: {
-            ...mapGetters({
-                isUserAuth: 'auth/isUserAuth',
-                toPath: 'auth/getToPath',
-            }),
+            isUserAuth() {
+                return this.$store.getters['auth/isUserAuth'];
+            },
+            toPath() {
+                return this.$store.getters['auth/getToPath'];
+            },
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
                 vm.$q.loading.show();
                 // vm.$q.localStorage.clear();
                 const token = vm.$q.localStorage.getItem(getLSKey('authToken'));
-                devlog.log('tt', token);
+                devlog.log('TOKEN_AUTH', token);
                 if (!vm.isUserAuth && token) {
+                    devlog.log('tt', vm.isUserAuth);
                     vm.$store.dispatch('auth/getUserModel')
                       .then((response) => {
-                          if (response) {
-                              if (vm.toPath) {
-                                  devlog.log('TOPATH', vm.toPath);
-                                  vm.$router.push(vm.toPath);
-                              } else {
-                                  vm.$router.push({ name: 'transfers' });
-                              }
+                          devlog.log('response', response);
+                          if (vm.toPath) {
+                              devlog.log('TOPATH', vm.toPath);
+                              vm.$router.push(vm.toPath);
+                          } else {
+                              vm.$router.push({ name: 'transfers' });
                           }
                           vm.$q.loading.hide();
+                      })
+                      .catch(() => {
+                          devlog.log('CATCH_LOGINO');
+                          vm.$q.loading.hide();
                       });
+                } else if (vm.isUserAuth) {
+                    devlog.log('vm.isUserAuth', vm.isUserAuth);
+                    vm.$router.push({ name: 'transfers' });
+                    vm.$q.loading.hide();
                 } else {
-                    // vm.$router.push({ name: 'transfers' });
                     vm.$q.loading.hide();
                 }
             });
@@ -163,8 +170,8 @@
 </script>
 
 <style lang="stylus" scoped>
-    .my-card
-        width 100%
-        height 100%
-        max-width 600px
+  .my-card
+    width 100%
+    height 100%
+    max-width 600px
 </style>

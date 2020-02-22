@@ -1,6 +1,17 @@
-export const setStorehouseData = (({ commit }, data) => {
-  commit('SET_STOREHOUSE_DATA', data);
-});
+import { getUrl } from 'src/tools/url';
+import { axiosInstance } from 'boot/axios';
+
+export const fetchStorehouseTableData = (({ commit }) => axiosInstance.get(`${getUrl('storehouseData')}/${1}`)
+  .then(({ data }) => {
+    commit('SET_STOREHOUSE_DATA', data);
+  })
+  .catch(() => {
+    devlog.warn('Ошибка при запросе fetchStorehouseTableData');
+  }));
+
+// export const setStorehouseData = (({ commit }, data) => {
+//   commit('SET_STOREHOUSE_DATA', data);
+// });
 
 export const setStorehouseCategoriesData = (({ commit }, data) => {
   devlog.log('setStorehouseCategoriesData', data);

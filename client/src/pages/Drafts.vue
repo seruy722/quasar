@@ -10,21 +10,17 @@
 
     <div>
       <div>Загрузка карго на сервер</div>
+      <UploadFileToServer :uploadData="uploadData" />
       <Dialog :dialog.sync="dialogUploadCargoData">
-        <template v-slot:body>
-          <q-card-section>
-            <UploadFileToServer :uploadData="uploadData" />
-          </q-card-section>
 
-          <q-separator />
+        <q-separator />
 
-          <q-card-actions align="right">
-            <OutlineBtn
-              :btnData="btnData"
-              @clickOutlineBtn="dialogUploadCargoData.value = false"
-            />
-          </q-card-actions>
-        </template>
+        <q-card-actions align="right">
+          <OutlineBtn
+            :btnData="btnData"
+            @clickOutlineBtn="dialogUploadCargoData.value = false"
+          />
+        </q-card-actions>
       </Dialog>
     </div>
 

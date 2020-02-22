@@ -157,39 +157,39 @@ const routes = [
       //   },
       //   component: () => import('pages/Profile.vue'),
       // },
-      // {
-      //   path: 'faxes',
-      //   name: 'faxes',
-      //   meta: {
-      //     title: 'faxes',
-      //     middleware: [
-      //       auth,
-      //     ],
-      //   },
-      //   component: () => import('pages/Faxes.vue'),
-      // },
-      // {
-      //   path: 'faxes/:id',
-      //   name: 'fax',
-      //   meta: {
-      //     title: 'fax',
-      //     middleware: [
-      //       auth,
-      //     ],
-      //   },
-      //   component: () => import('pages/Fax.vue'),
-      // },
-      // {
-      //   path: 'drafts',
-      //   name: 'drafts',
-      //   meta: {
-      //     title: 'drafts',
-      //     middleware: [
-      //       auth,
-      //     ],
-      //   },
-      //   component: () => import('pages/Drafts.vue'),
-      // },
+      {
+        path: 'faxes',
+        name: 'faxes',
+        meta: {
+          title: 'faxes',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('pages/Faxes.vue'),
+      },
+      {
+        path: 'faxes/:id',
+        name: 'fax',
+        meta: {
+          title: 'fax',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('pages/Fax.vue'),
+      },
+      {
+        path: 'drafts',
+        name: 'drafts',
+        meta: {
+          title: 'drafts',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('pages/Drafts.vue'),
+      },
       // {
       //   path: 'search',
       //   name: 'search',

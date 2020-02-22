@@ -3,7 +3,7 @@
     :dialog.sync="show"
     :persistent="true"
     title="Запись"
-    data-vue-component-name="DialogAddEntryOnStorehouse"
+    data-vue-component-name="DialogFaxData"
   >
     <Card style="min-width: 320px;width: 100%;max-width: 900px;">
       <CardSection class="row justify-between bg-grey q-mb-sm">
@@ -41,7 +41,6 @@
               :mask="item.mask"
               :dense="$q.screen.xs || $q.screen.sm"
               :field="index"
-              :readonly="item.readonly"
               :disable="item.disable"
               :change-value.sync="item.changeValue"
               :errors="errorsData"
@@ -62,11 +61,12 @@
 
             <SelectChips
               v-else-if="item.type === 'select-chips'"
-              v-model="item.value"
+              v-model.trim="item.value"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
+              :disable="item.disable"
               :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
@@ -74,76 +74,78 @@
 
             <SearchSelect
               v-else
-              v-model="item.value"
+              v-model.number="item.value"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
+              :disable="item.disable"
               :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
           </div>
         </div>
+        <div v-show="entryData.combineTableData === false">
+          <CheckBox
+            v-model="withoutThings"
+            label="Без описи вложения"
+          />
+          <IconBtn
+            v-if="things && !withoutThings"
+            color="positive"
+            icon="edit"
+            :dense="$q.screen.xs || $q.screen.sm"
+            tooltip="Редактировать"
+            class="q-ml-md"
+            @iconBtnClick="showThingsDialog = true"
+          />
+          <IconBtn
+            v-else
+            icon="add"
+            :dense="$q.screen.xs || $q.screen.sm"
+            tooltip="Добавить"
+            class="q-ml-md"
+            @iconBtnClick="showThingsDialog = true"
+          />
 
-        <CheckBox
-          v-model="withoutThings"
-          label="Без описи вложения"
-        />
-        <IconBtn
-          v-if="things && !withoutThings"
-          color="positive"
-          icon="edit"
-          :dense="$q.screen.xs || $q.screen.sm"
-          tooltip="Редактировать"
-          class="q-ml-md"
-          @iconBtnClick="showThingsDialog = true"
-        />
-        <IconBtn
-          v-else
-          icon="add"
-          :dense="$q.screen.xs || $q.screen.sm"
-          tooltip="Добавить"
-          class="q-ml-md"
-          @iconBtnClick="showThingsDialog = true"
-        />
 
-
-        <div v-show="!withoutThings">
-          <List
-            dense
-            bordered
-            padding
-            separator
-            class="q-px-sm"
-          >
-            <ItemLabel>
-              <div class="row items-center">
-                <div>
-                  Опись вложения
-                </div>
-                <DialogAddThings
-                  :things.sync="things"
-                  :show-dialog.sync="showThingsDialog"
-                  :change-things.sync="changeThings"
-                />
-              </div>
-            </ItemLabel>
-            <ListItem class="text-bold">
-              <ItemSection>Название</ItemSection>
-              <ItemSection>Количество</ItemSection>
-            </ListItem>
-
-            <ListItem
-              v-for="({title, count}, index) in thingsList"
-              :key="index"
-              v-ripple
-              clickable
+          <div v-show="!withoutThings">
+            <List
+              dense
+              bordered
+              padding
+              separator
+              class="q-px-sm"
             >
-              <ItemSection>{{ title }}</ItemSection>
-              <ItemSection>{{ count }}</ItemSection>
-            </ListItem>
-          </List>
+              <ItemLabel>
+                <div class="row items-center">
+                  <div>
+                    Опись вложения
+                  </div>
+                  <DialogAddThings
+                    :things.sync="things"
+                    :show-dialog.sync="showThingsDialog"
+                    :change-things.sync="changeThings"
+                  />
+                </div>
+              </ItemLabel>
+              <ListItem class="text-bold">
+                <ItemSection>Название</ItemSection>
+                <ItemSection>Количество</ItemSection>
+              </ListItem>
+
+              <ListItem
+                v-for="({title, count}, index) in thingsList"
+                :key="index"
+                v-ripple
+                clickable
+              >
+                <ItemSection>{{ title }}</ItemSection>
+                <ItemSection>{{ count }}</ItemSection>
+              </ListItem>
+            </List>
+          </div>
         </div>
       </CardSection>
       <Separator />
@@ -189,7 +191,7 @@
     } from 'src/utils/FrequentlyCalledFunctions';
 
     export default {
-        name: 'DialogAddEntryOnStorehouse',
+        name: 'DialogFaxData',
         components: {
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
             DialogAddThings: () => import('src/components/Dialogs/DialogAddThings.vue'),
@@ -245,7 +247,7 @@
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
                         autofocus: true,
-                        readonly: false,
+                        disable: false,
                         changeValue: false,
                         default: '',
                         value: '',
@@ -347,12 +349,22 @@
                 if (!_.isEmpty(val)) {
                     devlog.log('vALIN_ADD', val);
                     _.forEach(this.storehouseData, (item, index) => {
-                        if (_.get(this.entryData, `row[${index}]`)) {
-                            _.set(item, 'value', _.get(this.entryData, `row[${index}]`));
+                        if (_.get(val, `row[${index}]`)) {
+                            _.set(item, 'value', _.get(val, `row[${index}]`));
                         }
                     });
-                    this.things = _.get(this.entryData, 'row.things');
-                    this.storehouseData.code_place.readonly = true;
+                    this.things = _.get(val, 'row.things');
+                    devlog.log('COMBINE', val);
+                    this.storehouseData.code_place.disable = true;
+                    if (val.combineTableData) {
+                        this.storehouseData.kg.disable = true;
+                        this.storehouseData.shop.disable = true;
+                        this.storehouseData.notation.disable = true;
+                    } else {
+                        this.storehouseData.kg.disable = false;
+                        this.storehouseData.shop.disable = false;
+                        this.storehouseData.notation.disable = false;
+                    }
                 }
             },
             categories: {
@@ -419,7 +431,12 @@
                             this.$axios.post(getUrl('updateStorehouseData'), sendData)
                               .then(({ data: { storehouseData } }) => {
                                   devlog.log('DTA_UPDATE', storehouseData);
-                                  this.$store.dispatch('storehouse/updateStorehouseData', setFormatedDate(storehouseData, ['created_at']));
+                                  const formatedData = setFormatedDate(storehouseData, ['created_at']);
+                                  this.$store.dispatch('storehouse/updateStorehouseData', formatedData);
+                                  this.$store.dispatch('faxes/updateFaxData', formatedData)
+                                    .catch((e) => {
+                                        devlog.error('EROR', e);
+                                    });
                                   setChangeValue(this.storehouseData);
                                   this.$q.loading.hide();
                                   this.showNotif('success', 'Запись успешно обновлена.', 'center');

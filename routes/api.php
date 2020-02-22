@@ -48,6 +48,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/destroy-storehouse-data', 'Api\StorehouseDataController@destroy');
     Route::get('/storehouse-data-history/{id}', 'Api\StorehouseDataController@getStorehouseDataHistory');
     Route::post('/get-new-storehouseData', 'Api\StorehouseDataController@getNewStorehouseData');
+    Route::post('/set-transfers-storehouse-fax', 'Api\StorehouseDataController@setTransfersStorehouseFax');
 
     // CLIENTS
     Route::post('/valid-customer-data', 'Api\CustomersController@checkValidCustomerData');
@@ -69,6 +70,9 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/add-fax', 'Api\FaxController@addFax');
     Route::post('/delete-faxes', 'Api\FaxController@deleteFax');
     Route::post('/update-faxes', 'Api\FaxController@updateFaxes');
+    Route::post('/upload-to-cargo', 'Api\FaxController@uploadToCargo');
+    Route::get('/fax-history/{id}', 'Api\FaxController@faxHistory');
+    Route::post('/get-new-fax', 'Api\FaxController@getNewFax');
 
     // FAX_DATA
     Route::post('/upload-fax-data-table', 'Api\FaxDataController@storeFaxData');

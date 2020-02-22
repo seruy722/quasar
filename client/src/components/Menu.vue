@@ -33,11 +33,36 @@
     <DialogAddFax :show-dialog.sync="showFaxDialog" />
     <DialogAddClient :show-dialog.sync="showCustomerDialog" />
     <DialogAddCode :show-dialog.sync="showCodeDialog" />
-    <DialogAddThings />
   </div>
 </template>
 
 <script>
+    const listItems = [
+        {
+            title: 'Запись',
+            click: 'showAddEntryOnStorehouseDialog',
+        },
+        {
+            title: 'Код',
+            click: 'showCodeDialog',
+        },
+        {
+            title: 'Клиента',
+            click: 'showCustomerDialog',
+        },
+        {
+            title: 'Категорию',
+            click: 'showCategoryDialog',
+        },
+        {
+            title: 'Факс',
+            click: 'showFaxDialog',
+        },
+        {
+            title: 'Перевожчика',
+            click: 'showTransporterDialog',
+        },
+    ];
     export default {
         name: 'Menu',
         components: {
@@ -48,46 +73,19 @@
             DialogAddFax: () => import('src/components/Dialogs/DialogAddFax.vue'),
             DialogAddClient: () => import('src/components/Dialogs/DialogAddClient.vue'),
             DialogAddCode: () => import('src/components/Dialogs/DialogAddCode.vue'),
-            DialogAddThings: () => import('src/components/Dialogs/DialogAddThings.vue'),
             ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            // ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
             ListItem: () => import('src/components/Elements/List/ListItem.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
-        // props: {
-        //     items: {
-        //         type: Array,
-        //         default: () => [],
-        //     },
-        // },
+        props: {
+            items: {
+                type: Array,
+                default: () => [],
+            },
+        },
         data() {
             return {
-                listItems: [
-                    {
-                        title: 'Запись',
-                        click: 'showAddEntryOnStorehouseDialog',
-                    },
-                    {
-                        title: 'Код',
-                        click: 'showCodeDialog',
-                    },
-                    {
-                        title: 'Клиента',
-                        click: 'showCustomerDialog',
-                    },
-                    {
-                        title: 'Категорию',
-                        click: 'showCategoryDialog',
-                    },
-                    {
-                        title: 'Факс',
-                        click: 'showFaxDialog',
-                    },
-                    {
-                        title: 'Перевожчика',
-                        click: 'showTransporterDialog',
-                    },
-                ],
+                listItems: [],
                 showAddEntryOnStorehouseDialog: false,
                 showTransporterDialog: false,
                 showCategoryDialog: false,
@@ -95,6 +93,23 @@
                 showCustomerDialog: false,
                 showCodeDialog: false,
             };
+        },
+        watch: {
+            items: {
+                handler: function set(val) {
+                    if (!_.isEmpty(val)) {
+                        this.listItems = _.reduce(listItems, (result, item) => {
+                            if (val.includes(item.title)) {
+                                result.push(item);
+                            }
+                            return result;
+                        }, []);
+                    } else {
+                        this.listItems = listItems;
+                    }
+                },
+                immediate: true,
+            },
         },
         methods: {
             onClick(value) {

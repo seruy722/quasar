@@ -2,6 +2,10 @@ import {
   formatISO,
   isDate,
   format,
+  set,
+  getMinutes,
+  getHours,
+  getSeconds,
 } from 'date-fns';
 
 /**
@@ -157,13 +161,14 @@ export const fullDate = ((date) => {
  * @return {string|*}
  */
 export const toDate = (str) => {
-  devlog.log('STR_DATE', _.size(str));
+  devlog.log('STR_DATE', str);
   if (str && _.size(str) === 19) {
     const [date, time] = _.split(str, ' ');
     const parseDate = _.join(_.reverse(_.split(date, '-')), '-');
+    devlog.log('time', time);
     return `${parseDate} ${time}`;
   }
-  if (isDate(new Date(str))) {
+  if (_.trim(str) && isDate(new Date(str))) {
     toDate(fullDate(str));
   }
 
@@ -176,11 +181,40 @@ export const toDate = (str) => {
  */
 export const isoDate = ((str) => {
   const date = toDate(str);
-  if (isDate(new Date(date))) {
+  if (isDate(new Date(date)) && date) {
     devlog.log('F_I_D', formatISO(new Date(date)));
     return formatISO(new Date(date));
   }
   return null;
+});
+
+/**
+ * Добавляет текущее время к строке 2020.02.02
+ * @type {Function}
+ */
+export const addTime = ((date) => {
+  if (date) {
+    const dateNow = new Date();
+    return set(new Date(date), {
+      hours: getHours(dateNow),
+      minutes: getMinutes(dateNow),
+      seconds: getSeconds(dateNow),
+    });
+  }
+  return date;
+});
+
+/**
+ * Разворачивает дату формата 02-02-2020 в 2020-02-02
+ * @type {Function}
+ */
+export const reverseDate = ((date) => {
+  if (date) {
+    return date.split('-')
+      .reverse()
+      .join('-');
+  }
+  return date;
 });
 
 /**

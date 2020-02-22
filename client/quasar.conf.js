@@ -44,12 +44,12 @@ module.exports = function (ctx) {
       // Quasar plugins
       plugins: [],
       config: {
-        loading: {
-          spinner: 'QSpinnerFacebook',
-          spinnerColor: 'yellow',
-          spinnerSize: 140,
-          backgroundColor: 'blue',
-        },
+        // loading: {
+        //   spinner: 'QSpinnerFacebook',
+        //   spinnerColor: 'yellow',
+        //   spinnerSize: 140,
+        //   backgroundColor: 'blue',
+        // },
         screen: {
           bodyClasses: true,
         },
