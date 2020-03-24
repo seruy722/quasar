@@ -10,6 +10,7 @@ use App\Exports\Fax\FaxData\FaxDataExport;
 use App\Fax;
 use App\FaxData;
 use App\Shop;
+use App\StorehouseData;
 use App\Thingslist;
 use App\TransporterFaxesPrice;
 use App\TransporterPrice;
@@ -18,8 +19,11 @@ use App\Imports\ImportData;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use function foo\func;
 
 class FaxDataController extends Controller
@@ -110,7 +114,8 @@ class FaxDataController extends Controller
         return response(['status' => true]);
     }
 
-    public function createThingsListElem($elem){
+    public function createThingsListElem($elem)
+    {
         Thingslist::firstOrCreate(['name' => $elem]);
     }
 
@@ -126,9 +131,10 @@ class FaxDataController extends Controller
         });
     }
 
+
     public function getFaxData($id)
     {
-        $fax = Fax::with('transporter')->find($id);
+//        $fax = Fax::with('transporter')->find($id);
 //        $faxCategories = FaxData::select('categories.name')
 //            ->selectRaw('SUM(fax_data.place) as place')
 //            ->selectRaw('SUM(fax_data.kg) as kg')
@@ -150,8 +156,35 @@ class FaxDataController extends Controller
 //            }
 //            return $category;
 //        });
+        $role = Permission::findById(2);
 
-        return response(['faxData' => $this->groupedFaxData($id), 'transporterPriceData' => TransporterFaxesPrice::where('fax_id', $id)->get(), 'fax' => $fax]);
+        $queryData = StorehouseData::select(
+            'storehouse_data.id',
+            'storehouse_data.code_place',
+            'storehouse_data.code_client_id',
+            'storehouse_data.place',
+            'storehouse_data.kg',
+            'storehouse_data.for_kg',
+            'storehouse_data.fax_id',
+            'storehouse_data.for_place',
+            'storehouse_data.shop',
+            'storehouse_data.things',
+            'storehouse_data.notation',
+            'storehouse_data.category_id',
+            'storehouse_data.brand',
+            'storehouse_data.created_at',
+            'storehouse_data.updated_at',
+            'codes.code as code_client_name',
+            'categories.name as category_name'
+        )
+            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
+            ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
+            ->where('storehouse_data.storehouse_id', 1)
+            ->where('storehouse_data.fax_id', $id)
+            ->where('storehouse_data.destroyed', false)
+            ->orderBy('storehouse_data.created_at', 'desc');
+
+        return response(['faxData' => $queryData->get(), 'role' => $role]);
     }
 
     public function updateFaxData(Request $request)
@@ -228,5 +261,15 @@ class FaxDataController extends Controller
             }
         });
         return response(['status' => true, 'faxData' => $this->groupedFaxData($id)]);
+    }
+
+    public function exportModer(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxExportForModers\FaxSheetsExport($request->id), 'storehouseData.xlsx');
+    }
+
+    public function exportAdmin(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxExportForAdmin\FaxSheetsExport($request->id), 'storehouseData.xlsx');
     }
 }

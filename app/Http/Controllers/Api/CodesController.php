@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Code;
 use App\Customer;
+use App\Http\Resources\CodeResource;
 use App\Imports\ImportData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -75,12 +76,27 @@ class CodesController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
-        return response(['code' => ['label' => $code->code, 'value' => $code->id]]);
+        $this->storeCodesHistory($code->id, $request->all(), 'create');
+
+        return response(['code' => ['label' => $code->code, 'value' => $code->id], 'codeWithCustomers' => CodeResource::collection(Code::with('customers', 'user')->where('id', $code->id)->get())]);
 
     }
 
     public function index()
     {
         return response(['codeList' => Code::select('id as value', 'code as label')->get()]);
+    }
+
+    public function getCodesWithCustomers()
+    {
+        return CodeResource::collection(Code::with('customers', 'user')->get());
+    }
+
+    public function storeCodesHistory($id, $data, $action)
+    {
+        $data['user_name'] = auth()->user()->name;
+        $data['user_id'] = auth()->user()->id;
+        $saveData = ['table' => (new Code)->getTable(), 'action' => $action, 'entry_id' => $id, 'history_data' => json_encode($data)];
+        \App\History::create($saveData);
     }
 }

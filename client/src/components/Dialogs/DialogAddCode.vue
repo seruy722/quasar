@@ -136,9 +136,12 @@
                 devlog.log('S_VAL', value);
                 this.$q.loading.show();
                 this.$axios.post(getUrl('storeCode'), { code: _.startCase(value) })
-                  .then(({ data: { code: addedCode } }) => {
+                  .then(({ data: { code: addedCode, codeWithCustomers } }) => {
                       devlog.log('C_DATA', addedCode);
-                      this.$store.dispatch('codes/addCode', addedCode);
+                      this.$store.dispatch('codes/addCode', {
+                          code: addedCode,
+                          codeWithCustomers: _.first(codeWithCustomers),
+                      });
                       this.codeId = addedCode.value;
                       this.showClientDialog = true;
                       this.$q.loading.hide();

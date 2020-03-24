@@ -14,7 +14,7 @@
         <q-date
           v-model="valueData"
           today-btn
-          mask="DD.MM.YYYY"
+          mask="DD-MM-YYYY"
           @input="() => $refs.qDateProxy.hide()"
         />
       </q-popup-proxy>
@@ -41,9 +41,11 @@
         computed: {
             valueData: {
                 get: function get() {
+                    devlog.log('this.value', this.value);
                     return this.value;
                 },
                 set: function set(val) {
+                    devlog.log('this.value_ЫУЕ', val);
                     this.$emit('update:value', val);
                     this.$emit('update:changeValue', true);
                 },

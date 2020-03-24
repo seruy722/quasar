@@ -15,100 +15,89 @@ const routes = [
       },
     ],
   },
-  // {
-  //   path: '/admin',
-  //   component: () => import('layouts/AdminLayout.vue'),
-  //   children: [
-  //     {
-  //       path: 'transfers',
-  //       name: 'transfers',
-  //       meta: {
-  //         title: 'transfers',
-  //         middleware: [
-  //           auth,
-  //         ],
-  //       },
-  //       component: () => import('src/pages/Moder/Transfers.vue'),
-  //     },
-  //     // {
-  //     //   path: 'storehouse',
-  //     //   name: 'storehouse',
-  //     //   meta: {
-  //     //     title: 'storehouse',
-  //     //     middleware: [
-  //     //       auth,
-  //     //     ],
-  //     //   },
-  //     //   component: () => import('pages/Moder/Storehouse.vue'),
-  //     // },
-  //     // {
-  //     //   path: 'customers',
-  //     //   name: 'customers',
-  //     //   meta: {
-  //     //     title: 'customers',
-  //     //     middleware: [
-  //     //       auth,
-  //     //     ],
-  //     //   },
-  //     //   component: () => import('pages/Moder/Customers.vue'),
-  //     // },
-  //     // {
-  //     //   path: 'profile',
-  //     //   name: 'profile',
-  //     //   meta: {
-  //     //     title: 'profile',
-  //     //     middleware: [
-  //     //       auth,
-  //     //     ],
-  //     //   },
-  //     //   component: () => import('pages/Profile.vue'),
-  //     // },
-  //     // {
-  //     //   path: 'faxes',
-  //     //   name: 'faxes',
-  //     //   meta: {
-  //     //     title: 'faxes',
-  //     //     middleware: [
-  //     //       auth,
-  //     //     ],
-  //     //   },
-  //     //   component: () => import('pages/Faxes.vue'),
-  //     // },
-  //     // {
-  //     //   path: 'faxes/:id',
-  //     //   name: 'fax',
-  //     //   meta: {
-  //     //     title: 'fax',
-  //     //     middleware: [
-  //     //       auth,
-  //     //     ],
-  //     //   },
-  //     //   component: () => import('pages/Fax.vue'),
-  //     // },
-  //     // {
-  //     //   path: 'drafts',
-  //     //   name: 'drafts',
-  //     //   meta: {
-  //     //     title: 'drafts',
-  //     //     middleware: [
-  //     //       auth,
-  //     //     ],
-  //     //   },
-  //     //   component: () => import('pages/Drafts.vue'),
-  //     // },
-  //     // {
-  //     //   path: 'search',
-  //     //   name: 'search',
-  //     //   meta: {
-  //     //     title: 'search',
-  //     //     middleware: [
-  //     //       auth,
-  //     //     ],
-  //     //   },
-  //     //   component: () => import('pages/Search.vue'),
-  //     // },
-  //   ],
-  // },
+  {
+    path: '/admin',
+    component: () => import('layouts/AdminLayout.vue'),
+    children: [
+      {
+        path: 'access',
+        name: 'access',
+        meta: {
+          title: 'access',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('src/pages/Admin/Access.vue'),
+      },
+      // {
+      //   path: 'storehouse',
+      //   name: 'storehouse',
+      //   meta: {
+      //     title: 'storehouse',
+      //     middleware: [
+      //       auth,
+      //     ],
+      //   },
+      //   component: () => import('pages/Moder/Storehouse.vue'),
+      // },
+      // {
+      //   path: 'profile',
+      //   name: 'profile',
+      //   meta: {
+      //     title: 'profile',
+      //     middleware: [
+      //       auth,
+      //     ],
+      //   },
+      //   component: () => import('pages/Profile.vue'),
+      // },
+      {
+        path: 'admin-faxes',
+        name: 'admin-faxes',
+        meta: {
+          title: 'faxes',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('src/pages/Admin/Faxes.vue'),
+      },
+      {
+        path: 'admin-faxes/:id',
+        name: 'admin-fax',
+        meta: {
+          title: 'admin-faxes',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('src/pages/Admin/Fax.vue'),
+      },
+      // {
+      //   path: 'drafts',
+      //   name: 'drafts',
+      //   meta: {
+      //     title: 'drafts',
+      //     middleware: [
+      //       auth,
+      //     ],
+      //   },
+      //   component: () => import('pages/Drafts.vue'),
+      // },
+      // {
+      //   path: 'search',
+      //   name: 'search',
+      //   meta: {
+      //     title: 'search',
+      //     middleware: [
+      //       auth,
+      //     ],
+      //   },
+      //   component: () => import('pages/Search.vue'),
+      // },
+    ],
+  },
   {
     path: '/moder',
     component: () => import('layouts/ModerLayout.vue'),
@@ -135,17 +124,17 @@ const routes = [
         },
         component: () => import('pages/Moder/Storehouse.vue'),
       },
-      // {
-      //   path: 'customers',
-      //   name: 'customers',
-      //   meta: {
-      //     title: 'customers',
-      //     middleware: [
-      //       auth,
-      //     ],
-      //   },
-      //   component: () => import('pages/Moder/Customers.vue'),
-      // },
+      {
+        path: 'codes',
+        name: 'codes',
+        meta: {
+          title: 'codes',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('pages/Moder/Codes.vue'),
+      },
       // {
       //   path: 'profile',
       //   name: 'profile',
@@ -157,39 +146,39 @@ const routes = [
       //   },
       //   component: () => import('pages/Profile.vue'),
       // },
-      // {
-      //   path: 'faxes',
-      //   name: 'faxes',
-      //   meta: {
-      //     title: 'faxes',
-      //     middleware: [
-      //       auth,
-      //     ],
-      //   },
-      //   component: () => import('pages/Faxes.vue'),
-      // },
-      // {
-      //   path: 'faxes/:id',
-      //   name: 'fax',
-      //   meta: {
-      //     title: 'fax',
-      //     middleware: [
-      //       auth,
-      //     ],
-      //   },
-      //   component: () => import('pages/Fax.vue'),
-      // },
-      // {
-      //   path: 'drafts',
-      //   name: 'drafts',
-      //   meta: {
-      //     title: 'drafts',
-      //     middleware: [
-      //       auth,
-      //     ],
-      //   },
-      //   component: () => import('pages/Drafts.vue'),
-      // },
+      {
+        path: 'faxes',
+        name: 'faxes',
+        meta: {
+          title: 'faxes',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('pages/Faxes.vue'),
+      },
+      {
+        path: 'faxes/:id',
+        name: 'fax',
+        meta: {
+          title: 'fax',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('pages/Fax.vue'),
+      },
+      {
+        path: 'drafts',
+        name: 'drafts',
+        meta: {
+          title: 'drafts',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('pages/Drafts.vue'),
+      },
       // {
       //   path: 'search',
       //   name: 'search',

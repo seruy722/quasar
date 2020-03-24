@@ -6,7 +6,7 @@ const settings = {
     label: i18n.t('notChosen'),
     value: 0,
   },
-  transportOptionsData: [
+  transportStatusOptions: [
     {
       label: i18n.t('notChosen'),
       value: 0,
@@ -22,6 +22,10 @@ const settings = {
     {
       label: 'Прибыл',
       value: 3,
+    },
+    {
+      label: 'Задерживается',
+      value: 4,
     },
   ],
   sex: [

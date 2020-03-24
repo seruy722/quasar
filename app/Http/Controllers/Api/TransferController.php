@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Transfer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Spatie\Permission\Models\Role;
 
 class TransferController extends Controller
 {
@@ -50,9 +51,15 @@ class TransferController extends Controller
     public function update(Request $request)
     {
         $data = $this->stripData($request->except('id'));
-        if (array_key_exists('issued_by', $data) && $data['issued_by']) {
+        if (array_key_exists('issued_by', $data)) {
 //            $data['issued_by'] = date("Y-m-d H:i:s", strtotime($data['issued_by']));
-            $data['issued_by'] = \Illuminate\Support\Carbon::parse(strtotime($data['issued_by']))->toDateTimeString();
+//            $data['issued_by'] = \Illuminate\Support\Carbon::parse(strtotime($data['issued_by']))->toDateTimeString();
+            if ($data['issued_by']) {
+                $data['issued_by'] = date("Y-m-d H:i:s", strtotime($data['issued_by']));
+            } else {
+                $data['issued_by'] = null;
+            }
+
         }
 
         $rul = [];
@@ -104,7 +111,7 @@ class TransferController extends Controller
             'updated_at' => 'required|date',
         ]);
         return response(['transfers' => $this->query()
-            ->where('transfers.created_at', '>', \Illuminate\Support\Carbon::parse($request->created_at)->toDateTimeString())
+            ->where('transfers.created_at', '>', date("Y-m-d H:i:s", strtotime($request->created_at)))
             ->orWhere('transfers.updated_at', '>', $request->updated_at)
             ->get()]);
     }
@@ -122,6 +129,9 @@ class TransferController extends Controller
                 $data['client_name'] = $code->code;
             }
 
+        }
+        if (array_key_exists('issued_by', $data)) {
+            $data['issued_by'] = \Illuminate\Support\Carbon::parse($data['issued_by'])->toAtomString();
         }
         $data['user_name'] = auth()->user()->name;
         $data['user_id'] = auth()->user()->id;

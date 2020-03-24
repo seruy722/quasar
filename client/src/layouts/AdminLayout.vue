@@ -83,8 +83,8 @@
                         icon: 'person',
                     },
                     {
-                        title: 'faxes',
-                        field: 'faxes',
+                        title: 'admin-faxes',
+                        field: 'admin-faxes',
                         icon: 'person',
                     },
                     {

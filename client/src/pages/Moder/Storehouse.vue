@@ -18,7 +18,7 @@
 
           <IconBtn
             color="primary"
-            icon="update"
+            icon="sync"
             tooltip="Обновить"
             @iconBtnClick="refresh"
           />
@@ -36,7 +36,6 @@
             color="info"
             icon="move_to_inbox"
             tooltip="Переместить"
-            @iconBtnClick="destroyEntry(storehouseTableReactiveProperties.selected)"
           />
 
           <IconBtn
@@ -92,6 +91,11 @@
                       :lines="10"
                     >
                       {{ col.value | thingsFilter }}
+                    </ItemLabel>
+                    <ItemLabel
+                      v-else-if="col.field === 'kg'"
+                    >
+                      {{ col.value | numberFormatFilter }}
                     </ItemLabel>
                     <ItemLabel v-else>
                       {{ col.value }}
@@ -271,9 +275,10 @@
         getShopsList,
         setCategoriesStoreHouseData,
         setFormatedDate,
-        prepareHistoryData,
+        getStorehouseTableData,
     } from 'src/utils/FrequentlyCalledFunctions';
     import { max } from 'date-fns';
+    import StorehouseDataMixin from 'src/mixins/StorehouseData';
 
     export default {
         name: 'Storehouse',
@@ -295,7 +300,7 @@
             CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
         },
-        mixins: [showNotif, ExportDataMixin],
+        mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
         data() {
             return {
                 localStorehouseEditData: {},
@@ -375,11 +380,6 @@
                     selected: [],
                     visibleColumns: ['code_client_name', 'place', 'kg', 'category_name', 'code_place', 'notation', 'shop', 'things', 'created_at'],
                 },
-                storehouseHistoryData: {
-                    cols: {},
-                    historyData: [],
-                },
-                dialogHistory: false,
             };
         },
         computed: {
@@ -396,22 +396,13 @@
             },
         },
         mounted() {
-            this.getStorehouseTableData(1);
+            this.$q.loading.show();
+            Promise.all([getStorehouseTableData(this.$store)])
+              .then(() => {
+                  this.$q.loading.hide();
+              });
         },
         methods: {
-            async getStorehouseTableData(id) {
-                if (_.isEmpty(this.storehouseData)) {
-                    this.$q.loading.show();
-                    await this.$axios.get(`${getUrl('storehouseData')}/${id}`)
-                      .then(({ data }) => {
-                          this.$store.dispatch('storehouse/setStorehouseData', setFormatedDate(data));
-                          this.$q.loading.hide();
-                      })
-                      .catch(() => {
-                          this.$q.loading.hide();
-                      });
-                }
-            },
             viewUpdateDialog(val, event) {
                 if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
                     this.localStorehouseEditData = val;
@@ -472,27 +463,6 @@
                     }, 'На складе.xlsx');
                 }
             },
-            async getStorehouseDataHistory(id, cols) {
-                this.$q.loading.show();
-                await this.$axios.get(`${getUrl('storehouseDataHistory')}/${id}`)
-                  .then(({ data: { storehouseDataHistory } }) => {
-                      if (!_.isEmpty(storehouseDataHistory)) {
-                          this.$q.loading.hide();
-                          this.dialogHistory = true;
-                          this.storehouseHistoryData = prepareHistoryData(cols, storehouseDataHistory);
-                          this.storehouseHistoryData.cols.user_name = 'Пользователь';
-                          this.storehouseHistoryData.historyData = setFormatedDate(this.storehouseHistoryData.historyData);
-                          devlog.log('storehouseDataHistory', storehouseDataHistory);
-                      } else {
-                          this.$q.loading.hide();
-                          this.showNotif('info', 'По этой записи нет истории.', 'center');
-                      }
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      devlog.error('Ошибка при получении данных истории.');
-                  });
-            },
             async refresh(done) {
                 const { storehouseData } = this;
                 // devlog.log('formatToMysql', max(_.map(storehouseData, (item) => new Date(toDate(item.created_at)))));
@@ -507,7 +477,7 @@
                           _.forEach(newData, (item) => {
                               const find = _.some(storehouseData, ['id', item.id]);
                               if (find) {
-                                  this.$store.dispatch('storehouse/updateStorehouseData', setFormatedDate(item));
+                                  this.$store.dispatch('storehouse/updateStorehouseData', setFormatedDate(item, ['created_at']));
                               } else {
                                   createdItems.push(item);
                               }
@@ -515,7 +485,7 @@
 
                           if (!_.isEmpty(createdItems)) {
                               _.forEach(sortCollection(createdItems, 'id'), (elem) => {
-                                  this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(elem));
+                                  this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(elem, ['created_at']));
                               });
                           }
 

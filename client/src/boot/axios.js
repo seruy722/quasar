@@ -8,7 +8,7 @@ const axiosInstance = axios.create(getUrl('axiosData'));
 export default ({ Vue, router }) => {
     axiosInstance.interceptors.request.use((request) => {
         const token = LocalStorage.getItem(getLSKey('authToken'));
-        devlog.log('token', token);
+        // devlog.log('token', token);
         if (token) {
             request.headers.Authorization = `Bearer ${token}`;
         }

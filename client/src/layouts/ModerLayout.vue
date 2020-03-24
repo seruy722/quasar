@@ -31,7 +31,7 @@
         <q-list padding>
           <q-item>
             <q-item-section avatar>
-              <q-icon name="account_circle" size="md"/>
+              <q-icon name="account_circle" size="md" />
             </q-item-section>
 
             <q-item-section class="text-bold">
@@ -84,36 +84,41 @@
                         field: 'storehouse',
                         icon: 'store',
                     },
-                    // {
-                    //     title: 'customers',
-                    //     field: 'customers',
-                    //     icon: 'people',
-                    // },
+                    {
+                        title: 'codes',
+                        field: 'codes',
+                        icon: 'people',
+                    },
                     // {
                     //     title: 'profile',
                     //     field: 'profile',
                     //     icon: 'person',
                     // },
-                    // {
-                    //     title: 'faxes',
-                    //     field: 'faxes',
-                    //     icon: 'person',
-                    // },
+                    {
+                        title: 'faxes',
+                        field: 'faxes',
+                        icon: 'person',
+                    },
                     {
                         title: 'transfers',
                         field: 'transfers',
                         icon: 'import_export',
                     },
-                    // {
-                    //     title: 'drafts',
-                    //     field: 'drafts',
-                    //     icon: 'drafts',
-                    // },
+                    {
+                        title: 'drafts',
+                        field: 'drafts',
+                        icon: 'drafts',
+                    },
                     // {
                     //     title: 'search',
                     //     field: 'search',
                     //     icon: 'search',
                     // },
+                    {
+                        title: 'access',
+                        field: 'access',
+                        icon: 'update',
+                    },
                     {
                         title: 'exit',
                         field: 'exit',
@@ -141,6 +146,7 @@
                 if (this.$route.name !== field) {
                     if (field === 'exit') {
                         this.$q.localStorage.clear();
+                        this.$store.dispatch('auth/logout');
                         this.$router.push({ name: 'login' });
                     } else {
                         this.$router.push({ name: field });

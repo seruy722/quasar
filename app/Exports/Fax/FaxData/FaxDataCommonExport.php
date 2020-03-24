@@ -29,11 +29,11 @@ class FaxDataCommonExport implements FromCollection, ShouldAutoSize, WithTitle, 
         $this->faxID = $faxID;
 
         $data = FaxDataCommonExportResource::collection(
-            FaxData::select('fax_data.code', 'fax_data.place', 'fax_data.kg',
-                'fax_data.shop_id', 'fax_data.things', 'fax_data.category_id', 'fax_data.notation')
+            FaxData::select('storehouse_data.code', 'storehouse_data.place', 'storehouse_data.kg',
+                'storehouse_data.shop_id', 'storehouse_data.things', 'storehouse_data.category_id', 'storehouse_data.notation')
                 ->selectRaw('codes.code as codesCode')
-                ->where('fax_data.fax_id', $this->faxID)
-                ->join('codes', 'codes.id', '=', 'fax_data.code_id')
+                ->where('storehouse_data.fax_id', $this->faxID)
+                ->join('codes', 'codes.id', '=', 'storehouse_data.code_id')
                 ->orderByRaw('CONVERT(codes.code, UNSIGNED INTEGER)')
                 ->get()
         );
@@ -44,10 +44,10 @@ class FaxDataCommonExport implements FromCollection, ShouldAutoSize, WithTitle, 
         $this->sumKg = $this->countSum($this->data, 'kg');
 
         $this->categories = FaxData::select('categories.name')
-            ->selectRaw('SUM(fax_data.place) as place')
-            ->selectRaw('SUM(fax_data.kg) as kg')
-            ->leftJoin('categories', 'categories.id', '=', 'fax_data.category_id')
-            ->where('fax_data.fax_id', $this->faxID)
+            ->selectRaw('SUM(storehouse_data.place) as place')
+            ->selectRaw('SUM(storehouse_data.kg) as kg')
+            ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
+            ->where('storehouse_data.fax_id', $this->faxID)
             ->orderBy('kg', 'DESC')
             ->groupBy('category_id')
             ->get();

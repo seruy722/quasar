@@ -1,6 +1,7 @@
 import { countSumCollection } from 'src/utils/index';
 import { fullDate } from 'src/utils/formatDate';
 import getFromSettings from 'src/tools/settings';
+import { uid } from 'quasar';
 // ДОП ФУНКЦИИ
 /**
  * Возвращает итоговый обьект для категорий
@@ -9,8 +10,10 @@ import getFromSettings from 'src/tools/settings';
  */
 const sumObjectForCategories = (arr) => ({
   name: '',
+  for_kg: null,
   kg: countSumCollection(arr, 'kg'),
   place: countSumCollection(arr, 'place'),
+  sum: countSumCollection(arr, 'sum'),
 });
 
 // TRANSFERS
@@ -54,27 +57,76 @@ export const setChangeValue = (data) => {
   });
 };
 // STOREHOUSEDATA
-export const setCategoriesStoreHouseData = (data) => {
-  const uniq = _.uniqBy(_.map(data, ({ category_name: categoryName, category_id: categoryID }) => ({
+export const setCategoriesStoreHouseData = (data, transporterPrices) => {
+  const uniq = _.uniqBy(_.map(data, ({ category_name: categoryName, category_id: categoryID, fax_id: faxId }) => ({
     name: categoryName,
     id: categoryID,
+    faxId,
   })), 'name');
 
   const arr = [];
 
-  _.forEach(uniq, ({ name, id }) => {
+  _.forEach(uniq, ({ name, id, faxId }) => {
+    const kg = countSumCollection(_.filter(data, { category_id: id }), ({ kg: kilo }) => kilo);
+    let forKg = 0;
+    const findForKg = _.find(transporterPrices, { category_id: id });
+    if (findForKg) {
+      forKg = findForKg.category_price;
+    }
     arr.push({
       name,
       place: countSumCollection(_.filter(data, { category_id: id }), ({ place }) => place),
-      kg: countSumCollection(_.filter(data, { category_id: id }), ({ kg: kilo }) => kilo),
+      kg,
+      for_kg: forKg,
+      sum: kg * forKg,
+      category_id: id,
+      fax_id: faxId,
+      uid: uid(),
     });
   });
 
-  // _.orderBy(arr, 'kg', 'desc');
   arr.push(sumObjectForCategories(arr));
 
   return arr;
 };
+
+/**
+ * Комбинирует одинаковые данные по code_client_id и category_name
+ * @type {function(*=): []}
+ */
+export const combineStoreHouseData = ((data) => {
+  const clients = _.uniq(_.map(data, 'code_client_id'));
+  const clientsCategories2 = [];
+  _.forEach(clients, (item) => {
+    clientsCategories2.push(_.chain(data)
+      .filter({ code_client_id: item })
+      .groupBy('category_name')
+      .mapValues((values) => _.chain(values)
+        .groupBy('for_kg')
+        .mapValues((val) => _.chain(val)
+          .groupBy('for_place')
+          .value())
+        .value())
+      .value());
+  });
+  const result = [];
+  _.forEach(clientsCategories2, (elem) => {
+    _.forEach(elem, (el) => {
+      _.forEach(_.values(el), (arr) => {
+        _.forEach((arr), (arr2) => {
+          devlog.log('ARR_EKL', arr2);
+          result.push(_.assign({}, _.first(arr2), {
+            kg: _.sumBy(arr2, 'kg'),
+            place: _.sumBy(arr2, 'place'),
+            arr: arr2,
+          }));
+        });
+      });
+    });
+  });
+  return result;
+});
+
 /**
  * Получение и запись всех категорий во vuex
  * @param store
@@ -153,6 +205,28 @@ export const getTransporters = (store) => {
   return true;
 };
 /**
+ * Получение и запись списка перевожчиков во vuex
+ * @param store
+ * @return {boolean|*}
+ */
+export const getStorehouseTableData = (store) => {
+  if (_.isEmpty(store.getters['storehouse/getStorehouseData'])) {
+    return store.dispatch('storehouse/fetchStorehouseTableData');
+  }
+  return true;
+};
+/**
+ * Получение и запись списка факсов во vuex
+ * @param store
+ * @return {boolean|*}
+ */
+export const getFaxes = (store) => {
+  if (_.isEmpty(store.getters['faxes/getFaxes'])) {
+    return store.dispatch('faxes/fetchFaxes');
+  }
+  return true;
+};
+/**
  * Устанавливает значения по умолчанию
  * @param data
  */
@@ -166,21 +240,24 @@ export const setDefaultData = (data) => {
 /**
  * Форматирует даты из 2020-01-31 16:25:13 в 30-01-2020 16:25:13
  * @param data
+ * @param fields
  * @return {*}
  */
-export const setFormatedDate = (data) => {
+export const setFormatedDate = (data, fields = []) => {
   if (_.isArray(data)) {
     _.forEach(data, (item) => {
-      item.created_at = fullDate(item.created_at);
-      if (_.has(item, 'issued_by')) {
-        _.set(item, 'issued_by', fullDate(_.get(item, 'issued_by')));
-      }
+      _.forEach(fields, (field) => {
+        if (item[field]) {
+          item[field] = fullDate(item[field]);
+        }
+      });
     });
   } else if (_.isObject(data)) {
-    data.created_at = fullDate(data.created_at);
-    if (_.has(data, 'issued_by')) {
-      _.set(data, 'issued_by', fullDate(_.get(data, 'issued_by')));
-    }
+    _.forEach(fields, (field) => {
+      if (data[field]) {
+        data[field] = fullDate(data[field]);
+      }
+    });
   }
 
   return data;

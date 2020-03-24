@@ -8,11 +8,20 @@
     :label-cancel="labelCancel"
     dense
     @save="$emit('addToSave')"
-    @show="$emit('update:edit', true)"
+    @show="$emit('show')"
     @hide="$emit('update:edit', false)"
   >
     <slot :dd="value">
       <q-input
+        v-if="type === 'number'"
+        v-model.number="modelData"
+        :type="type"
+        :mask="mask"
+        dense
+        autofocus
+      />
+      <q-input
+        v-else
         v-model.trim="modelData"
         :type="type"
         :mask="mask"
@@ -41,11 +50,11 @@
             },
             labelSet: {
                 type: String,
-                default: 'save',
+                default: 'Сохранить',
             },
             labelCancel: {
                 type: String,
-                default: 'cancel',
+                default: 'Отмена',
             },
             type: {
                 type: String,

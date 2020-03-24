@@ -13,7 +13,7 @@
         <template v-slot:top-buttons>
           <IconBtn
             color="primary"
-            icon="update"
+            icon="sync"
             tooltip="Обновить"
             @iconBtnClick="refresh"
           />
@@ -489,6 +489,8 @@
         isoDate,
         toDate,
         formatToMysql,
+        reverseDate,
+        addTime,
     } from 'src/utils/formatDate';
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
     import showNotif from 'src/mixins/showNotif';
@@ -505,7 +507,10 @@
         setDefaultData,
         getClientCodes,
     } from 'src/utils/FrequentlyCalledFunctions';
-    import { max } from 'date-fns';
+    import {
+        max,
+        formatISO,
+    } from 'date-fns';
 
     export default {
         name: 'Transfers',
@@ -640,7 +645,7 @@
                         type: 'date',
                         field: 'issued_by',
                         label: 'Выдано',
-                        mask: '##.##.####',
+                        mask: '##-##-####',
                         require: true,
                         requireError: 'Поле обьязательное для заполнения.',
                         changeValue: false,
@@ -748,19 +753,20 @@
                 return this.$store.getters['codes/getCodes'];
             },
             countTransfers() {
+                const { allTransfers } = this;
                 return {
-                    all: numberFormat(_.size(this.allTransfers)),
-                    allSum: numberFormat(countSumCollection(this.allTransfers, 'sum')),
-                    notIssued: numberFormat(_.size(_.filter(this.allTransfers, { status: 2 }))),
-                    notIssuedSum: numberFormat(countSumCollection(_.filter(this.allTransfers, { status: 2 }), 'sum')),
-                    issued: numberFormat(_.size(_.filter(this.allTransfers, { status: 3 }))),
-                    issuedSum: numberFormat(countSumCollection(_.filter(this.allTransfers, { status: 3 }), 'sum')),
-                    question: numberFormat(_.size(_.filter(this.allTransfers, { status: 1 }))),
-                    questionSum: numberFormat(countSumCollection(_.filter(this.allTransfers, { status: 1 }), 'sum')),
-                    cancel: numberFormat(_.size(_.filter(this.allTransfers, { status: 4 }))),
-                    cancelSum: numberFormat(countSumCollection(_.filter(this.allTransfers, { status: 4 }), 'sum')),
-                    returned: numberFormat(_.size(_.filter(this.allTransfers, { status: 5 }))),
-                    returnedSum: numberFormat(countSumCollection(_.filter(this.allTransfers, { status: 5 }), 'sum')),
+                    all: numberFormat(_.size(allTransfers)),
+                    allSum: numberFormat(countSumCollection(allTransfers, 'sum')),
+                    notIssued: numberFormat(_.size(_.filter(allTransfers, { status: 2 }))),
+                    notIssuedSum: numberFormat(countSumCollection(_.filter(allTransfers, { status: 2 }), 'sum')),
+                    issued: numberFormat(_.size(_.filter(allTransfers, { status: 3 }))),
+                    issuedSum: numberFormat(countSumCollection(_.filter(allTransfers, { status: 3 }), 'sum')),
+                    question: numberFormat(_.size(_.filter(allTransfers, { status: 1 }))),
+                    questionSum: numberFormat(countSumCollection(_.filter(allTransfers, { status: 1 }), 'sum')),
+                    cancel: numberFormat(_.size(_.filter(allTransfers, { status: 4 }))),
+                    cancelSum: numberFormat(countSumCollection(_.filter(allTransfers, { status: 4 }), 'sum')),
+                    returned: numberFormat(_.size(_.filter(allTransfers, { status: 5 }))),
+                    returnedSum: numberFormat(countSumCollection(_.filter(allTransfers, { status: 5 }), 'sum')),
                 };
             },
             countCheckedTransfers() {
@@ -805,7 +811,10 @@
                     this.$q.loading.show();
                     const values = _.mapValues(sendData, 'value');
                     values.receiver_name = _.startCase(_.toLower(values.receiver_name));
-                    values.issued_by = isoDate(values.issued_by);
+                    if (_.trim(values.issued_by)) {
+                        const date = reverseDate(values.issued_by);
+                        values.issued_by = formatISO(addTime(date));
+                    }
                     this.$axios.post(getUrl('storeTransfers'), values)
                       .then(({ data: { transfer } }) => {
                           devlog.log('DDFR', transfer);
@@ -826,7 +835,13 @@
                         devlog.log('sendData_', sendData);
                         const dataToSend = _.reduce(sendData, (result, { value, changeValue }, index) => {
                             if (changeValue && index === 'issued_by') {
-                                result[index] = isoDate(value);
+                                devlog.log('ISSUUE', value);
+                                if (value) {
+                                    const date = reverseDate(value);
+                                    result[index] = formatISO(addTime(date));
+                                } else {
+                                    result[index] = value;
+                                }
                             } else if (changeValue && index === 'receiver_name' && value) {
                                 result[index] = _.startCase(_.toLower(value));
                             } else if (changeValue) {
@@ -835,6 +850,7 @@
                             return result;
                         }, {});
                         _.assign(dataToSend, { id: _.get(this.localProps, 'row.id') });
+                        devlog.log('dataToSend', dataToSend);
                         this.$axios.post(getUrl('updateTransfers'), dataToSend)
                           .then(({ data: { transfer } }) => {
                               devlog.log('DDFR', transfer);
@@ -904,7 +920,7 @@
                 }
             },
             setAdditionalData(data) {
-                return setMethodLabel(setStatusLabel(setFormatedDate(data)));
+                return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
             },
             openCloseDialog(val) {
                 this.dialog = val;

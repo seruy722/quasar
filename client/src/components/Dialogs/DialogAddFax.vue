@@ -7,8 +7,15 @@
   >
     <Card style="min-width: 320px;width: 100%;max-width: 500px;">
       <CardSection class="row justify-between bg-grey q-mb-sm">
-        <span class="text-h6">Новый факс</span>
+        <span class="text-h6">{{ entryData.row ? 'Редактирование' : 'Новый факс' }}</span>
         <div>
+          <IconBtn
+            v-if="entryData.row"
+            dense
+            icon="history"
+            tooltip="История"
+            @iconBtnClick="entryData.historyFunc(entryData.row.id, entryData.cols)"
+          />
           <IconBtn
             dense
             icon="clear"
@@ -19,40 +26,88 @@
       </CardSection>
       <CardSection>
         <BaseInput
-          v-model="faxData.name.value"
+          v-model.trim="faxData.name.value"
           :label="faxData.name.label"
           :type="faxData.name.type"
           :autofocus="true"
           :field="faxData.name.field"
           :dense="$q.screen.xs || $q.screen.sm"
+          :change-value.sync="faxData.name.changeValue"
           :errors="errorsData"
         />
 
         <SearchSelect
-          v-model="faxData.transporter_id.value"
+          v-model.number="faxData.transporter_id.value"
           :label="faxData.transporter_id.label"
           :dense="$q.screen.xs || $q.screen.sm"
           :field="faxData.transporter_id.field"
           :func-load-data="faxData.transporter_id.funcLoadData"
+          :change-value.sync="faxData.transporter_id.changeValue"
           :options="transporters"
           :errors="errorsData"
         />
 
         <BaseSelect
-          v-model="faxData.transport_id.value"
+          v-model.number="faxData.transport_id.value"
           :label="faxData.transport_id.label"
           :dense="$q.screen.xs || $q.screen.sm"
           :field="faxData.transport_id.field"
+          :change-value.sync="faxData.transport_id.changeValue"
           :options="transport"
           :errors="errorsData"
         />
 
         <BaseSelect
-          v-model="faxData.status.value"
+          v-model.number="faxData.status.value"
           :label="faxData.status.label"
           :dense="$q.screen.xs || $q.screen.sm"
           :field="faxData.status.field"
           :options="faxData.status.options"
+          :change-value.sync="faxData.status.changeValue"
+          :errors="errorsData"
+        />
+
+        <BaseInput
+          v-model.trim="faxData.departure_date.value"
+          :label="faxData.departure_date.label"
+          :errors="errorsData"
+          :field="faxData.departure_date.field"
+          :mask="faxData.departure_date.mask"
+          :change-value.sync="faxData.departure_date.changeValue"
+          dense
+        >
+          <template v-slot:append>
+            <Date
+              :value.sync="faxData.departure_date.value"
+              :change-value.sync="faxData.departure_date.changeValue"
+            />
+          </template>
+        </BaseInput>
+
+        <BaseInput
+          v-model.trim="faxData.arrival_date.value"
+          :label="faxData.arrival_date.label"
+          :errors="errorsData"
+          :field="faxData.arrival_date.field"
+          :mask="faxData.arrival_date.mask"
+          :change-value.sync="faxData.arrival_date.changeValue"
+          dense
+        >
+          <template v-slot:append>
+            <Date
+              :value.sync="faxData.arrival_date.value"
+              :change-value.sync="faxData.arrival_date.changeValue"
+            />
+          </template>
+        </BaseInput>
+
+        <BaseInput
+          v-model.trim="faxData.notation.value"
+          :label="faxData.notation.label"
+          :type="faxData.notation.type"
+          :field="faxData.notation.field"
+          :dense="$q.screen.xs || $q.screen.sm"
+          :change-value.sync="faxData.notation.changeValue"
           :errors="errorsData"
         />
       </CardSection>
@@ -60,16 +115,17 @@
       <Separator />
       <CardActions>
         <OutlineBtn
+          label="Закрыть"
+          color="negative"
+          @clickOutlineBtn="close(faxData)"
+        />
+
+        <OutlineBtn
           label="Сохранить"
           color="positive"
           @clickOutlineBtn="checkErrors(faxData, saveFax)"
         />
 
-        <OutlineBtn
-          label="Закрыть"
-          color="negative"
-          @clickOutlineBtn="close(faxData)"
-        />
       </CardActions>
     </Card>
   </Dialog>
@@ -80,7 +136,18 @@
     import showNotif from 'src/mixins/showNotif';
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
     import getFromSettings from 'src/tools/settings';
-    import { setDefaultData, getTransports, getTransporters } from 'src/utils/FrequentlyCalledFunctions';
+    import {
+        setDefaultData,
+        getTransports,
+        getTransporters,
+        setFormatedDate,
+        setChangeValue,
+    } from 'src/utils/FrequentlyCalledFunctions';
+    import {
+        reverseDate,
+        addTime,
+    } from 'src/utils/formatDate';
+    import { formatISO } from 'date-fns';
 
     export default {
         name: 'DialogAddFax',
@@ -95,12 +162,17 @@
             Separator: () => import('src/components/Separator.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             BaseSelect: () => import('src/components/Elements/BaseSelect.vue'),
+            Date: () => import('src/components/Date.vue'),
         },
         mixins: [showNotif, CheckErrorsMixin],
         props: {
             showDialog: {
                 type: Boolean,
                 default: false,
+            },
+            entryData: {
+                type: Object,
+                default: () => ({}),
             },
         },
         data() {
@@ -125,6 +197,7 @@
                         ],
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
+                        changeValue: false,
                         default: '',
                         value: '',
                     },
@@ -132,9 +205,10 @@
                         type: 'select',
                         label: 'Статус',
                         field: 'status',
-                        options: getFromSettings('transportOptionsData'),
+                        options: getFromSettings('transportStatusOptions'),
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
+                        changeValue: false,
                         default: 0,
                         value: 0,
                     },
@@ -145,6 +219,7 @@
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
                         funcLoadData: getTransporters,
+                        changeValue: false,
                         default: null,
                         value: null,
                     },
@@ -154,8 +229,49 @@
                         field: 'transport_id',
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
+                        changeValue: false,
                         default: null,
                         value: null,
+                    },
+                    departure_date: {
+                        type: 'date',
+                        label: 'Дата отправления',
+                        field: 'departure_date',
+                        require: false,
+                        requireError: 'Поле обьзательное для заполнения.',
+                        changeValue: false,
+                        mask: '##-##-#### ##:##:##',
+                        default: '',
+                        value: '',
+                    },
+                    arrival_date: {
+                        type: 'date',
+                        label: 'Дата прибытия',
+                        field: 'arrival_date',
+                        require: false,
+                        requireError: 'Поле обьзательное для заполнения.',
+                        changeValue: false,
+                        mask: '##-##-#### ##:##:##',
+                        default: '',
+                        value: '',
+                    },
+                    notation: {
+                        type: 'text',
+                        label: 'Примечания',
+                        field: 'notation',
+                        rules: [
+                            {
+                                name: 'isLength',
+                                error: 'Максимальное количество символов 255.',
+                                options: {
+                                    min: undefined,
+                                    max: 255,
+                                },
+                            },
+                        ],
+                        changeValue: false,
+                        default: '',
+                        value: '',
                     },
                 },
             };
@@ -171,42 +287,128 @@
         watch: {
             showDialog(val) {
                 if (val) {
-                    getTransports(this.$store);
-                    this.show = val;
+                    this.$q.loading.show();
+                    Promise.all([getTransports(this.$store), getTransporters(this.$store)])
+                      .then(() => {
+                          this.show = val;
+                          this.$q.loading.hide();
+                      });
                 }
             },
             show(val) {
                 this.$emit('update:showDialog', val);
             },
+            entryData(val) {
+                if (!_.isEmpty(val)) {
+                    devlog.log('vALIN_ADD', val);
+                    _.forEach(this.faxData, (item, index) => {
+                        devlog.log('ITEM', item);
+                        if (_.get(this.entryData, `row[${index}]`)) {
+                            _.set(item, 'value', _.get(this.entryData, `row[${index}]`));
+                        }
+                    });
+                }
+            },
+            'faxData.status.value': function view(val) {
+                devlog.log('STAT_VAL', val);
+                switch (val) {
+                    case 1:
+                        this.faxData.departure_date.value = '';
+                        this.faxData.arrival_date.value = '';
+                        // this.faxData.departure_date.changeValue = true;
+                        // this.faxData.arrival_date.changeValue = true;
+                        this.faxData.departure_date.require = false;
+                        this.faxData.arrival_date.require = false;
+                        break;
+                    case 2:
+                        this.faxData.departure_date.require = true;
+                        this.faxData.arrival_date.require = false;
+                        this.faxData.arrival_date.value = '';
+                        // this.faxData.arrival_date.changeValue = true;
+                        break;
+                    case 3:
+                        this.faxData.arrival_date.require = true;
+                        this.faxData.departure_date.require = true;
+                        break;
+                    case 4:
+                        this.faxData.arrival_date.require = false;
+                        this.faxData.departure_date.require = true;
+                        this.faxData.arrival_date.value = '';
+                        // this.faxData.arrival_date.changeValue = true;
+                        break;
+                    default:
+                        this.faxData.departure_date.require = false;
+                        this.faxData.departure_date.require = false;
+                }
+            },
         },
         methods: {
             saveFax(faxData) {
-                this.$q.loading.show();
-                const sendData = _.reduce(faxData, (result, item, index) => {
-                    if (index === 'name') {
-                        result[item.field] = _.startCase(item.value);
+                devlog.log('STRA');
+                const sendData = _.reduce(faxData, (result, { value, changeValue }, index) => {
+                    if (changeValue) {
+                        if (index === 'name') {
+                            result[index] = _.startCase(value);
+                        } else if (index === 'departure_date' && value) {
+                            if (value) {
+                                const date = reverseDate(value);
+                                result[index] = formatISO(addTime(date));
+                            } else {
+                                result[index] = null;
+                            }
+                        } else if (index === 'arrival_date' && value) {
+                            if (value) {
+                                const date = reverseDate(value);
+                                result[index] = formatISO(addTime(date));
+                            } else {
+                                result[index] = null;
+                            }
+                        } else {
+                            result[index] = value;
+                        }
                     }
-                    result[item.field] = item.value;
-
                     return result;
                 }, {});
-
-                this.$axios.post(getUrl('addFax'), sendData)
-                  .then(({ data: { fax } }) => {
-                      this.$q.loading.hide();
-                      if (!_.isEmpty(this.$store.getters['faxes/getFaxes'])) {
-                          this.$store.dispatch('faxes/addFax', fax);
-                      }
-                      this.showNotif('success', 'Факс успешно добавлен.', 'center');
-                  })
-                  .catch(({ response: { data: { errors } } }) => {
-                      this.errorsData.errors = errors;
-                      this.$q.loading.hide();
-                  });
+                devlog.log('STRA_2', sendData);
+                if (!_.isEmpty(sendData)) {
+                    this.$q.loading.show();
+                    if (this.entryData.row) {
+                        sendData.id = _.get(this.entryData, 'row.id');
+                        this.$axios.post(getUrl('updateFaxes'), sendData)
+                          .then(({ data: { fax } }) => {
+                              this.$q.loading.hide();
+                              this.$store.dispatch('faxes/updateFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
+                              devlog.log('Fx0', fax);
+                              setChangeValue(this.faxData);
+                              this.close(this.faxData);
+                              this.showNotif('success', 'Факс успешно обновлен.', 'center');
+                          })
+                          .catch(({ response: { data: { errors } } }) => {
+                              this.errorsData.errors = errors;
+                              this.$q.loading.hide();
+                          });
+                    } else {
+                        this.$axios.post(getUrl('addFax'), sendData)
+                          .then(({ data: { fax } }) => {
+                              this.$q.loading.hide();
+                              if (!_.isEmpty(this.$store.getters['faxes/getFaxes'])) {
+                                  this.$store.dispatch('faxes/addFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
+                              }
+                              this.showNotif('success', 'Факс успешно добавлен.', 'center');
+                          })
+                          .catch(({ response: { data: { errors } } }) => {
+                              this.errorsData.errors = errors;
+                              this.$q.loading.hide();
+                          });
+                    }
+                } else {
+                    this.close(this.faxData);
+                }
             },
             close(data) {
                 this.show = false;
                 setDefaultData(data);
+                this.entryData.selected = false;
             },
         },
     };

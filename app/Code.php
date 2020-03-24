@@ -8,13 +8,29 @@ class Code extends Model
 {
     protected $fillable = ['code', 'user_id'];
 
-    public function clients()
+    public function customers()
     {
-        return $this->hasMany('App\Customer', 'code_id');
+        return $this->hasMany('App\Customer', 'code_id', 'id')->join('cities', 'cities.id', '=', 'customers.city_id')->select('customers.*', 'cities.name AS city_name');
     }
 
     public function user()
     {
         return $this->hasOne('App\User', 'id', 'user_id');
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        if ($value) {
+            return \Illuminate\Support\Carbon::parse($value)->toAtomString();
+        }
+        return null;
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        if ($value) {
+            return \Illuminate\Support\Carbon::parse($value)->toAtomString();
+        }
+        return null;
     }
 }

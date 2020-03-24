@@ -54,7 +54,7 @@ export default {
   transporter: 'Перевожчик',
   fax: 'Факс',
   transport: 'Транспорт',
-  departureDate: 'Дата отправки',
+  departureDate: 'Дата отправления',
   arrived: 'Прибыл',
   edit: 'Редактирование',
   cancel: 'Отмена',

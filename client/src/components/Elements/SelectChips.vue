@@ -10,6 +10,8 @@
     :input-style="{fontWeight: 'bold'}"
     :error-message="viewError()"
     :error="isError"
+    :readonly="readonly"
+    :disable="disable"
     data-vue-component-name="SelectChips"
     @new-value="createValue"
     @filter="filterFn"
@@ -41,6 +43,14 @@
                 default: false,
             },
             changeValue: {
+                type: Boolean,
+                default: false,
+            },
+            readonly: {
+                type: Boolean,
+                default: false,
+            },
+            disable: {
                 type: Boolean,
                 default: false,
             },

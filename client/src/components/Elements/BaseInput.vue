@@ -16,6 +16,7 @@
     :mask="mask"
     :unmasked-value="unmaskedValue"
     :readonly="readonly"
+    :disable="disable"
     bottom-slots
     :input-style="{fontWeight: 'bold'}"
     data-vue-component="BaseInput"
@@ -76,6 +77,10 @@
                 default: false,
             },
             readonly: {
+                type: Boolean,
+                default: false,
+            },
+            disable: {
                 type: Boolean,
                 default: false,
             },

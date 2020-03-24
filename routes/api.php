@@ -28,9 +28,10 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
         return $request->user();
     });
     // CODES
-    Route::get('/codes', function () {
-        return CodeResource::collection(Code::with('customers', 'user')->get());
-    });
+    Route::get('/codes', 'Api\CodesController@getCodesWithCustomers');
+//    Route::get('/codes', function () {
+//        return CodeResource::collection(Code::with('customers', 'user')->get());
+//    });
     Route::post('/upload-codes', 'Api\CodesController@uploadCodesData');
     Route::get('/check-code-exist/{code}', 'Api\CodesController@checkCodeExist');
     Route::post('/store-code', 'Api\CodesController@storeCode');
@@ -48,10 +49,14 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/destroy-storehouse-data', 'Api\StorehouseDataController@destroy');
     Route::get('/storehouse-data-history/{id}', 'Api\StorehouseDataController@getStorehouseDataHistory');
     Route::post('/get-new-storehouseData', 'Api\StorehouseDataController@getNewStorehouseData');
+    Route::post('/set-transfers-storehouse-fax', 'Api\StorehouseDataController@setTransfersStorehouseFax');
+    Route::post('/update-fax-combine-data', 'Api\StorehouseDataController@updateFaxCombineData');
 
     // CLIENTS
     Route::post('/valid-customer-data', 'Api\CustomersController@checkValidCustomerData');
     Route::post('/store-customers', 'Api\CustomersController@storeCustomers');
+    Route::post('/update-customer', 'Api\CustomersController@update');
+    Route::get('/destroy-customer/{id}', 'Api\CustomersController@destroy');
 
     // CARGO_TABLE
     Route::post('/upload-cargo-table', 'CommonController@storeCargoTable');
@@ -69,6 +74,10 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/add-fax', 'Api\FaxController@addFax');
     Route::post('/delete-faxes', 'Api\FaxController@deleteFax');
     Route::post('/update-faxes', 'Api\FaxController@updateFaxes');
+    Route::post('/upload-to-cargo', 'Api\FaxController@uploadToCargo');
+    Route::get('/fax-history/{id}', 'Api\FaxController@faxHistory');
+    Route::post('/get-new-fax', 'Api\FaxController@getNewFax');
+    Route::get('/fax/{id}', 'Api\FaxController@getFax');
 
     // FAX_DATA
     Route::post('/upload-fax-data-table', 'Api\FaxDataController@storeFaxData');
@@ -76,6 +85,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/update-fax-data', 'Api\FaxDataController@updateFaxData');
     Route::post('/export-fax-data', 'Api\FaxDataController@export');
     Route::get('/update-all-price-in-fax-data/{id}', 'Api\FaxDataController@updatePrice');
+    Route::post('/export-fax-moder-data', 'Api\FaxDataController@exportModer');
+    Route::post('/export-fax-admin-data', 'Api\FaxDataController@exportAdmin');
 
     // CATEGORIES
     Route::get('/categories', 'Api\CategoryController@index');
@@ -91,6 +102,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     // TRANSPORTER_PRICE
     Route::post('/update-transporter-price-data', 'Api\TransporterPriceController@updateData');
     Route::post('/update-transporter-faxes-price', 'Api\TransporterFaxesPriceController@updateData');
+    Route::get('/transporter-price-data/{id}', 'Api\TransporterFaxesPriceController@getTransporterPriceData');
+    Route::post('/save-categories-price', 'Api\TransporterFaxesPriceController@saveCategoriesPrice');
 
     // CITIES
     Route::get('/cities', function () {

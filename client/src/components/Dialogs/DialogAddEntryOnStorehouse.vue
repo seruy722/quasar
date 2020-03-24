@@ -402,7 +402,7 @@
                         this.$q.loading.show();
                         this.$axios.post(getUrl('addStorehouseData'), sendData)
                           .then(({ data: { storehouseData } }) => {
-                              this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(storehouseData));
+                              this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(storehouseData, ['created_at']));
                               // this.setChangeValue(this.storehouseData);
                               this.$q.loading.hide();
                               this.showNotif('success', 'Запись успешно добавлена.', 'center');
@@ -419,7 +419,7 @@
                             this.$axios.post(getUrl('updateStorehouseData'), sendData)
                               .then(({ data: { storehouseData } }) => {
                                   devlog.log('DTA_UPDATE', storehouseData);
-                                  this.$store.dispatch('storehouse/updateStorehouseData', setFormatedDate(storehouseData));
+                                  this.$store.dispatch('storehouse/updateStorehouseData', setFormatedDate(storehouseData, ['created_at']));
                                   setChangeValue(this.storehouseData);
                                   this.$q.loading.hide();
                                   this.showNotif('success', 'Запись успешно обновлена.', 'center');
