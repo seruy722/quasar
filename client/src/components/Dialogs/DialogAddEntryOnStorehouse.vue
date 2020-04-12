@@ -8,7 +8,7 @@
     <Card style="min-width: 320px;width: 100%;max-width: 900px;">
       <CardSection class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">{{ entryData.row ? 'Редактирование' : 'Новая запись' }}</span>
-        <div>
+        <div class="row">
           <IconBtn
             v-if="entryData.row"
             dense
@@ -16,6 +16,7 @@
             tooltip="История"
             @iconBtnClick="entryData.historyFunc(entryData.row.id, entryData.cols)"
           />
+          <Menu :items="['Код', 'Клиента', 'Категорию']" />
 
           <IconBtn
             dense
@@ -207,6 +208,8 @@
             Separator: () => import('src/components/Separator.vue'),
             SelectChips: () => import('src/components/Elements/SelectChips.vue'),
             CheckBox: () => import('src/components/Elements/CheckBox.vue'),
+            // MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
+            Menu: () => import('src/components/Menu.vue'),
         },
         mixins: [CheckErrorsMixin, showNotif],
         props: {
