@@ -6,6 +6,7 @@
     :error="isError"
     :value="value"
     :dense="dense"
+    :multiple="multiple"
     use-input
     data-vue-component-name="SearchSelect"
     emit-value
@@ -27,7 +28,7 @@
         mixins: [ErrorsServerMixin],
         props: {
             value: {
-                type: [String, Number],
+                type: [String, Number, Array],
                 default: null,
             },
             options: {
@@ -55,6 +56,10 @@
                 default: false,
             },
             changeValue: {
+                type: Boolean,
+                default: false,
+            },
+            multiple: {
                 type: Boolean,
                 default: false,
             },

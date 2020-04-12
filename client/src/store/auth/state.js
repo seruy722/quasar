@@ -1,4 +1,5 @@
 export default {
-    user: null,
-    toPath: '',
+  user: null,
+  toPath: '',
+  usersWithRolesAndPermissions: [],
 };

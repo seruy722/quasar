@@ -1,9 +1,10 @@
 import { getUrl } from 'src/tools/url';
 import { axiosInstance } from 'boot/axios';
+import { setFormatedDate } from 'src/utils/FrequentlyCalledFunctions';
 
 export const fetchStorehouseTableData = (({ commit }) => axiosInstance.get(`${getUrl('storehouseData')}/${1}`)
   .then(({ data }) => {
-    commit('SET_STOREHOUSE_DATA', data);
+    commit('SET_STOREHOUSE_DATA', setFormatedDate(data, ['created_at']));
   })
   .catch(() => {
     devlog.warn('Ошибка при запросе fetchStorehouseTableData');

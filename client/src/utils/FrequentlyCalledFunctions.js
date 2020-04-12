@@ -6,15 +6,24 @@ import { uid } from 'quasar';
 /**
  * Возвращает итоговый обьект для категорий
  * @param arr
+ * @param isForKg
  * @return {{name: string, place: *, kg: *}}
  */
-const sumObjectForCategories = (arr) => ({
-  name: '',
-  for_kg: null,
-  kg: countSumCollection(arr, 'kg'),
-  place: countSumCollection(arr, 'place'),
-  sum: countSumCollection(arr, 'sum'),
-});
+const sumObjectForCategories = (arr, isForKg) => {
+  const result = {
+    name: '',
+    for_kg: 0,
+    kg: countSumCollection(arr, 'kg'),
+    place: countSumCollection(arr, 'place'),
+    sum: countSumCollection(arr, 'sum'),
+  };
+  if (!isForKg) {
+    delete result.for_kg;
+    delete result.sum;
+  }
+
+  return result;
+};
 
 // TRANSFERS
 /**
@@ -68,26 +77,34 @@ export const setCategoriesStoreHouseData = (data, transporterPrices) => {
 
   _.forEach(uniq, ({ name, id, faxId }) => {
     const kg = countSumCollection(_.filter(data, { category_id: id }), ({ kg: kilo }) => kilo);
-    let forKg = 0;
-    const findForKg = _.find(transporterPrices, { category_id: id });
-    if (findForKg) {
-      forKg = findForKg.category_price;
-    }
-    arr.push({
+    const obj = {
       name,
       place: countSumCollection(_.filter(data, { category_id: id }), ({ place }) => place),
       kg,
-      for_kg: forKg,
-      sum: kg * forKg,
       category_id: id,
       fax_id: faxId,
       uid: uid(),
-    });
+    };
+    if (!_.isEmpty(transporterPrices)) {
+      let forKg = 0;
+      const findForKg = _.find(transporterPrices, { category_id: id });
+      if (findForKg) {
+        forKg = findForKg.category_price;
+      }
+      obj.for_kg = forKg;
+      obj.sum = kg * forKg;
+    }
+    arr.push(obj);
   });
 
-  arr.push(sumObjectForCategories(arr));
+  arr.sort((a, b) => b.place - a.place);
 
-  return arr;
+  // arr.push(sumObjectForCategories(arr));
+
+  return {
+    categoriesList: arr,
+    footer: sumObjectForCategories(arr, _.has(_.first(arr), 'for_kg')),
+  };
 };
 
 /**

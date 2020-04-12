@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Category;
+use App\CodePrice;
 use App\Storehouse;
 use App\StorehouseData;
 use Illuminate\Http\Request;
@@ -101,6 +102,8 @@ class StorehouseDataController extends Controller
             'code_place' => 'required|max:12|unique:storehouse_data',
             'code_client_id' => 'required|numeric',
             'kg' => 'required|numeric',
+            'for_kg' => 'numeric',
+            'for_place' => 'numeric',
             'shop' => 'nullable|max:100',
             'things' => 'nullable|json|max:1000',
             'notation' => 'nullable|max:255',
@@ -132,9 +135,21 @@ class StorehouseDataController extends Controller
         if (array_key_exists('shop', $data)) {
             $saveData['shop'] = $data['shop'];
         }
+        if (array_key_exists('for_kg', $data)) {
+            $saveData['for_kg'] = $data['for_kg'];
+            $price = CodePrice::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg'], 'user_id' => auth()->user()->id]);
+            $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_kg' => $data['for_kg']];
+            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodePrice)->getTable());
+        }
+        if (array_key_exists('for_place', $data)) {
+            $saveData['for_place'] = $data['for_place'];
+            $price = CodePrice::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_place' => $data['for_place'], 'user_id' => auth()->user()->id]);
+            $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_place' => $data['for_place']];
+            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodePrice)->getTable());
+        }
 
         $storehouse = StorehouseData::create($saveData);
-        $this->storehouseDataHistory($storehouse->id, $saveData, 'create');
+        $this->storehouseDataHistory($storehouse->id, $saveData, 'create', (new StorehouseData)->getTable());
 
         $arrData = $this->storehouseDataList(1);
 
@@ -143,7 +158,7 @@ class StorehouseDataController extends Controller
 
     public function update(Request $request)
     {
-        $data = $this->stripData($request->except('id'));
+        $data = $this->stripData($request->except('id', 'replacePrice'));
 
         if (array_key_exists('category_id', $data)) {
             $category = Category::find($data['category_id']);
@@ -152,6 +167,29 @@ class StorehouseDataController extends Controller
             } else {
                 $data['brand'] = false;
             }
+        }
+        $entry = StorehouseData::find($request->id);
+        $price = CodePrice::where('code_id', $entry->code_client_id)->where('category_id', $entry->category_id)->first();
+        if ($price) {
+            if ($request->replacePrice && array_key_exists('for_kg', $data)) {
+                $price->for_kg = $data['for_kg'];
+            }
+            if ($request->replacePrice && array_key_exists('for_place', $data)) {
+                $price->for_kg = $data['for_place'];
+            }
+            $price->save();
+        } else {
+            $arrForCreateCodePrice = [
+                'code_id' => $entry->code_client_id,
+                'category_id' => $entry->category_id,
+            ];
+            if (array_key_exists('for_kg', $data)) {
+                $arrForCreateCodePrice['for_kg'] = $data['for_kg'];
+            }
+            if (array_key_exists('for_place', $data)) {
+                $arrForCreateCodePrice['for_place'] = $data['for_place'];
+            }
+            CodePrice::create($arrForCreateCodePrice);
         }
 
         if (array_key_exists('for_kg', $data) && is_null($data['for_kg'])) {
@@ -172,7 +210,7 @@ class StorehouseDataController extends Controller
         $this->validate($request, $rul);
 
         StorehouseData::where('id', $request->id)->update($data);
-        $this->storehouseDataHistory($request->id, $data, 'update');
+        $this->storehouseDataHistory($request->id, $data, 'update', (new StorehouseData)->getTable());
 
         $arrData = $this->storehouseDataList(1);
 
@@ -211,7 +249,7 @@ class StorehouseDataController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\StorehouseData\StorehouseExport($request->ids), 'storehouseData.xlsx');
     }
 
-    public function storehouseDataHistory($id, $data, $action)
+    public function storehouseDataHistory($id, $data, $action, $table)
     {
         if (array_key_exists('code_client_id', $data)) {
             $code = \App\Code::find($data['code_client_id']);
@@ -229,7 +267,7 @@ class StorehouseDataController extends Controller
         }
         $data['user_name'] = auth()->user()->name;
         $data['user_id'] = auth()->user()->id;
-        $saveData = ['table' => (new StorehouseData)->getTable(), 'action' => $action, 'entry_id' => $id, 'history_data' => json_encode($data)];
+        $saveData = ['table' => $table, 'action' => $action, 'entry_id' => $id, 'history_data' => json_encode($data)];
         \App\History::create($saveData);
     }
 
@@ -241,7 +279,7 @@ class StorehouseDataController extends Controller
         $data = ['destroyed' => true];
         foreach ($request->ids as $id) {
             StorehouseData::where('id', $id)->update($data);
-            $this->storehouseDataHistory($id, $data, 'destroy');
+            $this->storehouseDataHistory($id, $data, 'destroy', (new StorehouseData)->getTable());
         }
         return response(['status' => true]);
     }
@@ -274,15 +312,48 @@ class StorehouseDataController extends Controller
         return response(['status' => true, 'd1' => $d1, 'd2' => $d2]);
     }
 
+    public function setReplacePrice($faxData)
+    {
+        if ($faxData->isNotEmpty()) {
+            return $faxData->map(function ($item) {
+                $item->replacePrice = false;
+                return $item;
+            });
+        }
+        return $faxData;
+    }
+
     public function updateFaxCombineData(Request $request)
     {
-        $data = $request->all();
+        $data = $request->except('replacePrice');
         $ids = [];
         foreach ($data as $elem) {
             array_push($ids, $elem['id']);
             $needData = array_diff_key($elem, array_flip(["arr", "id"]));
             foreach ($elem['arr'] as $item) {
                 array_push($ids, $item['id']);
+                $price = CodePrice::where('code_id', $item['code_client_id'])->where('category_id', $item['category_id'])->first();
+                if ($price) {
+                    if ($request->replacePrice && array_key_exists('for_kg', $elem)) {
+                        $price->for_kg = $elem['for_kg'];
+                    }
+                    if ($request->replacePrice && array_key_exists('for_place', $elem)) {
+                        $price->for_kg = $elem['for_place'];
+                    }
+                    $price->save();
+                } else {
+                    $arrForCreateCodePrice = [
+                        'code_id' => $item['code_client_id'],
+                        'category_id' => $item['category_id'],
+                    ];
+                    if (array_key_exists('for_kg', $elem)) {
+                        $arrForCreateCodePrice['for_kg'] = $elem['for_kg'];
+                    }
+                    if (array_key_exists('for_place', $elem)) {
+                        $arrForCreateCodePrice['for_place'] = $elem['for_place'];
+                    }
+                    CodePrice::create($arrForCreateCodePrice);
+                }
                 if (array_key_exists('category_id', $item)) {
                     $category = Category::find($item['category_id']);
                     if ($category && $category->name === 'Бренд') {
@@ -292,12 +363,18 @@ class StorehouseDataController extends Controller
                     }
                 }
                 StorehouseData::where('id', $item['id'])->update($needData);
-                $this->storehouseDataHistory($item['id'], $needData, 'update');
+                $this->storehouseDataHistory($item['id'], $needData, 'update', (new StorehouseData)->getTable());
             }
         }
 
         $arrData = $this->storehouseDataList(1);
 
-        return response(['updatedData' => $arrData->whereIn('storehouse_data.id', $ids)->get()]);
+        return response(['updatedData' => $this->setReplacePrice($arrData->whereIn('storehouse_data.id', $ids)->get())]);
+    }
+
+    public function moveFromStorehouseToFax(Request $request)
+    {
+        StorehouseData::whereIn('id', $request->ids)->update(['fax_id' => $request->faxId]);
+        return response(['status' => true]);
     }
 }

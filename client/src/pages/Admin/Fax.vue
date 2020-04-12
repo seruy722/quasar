@@ -33,8 +33,15 @@
         <IconBtn
           v-show="!combineTableData"
           icon="sync_alt"
-          tooltip="excel"
+          tooltip="Трансфер данных"
           @iconBtnClick="openDialogTransferFromStorehouse"
+        />
+
+        <IconBtn
+          icon="data_usage"
+          color="orange"
+          tooltip="Обновить цены"
+          @iconBtnClick="updatePricesInFax(currentFaxItem.id)"
         />
       </template>
 
@@ -177,7 +184,18 @@
               type="number"
               :title="props.row.code_client_name"
               @addToSave="addToAddSaveArray(props.row, 'for_kg')"
-            />
+            >
+              <q-input
+                v-model.number="props.row.for_kg"
+                type="number"
+                dense
+              />
+              <q-checkbox
+                v-model="props.row.replacePrice"
+                label="Заменить"
+                dense
+              />
+            </PopupEdit>
           </q-td>
 
           <q-td
@@ -625,6 +643,7 @@
                     const newObj = _.assign({}, {
                         id: val.id,
                         arr: val.arr,
+                        replacePrice: val.replacePrice,
                     });
                     newObj[key] = val[key];
                     this.addToSaveArray.push(newObj);
@@ -750,6 +769,20 @@
                   })
                   .catch(() => {
                       devlog.error('Произошла ошибка в запросе - saveTransfersData');
+                  });
+            },
+            updatePricesInFax(faxId) {
+                this.$q.loading.show();
+                devlog.log('faxId', faxId);
+                this.$axios.get(`${getUrl('updatePricesInFax')}/${faxId}`)
+                  .then(({ data: { faxData } }) => {
+                      this.$store.dispatch('faxes/setFaxData', faxData);
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Цены успешно обновлены.', 'center');
+                  })
+                  .catch(() => {
+                      this.$q.loading.hide();
+                      devlog.error('Ошибка получения данных факса');
                   });
             },
         },

@@ -89,11 +89,11 @@
                         field: 'codes',
                         icon: 'people',
                     },
-                    // {
-                    //     title: 'profile',
-                    //     field: 'profile',
-                    //     icon: 'person',
-                    // },
+                    {
+                        title: 'client-price',
+                        field: 'client-price',
+                        icon: 'money',
+                    },
                     {
                         title: 'faxes',
                         field: 'faxes',

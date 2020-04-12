@@ -131,6 +131,44 @@ class FaxDataController extends Controller
         });
     }
 
+    public function setReplacePrice($faxData)
+    {
+        if ($faxData->isNotEmpty()) {
+            return $faxData->map(function ($item) {
+                $item->replacePrice = false;
+                return $item;
+            });
+        }
+        return $faxData;
+    }
+
+    public function getFaxDataQuery()
+    {
+        return StorehouseData::select(
+            'storehouse_data.id',
+            'storehouse_data.code_place',
+            'storehouse_data.code_client_id',
+            'storehouse_data.place',
+            'storehouse_data.kg',
+            'storehouse_data.for_kg',
+            'storehouse_data.fax_id',
+            'storehouse_data.for_place',
+            'storehouse_data.shop',
+            'storehouse_data.things',
+            'storehouse_data.notation',
+            'storehouse_data.category_id',
+            'storehouse_data.brand',
+            'storehouse_data.created_at',
+            'storehouse_data.updated_at',
+            'codes.code as code_client_name',
+            'categories.name as category_name'
+        )
+            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
+            ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
+            ->where('storehouse_data.storehouse_id', 1)
+            ->where('storehouse_data.destroyed', false)
+            ->orderBy('storehouse_data.created_at', 'desc');
+    }
 
     public function getFaxData($id)
     {
@@ -156,35 +194,18 @@ class FaxDataController extends Controller
 //            }
 //            return $category;
 //        });
-        $role = Permission::findById(2);
 
-        $queryData = StorehouseData::select(
-            'storehouse_data.id',
-            'storehouse_data.code_place',
-            'storehouse_data.code_client_id',
-            'storehouse_data.place',
-            'storehouse_data.kg',
-            'storehouse_data.for_kg',
-            'storehouse_data.fax_id',
-            'storehouse_data.for_place',
-            'storehouse_data.shop',
-            'storehouse_data.things',
-            'storehouse_data.notation',
-            'storehouse_data.category_id',
-            'storehouse_data.brand',
-            'storehouse_data.created_at',
-            'storehouse_data.updated_at',
-            'codes.code as code_client_name',
-            'categories.name as category_name'
-        )
-            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
-            ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
-            ->where('storehouse_data.storehouse_id', 1)
-            ->where('storehouse_data.fax_id', $id)
-            ->where('storehouse_data.destroyed', false)
-            ->orderBy('storehouse_data.created_at', 'desc');
+        $queryData = $this->getFaxDataQuery();
 
-        return response(['faxData' => $queryData->get(), 'role' => $role]);
+        $fax = Fax::find($id);
+        if ($fax->join_faxes_ids) {
+            $faxData = $queryData->whereIn('storehouse_data.fax_id', explode(',', $fax->join_faxes_ids))->get();
+            return response(['faxData' => $this->setReplacePrice($faxData)]);
+        }
+        $faxData = $queryData->where('storehouse_data.fax_id', $id)->get();
+
+
+        return response(['faxData' => $this->setReplacePrice($faxData)]);
     }
 
     public function updateFaxData(Request $request)
@@ -240,7 +261,7 @@ class FaxDataController extends Controller
             ]);
         }
 //        FaxData::where('id', $data['id']);
-        return response(['faxData' => $this->groupedFaxData($faxID)]);
+        return response(['faxData' => $this->setReplacePrice($this->groupedFaxData($faxID))]);
     }
 
     public function export(Request $request)
@@ -249,18 +270,23 @@ class FaxDataController extends Controller
         return Excel::download(new FaxDataExport($request->faxID, $request->transporterID), 'users.xlsx');
     }
 
-    public function updatePrice($id)
+    public function updatePricesInFax($id)
     {
-        $faxData = FaxData::where('fax_id', $id)->get();
+        $fax = Fax::find($id);
+        $faxData = StorehouseData::where('fax_id', $id)->get();
+        if ($fax->join_faxes_ids) {
+            $faxData = StorehouseData::whereIn('fax_id', explode(',', $fax->join_faxes_ids))->get();
+        }
         $faxData->each(function ($item) {
-            $price = CodePrice::where('code_id', $item->code_id)->where('category_id', $item->category_id)->first();
+            $price = CodePrice::where('code_id', $item->code_client_id)->where('category_id', $item->category_id)->first();
             if ($price) {
                 $item->for_kg = $price->for_kg;
                 $item->for_place = $price->for_place;
                 $item->save();
             }
         });
-        return response(['status' => true, 'faxData' => $this->groupedFaxData($id)]);
+        $resultData = $fax->join_faxes_ids ? $this->setReplacePrice($this->getFaxDataQuery()->whereIn('fax_id', explode(',', $fax->join_faxes_ids))->get()) : $this->setReplacePrice($this->getFaxDataQuery()->where('fax_id', $id)->get());
+        return response(['faxData' => $resultData]);
     }
 
     public function exportModer(Request $request)

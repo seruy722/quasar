@@ -4,12 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\TransporterFaxesPrice;
 use App\TransporterPrice;
+use App\User;
+use App\UserPermissionRole;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use App\Traits\UserPermission;
 
 class TransporterFaxesPriceController extends Controller
 {
+    use UserPermission;
+
     public function updateData(Request $request)
     {
         $data = $request->data;
@@ -32,7 +39,7 @@ class TransporterFaxesPriceController extends Controller
 
     public function getTransporterPriceData($id)
     {
-        return response(['transporterPriceData' => TransporterFaxesPrice::where('fax_id', $id)->get()]);
+        return response(['transporterPriceData' => auth()->user()->hasPermissionTo('view transporter fax price') ? TransporterFaxesPrice::where('fax_id', $id)->get() : []]);
     }
 
     public function saveCategoriesPrice(Request $request)

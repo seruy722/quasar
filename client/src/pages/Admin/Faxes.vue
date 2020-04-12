@@ -15,7 +15,7 @@
           icon="delete"
           :tooltip="$t('delete')"
           class="q-ml-md"
-          @iconBtnClick="deleteFaxItems"
+          @iconBtnClick="deleteFaxItems(faxesTableReactiveProperties.selected)"
         />
 
         <IconBtn
@@ -23,6 +23,13 @@
           icon="sync"
           tooltip="Обновить"
           @iconBtnClick="refresh"
+        />
+        <IconBtn
+          v-show="faxesTableReactiveProperties.selected.length > 1"
+          color="orange"
+          icon="gamepad"
+          tooltip="Обьеденить"
+          @iconBtnClick="combineFaxes(faxesTableReactiveProperties.selected)"
         />
 
         <!--        <IconBtn-->
@@ -451,23 +458,38 @@
                     params: { id: item.id },
                 });
             },
-            deleteFaxItems() {
-                this.$q.loading.show();
+            deleteFaxItems(selectedFaxes) {
                 // devlog.log('ID', this.faxesTableProperties.selected);
-                const selectedIds = _.map(this.faxesTableProperties.selected, 'id');
-                this.$axios.post(getUrl('deleteFax'), { ids: selectedIds })
-                  .then(({ data }) => {
-                      if (data.status) {
-                          this.$q.loading.hide();
-                          this.faxesTableReactiveProperties.selected = [];
-                          this.$store.dispatch('faxes/deleteFaxes', selectedIds);
-                          this.showNotif('success', 'Данные успешно удалены.', 'center');
-                      }
-                  })
-                  .catch((errors) => {
-                      this.$q.loading.hide();
-                      devlog.log(errors);
-                  });
+                const selectedIds = _.map(selectedFaxes, 'id');
+                const faxNames = _.map(selectedFaxes, 'name');
+                this.showNotif('warning', `Удалить факс - ${faxNames.join(', ')}?`, 'center', [
+                    {
+                        label: 'Отмена',
+                        color: 'white',
+                        handler: () => {
+                        },
+                    },
+                    {
+                        label: 'Удалить',
+                        color: 'white',
+                        handler: () => {
+                            this.$q.loading.show();
+                            this.$axios.post(getUrl('deleteFax'), { ids: selectedIds })
+                              .then(({ data }) => {
+                                  if (data.status) {
+                                      this.faxesTableReactiveProperties.selected = [];
+                                      this.$store.dispatch('faxes/deleteFaxes', selectedIds);
+                                      this.$q.loading.hide();
+                                      this.showNotif('success', 'Данные успешно удалены.', 'center');
+                                  }
+                              })
+                              .catch((errors) => {
+                                  this.$q.loading.hide();
+                                  devlog.log(errors);
+                              });
+                        },
+                    },
+                ]);
             },
             viewEditDialog(val, event) {
                 if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox') && !_.includes(_.get(event, 'target.classList'), 'upload_to_cargo') && !_.includes(_.get(event, 'target.classList'), 'fax_name')) {
@@ -565,6 +587,40 @@
                   .catch(() => {
                       callFunction(done);
                   });
+            },
+            combineFaxes(selectedFaxes) {
+                const faxNames = _.map(selectedFaxes, 'name');
+                if (!_.isEmpty(selectedFaxes)) {
+                    this.showNotif('warning', `Обьеденить факсы - ${faxNames.join(', ')}?`, 'center', [
+                        {
+                            label: 'Отмена',
+                            color: 'white',
+                            handler: () => {
+                            },
+                        },
+                        {
+                            label: 'Обьеденить',
+                            color: 'white',
+                            handler: () => {
+                                this.$q.loading.show();
+                                this.$axios.post(getUrl('combineFaxes'), selectedFaxes)
+                                  .then(({ data: { fax } }) => {
+                                      devlog.log('COM_DATA', fax);
+                                      this.$store.dispatch('faxes/addFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
+                                      this.faxesTableReactiveProperties.selected = [];
+                                      this.$q.loading.hide();
+                                      this.showNotif('success', 'Факсы успешно обьеденены.', 'center');
+                                  })
+                                  .catch((errors) => {
+                                      devlog.error('Ошибка запроса combineFaxes', errors);
+                                      this.$q.loading.hide();
+                                  });
+                            },
+                        },
+                    ]);
+                } else {
+                    this.showNotif('warning', 'Выберите факсы для соеденения!', 'center');
+                }
             },
         },
     };

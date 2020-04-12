@@ -1,3 +1,4 @@
-export const getUser = (state) => state.user;
-export const isUserAuth = (state) => !_.isEmpty(state.user);
-export const getToPath = (state) => state.toPath;
+export const getUser = ({ user }) => user;
+export const isUserAuth = ({ user }) => !_.isEmpty(user);
+export const getToPath = ({ toPath }) => toPath;
+export const getUsersWithRolesAndPermissions = ({ usersWithRolesAndPermissions }) => usersWithRolesAndPermissions;

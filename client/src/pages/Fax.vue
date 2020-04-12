@@ -443,9 +443,6 @@
             faxName() {
                 return _.get(this.currentFaxItem, 'name');
             },
-            // storehouseData() {
-            //     return this.$store.getters['storehouse/getStorehouseData'];
-            // },
         },
         watch: {
             faxData(val) {

@@ -36,6 +36,7 @@
             color="info"
             icon="move_to_inbox"
             tooltip="Переместить"
+            @iconBtnClick="moveToFax"
           />
 
           <IconBtn
@@ -61,8 +62,9 @@
             >
               <template v-slot:header>
                 <ItemSection avatar>
-                  <CheckBox
+                  <q-checkbox
                     v-model="props.selected"
+                    dense
                   />
                 </ItemSection>
 
@@ -128,7 +130,10 @@
               auto-width
               class="select_checkbox"
             >
-              <CheckBox v-model="props.selected" />
+              <q-checkbox
+                v-model="props.selected"
+                dense
+              />
             </q-td>
             <q-td
               key="code_place"
@@ -196,46 +201,10 @@
         </template>
       </Table>
 
-      <div class="text-center text-bold text-uppercase q-mt-lg">Категории</div>
-      <List
-        separator
-        bordered
-        dense
-        style="max-width: 450px;margin: 20px auto;"
-      >
-        <ListItem class="text-bold">
-          <ItemSection>
-            <ItemLabel>Категория</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>Мест</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>Вес</ItemLabel>
-          </ItemSection>
-        </ListItem>
-
-        <ListItem
-          v-for="({name, kg, place}, index) in storehouseCategoriesData"
-          :key="index"
-        >
-          <ItemSection>
-            <ItemLabel>{{ name }}</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel v-if="name">{{ place | numberFormatFilter }}</ItemLabel>
-            <ItemLabel v-else>
-              <Badge>{{ place | numberFormatFilter }}</Badge>
-            </ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel v-if="name">{{ kg | numberFormatFilter }}</ItemLabel>
-            <ItemLabel v-else>
-              <Badge>{{ kg | numberFormatFilter }}</Badge>
-            </ItemLabel>
-          </ItemSection>
-        </ListItem>
-      </List>
+      <CountCategories
+        :list="storehouseData"
+        style="max-width: 500px;margin:0 auto;"
+      />
       <Dialog
         :dialog="dialogHistory"
         :persistent="true"
@@ -259,6 +228,10 @@
         </Card>
       </Dialog>
     </PullRefresh>
+    <DialogMoveToFax
+      :show.sync="showMoveToFaxDialog"
+      :values.sync="storehouseTableReactiveProperties.selected"
+    />
   </q-page>
 </template>
 
@@ -273,7 +246,6 @@
         getClientCodes,
         getCategories,
         getShopsList,
-        setCategoriesStoreHouseData,
         setFormatedDate,
         getStorehouseTableData,
     } from 'src/utils/FrequentlyCalledFunctions';
@@ -293,16 +265,19 @@
             ListItem: () => import('src/components/Elements/List/ListItem.vue'),
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             List: () => import('src/components/Elements/List/List.vue'),
-            CheckBox: () => import('src/components/Elements/CheckBox.vue'),
-            Badge: () => import('src/components/Elements/Badge.vue'),
+            // CheckBox: () => import('src/components/Elements/CheckBox.vue'),
+            // Badge: () => import('src/components/Elements/Badge.vue'),
             StorehouseDataHistory: () => import('src/components/History/StorehouseDataHistory.vue'),
             Card: () => import('src/components/Elements/Card/Card.vue'),
             CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
+            CountCategories: () => import('src/components/CountCategories.vue'),
+            DialogMoveToFax: () => import('src/components/Dialogs/DialogMoveToFax.vue'),
         },
         mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
         data() {
             return {
+                showMoveToFaxDialog: false,
                 localStorehouseEditData: {},
                 showAddEntryOnStorehouseDialog: false,
                 storehouseTableProperties: {
@@ -390,11 +365,11 @@
                 return this.$store.getters['storehouse/getStorehouseCategoriesData'];
             },
         },
-        watch: {
-            storehouseData(val) {
-                this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(val));
-            },
-        },
+        // watch: {
+        //     storehouseData(val) {
+        //         this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(val));
+        //     },
+        // },
         mounted() {
             this.$q.loading.show();
             Promise.all([getStorehouseTableData(this.$store)])
@@ -403,6 +378,9 @@
               });
         },
         methods: {
+            moveToFax() {
+                this.showMoveToFaxDialog = true;
+            },
             viewUpdateDialog(val, event) {
                 if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
                     this.localStorehouseEditData = val;
@@ -444,7 +422,7 @@
                                   .then(({ data: { status } }) => {
                                       devlog.log('status', status);
                                       this.$store.dispatch('storehouse/destroyStorehouseData', ids);
-                                      this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
+                                      // this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
                                       this.storehouseTableReactiveProperties.selected = [];
                                       this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
                                   })

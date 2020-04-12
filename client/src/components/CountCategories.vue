@@ -17,19 +17,13 @@
           <ItemLabel>{{ item.name }}</ItemLabel>
         </ItemSection>
         <ItemSection>
-          <ItemLabel v-if="item.name">{{ item.place | numberFormatFilter }}</ItemLabel>
-          <ItemLabel v-else>
-            <Badge>{{ item.place | numberFormatFilter }}</Badge>
-          </ItemLabel>
+          <ItemLabel>{{ item.place | numberFormatFilter }}</ItemLabel>
         </ItemSection>
         <ItemSection>
-          <ItemLabel v-if="item.name">{{ item.kg | numberFormatFilter }}</ItemLabel>
-          <ItemLabel v-else>
-            <Badge>{{ item.kg | numberFormatFilter }}</Badge>
-          </ItemLabel>
+          <ItemLabel>{{ item.kg | numberFormatFilter }}</ItemLabel>
         </ItemSection>
-        <ItemSection class="cursor-pointer">
-          <ItemLabel v-if="item.name" class="text-red text-bold">{{ item.for_kg | numberFormatFilter }}</ItemLabel>
+        <ItemSection v-if="item.for_kg !== undefined" class="cursor-pointer">
+          <ItemLabel class="text-red text-bold">{{ item.for_kg | numberFormatFilter }}</ItemLabel>
           <PopupEdit
             v-if="item.name"
             :value.sync="item.for_kg"
@@ -38,10 +32,32 @@
             @addToSave="addToSaveArray(item)"
           />
         </ItemSection>
+        <ItemSection v-if="item.sum !== undefined">
+          <ItemLabel class="text-bold">{{ item.sum | numberFormatFilter }}
+          </ItemLabel>
+        </ItemSection>
+      </ListItem>
+      <!--      FOOTER-->
+      <ListItem>
         <ItemSection>
-          <ItemLabel class="text-bold" v-if="item.name">{{ item.sum | numberFormatFilter }}</ItemLabel>
-          <ItemLabel v-else>
-            <Badge>{{ item.sum | numberFormatFilter }}</Badge>
+          <ItemLabel>{{ footer.name }}</ItemLabel>
+        </ItemSection>
+        <ItemSection>
+          <ItemLabel class="text-bold">
+            <Badge>{{ footer.place | numberFormatFilter }}</Badge>
+          </ItemLabel>
+        </ItemSection>
+        <ItemSection>
+          <ItemLabel class="text-bold">
+            <Badge>{{ footer.kg | numberFormatFilter }}</Badge>
+          </ItemLabel>
+        </ItemSection>
+        <ItemSection v-if="footer.for_kg > -1">
+          <ItemLabel></ItemLabel>
+        </ItemSection>
+        <ItemSection v-if="footer.sum">
+          <ItemLabel class="text-bold">
+            <Badge>{{ footer.sum | numberFormatFilter }}</Badge>
           </ItemLabel>
         </ItemSection>
       </ListItem>
@@ -87,13 +103,20 @@
             return {
                 arrayToSave: [],
                 localList: [],
+                footer: {},
             };
         },
         watch: {
             list: {
                 handler: function setList(val) {
                     if (!_.isEmpty(val)) {
-                        this.getTransporterPriceData(_.get(_.first(val), 'fax_id'));
+                        const faxId = _.get(_.first(val), 'fax_id');
+                        devlog.log('faxId', faxId);
+                        if (faxId === 0) {
+                            this.setLocalList(val, []);
+                        } else {
+                            this.getTransporterPriceData(faxId);
+                        }
                     } else {
                         this.localList = [];
                     }
@@ -108,7 +131,7 @@
                   .then(({ data: { transporterPriceData } }) => {
                       devlog.log('PDATA', transporterPriceData);
                       this.arrayToSave = [];
-                      this.localList = setCategoriesStoreHouseData(this.list, transporterPriceData);
+                      this.setLocalList(this.list, transporterPriceData);
                       this.$q.loading.hide();
                       this.showNotif('success', 'Категории успешно обновлены', 'center');
                   })
@@ -116,6 +139,11 @@
                       this.showNotif('success', 'Ошибка обновления категорий. Перегрузите пожалйста страницу.', 'center');
                       devlog.log('errors', errors);
                   });
+            },
+            setLocalList(list, transporterPriceData) {
+                const { categoriesList, footer } = setCategoriesStoreHouseData(list, transporterPriceData);
+                this.localList = categoriesList;
+                this.footer = footer;
             },
             addToSaveArray(item) {
                 const obj = {
@@ -135,7 +163,7 @@
                 this.$axios.get(`${getUrl('transporterPriceData')}/${id}`)
                   .then(({ data: { transporterPriceData } }) => {
                       devlog.log('PDATA', transporterPriceData);
-                      this.localList = setCategoriesStoreHouseData(this.list, transporterPriceData);
+                      this.setLocalList(this.list, transporterPriceData);
                   })
                   .catch((errors) => {
                       devlog.log('errors', errors);

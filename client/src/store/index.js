@@ -12,6 +12,9 @@ import thingsList from './things-list';
 import shopsList from './shop-list';
 import transfers from './transfers';
 import codes from './codes';
+import roles from './roles';
+import permissions from './permissions';
+import codesPrices from './codes-prices';
 
 Vue.use(Vuex);
 
@@ -34,6 +37,9 @@ export default function (/* { ssrContext } */) {
       shopsList,
       transfers,
       codes,
+      roles,
+      permissions,
+      codesPrices,
     },
 
     // enable strict mode (adds overhead!)

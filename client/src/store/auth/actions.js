@@ -17,3 +17,16 @@ export const setToPath = (({ commit }, value) => {
 export const logout = (({ commit }) => {
   commit('LOGOUT');
 });
+
+export const setUsersWithRolesAndPermissions = (({ commit }, array) => {
+  commit('SET_USERS_WITH_ROLES_AND_PERMISSIONS', array);
+});
+
+export const userHaveAccess = ((data) => {
+  // const userRoles = _.get(state, 'user.roles');
+  // const userPermissions = _.get(state, 'user.roles');
+  // devlog.log('userRoles', userRoles);
+  // devlog.log('userPermissions', userPermissions);
+  devlog.log('data', data);
+  return true;
+});

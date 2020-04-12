@@ -110,6 +110,10 @@ const routes = [
           middleware: [
             auth,
           ],
+          accessData: {
+            roles: ['admin'],
+            permissions: ['view transfers list'],
+          },
         },
         component: () => import('src/pages/Moder/Transfers.vue'),
       },
@@ -135,17 +139,17 @@ const routes = [
         },
         component: () => import('pages/Moder/Codes.vue'),
       },
-      // {
-      //   path: 'profile',
-      //   name: 'profile',
-      //   meta: {
-      //     title: 'profile',
-      //     middleware: [
-      //       auth,
-      //     ],
-      //   },
-      //   component: () => import('pages/Profile.vue'),
-      // },
+      {
+        path: 'client-price',
+        name: 'client-price',
+        meta: {
+          title: 'client-price',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('pages/Moder/CodePrice.vue'),
+      },
       {
         path: 'faxes',
         name: 'faxes',

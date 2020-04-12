@@ -7,6 +7,7 @@ use App\FaxData;
 use App\Http\Resources\FaxDataCommonExportResource;
 use App\Http\Resources\FaxResource;
 use App\Http\Resources\TransportResource;
+use App\StorehouseData;
 use App\Transport;
 use App\Transporter;
 use App\TransporterFaxesPrice;
@@ -230,5 +231,44 @@ class FaxController extends Controller
     public function getFax($id)
     {
         return response(['fax' => Fax::where('id', $id)->first()]);
+    }
+
+    public function combineFaxes(Request $request)
+    {
+        $items = $request->all();
+        $firstElem = current($items);
+        $faxIds = array_map(function ($item) {
+            return $item['id'];
+        }, $items);
+
+        // Добавление факса
+        $fax = Fax::create([
+            'name' => 'JOIN_Факс ',
+            'transport_id' => $firstElem['transport_id'],
+            'transporter_id' => $firstElem['transporter_id'],
+            'status' => $firstElem['status'],
+            'user_id' => auth()->user()->id,
+        ]);
+        $fax->join_faxes_ids = implode(",", $faxIds);
+        // Добавление цен по категориям в зависимости от факса
+        $transporterPrice = TransporterPrice::where('transporter_id', $firstElem['transporter_id'])->get();
+        if ($transporterPrice->isNotEmpty()) {
+            $transporterPrice->each(function ($item) use ($fax) {
+                TransporterFaxesPrice::create(['fax_id' => $fax->id, 'category_id' => $item->category_id, 'category_price' => $item->for_kg]);
+            });
+        }
+
+        $faxData = StorehouseData::whereIn('fax_id', $faxIds)->get();
+
+        $transporter = Transporter::find($firstElem['transporter_id']);
+        $fax->name = 'JOIN_Факс ' . $transporter->name . ' ' . $faxData->sum('place') . 'м_' . $faxData->sum('kg') . 'кг';
+        $fax->save();
+
+        return response()->json(['fax' => $this->faxesList()->where('faxes.id', $fax->id)->first()]);
+    }
+
+    public function updatePricesInFax($id)
+    {
+        return response(['res' => $id]);
     }
 }

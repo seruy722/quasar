@@ -73,7 +73,7 @@
             />
 
             <SearchSelect
-              v-else
+              v-else-if="item.type === 'select'"
               v-model.number="item.value"
               :label="item.label"
               :field="index"
@@ -85,6 +85,12 @@
               :errors="errorsData"
             />
           </div>
+
+          <q-checkbox
+            v-model="storehouseData.replacePrice.value"
+            label="Заменить цену"
+            dense
+          />
         </div>
         <div v-show="entryData.combineTableData === false">
           <CheckBox
@@ -324,6 +330,12 @@
                         default: '',
                         value: '',
                     },
+                    replacePrice: {
+                        name: 'replacePrice',
+                        type: 'checkbox',
+                        default: false,
+                        value: false,
+                    },
                 },
             };
         },
@@ -417,6 +429,8 @@
                 devlog.log('saveData');
                 const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
                     if (changeValue) {
+                        result[index] = value;
+                    } else if (index === 'replacePrice' && value) {
                         result[index] = value;
                     }
                     return result;
