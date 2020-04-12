@@ -4,38 +4,5 @@
       "lastQuasarVersion": "1.8.3",
       "lastIdeHelperVersion": "1.0.0-alpha.3"
     }
-  },
-  "@quasar/icon-genie": {
-    "minify_dev": "pngquant",
-    "minify_build": "optipng",
-    "cordova": {
-      "background_color": "#000074",
-      "splashscreen_type": "pure"
-    },
-    "build_always": true,
-    "__internal": {
-      "dev": {
-        "spa": {
-          "iconHash": "4ccb11f8fcf30f338d32859047fd3ad3"
-        },
-        "cordova": {
-          "iconHash": "4ccb11f8fcf30f338d32859047fd3ad3",
-          "splashscreenHash": "f3a37d8ad9d13f082b8489c14e78183f",
-          "splashscreenType": "pure",
-          "backgroundColor": "#000074"
-        }
-      },
-      "build": {
-        "spa": {
-          "iconHash": "4ccb11f8fcf30f338d32859047fd3ad3"
-        },
-        "cordova": {
-          "iconHash": "4ccb11f8fcf30f338d32859047fd3ad3",
-          "splashscreenHash": "f3a37d8ad9d13f082b8489c14e78183f",
-          "splashscreenType": "pure",
-          "backgroundColor": "#000074"
-        }
-      }
-    }
   }
 }
