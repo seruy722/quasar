@@ -59,6 +59,7 @@
 
 <script>
     // import { getLSKey } from 'src/tools/lsKeys';
+    import accessFunc from 'src/tools/access';
 
     export default {
         name: 'ModerLayout',
@@ -66,62 +67,105 @@
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
         data() {
+            this.$_menu = [
+                {
+                    title: 'storehouse',
+                    field: 'storehouse',
+                    icon: 'store',
+                    access: {
+                        roles: ['admin'],
+                        permissions: [],
+                    },
+                },
+                {
+                    title: 'customers',
+                    field: 'customers',
+                    icon: 'people',
+                    access: {
+                        roles: ['admin'],
+                        permissions: [],
+                    },
+                },
+                {
+                    title: 'profile',
+                    field: 'profile',
+                    icon: 'person',
+                    access: {
+                        roles: ['admin'],
+                        permissions: [],
+                    },
+                },
+                {
+                    title: 'admin-faxes',
+                    field: 'admin-faxes',
+                    icon: 'person',
+                    access: {
+                        roles: ['admin'],
+                        permissions: [],
+                    },
+                },
+                {
+                    title: 'drafts',
+                    field: 'drafts',
+                    icon: 'drafts',
+                    access: {
+                        roles: ['admin'],
+                        permissions: [],
+                    },
+                },
+                {
+                    title: 'search',
+                    field: 'search',
+                    icon: 'search',
+                    access: {
+                        roles: ['admin'],
+                        permissions: [],
+                    },
+                },
+                {
+                    title: 'exit',
+                    field: 'exit',
+                    icon: 'exit_to_app',
+                    access: {
+                        roles: ['admin'],
+                        permissions: [],
+                    },
+                },
+            ];
             return {
                 drawer: false,
                 miniState: true,
-                menu: [
-                    {
-                        title: 'storehouse',
-                        field: 'storehouse',
-                        icon: 'store',
-                    },
-                    {
-                        title: 'customers',
-                        field: 'customers',
-                        icon: 'people',
-                    },
-                    {
-                        title: 'profile',
-                        field: 'profile',
-                        icon: 'person',
-                    },
-                    {
-                        title: 'admin-faxes',
-                        field: 'admin-faxes',
-                        icon: 'person',
-                    },
-                    {
-                        title: 'drafts',
-                        field: 'drafts',
-                        icon: 'drafts',
-                    },
-                    {
-                        title: 'search',
-                        field: 'search',
-                        icon: 'search',
-                    },
-                    {
-                        title: 'exit',
-                        field: 'exit',
-                        icon: 'exit_to_app',
-                    },
-                ],
+                menu: [],
             };
         },
-        // beforeDestroy() {
-        //     this.$q.localStorage.set(getLSKey('moderDrawerItem'), _.find(this.menu, { active: true }));
-        // },
         computed: {
             pageTitle() {
                 return this.$route.meta.title;
             },
+            userAccess() {
+                return _.get(this.$store.getters['auth/getUser'], 'access');
+            },
+        },
+        watch: {
+            userAccess(val) {
+                this.setMenu(val);
+            },
+        },
+        created() {
+            this.setMenu(this.userAccess);
         },
         methods: {
-            // menuDrawer() {
-            //     this.drawer = !this.drawer;
-            // },
             onClickDrawerMenu(item) {
                 this.$router.push({ name: item.field });
+            },
+            setMenu(userAccess) {
+                if (userAccess) {
+                    _.forEach(this.$_menu, (item) => {
+                        if (accessFunc(userAccess, item.access)) {
+                            this.menu.push(item);
+                        }
+                    });
+                }
             },
         },
     };

@@ -25,10 +25,13 @@ export default function ({ store }) {
     mode: process.env.VUE_ROUTER_MODE,
     base: process.env.VUE_ROUTER_BASE,
   });
+  devlog.log('CUR_ROUTE', Router.currentRoute);
 
   Router.beforeEach((to, from, next) => {
     const { middleware } = to.meta;
     devlog.log('Middleware', middleware);
+    devlog.warn('Middleware_TO_ROUTER', to);
+    devlog.warn('Middleware_TO_ROUTERnext', next);
     if (!middleware) {
       return next();
     }

@@ -64,6 +64,7 @@
     import {
         getClientCodes,
         setDefaultData,
+        setFormatedDate,
     } from 'src/utils/FrequentlyCalledFunctions';
 
     export default {
@@ -140,7 +141,7 @@
                       devlog.log('C_DATA', addedCode);
                       this.$store.dispatch('codes/addCode', {
                           code: addedCode,
-                          codeWithCustomers: _.first(codeWithCustomers),
+                          codeWithCustomers: _.first(setFormatedDate(codeWithCustomers, ['created_at'])),
                       });
                       this.codeId = addedCode.value;
                       this.showClientDialog = true;

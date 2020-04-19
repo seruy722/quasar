@@ -68,68 +68,97 @@
 
 <script>
     // import { getLSKey } from 'src/tools/lsKeys';
+    // import showNotif from 'src/mixins/showNotif';
+    import accessFunc from 'src/tools/access';
 
     export default {
         name: 'ModerLayout',
         components: {
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
+        // mixins: [showNotif],
         data() {
+            this.$_menu = [
+                {
+                    title: 'storehouse',
+                    field: 'storehouse',
+                    icon: 'store',
+                    access: {
+                        roles: ['admin', 'storehouse'],
+                        permissions: ['view storehouse data'],
+                    },
+                },
+                {
+                    title: 'codes',
+                    field: 'codes',
+                    icon: 'people',
+                    access: {
+                        roles: ['admin', 'codes'],
+                        permissions: ['view codes list'],
+                    },
+                },
+                {
+                    title: 'codes-prices',
+                    field: 'codes-prices',
+                    icon: 'money',
+                    access: {
+                        roles: ['admin', 'codes-prices'],
+                        permissions: ['get-codes-prices'],
+                    },
+                },
+                {
+                    title: 'faxes',
+                    field: 'faxes',
+                    icon: 'person',
+                    access: {
+                        roles: ['admin', 'fax'],
+                        permissions: ['view faxes list'],
+                    },
+                },
+                {
+                    title: 'transfers',
+                    field: 'transfers',
+                    icon: 'import_export',
+                    access: {
+                        roles: ['admin', 'transfers'],
+                        permissions: ['view transfers list'],
+                    },
+                },
+                {
+                    title: 'drafts',
+                    field: 'drafts',
+                    icon: 'drafts',
+                },
+                // {
+                //     title: 'search',
+                //     field: 'search',
+                //     icon: 'search',
+                // },
+                {
+                    title: 'access',
+                    field: 'access',
+                    icon: 'update',
+                    access: {
+                        roles: ['admin'],
+                        permissions: ['view access list'],
+                    },
+                },
+                {
+                    title: 'exit',
+                    field: 'exit',
+                    icon: 'exit_to_app',
+                    access: {
+                        roles: [],
+                        permissions: ['exit app'],
+                    },
+                },
+            ];
             return {
                 drawer: false,
                 miniState: true,
-                menu: [
-                    {
-                        title: 'storehouse',
-                        field: 'storehouse',
-                        icon: 'store',
-                    },
-                    {
-                        title: 'codes',
-                        field: 'codes',
-                        icon: 'people',
-                    },
-                    {
-                        title: 'client-price',
-                        field: 'client-price',
-                        icon: 'money',
-                    },
-                    {
-                        title: 'faxes',
-                        field: 'faxes',
-                        icon: 'person',
-                    },
-                    {
-                        title: 'transfers',
-                        field: 'transfers',
-                        icon: 'import_export',
-                    },
-                    {
-                        title: 'drafts',
-                        field: 'drafts',
-                        icon: 'drafts',
-                    },
-                    // {
-                    //     title: 'search',
-                    //     field: 'search',
-                    //     icon: 'search',
-                    // },
-                    {
-                        title: 'access',
-                        field: 'access',
-                        icon: 'update',
-                    },
-                    {
-                        title: 'exit',
-                        field: 'exit',
-                        icon: 'exit_to_app',
-                    },
-                ],
+                menu: [],
             };
         },
-        // beforeDestroy() {
-        //     this.$q.localStorage.set(getLSKey('moderDrawerItem'), _.find(this.menu, { active: true }));
-        // },
         computed: {
             pageTitle() {
                 return this.$route.meta.title;
@@ -137,20 +166,44 @@
             userName() {
                 return _.get(this.$store.getters['auth/getUser'], 'name');
             },
+            userAccess() {
+                return _.get(this.$store.getters['auth/getUser'], 'access');
+            },
+        },
+        watch: {
+            userAccess(val) {
+                devlog.log('userAccessWATCH', val);
+                this.setMenu(val);
+            },
+        },
+        created() {
+            devlog.log('userAccesscreated', this.userAccess);
+            this.setMenu(this.userAccess);
         },
         methods: {
-            // menuDrawer() {
-            //     this.drawer = !this.drawer;
-            // },
             onClickDrawerMenu({ field }) {
                 if (this.$route.name !== field) {
                     if (field === 'exit') {
                         this.$q.localStorage.clear();
                         this.$store.dispatch('auth/logout');
                         this.$router.push({ name: 'login' });
+                        /* eslint-disable-next-line */
+                        globalThis.location.reload();
+                        // location.reload();
                     } else {
+                        devlog.log('ROUTYFGHDH', this.$route);
                         this.$router.push({ name: field });
+                        // this.showNotif('error', 'У Вас нет доступа к этой странице.', 'center');
                     }
+                }
+            },
+            setMenu(userAccess) {
+                if (userAccess) {
+                    _.forEach(this.$_menu, (item) => {
+                        if (accessFunc(userAccess, item.access)) {
+                            this.menu.push(item);
+                        }
+                    });
                 }
             },
         },

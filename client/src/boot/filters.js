@@ -19,8 +19,15 @@ export default async ({ Vue }) => {
   });
   Vue.filter('numberFormatFilter', (val) => numberFormat(val));
   Vue.filter('phoneNumberFilter', (val) => {
+    const maskPhone = ((value) => `+${value.slice(0, 2)} (${value.slice(2, 5)}) ${value.slice(5, 8)}-${value.slice(8, 10)}-${value.slice(10, 12)}`);
     if (_.isString(val)) {
-      return `+${val.slice(0, 2)} (${val.slice(2, 5)}) ${val.slice(5, 8)}-${val.slice(8, 10)}-${val.slice(10, 12)}`;
+      return maskPhone(val);
+    }
+    if (_.isArray(val)) {
+      if (!_.isEmpty(val)) {
+        return _.map(val, (phone) => maskPhone(phone));
+      }
+      return '';
     }
     return val;
   });

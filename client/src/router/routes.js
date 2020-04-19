@@ -27,6 +27,10 @@ const routes = [
           middleware: [
             auth,
           ],
+          accessData: {
+            roles: ['admin'],
+            permissions: [],
+          },
         },
         component: () => import('src/pages/Admin/Access.vue'),
       },
@@ -60,6 +64,10 @@ const routes = [
           middleware: [
             auth,
           ],
+          accessData: {
+            roles: ['admin'],
+            permissions: [],
+          },
         },
         component: () => import('src/pages/Admin/Faxes.vue'),
       },
@@ -71,6 +79,10 @@ const routes = [
           middleware: [
             auth,
           ],
+          accessData: {
+            roles: ['admin'],
+            permissions: [],
+          },
         },
         component: () => import('src/pages/Admin/Fax.vue'),
       },
@@ -125,6 +137,10 @@ const routes = [
           middleware: [
             auth,
           ],
+          accessData: {
+            roles: ['admin', 'storehouse'],
+            permissions: ['view storehouse data'],
+          },
         },
         component: () => import('pages/Moder/Storehouse.vue'),
       },
@@ -136,14 +152,18 @@ const routes = [
           middleware: [
             auth,
           ],
+          access: {
+            roles: ['admin', 'codes'],
+            permissions: ['view codes list'],
+          },
         },
         component: () => import('pages/Moder/Codes.vue'),
       },
       {
-        path: 'client-price',
-        name: 'client-price',
+        path: 'codes-prices',
+        name: 'codes-prices',
         meta: {
-          title: 'client-price',
+          title: 'codes-prices',
           middleware: [
             auth,
           ],
@@ -158,6 +178,10 @@ const routes = [
           middleware: [
             auth,
           ],
+          access: {
+            roles: ['admin', 'fax'],
+            permissions: ['view faxes list'],
+          },
         },
         component: () => import('pages/Faxes.vue'),
       },

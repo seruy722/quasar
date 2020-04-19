@@ -1,5 +1,6 @@
 <template>
-  <div
+  <q-page
+    v-show="!isUserAuth"
     data-vue-component-name="Login"
     class="q-pa-md row items-center justify-center q-gutter-md"
   >
@@ -45,7 +46,7 @@
         />
       </q-card-actions>
     </q-card>
-  </div>
+  </q-page>
 </template>
 
 <script>
@@ -116,8 +117,8 @@
                     vm.$store.dispatch('auth/getUserModel')
                       .then((response) => {
                           devlog.log('response', response);
+                          devlog.log('TOPATH', vm.toPath);
                           if (vm.toPath) {
-                              devlog.log('TOPATH', vm.toPath);
                               vm.$router.push(vm.toPath);
                           } else {
                               vm.$router.push({ name: 'transfers' });
@@ -130,7 +131,12 @@
                       });
                 } else if (vm.isUserAuth) {
                     devlog.log('vm.isUserAuth', vm.isUserAuth);
-                    vm.$router.push({ name: 'transfers' });
+                    devlog.log('TOPATH', vm.toPath);
+                    if (vm.toPath) {
+                        vm.$router.push(vm.toPath);
+                    } else {
+                        vm.$router.push({ name: 'transfers' });
+                    }
                     vm.$q.loading.hide();
                 } else {
                     vm.$q.loading.hide();

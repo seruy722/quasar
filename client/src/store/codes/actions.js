@@ -15,20 +15,31 @@ export const addCode = (({ commit }, data) => {
   commit('ADD_CODE', data);
 });
 
-export const deleteCustomer = (({ commit }, data) => {
+export const deleteCustomer = (({ commit }, data) => axiosInstance.get(`${getUrl('destroyCustomerEntry')}/${data.id}`)
+  .then(() => {
+    commit('DELETE_CUSTOMER', data);
+  })
+  .catch((e) => {
+    devlog.error('Ошибка запроса - setCodes', e);
+  }));
+export const deleteCustomerFromStore = (({ commit }, data) => {
   commit('DELETE_CUSTOMER', data);
 });
 
+export const updateCustomer = (({ commit }, data) => {
+  commit('UPDATE_CUSTOMER', data);
+});
+
 export const setCodesWithCustomers = (({ commit }) => axiosInstance.get(getUrl('codes'))
-  .then(({ data: { data: codesData } }) => {
-    const sortCodesData = codesData.sort((a, b) => parseInt(a.code, 10) - parseInt(b.code, 10));
-    _.forEach(sortCodesData, (item) => {
-      if (!_.isEmpty(item.customers)) {
-        item.city = _.join(_.map(item.customers, 'city_name'), '; ');
-      }
-      item.user_name = _.get(item, 'user.name');
-    });
-    commit('SET_CODES_WITH_CUSTOMERS', setFormatedDate(sortCodesData, ['created_at', 'updated_at']));
+  .then(({ data: { codesData } }) => {
+    // const sortCodesData = codesData.sort((a, b) => parseInt(a.code, 10) - parseInt(b.code, 10));
+    // _.forEach(sortCodesData, (item) => {
+    //   if (!_.isEmpty(item.customers)) {
+    //     item.city = _.join(_.map(item.customers, 'city_name'), '; ');
+    //   }
+    //   item.user_name = _.get(item, 'user.name');
+    // });
+    commit('SET_CODES_WITH_CUSTOMERS', setFormatedDate(codesData, ['created_at']));
   })
   .catch((e) => {
     devlog.error('Ошибка запроса - setCodesWithCustomers', e);

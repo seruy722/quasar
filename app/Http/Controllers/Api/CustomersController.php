@@ -63,17 +63,20 @@ class CustomersController extends Controller
             'phone' => 'required|max:20',
             'name' => 'required|max:255',
             'city_id' => 'nullable|max:255',
-            'sex' => 'required|numeric|max:2',
             'code_id' => 'required|numeric|max:20000',
         ]);
 
         $data = $this->stripData($request->all());
+        if (array_key_exists('sex', $data) && !$data['sex']) {
+            unset($data['sex']);
+        }
 
         $customer = Customer::create($data);
 
         $this->storeCustomerHistory($customer->id, $data, 'create');
+//        json_decode(json_encode($customer, JSON_NUMERIC_CHECK))
 
-        return response(['status' => true, 'customer' => $customer]);
+        return response(['customer' => $customer]);
     }
 
     public function update(Request $request)
@@ -91,8 +94,9 @@ class CustomersController extends Controller
 
         Customer::where('id', $request->id)->update($data);
         $this->storeCustomerHistory($request->id, $data, 'update');
+        $customer = Customer::select('customers.*', 'cities.name AS city_name')->leftJoin('cities', 'cities.id', '=', 'customers.city_id')->where('customers.id', $request->id)->first();
 
-        return response(['customer' => Customer::find($request->id)]);
+        return response(['customer' => $customer]);
     }
 
     public function destroy($id)
@@ -123,5 +127,12 @@ class CustomersController extends Controller
         $data['user_id'] = auth()->user()->id;
         $saveData = ['table' => (new Customer)->getTable(), 'action' => $action, 'entry_id' => $id, 'history_data' => json_encode($data)];
         \App\History::create($saveData);
+    }
+
+    public function getCustomerHistory($id)
+    {
+        $customerHistory = \App\History::where('table', (new Customer)->getTable())->where('entry_id', $id)->get();
+
+        return response(['customerHistory' => $customerHistory]);
     }
 }

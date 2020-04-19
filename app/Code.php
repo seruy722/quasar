@@ -10,7 +10,7 @@ class Code extends Model
 
     public function customers()
     {
-        return $this->hasMany('App\Customer', 'code_id', 'id')->join('cities', 'cities.id', '=', 'customers.city_id')->select('customers.*', 'cities.name AS city_name');
+        return $this->hasMany('App\Customer', 'code_id', 'id')->leftJoin('cities', 'cities.id', '=', 'customers.city_id')->select('customers.*', 'cities.name AS city_name');
     }
 
     public function user()

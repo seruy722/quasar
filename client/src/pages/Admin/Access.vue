@@ -68,13 +68,15 @@
             </q-item-section>
 
             <q-item-section>
-              <IconBtn
-                flat
-                dense
-                icon="add_circle"
-                tooltip="Добавить"
-                @iconBtnClick="viewDialogAddRole"
-              />
+              <q-item-label>
+                <IconBtn
+                  flat
+                  dense
+                  icon="add_circle"
+                  tooltip="Добавить"
+                  @iconBtnClick="viewDialogAddRole"
+                />
+              </q-item-label>
             </q-item-section>
           </template>
           <List
@@ -133,13 +135,15 @@
             </q-item-section>
 
             <q-item-section>
-              <IconBtn
-                flat
-                dense
-                icon="add_circle"
-                tooltip="Добавить"
-                @iconBtnClick="viewDialogAddPermission"
-              />
+              <q-item-label>
+                <IconBtn
+                  flat
+                  dense
+                  icon="add_circle"
+                  tooltip="Добавить"
+                  @iconBtnClick="viewDialogAddPermission"
+                />
+              </q-item-label>
             </q-item-section>
           </template>
 

@@ -2,11 +2,11 @@
 
 use App\Code;
 use App\Customer;
-use App\Http\Resources\CodeResource;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CommonExport;
 use GuzzleHttp\Client;
+use App\Traits\UserSetAccessData;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,22 +25,13 @@ use GuzzleHttp\Client;
 
 Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:api']], function () {
     Route::get('/user', function (Request $request) {
-        $user = $request->user();
-        $user->getPermissionsViaRoles();
-        $rolesWithPermissions = $user->roles->map(function ($role) {
-            $rolePermissions = $role->permissions->map(function ($permission) {
-                return $permission->name;
-            });
-            return ['role' => $role->name, 'permissions' => $rolePermissions];
-        });
-        $userPermissions = $user->permissions->map(function ($permission) {
-            return $permission->name;
-        });
-        unset($user->roles);
-        unset($user->permissions);
-        $user->roles = $rolesWithPermissions;
-        $user->permissions = $userPermissions;
-        return $user;
+        class Access
+        {
+            use UserSetAccessData;
+        }
+
+        $obj = new Access();
+        return $obj->setAccessData();
     });
 
     // PERMISSION AND ROLES
@@ -60,7 +51,9 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     });
 
     // CODES
-    Route::get('/codes', 'Api\CodesController@getCodesWithCustomers');
+    Route::get('/codes', 'Api\CodesController@getCodesWithCustomers')->name('view codes list')->middleware(['role_or_permission:admin|codes|view codes list']);
+    Route::get('/get-code-history/{id}', 'Api\CodesController@getCodeHistory')->name('get-code-history')->middleware(['role_or_permission:admin|codes|get-code-history']);
+//    Route::post('/get-new-codes', 'Api\CodesController@getNewCodes')->name('get-new-codes')->middleware(['role_or_permission:admin|codes|get-new-codes']);
 //    Route::get('/codes', function () {
 //        return CodeResource::collection(Code::with('customers', 'user')->get());
 //    });
@@ -90,6 +83,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/store-customers', 'Api\CustomersController@storeCustomers');
     Route::post('/update-customer', 'Api\CustomersController@update');
     Route::get('/destroy-customer/{id}', 'Api\CustomersController@destroy');
+    Route::get('/get-customer-history/{id}', 'Api\CustomersController@getCustomerHistory');
 
     // CARGO_TABLE
     Route::post('/upload-cargo-table', 'CommonController@storeCargoTable');

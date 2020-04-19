@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use function foo\func;
 
 class CodesController extends Controller
 {
@@ -18,18 +19,33 @@ class CodesController extends Controller
     {
         if ($request->hasFile('upload')) {
             $ImportedFaxArray = Excel::toArray(new ImportData, $request->file('upload'));
+            Customer::truncate();
             foreach ($ImportedFaxArray as $item) {
-                foreach ($item as $elem) {
-                    $trimElem = trim(implode($elem));
-                    $isElem = Code::where('code', $trimElem)->first();
-                    if (!$isElem) {
-                        Code::create([
-                            'code' => $trimElem,
-                            'user_id' => rand(1, 4),
-                        ]);
-                    }
-
-                }
+//                return response(['answ' => $item[0]]);
+//                Customer::create([
+//                    'name' => $item[0],
+//                    'phone' => $item[1],
+//                    'code_id' => rand(1, 50),
+//                ]);
+//                return response(['answ' => $item]);
+//                foreach ($item as $elem) {
+////                    $trimElem = trim(implode($elem));
+////                    return response(['answ' => $elem[30]]);
+//                    $arr = ['code_id' => rand(1, 50), 'city_id' => 1];
+//                    if (trim($elem[0])) {
+//                        $arr['name'] = trim($elem[0]);
+//                    } else {
+//                        $arr['name'] = 'trim($elem[0])';
+//                    }
+//                    if (trim($elem[30])) {
+//                        $str = preg_replace("/[^0-9]/", '', $elem[1]);
+//                        $arr['phone'] = $str;
+//                    } else {
+//                        $arr['phone'] = 'trim($elem[1])';
+//                    }
+//
+//                    Customer::create($arr);
+//                }
             }
         }
 //        $baza = DB::table('bazas')->whereNotNull('code')->get();
@@ -65,6 +81,30 @@ class CodesController extends Controller
         return response(['status' => true]);
     }
 
+    public function codeWithCustomersQuery()
+    {
+        return Code::with('customers');
+    }
+
+    public function sortCodesWithCustomers($data)
+    {
+        return $data->map(function ($item) {
+            $item['phones'] = $item->customers->map(function ($elem) {
+                return $elem['phone'];
+            })->unique()->values()->all();
+            $item['cities'] = $item->customers->map(function ($elem) {
+                return $elem['city_name'];
+            })->unique();
+            return $item;
+        })->sort(function ($a, $b) {
+            if ($a['code'] == $b['code']) {
+                return 0;
+            }
+
+            return ($a['code'] < $b['code']) ? -1 : 1;
+        })->values()->all();
+    }
+
     public function storeCode(Request $request)
     {
         $this->validate($request, [
@@ -73,12 +113,12 @@ class CodesController extends Controller
 
         $code = Code::create([
             'code' => $request->code,
-            'user_id' => $request->user()->id,
         ]);
 
         $this->storeCodesHistory($code->id, $request->all(), 'create');
+        $codeWithCustomers = $this->codeWithCustomersQuery()->where('id', $code->id)->get();
 
-        return response(['code' => ['label' => $code->code, 'value' => $code->id], 'codeWithCustomers' => CodeResource::collection(Code::with('customers', 'user')->where('id', $code->id)->get())]);
+        return response(['code' => ['label' => $code->code, 'value' => $code->id], 'codeWithCustomers' => $this->sortCodesWithCustomers($codeWithCustomers)]);
 
     }
 
@@ -89,7 +129,8 @@ class CodesController extends Controller
 
     public function getCodesWithCustomers()
     {
-        return CodeResource::collection(Code::with('customers', 'user')->get());
+        $codes = $this->codeWithCustomersQuery()->get();
+        return response(['codesData' => $this->sortCodesWithCustomers($codes)]);
     }
 
     public function storeCodesHistory($id, $data, $action)
@@ -98,5 +139,26 @@ class CodesController extends Controller
         $data['user_id'] = auth()->user()->id;
         $saveData = ['table' => (new Code)->getTable(), 'action' => $action, 'entry_id' => $id, 'history_data' => json_encode($data)];
         \App\History::create($saveData);
+    }
+
+//    public function getNewCodes(Request $request)
+//    {
+//        $this->validate($request, [
+//            'maxCodeEntryId' => 'required|numeric',
+//            'updatedAtCode' => 'required|date',
+//        ]);
+//        $clients = Customer::where('id', '>', $request->maxClientEntryId)
+//            ->orWhere('updated_at', '>', $request->updatedAtClient)
+//            ->get();
+//        return response(['codesData' => Code::with('customers')
+//            ->where('id', '>', $request->maxCodeEntryId)
+//            ->orWhere('updated_at', '>', $request->updatedAtCode)
+//            ->get(), 'clients' => $clients]);
+//    }
+    public function getCodeHistory($id)
+    {
+        $codeHistory = \App\History::where('table', (new Code)->getTable())->where('entry_id', $id)->get();
+
+        return response(['codeHistory' => $codeHistory]);
     }
 }

@@ -37,7 +37,7 @@ export default ({ Vue, router }) => {
         message: 'У Вас нет доступа к этому ресурсу.',
         color: 'red',
       });
-    } else if (status === 403 || status === 500) {
+    } else if (status === 403) {
       router.push({ name: 'login' });
     }
     // if ((status === 401 && !token) || (status === 401 && token === 'undefined')) {

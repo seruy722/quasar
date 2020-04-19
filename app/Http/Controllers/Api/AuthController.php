@@ -6,10 +6,11 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use App\Traits\UserSetAccessData;
 
 class AuthController extends Controller
 {
+    use UserSetAccessData;
     public function register(Request $request)
     {
         $validatedData = $request->validate([
@@ -26,7 +27,7 @@ class AuthController extends Controller
         $accessToken->expires_at = now()->addDays(7);
         $accessToken->save();
 
-        return response(['user' => $user, 'access_token' => $accessToken->id]);
+        return response(['user' => $this->setAccessData(), 'access_token' => $accessToken->id]);
 
     }
 
@@ -50,7 +51,7 @@ class AuthController extends Controller
         $expData->expires_at = now()->addDays(7);
         $expData->save();
 
-        return response(['user' => auth()->user(), 'access_token' => $accessToken->accessToken]);
+        return response(['user' => $this->setAccessData(), 'access_token' => $accessToken->accessToken]);
 
     }
 }

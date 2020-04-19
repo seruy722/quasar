@@ -210,7 +210,7 @@
                         label: 'Пол',
                         field: 'sex',
                         options: getFromSettings('sex'),
-                        require: true,
+                        require: false,
                         requireError: 'Поле обьзательное для заполнения.',
                         changeValue: false,
                         default: 0,
@@ -322,8 +322,15 @@
                         this.$axios.post(getUrl('updateCustomer'), updateData)
                           .then(({ data: { customer } }) => {
                               this.$q.loading.hide();
-                              this.$store.dispatch('codes/addCustomerToCodeWithCustomers', customer);
+                              this.$store.dispatch('codes/updateCustomer', customer);
+                              if (_.toNumber(this.entryData.code_id) !== _.toNumber(customer.code_id)) {
+                                  this.$store.dispatch('codes/deleteCustomerFromStore', {
+                                      id: this.entryData.id,
+                                      code_id: this.entryData.code_id,
+                                  });
+                              }
                               setChangeValue(values);
+                              this.close(this.customerData);
                               this.showNotif('success', 'Данные клиента успешно обновлены.', 'center');
                           })
                           .catch((errors) => {
@@ -346,13 +353,12 @@
                     {
                         label: 'Удалить',
                         color: 'white',
-                        handler: () => {
-                            this.$axios.get(`${getUrl('destroyCustomerEntry')}/${id}`)
+                        handler: async () => {
+                            await this.$store.dispatch('codes/deleteCustomer', {
+                                id,
+                                code_id: this.entryData.code_id,
+                            })
                               .then(() => {
-                                  this.$store.dispatch('codes/deleteCustomer', {
-                                      id,
-                                      code_id: this.entryData.code_id,
-                                  });
                                   this.close(this.customerData);
                                   this.showNotif('success', 'Запись успешно удалена.', 'center');
                               })
@@ -368,6 +374,7 @@
                 setDefaultData(data);
                 setChangeValue(data);
                 this.$emit('update:entryData', {});
+                this.$emit('update:codeId', 0);
             },
         },
     };
