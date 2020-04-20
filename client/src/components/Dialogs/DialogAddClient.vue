@@ -236,7 +236,11 @@
                 if (!_.isEmpty(val)) {
                     _.forEach(this.customerData, (item, index) => {
                         if (_.get(val, index)) {
-                            _.set(item, 'value', _.get(val, index));
+                            if (index === 'code_id' || index === 'city_id' || index === 'sex') {
+                                _.set(item, 'value', _.toNumber(_.get(val, index)));
+                            } else {
+                                _.set(item, 'value', _.get(val, index));
+                            }
                         }
                     });
                 }
@@ -265,7 +269,11 @@
             },
             cities: {
                 handler: function set(val) {
-                    _.set(this.customerData, 'city_id.options', val);
+                    _.set(this.customerData, 'city_id.options', _.clone(val));
+                    this.customerData.city_id.options.unshift({
+                        label: 'Не выбрано',
+                        value: null,
+                    });
                 },
                 immediate: true,
             },
