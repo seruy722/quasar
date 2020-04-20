@@ -23,14 +23,14 @@
     "ioredis": "^4.16.2",
     "lodash": "^4.17.15",
     "mobile-drag-drop": "^2.3.0-rc.2",
-    "quasar": "^1.9.14",
+    "quasar": "^1.9.15",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "validator": "^13.0.0",
-    "vue-i18n": "^8.17.0"
+    "vue-i18n": "^8.17.3"
   },
   "devDependencies": {
-    "@quasar/app": "^1.6.2",
+    "@quasar/app": "^1.7.1",
     "@vue/eslint-config-airbnb": "^5.0.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
