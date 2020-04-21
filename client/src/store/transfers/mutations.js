@@ -1,5 +1,5 @@
 export const SET_TRANSFERS = ((state, data) => {
-  state.transfers.push(...data);
+  state.transfers = data;
 });
 
 export const ADD_TRANSFER = ((state, [elem]) => {

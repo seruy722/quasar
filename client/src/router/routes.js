@@ -123,7 +123,7 @@ const routes = [
             auth,
           ],
           accessData: {
-            roles: ['admin'],
+            roles: ['admin', 'transfers'],
             permissions: ['view transfers list'],
           },
         },
@@ -152,7 +152,7 @@ const routes = [
           middleware: [
             auth,
           ],
-          access: {
+          accessData: {
             roles: ['admin', 'codes'],
             permissions: ['view codes list'],
           },
@@ -167,6 +167,10 @@ const routes = [
           middleware: [
             auth,
           ],
+          accessData: {
+            roles: ['admin', 'codes-prices'],
+            permissions: ['get-codes-prices'],
+          },
         },
         component: () => import('pages/Moder/CodePrice.vue'),
       },
@@ -178,7 +182,7 @@ const routes = [
           middleware: [
             auth,
           ],
-          access: {
+          accessData: {
             roles: ['admin', 'fax'],
             permissions: ['view faxes list'],
           },

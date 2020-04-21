@@ -121,7 +121,11 @@
                           if (vm.toPath) {
                               vm.$router.push(vm.toPath);
                           } else {
-                              vm.$router.push({ name: 'transfers' });
+                              vm.$router.push({ name: 'transfers' })
+                                .catch((e) => {
+                                    /* eslint-disable-next-line */
+                                    console.error('transfersError', e);
+                                });
                           }
                           vm.$q.loading.hide();
                       })
@@ -135,7 +139,11 @@
                     if (vm.toPath) {
                         vm.$router.push(vm.toPath);
                     } else {
-                        vm.$router.push({ name: 'transfers' });
+                        vm.$router.push({ name: 'transfers' })
+                          .catch((e) => {
+                              /* eslint-disable-next-line */
+                              console.error('transfersError2', e);
+                          });
                     }
                     vm.$q.loading.hide();
                 } else {
@@ -146,7 +154,7 @@
         created() {
             this.onKeyUpFunc = this.login;
         },
-        beforeDestroy() {
+        destroyed() {
             this.$q.loading.hide();
         },
         methods: {
@@ -160,10 +168,13 @@
                   .then(({ data }) => {
                       this.$store.dispatch('auth/setUser', _.get(data, 'user'));
                       this.$q.localStorage.set(getLSKey('authToken'), _.get(data, 'access_token'));
-                      this.$router.push({ name: 'transfers' });
+                      this.$router.push({ name: 'transfers' })
+                        .catch((e) => {
+                            /* eslint-disable-next-line */
+                            console.error('transfersError3', e);
+                        });
                   })
                   .catch((errors) => {
-                      devlog.log(errors);
                       this.$q.loading.hide();
                       this.errorsData.errors = _.get(errors, 'response.data.errors');
                   });

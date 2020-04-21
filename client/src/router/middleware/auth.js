@@ -32,18 +32,23 @@ export default function auth({
         devlog.log('ACCESS_1userAccess', userAccess);
         devlog.log('ACCESS_1accessData', accessData);
         if (accessData && !access(userAccess, accessData)) {
-          return next({ name: 'login' });
+          devlog.log('EROORRVVVVVV_NEXT1');
+          next({ name: 'login' });
+        } else {
+          next();
         }
-        return next();
+        // devlog.log('EROORRVVVVVV_NEXT');
+        // return next();
       })
       .catch(() => {
         devlog.log('LOGIN_CALL_catch');
-        return next({ name: 'login' });
+        next({ name: 'login' });
       });
   } else {
     const accessFunc = access(userAccess, accessData);
     devlog.log('ACCESS_DATA', accessData);
     devlog.log('ACCESS_2', access(userAccess, accessData));
+    devlog.log('ACCESS_PATH', path);
     if (!accessFunc) {
       // Promise.all([accessFunc])
       //   .then(() => {
@@ -51,8 +56,10 @@ export default function auth({
       //     next({ name: 'storehouse' });
       //   });
       next(false);
+    } else {
+      next();
     }
   }
   devlog.log('NEXTROUTER', path);
-  next();
+  // next();
 }
