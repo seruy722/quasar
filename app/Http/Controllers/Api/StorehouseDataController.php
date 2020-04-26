@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Category;
 use App\CodePrice;
+use App\Shop;
 use App\Storehouse;
 use App\StorehouseData;
+use App\Thingslist;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -71,7 +73,7 @@ class StorehouseDataController extends Controller
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
             ->where('storehouse_data.storehouse_id', $id)
             ->where('storehouse_data.destroyed', false)
-            ->orderBy('storehouse_data.created_at', 'desc');
+            ->orderBy('storehouse_data.id', 'desc');
 
 
 //        $faxesData = $queryData->groupBy('code_client_id')->map(function (\Illuminate\Support\Collection $code) {
@@ -134,6 +136,13 @@ class StorehouseDataController extends Controller
         }
         if (array_key_exists('shop', $data)) {
             $saveData['shop'] = $data['shop'];
+            Shop::firstOrCreate(['name' => $data['shop']]);
+        }
+        if (array_key_exists('things', $data)) {
+            $things = json_decode($data['things']);
+            foreach ($things as $item) {
+                Thingslist::firstOrCreate(['name' => $item->{'title'}]);
+            }
         }
         if (array_key_exists('for_kg', $data)) {
             $saveData['for_kg'] = $data['for_kg'];
@@ -153,7 +162,7 @@ class StorehouseDataController extends Controller
 
         $arrData = $this->storehouseDataList(1);
 
-        return response(['storehouseData' => $arrData->where('storehouse_data.id', $storehouse->id)->where('storehouse_data.fax_id', 0)->first()]);
+        return response(['storehouseData' => $arrData->where('storehouse_data.id', $storehouse->id)->where('storehouse_data.fax_id', 0)->first(), 'shopNames' => $this->getShopNames('data'), 'thingsList' => $this->getThingsList('data')]);
     }
 
     public function update(Request $request)
@@ -200,6 +209,13 @@ class StorehouseDataController extends Controller
             $data['for_place'] = 0;
         }
 
+        if (array_key_exists('shop', $data) && $data['shop']) {
+            Shop::firstOrCreate(['name' => $data['shop']]);
+        } else if (array_key_exists('shop', $data) && !$data['shop']) {
+            $data['shop'] = null;
+        }
+
+
         $rul = [];
         foreach ($this->rules as $key => $value) {
             if (array_key_exists($key, $data)) {
@@ -219,29 +235,27 @@ class StorehouseDataController extends Controller
             return response(['storehouseData' => $arrData->where('storehouse_data.id', $request->id)->first()]);
         }
 
-        return response(['storehouseData' => $arrData->where('storehouse_data.id', $request->id)->first()]);
+        return response(['storehouseData' => $arrData->where('storehouse_data.id', $request->id)->first(), 'shopNames' => $this->getShopNames('data'), 'thingsList' => $this->getThingsList('data')]);
     }
 
-    public function getShopNames()
+    public function getShopNames($value = null)
     {
-        $shopNames = StorehouseData::orderBy('shop');
-        $plucked = $shopNames->pluck('shop')->unique()->values()->all();
+        $shopNames = Shop::orderBy('name');
+        $plucked = $shopNames->pluck('name')->unique()->values()->all();
+        if ($value === 'data') {
+            return $plucked;
+        }
         return response($plucked);
     }
 
-    public function getThingsList()
+    public function getThingsList($value = null)
     {
-        $plucked = StorehouseData::pluck('things')->all();
-        $res = array_map('json_decode', $plucked);
-        $res2 = [];
-        foreach ($res as $item) {
-            if (is_array($item) && count($item)) {
-                foreach ($item as $elem) {
-                    array_push($res2, $elem->title);
-                }
-            }
+        $thingsNames = Thingslist::orderBy('name');
+        $plucked = $thingsNames->pluck('name')->unique()->values()->all();
+        if ($value === 'data') {
+            return $plucked;
         }
-        return response(array_values(array_unique($res2)));
+        return response($plucked);
     }
 
     public function export(Request $request)

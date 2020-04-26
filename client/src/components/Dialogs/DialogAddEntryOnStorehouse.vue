@@ -8,7 +8,7 @@
     <Card style="min-width: 320px;width: 100%;max-width: 900px;">
       <CardSection class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">{{ entryData.row ? 'Редактирование' : 'Новая запись' }}</span>
-        <div class="row">
+        <div class="row justify-center">
           <IconBtn
             v-if="entryData.row"
             dense
@@ -278,7 +278,7 @@
                     for_kg: {
                         name: 'for_kg',
                         type: 'number',
-                        label: this.$t('for_kg'),
+                        label: 'За кг',
                         require: false,
                         requireError: 'Поле обьзательное для заполнения.',
                         changeValue: false,
@@ -288,7 +288,7 @@
                     for_place: {
                         name: 'for_place',
                         type: 'number',
-                        label: this.$t('for_place'),
+                        label: 'За место',
                         require: false,
                         requireError: 'Поле обьзательное для заполнения.',
                         changeValue: false,
@@ -394,6 +394,7 @@
             },
             shopList: {
                 handler: function set(val) {
+                    devlog.log('shopList', val);
                     this.storehouseData.shop.options = val;
                 },
                 immediate: true,
@@ -426,7 +427,9 @@
                     if (!this.entryData.row) {
                         this.$q.loading.show();
                         this.$axios.post(getUrl('addStorehouseData'), sendData)
-                          .then(({ data: { storehouseData } }) => {
+                          .then(({ data: { storehouseData, shopNames, thingsList } }) => {
+                              this.$store.commit('shopsList/SET_SHOPS_LIST', shopNames);
+                              this.$store.commit('thingsList/SET_THINGS_LIST', thingsList);
                               this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(storehouseData, ['created_at']));
                               // this.setChangeValue(this.storehouseData);
                               this.$q.loading.hide();
@@ -442,8 +445,10 @@
                             sendData.id = _.get(this.entryData, 'row.id');
                             this.$q.loading.show();
                             this.$axios.post(getUrl('updateStorehouseData'), sendData)
-                              .then(({ data: { storehouseData } }) => {
+                              .then(({ data: { storehouseData, shopNames, thingsList } }) => {
                                   devlog.log('DTA_UPDATE', storehouseData);
+                                  this.$store.commit('shopsList/SET_SHOPS_LIST', shopNames);
+                                  this.$store.commit('thingsList/SET_THINGS_LIST', thingsList);
                                   this.$store.dispatch('storehouse/updateStorehouseData', setFormatedDate(storehouseData, ['created_at']));
                                   setChangeValue(this.storehouseData);
                                   this.$q.loading.hide();

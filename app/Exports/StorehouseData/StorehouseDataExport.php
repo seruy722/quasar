@@ -94,7 +94,7 @@ class StorehouseDataExport implements FromCollection, ShouldAutoSize, WithTitle,
                 $event->sheet->getDelegate()->getStyle($header)->getFont()->setBold(500);
                 $event->sheet->getDelegate()->getStyle($cellRange)->getAlignment()->applyFromArray(array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
                 $event->sheet->getDelegate()->getStyle($cellRange)->getBorders()->getAllBorders()->applyFromArray(array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN));
-                $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
+//                $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
                 $event->sheet->getDelegate()->getCell($callPlace)->setValue($this->sumPlace);
                 $event->sheet->getDelegate()->getCell($callKg)->setValue($this->sumKg);
                 $event->sheet->getDelegate()->getStyle($callPlace)->getFont()->setBold(500);

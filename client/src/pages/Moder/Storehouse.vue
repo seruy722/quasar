@@ -31,13 +31,13 @@
             @iconBtnClick="destroyEntry(storehouseTableReactiveProperties.selected)"
           />
 
-          <IconBtn
-            v-show="storehouseTableReactiveProperties.selected.length"
-            color="info"
-            icon="move_to_inbox"
-            tooltip="Переместить"
-            @iconBtnClick="moveToFax"
-          />
+<!--          <IconBtn-->
+<!--            v-show="storehouseTableReactiveProperties.selected.length"-->
+<!--            color="info"-->
+<!--            icon="move_to_inbox"-->
+<!--            tooltip="Переместить"-->
+<!--            @iconBtnClick="moveToFax"-->
+<!--          />-->
 
           <IconBtn
             color="positive"
