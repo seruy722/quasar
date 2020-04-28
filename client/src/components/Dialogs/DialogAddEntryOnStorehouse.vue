@@ -101,7 +101,7 @@
           @iconBtnClick="showThingsDialog = true"
         />
         <IconBtn
-          v-else
+          v-else-if="!withoutThings"
           icon="add"
           :dense="$q.screen.xs || $q.screen.sm"
           tooltip="Добавить"
