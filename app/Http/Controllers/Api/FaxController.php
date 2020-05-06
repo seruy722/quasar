@@ -49,7 +49,7 @@ class FaxController extends Controller
             ->leftJoin('users', 'users.id', '=', 'user_id')
             ->leftJoin('transporters', 'transporters.id', '=', 'transporter_id')
             ->leftJoin('transports', 'transports.id', '=', 'transport_id')
-            ->orderBy('created_at', 'DESC');
+            ->orderBy('faxes.id', 'DESC');
 //        return FaxResource::collection(Fax::with(['transport', 'transporter', 'user'])->orderBy('departure_date', 'DESC')->get());
     }
 
@@ -108,7 +108,7 @@ class FaxController extends Controller
         }
 
         $fax = Fax::create($arr);
-        $this->storeFaxHistory($fax->id, $arr, 'create');
+        $this->storeFaxHistory($fax->id, $arr, 'create', (new Fax)->getTable());
 
         // Добавление цен по категориям в зависимости от факса
         $transporterPrice = TransporterPrice::where('transporter_id', $request->transporter_id)->get();
@@ -127,7 +127,14 @@ class FaxController extends Controller
             'ids' => 'required|array',
         ]);
 
-        Fax::destroy($request->ids);
+        foreach ($request->ids as $id) {
+            $fax = Fax::find($id);
+            if ($fax) {
+                $this->storeFaxHistory($id, $fax->toArray(), 'delete', (new Fax)->getTable());
+            }
+            $fax->delete();
+        }
+
         return response(['status' => true]);
     }
 
@@ -158,11 +165,11 @@ class FaxController extends Controller
         $data['user_id'] = auth()->user()->id;
 
         Fax::where('id', $request->id)->update($data);
-        $this->storeFaxHistory($request->id, $data, 'update');
+        $this->storeFaxHistory($request->id, $data, 'update', (new Fax)->getTable());
         return response(['fax' => $this->faxesList()->where('faxes.id', $request->id)->first()]);
     }
 
-    public function storeFaxHistory($id, $data, $action)
+    public function storeFaxHistory($id, $data, $action, $table)
     {
         if (array_key_exists('transport_id', $data)) {
             $transport = \App\Transport::find($data['transport_id']);
@@ -187,27 +194,24 @@ class FaxController extends Controller
         }
         $data['user_name'] = auth()->user()->name;
         $data['user_id'] = auth()->user()->id;
-        $saveData = ['table' => (new Fax)->getTable(), 'action' => $action, 'entry_id' => $id, 'history_data' => json_encode($data)];
+        $saveData = ['table' => $table, 'action' => $action, 'entry_id' => $id, 'history_data' => json_encode($data)];
         \App\History::create($saveData);
     }
 
     public function uploadToCargo(Request $request)
     {
-        if ($request->value) {
-            \App\StorehouseData::where('fax_id', $request->id)->update([
-                'in_cargo' => false
-            ]);
-            Fax::where('id', $request->id)->update(['uploaded_to_cargo' => false]);
-            $this->storeFaxHistory($request->id, ['uploaded_to_cargo' => false], 'update');
-        } else {
-            \App\StorehouseData::where('fax_id', $request->id)->update([
-                'in_cargo' => true
-            ]);
-            Fax::where('id', $request->id)->update(['uploaded_to_cargo' => true]);
-            $this->storeFaxHistory($request->id, ['uploaded_to_cargo' => true], 'update');
-        }
+        $value = $request->value;
+        $faxId = $request->id;
+        $storeUpdateData = StorehouseData::where('fax_id', $faxId)->get();
+        $storeUpdateData->each(function ($item) use($value) {
+            $item->in_cargo = $value;
+            $item->save();
+            $this->storeFaxHistory($item['id'], ['in_cargo' => $value], 'update', (new StorehouseData)->getTable());
+        });
+        Fax::where('id', $faxId)->update(['uploaded_to_cargo' => $value]);
+        $this->storeFaxHistory($faxId, ['uploaded_to_cargo' => $value], 'update', (new Fax)->getTable());
 
-        return response(['fax' => $this->faxesList()->where('faxes.id', $request->id)->first()]);
+        return response(['fax' => $this->faxesList()->where('faxes.id', $faxId)->first()]);
     }
 
     public function faxHistory($id)
@@ -249,7 +253,6 @@ class FaxController extends Controller
             'status' => $firstElem['status'],
             'user_id' => auth()->user()->id,
         ]);
-        $fax->join_faxes_ids = implode(",", $faxIds);
         // Добавление цен по категориям в зависимости от факса
         $transporterPrice = TransporterPrice::where('transporter_id', $firstElem['transporter_id'])->get();
         if ($transporterPrice->isNotEmpty()) {
@@ -259,16 +262,15 @@ class FaxController extends Controller
         }
 
         $faxData = StorehouseData::whereIn('fax_id', $faxIds)->get();
-
+        $faxData->each(function ($elem) use ($fax) {
+            $elem->fax_id = $fax->id;
+            StorehouseData::create($elem->toArray());
+        });
         $transporter = Transporter::find($firstElem['transporter_id']);
         $fax->name = 'JOIN_Факс ' . $transporter->name . ' ' . $faxData->sum('place') . 'м_' . $faxData->sum('kg') . 'кг';
+        $fax->join_faxes_ids = 'dfsdfsd';
         $fax->save();
 
         return response()->json(['fax' => $this->faxesList()->where('faxes.id', $fax->id)->first()]);
-    }
-
-    public function updatePricesInFax($id)
-    {
-        return response(['res' => $id]);
     }
 }

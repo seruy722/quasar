@@ -65,8 +65,7 @@
             },
             funcLoadData: {
                 type: Function,
-                default: () => {
-                },
+                default: null,
             },
             errors: {
                 type: Object,

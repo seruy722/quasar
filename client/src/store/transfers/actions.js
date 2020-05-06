@@ -1,4 +1,15 @@
 // import JobQueue from 'src/utils/JobQueue';
+import { getUrl } from 'src/tools/url';
+import { axiosInstance } from 'boot/axios';
+import { setFormatedDate, setMethodLabel, setStatusLabel } from 'src/utils/FrequentlyCalledFunctions';
+
+export const fetchTransfers = (({ commit }) => axiosInstance.get(getUrl('transfers'))
+  .then(({ data: { transfers } }) => {
+    commit('SET_TRANSFERS', setMethodLabel(setStatusLabel(setFormatedDate(transfers, ['created_at', 'issued_by']))));
+  })
+  .catch(() => {
+    devlog.warn('Ошибка при запросе fetchTransfers');
+  }));
 
 export const setTransfers = (({ commit }, data) => {
   commit('SET_TRANSFERS', data);

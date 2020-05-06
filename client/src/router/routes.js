@@ -197,6 +197,10 @@ const routes = [
           middleware: [
             auth,
           ],
+          accessData: {
+            roles: ['admin', 'fax'],
+            permissions: ['view fax data'],
+          },
         },
         component: () => import('pages/Fax.vue'),
       },
@@ -208,6 +212,10 @@ const routes = [
           middleware: [
             auth,
           ],
+          accessData: {
+            roles: ['admin'],
+            permissions: [],
+          },
         },
         component: () => import('pages/Drafts.vue'),
       },

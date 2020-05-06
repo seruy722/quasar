@@ -30,6 +30,9 @@ export default {
             this.dialogHistory = true;
             this.storehouseHistoryData = prepareHistoryData(cols, storehouseDataHistory);
             this.storehouseHistoryData.cols.user_name = 'Пользователь';
+            this.storehouseHistoryData.cols.in_cargo = 'Загружен в карго';
+            this.storehouseHistoryData.cols.code_place = 'Код';
+            this.storehouseHistoryData.cols.fax_name = 'Перемещен в факс';
             this.storehouseHistoryData.historyData = setFormatedDate(this.storehouseHistoryData.historyData, ['created_at']);
             devlog.log('storehouseDataHistory', storehouseDataHistory);
           } else {

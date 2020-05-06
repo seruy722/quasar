@@ -2,6 +2,7 @@
   <q-page
     data-vue-component-name="Faxes"
   >
+    <PullRefresh @refresh="refresh">
     <Table
       :table-properties="faxesTableProperties"
       :table-data="faxes"
@@ -55,17 +56,18 @@
             expand-icon-class="text-white"
           >
             <template v-slot:header>
-              <ItemSection avatar>
-                <CheckBox
+              <q-item-section avatar>
+                <q-checkbox
+                  dense
                   v-model="props.selected"
                 />
-              </ItemSection>
+              </q-item-section>
 
-              <ItemSection>
-                <ItemLabel :lines="3">
+              <q-item-section>
+                <q-item-label :lines="3">
                   {{ props.row.name }}
-                </ItemLabel>
-              </ItemSection>
+                </q-item-label>
+              </q-item-section>
             </template>
 
             <List
@@ -73,33 +75,33 @@
               dense
               @clickList="viewEditDialog(props)"
             >
-              <ListItem
+              <q-item
                 v-for="col in props.cols.filter(col => col.name !== 'desc')"
                 :key="col.name"
               >
-                <ItemSection>
-                  <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
-                </ItemSection>
-                <ItemSection side>
-                  <ItemLabel
+                <q-item-section>
+                  <q-item-label>{{ `${col.label}:` }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label
                     v-if="col.field === 'status'"
                   >
                     {{ col.value | statusFilter }}
-                  </ItemLabel>
+                  </q-item-label>
 
-                  <ItemLabel
+                  <q-item-label
                     v-else-if="col.field === 'notation'"
                     :lines="4"
                   >
                     {{ col.value }}
-                  </ItemLabel>
-                  <ItemLabel v-else>
+                  </q-item-label>
+                  <q-item-label v-else>
                     {{ col.value }}
-                  </ItemLabel>
-                </ItemSection>
-              </ListItem>
-              <ListItem>
-                <ItemSection>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
                   <div class="row justify-around">
                     <BaseBtn
                       label="История"
@@ -114,8 +116,8 @@
                       @clickBaseBtn="goToFaxData(props.row)"
                     />
                   </div>
-                </ItemSection>
-              </ListItem>
+                </q-item-section>
+              </q-item>
             </List>
           </q-expansion-item>
         </div>
@@ -149,9 +151,9 @@
             key="status"
             :props="props"
           >
-            <Badge>
+            <q-badge>
               {{ props.row.status | statusFilter }}
-            </Badge>
+            </q-badge>
           </q-td>
 
           <q-td
@@ -218,8 +220,8 @@
         </q-tr>
       </template>
     </Table>
-
-    <List
+    </PullRefresh>
+    <q-list
       separator
       bordered
       dense
@@ -232,33 +234,35 @@
         class="shadow-1 overflow-hidden"
       >
         <template v-slot:header>
-          <ItemSection>
-            <ItemLabel>{{ status }}</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ count | numberFormatFilter }}</ItemLabel>
-          </ItemSection>
+          <q-item-section>
+            <q-item-label>{{ status }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>
+              <q-badge>{{ count | numberFormatFilter }}</q-badge>
+            </q-item-label>
+          </q-item-section>
         </template>
 
-        <List
+        <q-list
           separator
           bordered
           dense
         >
-          <ListItem
+          <q-item
             v-for="(elem, i) in data"
             :key="i"
           >
-            <ItemSection>
-              <ItemLabel>{{ elem.name }}</ItemLabel>
-            </ItemSection>
-            <ItemSection>
-              <ItemLabel>{{ elem.transport_name }}</ItemLabel>
-            </ItemSection>
-          </ListItem>
-        </List>
+            <q-item-section>
+              <q-item-label>{{ `${i+1}. ${elem.name}` }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-item-label>{{ elem.transport_name }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
       </q-expansion-item>
-    </List>
+    </q-list>
     <DialogAddFax
       :show-dialog.sync="showFaxDialog"
       :entry-data.sync="localFaxesEditData"
@@ -268,7 +272,7 @@
       :persistent="true"
       :maximized="true"
     >
-      <Card style="max-width: 600px;">
+      <q-card style="max-width: 600px;">
         <q-bar>
           <q-space />
           <IconBtn
@@ -280,10 +284,10 @@
           />
         </q-bar>
 
-        <CardSection class="q-pt-none">
+        <q-card-section class="q-pt-none">
           <FaxesHistory :fax-history-data="faxHistoryData" />
-        </CardSection>
-      </Card>
+        </q-card-section>
+      </q-card>
     </Dialog>
   </q-page>
 </template>
@@ -292,30 +296,22 @@
     import { getUrl } from 'src/tools/url';
     import getFromSettings from 'src/tools/settings';
     import { setFormatedDate, prepareHistoryData, getFaxes } from 'src/utils/FrequentlyCalledFunctions';
-    import { sortCollection } from 'src/utils/sort';
-    import { isoDate, toDate, formatToMysql } from 'src/utils/formatDate';
-    import { max } from 'date-fns';
     import { callFunction } from 'src/utils/index';
     import showNotif from 'src/mixins/showNotif';
 
     export default {
         name: 'Faxes',
         components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            CheckBox: () => import('src/components/Elements/CheckBox.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            DialogAddFax: () => import('src/components/Dialogs/DialogAddFax.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            Badge: () => import('src/components/Elements/Badge.vue'),
-            Menu: () => import('src/components/Menu.vue'),
-            FaxesHistory: () => import('src/components/History/FaxesHistory.vue'),
-            Card: () => import('src/components/Elements/Card/Card.vue'),
-            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
+            Table: () => import('components/Elements/Table/Table.vue'),
+            List: () => import('components/Elements/List/List.vue'),
+            BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
+            DialogAddFax: () => import('components/Dialogs/DialogAddFax.vue'),
+            IconBtn: () => import('components/Buttons/IconBtn.vue'),
+            Menu: () => import('components/Menu.vue'),
+            FaxesHistory: () => import('components/History/FaxesHistory.vue'),
+            Dialog: () => import('components/Dialogs/Dialog.vue'),
+            PullRefresh: () => import('src/components/PullRefresh.vue'),
+            // ListNumbered: () => import('components/ListNumbered.vue'),
         },
         filters: {
             statusFilter(value) {
@@ -443,10 +439,7 @@
         mounted() {
             this.$q.loading.show();
             Promise.all([getFaxes(this.$store)])
-              .then(() => {
-                  this.$q.loading.hide();
-              })
-              .catch(() => {
+              .finally(() => {
                   this.$q.loading.hide();
               });
         },
@@ -467,6 +460,7 @@
                         label: 'Отмена',
                         color: 'white',
                         handler: () => {
+                            this.faxesTableReactiveProperties.selected = [];
                         },
                     },
                     {
@@ -555,42 +549,25 @@
                   });
             },
             async refresh(done) {
-                const { faxes } = this;
-                await this.$axios.post(getUrl('getNewFax'), {
-                    created_at: isoDate(max(_.map(faxes, (item) => new Date(toDate(item.created_at))))),
-                    updated_at: formatToMysql(max(_.map(faxes, (item) => new Date(item.updated_at)))),
-                })
-                  .then(({ data: { newData } }) => {
-                      devlog.log('DTA', newData);
-                      if (!_.isEmpty(newData)) {
-                          const createdItems = [];
-                          _.forEach(newData, (item) => {
-                              const find = _.some(faxes, ['id', item.id]);
-                              if (find) {
-                                  this.$store.dispatch('faxes/updateFax', setFormatedDate(item, ['departure_date', 'arrival_date']));
-                              } else {
-                                  createdItems.push(item);
-                              }
-                          });
-
-                          if (!_.isEmpty(createdItems)) {
-                              _.forEach(sortCollection(createdItems, 'id'), (elem) => {
-                                  this.$store.dispatch('faxes/addFax', setFormatedDate(elem, ['departure_date', 'arrival_date']));
-                              });
-                          }
-                          this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                      } else {
-                          this.showNotif('info', 'Данные актуальны.', 'center');
-                      }
+                if (!done) {
+                    this.$q.loading.show();
+                }
+                this.$store.dispatch('faxes/fetchFaxes')
+                  .then(() => {
                       callFunction(done);
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
                   })
                   .catch(() => {
+                      this.$q.loading.hide();
                       callFunction(done);
                   });
             },
             combineFaxes(selectedFaxes) {
                 const faxNames = _.map(selectedFaxes, 'name');
-                if (!_.isEmpty(selectedFaxes)) {
+                const faxIds = _.uniq(_.map(selectedFaxes, 'transporter_id'));
+                devlog.log('faxIds', faxIds);
+                if (!_.isEmpty(selectedFaxes) && _.size(faxIds) === 1) {
                     this.showNotif('warning', `Обьеденить факсы - ${faxNames.join(', ')}?`, 'center', [
                         {
                             label: 'Отмена',
@@ -613,13 +590,15 @@
                                   })
                                   .catch((errors) => {
                                       devlog.error('Ошибка запроса combineFaxes', errors);
+                                      this.showNotif('error', 'Произошла ошибка при обьеденении факсов. Обновите страницу пожалуйста.', 'center');
+                                      this.faxesTableReactiveProperties.selected = [];
                                       this.$q.loading.hide();
                                   });
                             },
                         },
                     ]);
                 } else {
-                    this.showNotif('warning', 'Выберите факсы для соеденения!', 'center');
+                    this.showNotif('warning', 'Нельзя соеденять факсы разных перевожчиков!', 'center');
                 }
             },
         },

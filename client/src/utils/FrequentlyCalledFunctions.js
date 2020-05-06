@@ -93,6 +93,9 @@ export const setCategoriesStoreHouseData = (data, transporterPrices) => {
       }
       obj.for_kg = forKg;
       obj.sum = kg * forKg;
+    } else if (_.isArray(transporterPrices)) {
+      obj.for_kg = 0;
+      obj.sum = kg * obj.for_kg;
     }
     arr.push(obj);
   });

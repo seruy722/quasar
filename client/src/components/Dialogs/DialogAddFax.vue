@@ -348,7 +348,7 @@
                 const sendData = _.reduce(faxData, (result, { value, changeValue }, index) => {
                     if (changeValue) {
                         if (index === 'name') {
-                            result[index] = _.startCase(value);
+                            result[index] = _.upperFirst(value);
                         } else if (index === 'departure_date' && value) {
                             if (value) {
                                 const date = reverseDate(value);
@@ -394,6 +394,7 @@
                               if (!_.isEmpty(this.$store.getters['faxes/getFaxes'])) {
                                   this.$store.dispatch('faxes/addFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
                               }
+                              this.close(this.faxData);
                               this.showNotif('success', 'Факс успешно добавлен.', 'center');
                           })
                           .catch(({ response: { data: { errors } } }) => {

@@ -486,9 +486,9 @@
     import getFromSettings from 'src/tools/settings';
     import {
         formatToDotDate,
-        isoDate,
-        toDate,
-        formatToMysql,
+        // isoDate,
+        // toDate,
+        // formatToMysql,
         reverseDate,
         addTime,
     } from 'src/utils/formatDate';
@@ -496,7 +496,7 @@
     import showNotif from 'src/mixins/showNotif';
     import ExportDataMixin from 'src/mixins/ExportData';
     import { callFunction, countSumCollection, numberFormat } from 'src/utils/index';
-    import { sortCollection } from 'src/utils/sort';
+    // import { sortCollection } from 'src/utils/sort';
     import TransferMixin from 'src/mixins/Transfer';
     import {
         setMethodLabel,
@@ -508,7 +508,7 @@
         getClientCodes,
     } from 'src/utils/FrequentlyCalledFunctions';
     import {
-        max,
+        // max,
         formatISO,
     } from 'date-fns';
 
@@ -909,9 +909,8 @@
             async getTransfers() {
                 if (_.isEmpty(this.allTransfers)) {
                     this.$q.loading.show();
-                    await this.$axios.get(getUrl('transfers'))
-                      .then(({ data: { transfers } }) => {
-                          this.$store.dispatch('transfers/setTransfers', this.setAdditionalData(transfers));
+                    await this.$store.dispatch('transfers/fetchTransfers')
+                      .then(() => {
                           this.$q.loading.hide();
                       })
                       .catch(() => {
@@ -931,39 +930,52 @@
                 setChangeValue(data);
             },
             async refresh(done) {
-                const { allTransfers } = this;
-                await this.$axios.post(getUrl('getNewTransfers'), {
-                    created_at: isoDate(max(_.map(allTransfers, (item) => new Date(toDate(item.created_at))))),
-                    updated_at: formatToMysql(max(_.map(allTransfers, (item) => new Date(item.updated_at)))),
-                })
-                  .then(({ data: { transfers } }) => {
-                      devlog.log('DTA', transfers);
-                      if (!_.isEmpty(transfers)) {
-                          const createdItems = [];
-                          _.forEach(transfers, (item) => {
-                              const find = _.some(allTransfers, ['id', item.id]);
-                              if (find) {
-                                  this.$store.dispatch('transfers/updateTransfer', this.setAdditionalData([item]));
-                              } else {
-                                  createdItems.push(item);
-                              }
-                          });
-
-                          if (!_.isEmpty(createdItems)) {
-                              _.forEach(sortCollection(createdItems, 'id'), (elem) => {
-                                  this.$store.dispatch('transfers/addTransfer', this.setAdditionalData([elem]));
-                              });
-                          }
-
-                          this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                      } else {
-                          this.showNotif('info', 'Данные актуальны.', 'center');
-                      }
+                if (!done) {
+                    this.$q.loading.show();
+                }
+                this.$store.dispatch('transfers/fetchTransfers')
+                  .then(() => {
                       callFunction(done);
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
                   })
                   .catch(() => {
+                      this.$q.loading.hide();
                       callFunction(done);
                   });
+                // const { allTransfers } = this;
+                // await this.$axios.post(getUrl('getNewTransfers'), {
+                //     created_at: isoDate(max(_.map(allTransfers, (item) => new Date(toDate(item.created_at))))),
+                //     updated_at: formatToMysql(max(_.map(allTransfers, (item) => new Date(item.updated_at)))),
+                // })
+                //   .then(({ data: { transfers } }) => {
+                //       devlog.log('DTA', transfers);
+                //       if (!_.isEmpty(transfers)) {
+                //           const createdItems = [];
+                //           _.forEach(transfers, (item) => {
+                //               const find = _.some(allTransfers, ['id', item.id]);
+                //               if (find) {
+                //                   this.$store.dispatch('transfers/updateTransfer', this.setAdditionalData([item]));
+                //               } else {
+                //                   createdItems.push(item);
+                //               }
+                //           });
+                //
+                //           if (!_.isEmpty(createdItems)) {
+                //               _.forEach(sortCollection(createdItems, 'id'), (elem) => {
+                //                   this.$store.dispatch('transfers/addTransfer', this.setAdditionalData([elem]));
+                //               });
+                //           }
+                //
+                //           this.showNotif('success', 'Данные успешно обновлены.', 'center');
+                //       } else {
+                //           this.showNotif('info', 'Данные актуальны.', 'center');
+                //       }
+                //       callFunction(done);
+                //   })
+                //   .catch(() => {
+                //       callFunction(done);
+                //   });
             },
             exportTransfers() {
                 if (!_.isEmpty(this.allTransfers)) {

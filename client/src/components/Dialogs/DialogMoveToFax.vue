@@ -103,7 +103,7 @@
         watch: {
             faxes(val) {
                 if (!_.isEmpty(val)) {
-                    this.allFaxes = _.map(_.filter(val, { uploaded_to_cargo: 0 }), ({ name, id }) => ({
+                    this.allFaxes = _.map(_.filter(val, { uploaded_to_cargo: 0, join_faxes_ids: null }), ({ name, id }) => ({
                         label: name,
                         value: id,
                     }));
@@ -113,7 +113,10 @@
                 if (val) {
                     this.$q.loading.show();
                     Promise.all([getFaxes(this.$store)])
-                      .finally(() => {
+                      .then(() => {
+                          this.$q.loading.hide();
+                      })
+                      .catch(() => {
                           this.$q.loading.hide();
                       });
                 }
@@ -136,6 +139,7 @@
                       this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно перемещены.' : 'Запись успешно перемещена.', 'center');
                   })
                   .catch((errors) => {
+                      this.$q.loading.hide();
                       devlog.error('Ошибка запроса moveFromStorehouseToFax ', errors);
                   });
             },

@@ -322,9 +322,8 @@
               <div class="q-pa-md">
                 <div class="text-h6 q-mb-md"> Факс</div>
                 <!--                <Search v-model="search" />-->
-                <CountCategories :list="faxSideData" />
+                <CountCategories :list="faxSideData" style="margin-bottom: 20px;"/>
                 <q-list bordered separator>
-
                   <q-slide-item
                     v-for="(item, index) in faxSideData"
                     :key="index"
@@ -354,7 +353,7 @@
               <div class="q-pa-md">
                 <div class="text-h6 q-mb-md"> Склад</div>
                 <!--                <Search v-model="searchStorehouseData" />-->
-                <CountCategories :list="storehouseSideData" />
+                <CountCategories :list="storehouseSideData" style="margin-bottom: 20px;" />
                 <q-list bordered separator>
                   <q-slide-item
                     v-for="(item, index) in storehouseSideData"
@@ -651,7 +650,7 @@
             },
             exportFaxData() {
                 this.exportDataToExcel(getUrl('exportFaxAdminData'), {
-                    id: 1,
+                    id: this.currentFaxItem.id,
                 }, `${this.currentFaxItem.name}.xlsx`);
             },
             searchInList(val, arrayName) {
@@ -735,7 +734,7 @@
                 this.storehouseSideData.push(item);
                 const index = _.findIndex(this.faxSideData, { id: item.id });
                 this.faxSideData.splice(index, 1);
-                this.$q.notify('Left action triggered. Resetting in 1 second.');
+                this.$q.notify('На склад');
             },
             // Действие, когда пользователь закончил сдвиг элемента в любую сторону
             onAction({ reset }) {
@@ -751,9 +750,10 @@
                 this.faxSideData.push(item);
                 const index = _.findIndex(this.storehouseSideData, { id: item.id });
                 this.storehouseSideData.splice(index, 1);
-                this.$q.notify('Right action triggered. Resetting in 1 second.');
+                this.$q.notify('В факс');
             },
             saveTransfersData(faxData, storehouseData) {
+                this.$q.loading.show();
                 this.$axios.post(getUrl('transfersStoreFax'), {
                     id: this.$route.params.id,
                     faxIds: _.map(faxData, 'id'),
@@ -766,8 +766,11 @@
                       getStorehouseTableData(this.$store);
                       this.faxSideData = [];
                       this.storehouseSideData = [];
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Данные успешно сохранены.', 'center');
                   })
                   .catch(() => {
+                      this.$q.loading.hide();
                       devlog.error('Произошла ошибка в запросе - saveTransfersData');
                   });
             },
@@ -777,6 +780,7 @@
                 this.$axios.get(`${getUrl('updatePricesInFax')}/${faxId}`)
                   .then(({ data: { faxData } }) => {
                       this.$store.dispatch('faxes/setFaxData', faxData);
+                      this.faxTableData = combineStoreHouseData(faxData);
                       this.$q.loading.hide();
                       this.showNotif('success', 'Цены успешно обновлены.', 'center');
                   })

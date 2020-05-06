@@ -31,13 +31,13 @@
             @iconBtnClick="destroyEntry(storehouseTableReactiveProperties.selected)"
           />
 
-<!--          <IconBtn-->
-<!--            v-show="storehouseTableReactiveProperties.selected.length"-->
-<!--            color="info"-->
-<!--            icon="move_to_inbox"-->
-<!--            tooltip="Переместить"-->
-<!--            @iconBtnClick="moveToFax"-->
-<!--          />-->
+          <IconBtn
+            v-show="storehouseTableReactiveProperties.selected.length"
+            color="info"
+            icon="move_to_inbox"
+            tooltip="Переместить"
+            @iconBtnClick="moveToFax"
+          />
 
           <IconBtn
             color="positive"
@@ -239,17 +239,17 @@
     import { getUrl } from 'src/tools/url';
     import showNotif from 'src/mixins/showNotif';
     import ExportDataMixin from 'src/mixins/ExportData';
-    import { sortCollection } from 'src/utils/sort';
-    import { isoDate, toDate, formatToMysql } from 'src/utils/formatDate';
+    // import { sortCollection } from 'src/utils/sort';
+    // import { isoDate, toDate, formatToMysql } from 'src/utils/formatDate';
     import { callFunction } from 'src/utils/index';
     import {
         getClientCodes,
         getCategories,
         getShopsList,
-        setFormatedDate,
+        // setFormatedDate,
         getStorehouseTableData,
     } from 'src/utils/FrequentlyCalledFunctions';
-    import { max } from 'date-fns';
+    // import { max } from 'date-fns';
     import StorehouseDataMixin from 'src/mixins/StorehouseData';
 
     export default {
@@ -442,38 +442,17 @@
                 }
             },
             async refresh(done) {
-                const { storehouseData } = this;
-                // devlog.log('formatToMysql', max(_.map(storehouseData, (item) => new Date(toDate(item.created_at)))));
-                await this.$axios.post(getUrl('getNewStorehouseData'), {
-                    created_at: isoDate(max(_.map(storehouseData, (item) => new Date(toDate(item.created_at))))),
-                    updated_at: formatToMysql(max(_.map(storehouseData, (item) => new Date(item.updated_at)))),
-                })
-                  .then(({ data: { newData } }) => {
-                      devlog.log('DTA', newData);
-                      if (!_.isEmpty(newData)) {
-                          const createdItems = [];
-                          _.forEach(newData, (item) => {
-                              const find = _.some(storehouseData, ['id', item.id]);
-                              if (find) {
-                                  this.$store.dispatch('storehouse/updateStorehouseData', setFormatedDate(item, ['created_at']));
-                              } else {
-                                  createdItems.push(item);
-                              }
-                          });
-
-                          if (!_.isEmpty(createdItems)) {
-                              _.forEach(sortCollection(createdItems, 'id'), (elem) => {
-                                  this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(elem, ['created_at']));
-                              });
-                          }
-
-                          this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                      } else {
-                          this.showNotif('info', 'Данные актуальны.', 'center');
-                      }
+                if (!done) {
+                    this.$q.loading.show();
+                }
+                this.$store.dispatch('storehouse/fetchStorehouseTableData')
+                  .then(() => {
                       callFunction(done);
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
                   })
                   .catch(() => {
+                      this.$q.loading.hide();
                       callFunction(done);
                   });
             },

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Category;
 use App\CodePrice;
+use App\History;
 use App\Shop;
 use App\Storehouse;
 use App\StorehouseData;
@@ -144,13 +145,18 @@ class StorehouseDataController extends Controller
                 Thingslist::firstOrCreate(['name' => $item->{'title'}]);
             }
         }
-        if (array_key_exists('for_kg', $data)) {
+        if (array_key_exists('for_kg', $data) && array_key_exists('for_place', $data)) {
+            $saveData['for_kg'] = $data['for_kg'];
+            $saveData['for_place'] = $data['for_place'];
+            $price = CodePrice::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg'], 'for_place' => $data['for_place'], 'user_id' => auth()->user()->id]);
+            $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_kg' => $data['for_kg'], 'for_place' => $data['for_place']];
+            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodePrice)->getTable());
+        } else if (array_key_exists('for_kg', $data)) {
             $saveData['for_kg'] = $data['for_kg'];
             $price = CodePrice::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg'], 'user_id' => auth()->user()->id]);
             $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_kg' => $data['for_kg']];
             $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodePrice)->getTable());
-        }
-        if (array_key_exists('for_place', $data)) {
+        } else if (array_key_exists('for_place', $data)) {
             $saveData['for_place'] = $data['for_place'];
             $price = CodePrice::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_place' => $data['for_place'], 'user_id' => auth()->user()->id]);
             $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_place' => $data['for_place']];
@@ -279,6 +285,15 @@ class StorehouseDataController extends Controller
             }
 
         }
+
+        if (array_key_exists('fax_id', $data)) {
+            $fax = \App\Fax::find($data['fax_id']);
+            if ($fax) {
+                $data['fax_name'] = $fax->name;
+            } else {
+                $data['fax_name'] = 'Возврат на склад';
+            }
+        }
         $data['user_name'] = auth()->user()->name;
         $data['user_id'] = auth()->user()->id;
         $saveData = ['table' => $table, 'action' => $action, 'entry_id' => $id, 'history_data' => json_encode($data)];
@@ -320,8 +335,26 @@ class StorehouseDataController extends Controller
 
     public function setTransfersStorehouseFax(Request $request)
     {
-        $d1 = StorehouseData::whereIn('id', $request->storehouseIds)->update(['fax_id' => 0]);
-        $d2 = StorehouseData::whereIn('id', $request->faxIds)->update(['fax_id' => $request->id]);
+        $storehouseIds = $request->storehouseIds;
+        $faxIds = $request->faxIds;
+        $faxId = $request->id;
+        $d1 = StorehouseData::whereIn('id', $storehouseIds)->get();
+        $d2 = StorehouseData::whereIn('id', $faxIds)->get();
+        $d1->each(function ($item) {
+            if ($item->fax_id) {
+                $item->fax_id = 0;
+                $item->save();
+                $this->storehouseDataHistory($item['id'], ['fax_id' => 0], 'update', (new StorehouseData)->getTable());
+            }
+        });
+
+        $d2->each(function ($item) use ($faxId) {
+            if ($item->fax_id !== $faxId) {
+                $item->fax_id = $faxId;
+                $item->save();
+                $this->storehouseDataHistory($item['id'], ['fax_id' => $faxId], 'update', (new StorehouseData)->getTable());
+            }
+        });
 
         return response(['status' => true, 'd1' => $d1, 'd2' => $d2]);
     }
@@ -388,7 +421,13 @@ class StorehouseDataController extends Controller
 
     public function moveFromStorehouseToFax(Request $request)
     {
-        StorehouseData::whereIn('id', $request->ids)->update(['fax_id' => $request->faxId]);
+        $faxId = $request->faxId;
+        $d2 = StorehouseData::whereIn('id', $request->ids)->get();
+        $d2->each(function ($item) use ($faxId) {
+            $item->fax_id = $faxId;
+            $item->save();
+            $this->storehouseDataHistory($item['id'], ['fax_id' => $faxId], 'update', (new StorehouseData)->getTable());
+        });
         return response(['status' => true]);
     }
 }

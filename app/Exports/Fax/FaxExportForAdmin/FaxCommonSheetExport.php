@@ -38,7 +38,7 @@ class FaxCommonSheetExport implements FromCollection, ShouldAutoSize, WithTitle,
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
             ->where('storehouse_data.storehouse_id', 1)
-            ->where('storehouse_data.fax_id', 1)
+            ->where('storehouse_data.fax_id', $id)
             ->where('storehouse_data.destroyed', false)
             ->get();
 

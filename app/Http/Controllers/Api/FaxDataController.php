@@ -167,7 +167,7 @@ class FaxDataController extends Controller
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
             ->where('storehouse_data.storehouse_id', 1)
             ->where('storehouse_data.destroyed', false)
-            ->orderBy('storehouse_data.created_at', 'desc');
+            ->orderBy('storehouse_data.id', 'desc');
     }
 
     public function getFaxData($id)
@@ -196,14 +196,7 @@ class FaxDataController extends Controller
 //        });
 
         $queryData = $this->getFaxDataQuery();
-
-        $fax = Fax::find($id);
-        if ($fax->join_faxes_ids) {
-            $faxData = $queryData->whereIn('storehouse_data.fax_id', explode(',', $fax->join_faxes_ids))->get();
-            return response(['faxData' => $this->setReplacePrice($faxData)]);
-        }
         $faxData = $queryData->where('storehouse_data.fax_id', $id)->get();
-
 
         return response(['faxData' => $this->setReplacePrice($faxData)]);
     }
@@ -274,9 +267,6 @@ class FaxDataController extends Controller
     {
         $fax = Fax::find($id);
         $faxData = StorehouseData::where('fax_id', $id)->get();
-        if ($fax->join_faxes_ids) {
-            $faxData = StorehouseData::whereIn('fax_id', explode(',', $fax->join_faxes_ids))->get();
-        }
         $faxData->each(function ($item) {
             $price = CodePrice::where('code_id', $item->code_client_id)->where('category_id', $item->category_id)->first();
             if ($price) {
@@ -285,7 +275,7 @@ class FaxDataController extends Controller
                 $item->save();
             }
         });
-        $resultData = $fax->join_faxes_ids ? $this->setReplacePrice($this->getFaxDataQuery()->whereIn('fax_id', explode(',', $fax->join_faxes_ids))->get()) : $this->setReplacePrice($this->getFaxDataQuery()->where('fax_id', $id)->get());
+        $resultData = $this->setReplacePrice($this->getFaxDataQuery()->where('fax_id', $id)->get());
         return response(['faxData' => $resultData]);
     }
 
