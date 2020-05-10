@@ -102,7 +102,7 @@ class StorehouseDataController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'code_place' => 'required|max:12|unique:storehouse_data',
+            'code_place' => 'required|max:12|unique:code_places',
             'code_client_id' => 'required|numeric',
             'kg' => 'required|numeric',
             'for_kg' => 'numeric',
@@ -164,6 +164,7 @@ class StorehouseDataController extends Controller
         }
 
         $storehouse = StorehouseData::create($saveData);
+        \App\CodePlace::create(['code_place' => $saveData['code_place']]);
         $this->storehouseDataHistory($storehouse->id, $saveData, 'create', (new StorehouseData)->getTable());
 
         $arrData = $this->storehouseDataList(1);
@@ -305,10 +306,14 @@ class StorehouseDataController extends Controller
         $this->validate($request, [
             'ids' => 'required|array',
         ]);
-        $data = ['destroyed' => true];
         foreach ($request->ids as $id) {
-            StorehouseData::where('id', $id)->update($data);
-            $this->storehouseDataHistory($id, $data, 'destroy', (new StorehouseData)->getTable());
+            $entry = StorehouseData::find($id);
+            if ($entry) {
+                $entry->destroyed = true;
+                $entry->save();
+                $this->storehouseDataHistory($id, $entry->toArray(), 'destroy', (new StorehouseData)->getTable());
+                $entry->delete();
+            }
         }
         return response(['status' => true]);
     }
