@@ -198,8 +198,8 @@
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
                         changeValue: false,
-                        default: '',
-                        value: '',
+                        default: 'Факс ',
+                        value: 'Факс ',
                     },
                     status: {
                         type: 'select',

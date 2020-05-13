@@ -6,9 +6,17 @@
       :table-properties="faxTableProperties"
       :table-data="faxTableData"
       :table-reactive-properties="faxTableReactiveProperties"
-      :title="faxName"
+      :title="currentFaxItem.name"
     >
       <template v-slot:top-buttons>
+        <IconBtn
+          v-show="addToSaveArray.length"
+          color="positive"
+          icon="save"
+          tooltip="Сохранить"
+          @iconBtnClick="saveDataInCombineTable(addToSaveArray)"
+        />
+
         <q-checkbox
           v-model="combineTableData"
           label="Обьеденено"
@@ -25,9 +33,21 @@
         <IconBtn
           v-show="!combineTableData"
           icon="sync_alt"
-          tooltip="excel"
+          tooltip="Трансфер данных"
           @iconBtnClick="openDialogTransferFromStorehouse"
         />
+
+        <MoveToFaxBtn
+          v-show="faxTableReactiveProperties.selected.length"
+          @moveToFaxClick="moveToFax"
+        />
+
+        <!--        <IconBtn-->
+        <!--          icon="data_usage"-->
+        <!--          color="orange"-->
+        <!--          tooltip="Обновить цены"-->
+        <!--          @iconBtnClick="updatePricesInFax(currentFaxItem.id)"-->
+        <!--        />-->
       </template>
 
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -123,9 +143,24 @@
 
           <q-td
             key="code_client_name"
+            class="cursor-pointer"
             :props="props"
           >
-            {{ props.row.code_client_name }}
+            {{ props.row.code_client_id | optionsFilter(clientCodes) }}
+            <PopupEdit
+              v-if="combineTableData"
+              :value.sync="props.row.code_client_id"
+              type="number"
+              :title="props.row.code_client_name"
+              @addToSave="addToAddSaveArray(props.row, 'code_client_id')"
+            >
+              <SearchSelect
+                v-model="props.row.code_client_id"
+                label="Клиент"
+                :dense="$q.screen.xs || $q.screen.sm"
+                :options="clientCodes"
+              />
+            </PopupEdit>
           </q-td>
 
           <q-td
@@ -143,10 +178,66 @@
           </q-td>
 
           <q-td
-            key="category_name"
+            key="for_kg"
+            class="text-bold text-red cursor-pointer"
             :props="props"
           >
-            {{ props.row.category_name }}
+            {{ props.row.for_kg | numberFormatFilter }}
+            <PopupEdit
+              v-if="combineTableData"
+              :value.sync="props.row.for_kg"
+              type="number"
+              :title="props.row.code_client_name"
+              @addToSave="addToAddSaveArray(props.row, 'for_kg')"
+            >
+              <q-input
+                v-model.number="props.row.for_kg"
+                type="number"
+                dense
+              />
+              <q-checkbox
+                v-model="props.row.replacePrice"
+                label="Заменить"
+                dense
+              />
+            </PopupEdit>
+          </q-td>
+
+          <q-td
+            key="for_place"
+            class="text-bold text-red cursor-pointer"
+            :props="props"
+          >
+            {{ props.row.for_place | numberFormatFilter }}
+            <PopupEdit
+              v-if="combineTableData"
+              :value.sync="props.row.for_place"
+              type="number"
+              :title="props.row.code_client_name"
+              @addToSave="addToAddSaveArray(props.row, 'for_place')"
+            />
+          </q-td>
+
+          <q-td
+            key="category_name"
+            class="cursor-pointer"
+            :props="props"
+          >
+            {{ props.row.category_id | optionsFilter(categories) }}
+            <PopupEdit
+              v-if="combineTableData"
+              :value.sync="props.row.category_id"
+              type="number"
+              :title="props.row.code_client_name"
+              @addToSave="addToAddSaveArray(props.row, 'category_id')"
+            >
+              <SearchSelect
+                v-model="props.row.category_id"
+                label="Категория"
+                :dense="$q.screen.xs || $q.screen.sm"
+                :options="categories"
+              />
+            </PopupEdit>
           </q-td>
 
           <q-td
@@ -175,7 +266,8 @@
 
     <CountCategories
       :list="faxTableData"
-      style="max-width: 400px;margin:0 auto;"
+      :fax-id="currentFaxItem.id"
+      style="max-width: 600px;margin:0 auto;"
     />
     <DialogFaxData
       :show-dialog.sync="showFaxDataDialog"
@@ -212,6 +304,7 @@
         <q-bar>
           <q-space />
           <IconBtn
+            v-if="isTransfer"
             flat
             dense
             icon="save"
@@ -224,7 +317,7 @@
             dense
             icon="close"
             tooltip="Закрыть"
-            @iconBtnClick="dialogTransferFromStorehouse = false"
+            @iconBtnClick="closeDialogTransferFromStorehouse"
           />
         </q-bar>
         <CardSection>
@@ -235,9 +328,8 @@
               <div class="q-pa-md">
                 <div class="text-h6 q-mb-md"> Факс</div>
                 <!--                <Search v-model="search" />-->
-                <CountCategories :list="faxSideData" />
+                <CountCategories :list="faxSideData" style="margin-bottom: 20px;" />
                 <q-list bordered separator>
-
                   <q-slide-item
                     v-for="(item, index) in faxSideData"
                     :key="index"
@@ -267,7 +359,7 @@
               <div class="q-pa-md">
                 <div class="text-h6 q-mb-md"> Склад</div>
                 <!--                <Search v-model="searchStorehouseData" />-->
-                <CountCategories :list="storehouseSideData" />
+                <CountCategories :list="storehouseSideData" style="margin-bottom: 20px;" />
                 <q-list bordered separator>
                   <q-slide-item
                     v-for="(item, index) in storehouseSideData"
@@ -293,6 +385,10 @@
         </CardSection>
       </Card>
     </Dialog>
+    <DialogMoveToFax
+      :show.sync="showMoveToFaxDialog"
+      :values.sync="faxTableReactiveProperties.selected"
+    />
   </q-page>
 </template>
 
@@ -308,7 +404,7 @@
         getShopsList,
         setCategoriesStoreHouseData,
         combineStoreHouseData,
-        getStorehouseTableData,
+        // getStorehouseTableData,
         getFaxes,
         // setFormatedDate,
         // prepareHistoryData,
@@ -333,11 +429,26 @@
             CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
             CountCategories: () => import('src/components/CountCategories.vue'),
+            PopupEdit: () => import('src/components/PopupEdit.vue'),
+            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+            MoveToFaxBtn: () => import('src/components/Buttons/MoveToFaxBtn.vue'),
+            DialogMoveToFax: () => import('src/components/Dialogs/DialogMoveToFax.vue'),
             // Search: () => import('src/components/Search.vue'),
+        },
+        filters: {
+            optionsFilter(id, categories) {
+                const find = _.find(categories, { value: id });
+                if (find) {
+                    return find.label;
+                }
+                return id;
+            },
         },
         mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
         data() {
             return {
+                isTransfer: false,
+                addToSaveArray: [],
                 search: null,
                 searchStorehouseData: null,
                 faxSideData: [],
@@ -350,6 +461,7 @@
                 localFaxEditData: {},
                 combineTableData: true,
                 faxTableData: [],
+                showMoveToFaxDialog: false,
                 faxTableProperties: {
                     columns: [
                         {
@@ -380,20 +492,20 @@
                             align: 'center',
                             sortable: true,
                         },
-                        // {
-                        //     name: 'for_kg',
-                        //     label: this.$t('forKg'),
-                        //     field: 'for_kg',
-                        //     align: 'center',
-                        //     sortable: true,
-                        // },
-                        // {
-                        //     name: 'for_place',
-                        //     label: this.$t('forPlace'),
-                        //     field: 'for_place',
-                        //     align: 'center',
-                        //     sortable: true,
-                        // },
+                        {
+                            name: 'for_kg',
+                            label: this.$t('forKg'),
+                            field: 'for_kg',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'for_place',
+                            label: this.$t('forPlace'),
+                            field: 'for_place',
+                            align: 'center',
+                            sortable: true,
+                        },
                         {
                             name: 'category_name',
                             label: this.$t('category'),
@@ -429,28 +541,49 @@
                     visibleColumns: ['code_client_name', 'place', 'kg', 'category_name'],
                     title: '',
                 },
-                visibleColumns: ['code_client_name', 'place', 'kg', 'category_name'],
-                fullVisibleColumns: ['code_place', 'code_client_name', 'place', 'kg', 'category_name', 'things', 'notation', 'shop'],
+                visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'category_name'],
+                fullVisibleColumns: ['code_place', 'code_client_name', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop'],
             };
         },
         computed: {
             ...mapGetters({
-                currentFaxItem: 'faxes/getCurrentFaxItem',
                 faxData: 'faxes/getFaxData',
                 faxCategoriesData: 'faxes/getFaxCategoriesData',
                 storehouseData: 'storehouse/getStorehouseData',
+                currentFaxItem: 'faxes/getCurrentFaxItem',
             }),
+            categories() {
+                return this.$store.getters['category/getCategories'];
+            },
+            clientCodes() {
+                return this.$store.getters['codes/getCodes'];
+            },
             faxName() {
                 return _.get(this.currentFaxItem, 'name');
             },
+            // storehouseData() {
+            //     return this.$store.getters['storehouse/getStorehouseData'];
+            // },
+            // fax() {
+            //     return _.find(this.$store.getters['faxes/getFaxes'], { id: this.$route.params.id });
+            // },
         },
         watch: {
             faxData(val) {
-                const { faxData } = this;
+                devlog.log('VAL_K', _.get(_.first(val), 'for_kg'));
+                if (!_.get(_.first(val), 'for_kg')) {
+                    const { visibleColumns } = this;
+                    const { fullVisibleColumns } = this;
+                    const indexForKg = _.indexOf(visibleColumns, 'for_kg');
+                    const indexForKg2 = _.indexOf(fullVisibleColumns, 'for_kg');
+                    visibleColumns.splice(indexForKg, 2);
+                    fullVisibleColumns.splice(indexForKg2, 2);
+                }
+                // const { faxData } = this;
                 if (this.combineTableData) {
-                    this.faxTableData = sortArrayCollection(combineStoreHouseData(faxData), 'code_client_name');
+                    this.faxTableData = sortArrayCollection(combineStoreHouseData(val), 'code_client_name');
                 } else {
-                    this.faxTableData = sortArrayCollection(_.cloneDeep(faxData), 'code_client_name');
+                    this.faxTableData = sortArrayCollection(_.cloneDeep(val), 'code_client_name');
                 }
                 this.$store.dispatch('faxes/setFaxCategoriesData', setCategoriesStoreHouseData(val));
             },
@@ -468,32 +601,89 @@
                 },
                 immediate: true,
             },
-            search(val) {
-                if (_.trim(val)) {
-                    this.faxSideData = this.searchInList(val, 'faxSideData');
-                } else {
-                    this.faxSideData = _.filter(_.uniqBy([...this.faxSideData, ...this.faxTableData], 'id'), ({ id }) => !_.includes(this.faxSideDataTransferIds, id));
-                }
-            },
-            searchStorehouseData(val) {
-                if (_.trim(val)) {
-                    this.storehouseSideData = this.searchInList(val, 'storehouseSideData');
-                } else {
-                    this.storehouseSideData = _.filter(_.uniqBy([...this.storehouseData, ...this.storehouseSideData], 'id'), ({ id }) => !_.includes(this.storehouseSideDataTransferIds, id));
-                }
-            },
+            // faxTableData(val) {
+            //     this.faxSideData = sortArrayCollection(val, 'code_client_name');
+            // },
+            // storehouseData(val) {
+            //     this.storehouseSideData = sortArrayCollection(_.cloneDeep(val), 'code_client_name');
+            // },
+            // search(val) {
+            //     if (_.trim(val)) {
+            //         this.faxSideData = this.searchInList(val, 'faxSideData');
+            //     } else {
+            //         this.faxSideData = _.filter(_.uniqBy([...this.faxSideData, ...this.faxTableData], 'id'), ({ id }) => !_.includes(this.faxSideDataTransferIds, id));
+            //     }
+            // },
+            // searchStorehouseData(val) {
+            //     if (_.trim(val)) {
+            //         this.storehouseSideData = this.searchInList(val, 'storehouseSideData');
+            //     } else {
+            //         this.storehouseSideData = _.filter(_.uniqBy([...this.storehouseData, ...this.storehouseSideData], 'id'), ({ id }) => !_.includes(this.storehouseSideDataTransferIds, id));
+            //     }
+            // },
         },
         mounted() {
-            this.getFaxData(this.$route.params.id);
+            this.$q.loading.show();
+            Promise.all([this.getFax(this.$route.params.id), this.getFaxData(this.$route.params.id), getCategories(this.$store), getClientCodes(this.$store)])
+              .then(() => {
+                  this.$q.loading.hide();
+              });
+            // this.getFaxData(this.$route.params.id);
+            // getCategories(this.$store);
+            // getClientCodes(this.$store);
         },
         beforeDestroy() {
             clearTimeout(this.timer);
         },
         methods: {
+            moveToFax() {
+                this.showMoveToFaxDialog = true;
+            },
+            async getFax(id) {
+                if (_.isEmpty(this.currentFaxItem)) {
+                    this.$axios.get(`${getUrl('fax')}/${id}`)
+                      .then(({ data: { fax } }) => {
+                          this.$store.dispatch('faxes/setCurrentFaxItem', fax);
+                      })
+                      .catch((errors) => {
+                          devlog.log('errors', errors);
+                      });
+                }
+            },
+            saveDataInCombineTable(values) {
+                this.$q.loading.show();
+                this.$axios.post(getUrl('updateFaxCombineData'), values)
+                  .then(({ data: { updatedData } }) => {
+                      _.forEach(updatedData, (item) => {
+                          this.$store.dispatch('faxes/updateFaxData', item);
+                      });
+                      this.addToSaveArray = [];
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Запись успешно обновлена.', 'center');
+                  })
+                  .catch((errors) => {
+                      this.$q.loading.hide();
+                      devlog.log('errors', errors);
+                  });
+            },
+            addToAddSaveArray(val, key) {
+                const findIndex = _.findIndex(this.addToSaveArray, { id: val.id });
+                if (findIndex !== -1) {
+                    this.addToSaveArray[findIndex][key] = val[key];
+                } else {
+                    const newObj = _.assign({}, {
+                        id: val.id,
+                        arr: val.arr,
+                        replacePrice: val.replacePrice,
+                    });
+                    newObj[key] = val[key];
+                    this.addToSaveArray.push(newObj);
+                }
+            },
             exportFaxData() {
                 this.exportDataToExcel(getUrl('exportFaxModerData'), {
-                    id: 1,
-                }, 'faxName.xlsx');
+                    id: this.currentFaxItem.id,
+                }, `${this.currentFaxItem.name}.xlsx`);
             },
             searchInList(val, arrayName) {
                 const needle = val.toLowerCase();
@@ -504,33 +694,16 @@
                 //   .indexOf(needle) > -1 || v.code_client_name.toLowerCase()
                 //   .indexOf(needle) > -1);
             },
-            async updateFaxData() {
-                this.$q.loading.show();
-                await this.$axios.post(getUrl('updateFaxData'), this.arrayToUpdate)
-                  .then(async ({ data }) => {
-                      devlog.log('SDF', data);
-                      await this.$store.dispatch('faxes/setFaxData', sortArrayCollection(this.prepareFaxTableData(data.faxData), 'code_client_name'));
-                      await this.$store.dispatch('faxes/setFaxCategoriesData', this.categoriesSumData(this.updateCategories(this.faxCategoriesDataList)));
-                      this.arrayToUpdate = [];
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                  })
-                  .catch((errors) => {
-                      this.$q.loading.hide();
-                      devlog.log('EDR', errors);
-                      this.showNotif('error', 'Произошла ошибка. Обновите пожалуйста страницу.', 'center');
-                  });
-            },
             async getFaxData(id) {
-                this.$q.loading.show();
+                // this.$q.loading.show();
                 await this.$axios.get(`${getUrl('faxData')}/${id}`)
                   .then(({ data: { faxData } }) => {
                       this.$store.dispatch('faxes/setFaxData', faxData);
                       this.faxTableData = combineStoreHouseData(faxData);
-                      this.$q.loading.hide();
+                      // this.$q.loading.hide();
                   })
                   .catch(() => {
-                      this.$q.loading.hide();
+                      // this.$q.loading.hide();
                       devlog.error('Ошибка получения данных факса');
                   });
             },
@@ -564,17 +737,19 @@
                 }
             },
             openDialogTransferFromStorehouse() {
+                this.dialogTransferFromStorehouse = true;
                 this.$q.loading.show();
-                Promise.all([getStorehouseTableData(this.$store), getFaxes(this.$store)])
+                Promise.all([this.$store.dispatch('storehouse/fetchStorehouseTableData'), getFaxes(this.$store)])
                   .then(() => {
-                      if (_.isEmpty(this.faxSideData)) {
-                          this.faxSideData = sortArrayCollection(this.faxTableData, 'code_client_name');
-                      }
-                      if (_.isEmpty(this.storehouseSideData)) {
-                          setTimeout(() => {
-                              this.storehouseSideData = sortArrayCollection(_.cloneDeep(this.storehouseData), 'code_client_name');
-                          }, 100);
-                      }
+                      devlog.log('Promise.all');
+                      // if (_.isEmpty(this.faxSideData)) {
+                      this.faxSideData = sortArrayCollection(_.cloneDeep(this.faxTableData), 'code_client_name');
+                      // }
+                      // if (_.isEmpty(this.storehouseSideData)) {
+                      // setTimeout(() => {
+                      this.storehouseSideData = sortArrayCollection(_.cloneDeep(this.storehouseData), 'code_client_name');
+                      // }, 100);
+                      // }
                       this.dialogTransferFromStorehouse = true;
                       this.$q.loading.hide();
                   })
@@ -593,7 +768,8 @@
                 this.storehouseSideData.push(item);
                 const index = _.findIndex(this.faxSideData, { id: item.id });
                 this.faxSideData.splice(index, 1);
-                this.$q.notify('Left action triggered. Resetting in 1 second.');
+                this.$q.notify(`На склад ${item.code_client_name} код - (${item.place}м/${item.kg}кг)`);
+                this.isTransfer = true;
             },
             // Действие, когда пользователь закончил сдвиг элемента в любую сторону
             onAction({ reset }) {
@@ -609,9 +785,12 @@
                 this.faxSideData.push(item);
                 const index = _.findIndex(this.storehouseSideData, { id: item.id });
                 this.storehouseSideData.splice(index, 1);
-                this.$q.notify('Right action triggered. Resetting in 1 second.');
+                this.$q.notify(`В факс ${item.code_client_name} код - (${item.place}м/${item.kg}кг)`);
+                this.isTransfer = true;
             },
             saveTransfersData(faxData, storehouseData) {
+                devlog.log(faxData, storehouseData);
+                this.$q.loading.show();
                 this.$axios.post(getUrl('transfersStoreFax'), {
                     id: this.$route.params.id,
                     faxIds: _.map(faxData, 'id'),
@@ -619,14 +798,57 @@
                 })
                   .then(({ data }) => {
                       devlog.log('DATA', data);
-                      this.getFaxData(this.$route.params.id);
-                      this.dialogTransferFromStorehouse = false;
-                      getStorehouseTableData(this.$store);
                       this.faxSideData = [];
                       this.storehouseSideData = [];
+                      this.getFaxData(this.$route.params.id);
+                      this.$store.dispatch('storehouse/fetchStorehouseTableData');
+                      this.isTransfer = false;
+                      this.closeDialogTransferFromStorehouse();
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Данные успешно сохранены.', 'center');
                   })
                   .catch(() => {
+                      this.$q.loading.hide();
                       devlog.error('Произошла ошибка в запросе - saveTransfersData');
+                  });
+            },
+            closeDialogTransferFromStorehouse() {
+                if (this.isTransfer) {
+                    this.showNotif('warning', 'Сохранить изменения?', 'center', [
+                        {
+                            label: 'Нет',
+                            color: 'white',
+                            handler: () => {
+                                this.isTransfer = false;
+                                this.dialogTransferFromStorehouse = false;
+                            },
+                        },
+                        {
+                            label: 'Да',
+                            color: 'white',
+                            handler: () => {
+                                this.saveTransfersData(this.faxSideData, this.storehouseSideData);
+                            },
+                        },
+                    ]);
+                } else {
+                    this.isTransfer = false;
+                    this.dialogTransferFromStorehouse = false;
+                }
+            },
+            updatePricesInFax(faxId) {
+                this.$q.loading.show();
+                devlog.log('faxId', faxId);
+                this.$axios.get(`${getUrl('updatePricesInFax')}/${faxId}`)
+                  .then(({ data: { faxData } }) => {
+                      this.$store.dispatch('faxes/setFaxData', faxData);
+                      this.faxTableData = combineStoreHouseData(faxData);
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Цены успешно обновлены.', 'center');
+                  })
+                  .catch(() => {
+                      this.$q.loading.hide();
+                      devlog.error('Ошибка получения данных факса');
                   });
             },
         },

@@ -10,22 +10,27 @@ const settings = {
     {
       label: i18n.t('notChosen'),
       value: 0,
+      color: 'none',
     },
     {
       label: 'Погрузка',
       value: 1,
+      color: 'primary',
     },
     {
       label: 'Ушло',
       value: 2,
+      color: 'yellow_bg',
     },
     {
       label: 'Прибыл',
       value: 3,
+      color: 'green',
     },
     {
       label: 'Задерживается',
       value: 4,
+      color: 'accent',
     },
   ],
   sex: [

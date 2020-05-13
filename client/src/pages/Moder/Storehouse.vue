@@ -31,12 +31,17 @@
             @iconBtnClick="destroyEntry(storehouseTableReactiveProperties.selected)"
           />
 
-          <IconBtn
+<!--          <IconBtn-->
+<!--            v-show="storehouseTableReactiveProperties.selected.length"-->
+<!--            color="info"-->
+<!--            icon="move_to_inbox"-->
+<!--            tooltip="Переместить"-->
+<!--            @iconBtnClick="moveToFax"-->
+<!--          />-->
+
+          <MoveToFaxBtn
             v-show="storehouseTableReactiveProperties.selected.length"
-            color="info"
-            icon="move_to_inbox"
-            tooltip="Переместить"
-            @iconBtnClick="moveToFax"
+            @moveToFaxClick="moveToFax"
           />
 
           <IconBtn
@@ -61,60 +66,60 @@
               expand-icon-class="text-white"
             >
               <template v-slot:header>
-                <ItemSection avatar>
+                <q-item-section avatar>
                   <q-checkbox
                     v-model="props.selected"
                     dense
                   />
-                </ItemSection>
+                </q-item-section>
 
-                <ItemSection>
-                  <ItemLabel :lines="2">
+                <q-item-section>
+                  <q-item-label :lines="2">
                     {{ props.row.code_client_name }}
-                  </ItemLabel>
-                </ItemSection>
+                  </q-item-label>
+                </q-item-section>
               </template>
 
-              <List
+              <q-list
                 separator
                 dense
-                @clickList="viewUpdateDialog(props)"
+                @click="viewUpdateDialog(props)"
               >
-                <ListItem
+                <q-item
                   v-for="col in props.cols.filter(col => col.name !== 'desc')"
                   :key="col.name"
                 >
-                  <ItemSection>
-                    <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
-                  </ItemSection>
-                  <ItemSection side>
-                    <ItemLabel
+                  <q-item-section>
+                    <q-item-label>{{ `${col.label}:` }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label
                       v-if="col.field === 'things'"
                       :lines="10"
                     >
                       {{ col.value | thingsFilter }}
-                    </ItemLabel>
-                    <ItemLabel
+                    </q-item-label>
+                    <q-item-label
                       v-else-if="col.field === 'kg'"
                     >
                       {{ col.value | numberFormatFilter }}
-                    </ItemLabel>
-                    <ItemLabel v-else>
+                    </q-item-label>
+                    <q-item-label v-else>
                       {{ col.value }}
-                    </ItemLabel>
-                  </ItemSection>
-                </ListItem>
-                <ListItem>
-                  <ItemSection>
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>
                     <BaseBtn
                       label="История"
                       color="info"
                       style="max-width: 100px;margin: 0 auto;"
                       @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"
                     />
-                  </ItemSection>
-                </ListItem>
-              </List>
+                  </q-item-section>
+                </q-item>
+              </q-list>
             </q-expansion-item>
           </div>
         </template>
@@ -210,7 +215,7 @@
         :persistent="true"
         :maximized="true"
       >
-        <Card style="max-width: 600px;">
+        <q-card style="max-width: 600px;">
           <q-bar>
             <q-space />
             <IconBtn
@@ -222,10 +227,10 @@
             />
           </q-bar>
 
-          <CardSection class="q-pt-none">
+          <q-card-section class="q-pt-none">
             <StorehouseDataHistory :storehouse-history-data="storehouseHistoryData" />
-          </CardSection>
-        </Card>
+          </q-card-section>
+        </q-card>
       </Dialog>
     </PullRefresh>
     <DialogMoveToFax
@@ -260,19 +265,14 @@
             DialogAddEntryOnStorehouse: () => import('src/components/Dialogs/DialogAddEntryOnStorehouse.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             Menu: () => import('src/components/Menu.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
             // CheckBox: () => import('src/components/Elements/CheckBox.vue'),
             // Badge: () => import('src/components/Elements/Badge.vue'),
             StorehouseDataHistory: () => import('src/components/History/StorehouseDataHistory.vue'),
-            Card: () => import('src/components/Elements/Card/Card.vue'),
-            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
             CountCategories: () => import('src/components/CountCategories.vue'),
             DialogMoveToFax: () => import('src/components/Dialogs/DialogMoveToFax.vue'),
+            MoveToFaxBtn: () => import('src/components/Buttons/MoveToFaxBtn.vue'),
         },
         mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
         data() {

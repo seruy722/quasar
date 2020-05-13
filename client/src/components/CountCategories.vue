@@ -113,7 +113,7 @@
                         const faxId = _.get(_.first(val), 'fax_id');
                         devlog.log('faxId', faxId);
                         if (faxId === 0) {
-                            this.setLocalList(val, []);
+                            this.setLocalList(val, null);
                         } else {
                             this.getTransporterPriceData(faxId);
                         }

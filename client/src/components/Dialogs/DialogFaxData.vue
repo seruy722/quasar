@@ -87,6 +87,7 @@
           </div>
 
           <q-checkbox
+            v-show="showReplacePrice"
             v-model="storehouseData.replacePrice.value"
             label="Заменить цену"
             dense
@@ -107,7 +108,7 @@
             @iconBtnClick="showThingsDialog = true"
           />
           <IconBtn
-            v-else
+            v-else-if="!withoutThings"
             icon="add"
             :dense="$q.screen.xs || $q.screen.sm"
             tooltip="Добавить"
@@ -229,6 +230,7 @@
         },
         data() {
             return {
+                showReplacePrice: true,
                 show: false,
                 withoutThings: false,
                 showThingsDialog: false,
@@ -396,6 +398,11 @@
                         this.storehouseData.kg.disable = false;
                         this.storehouseData.shop.disable = false;
                         this.storehouseData.notation.disable = false;
+                    }
+                    if (!_.get(val, 'row.for_kg')) {
+                        delete this.storehouseData.for_kg;
+                        delete this.storehouseData.for_place;
+                        this.showReplacePrice = false;
                     }
                 }
             },

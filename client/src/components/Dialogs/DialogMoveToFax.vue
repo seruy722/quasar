@@ -5,8 +5,8 @@
     :persistent="true"
     data-vue-component-name="DialogMoveToFax"
   >
-    <Card style="min-width: 320px;width: 100%;max-width: 500px;">
-      <CardSection class="row justify-between bg-grey q-mb-sm">
+    <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
+      <q-card-section class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">Перемещение в факс</span>
         <div>
           <IconBtn
@@ -16,9 +16,9 @@
             @iconBtnClick="close"
           />
         </div>
-      </CardSection>
+      </q-card-section>
 
-      <CardSection>
+      <q-card-section>
         <SearchSelect
           v-model="faxData.faxId.value"
           :label="faxData.faxId.label"
@@ -27,15 +27,16 @@
           :options="allFaxes"
           :errors="errorsData"
         />
-      </CardSection>
+      </q-card-section>
 
       <Separator />
 
-      <CardActions>
+      <q-card-section>
         <BaseBtn
           label="Отмена"
           color="negative"
           :dense="$q.screen.xs || $q.screen.sm"
+          class="q-mr-md"
           @clickBaseBtn="close"
         />
 
@@ -45,8 +46,8 @@
           :dense="$q.screen.xs || $q.screen.sm"
           @clickBaseBtn="checkErrors(faxData, saveData)"
         />
-      </CardActions>
-    </Card>
+      </q-card-section>
+    </q-card>
   </Dialog>
 </template>
 
@@ -63,9 +64,6 @@
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
             Separator: () => import('src/components/Separator.vue'),
-            Card: () => import('src/components/Elements/Card/Card.vue'),
-            CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
         mixins: [showNotif, CheckErrorsMixin],
@@ -102,27 +100,36 @@
         },
         watch: {
             faxes(val) {
-                if (!_.isEmpty(val)) {
-                    this.allFaxes = _.map(_.filter(val, { uploaded_to_cargo: 0, join_faxes_ids: null }), ({ name, id }) => ({
-                        label: name,
-                        value: id,
-                    }));
-                }
+                this.setAllFaxes(val);
+                // if (!_.isEmpty(val)) {
+                //     this.allFaxes = _.map(_.filter(val, { uploaded_to_cargo: 0 }), ({ name, id }) => ({
+                //         label: name,
+                //         value: id,
+                //     }));
+                // }
             },
             show(val) {
                 if (val) {
                     this.$q.loading.show();
                     Promise.all([getFaxes(this.$store)])
-                      .then(() => {
-                          this.$q.loading.hide();
-                      })
-                      .catch(() => {
+                      .finally(() => {
                           this.$q.loading.hide();
                       });
                 }
             },
         },
+        created() {
+            if (!_.isEmpty(this.faxes)) {
+                this.setAllFaxes(this.faxes);
+            }
+        },
         methods: {
+            setAllFaxes(faxes) {
+                this.allFaxes = _.map(_.filter(faxes, { uploaded_to_cargo: 0 }), ({ name, id }) => ({
+                    label: name,
+                    value: id,
+                }));
+            },
             saveData({ faxId: { value } }) {
                 devlog.log('VALS', value);
                 this.$q.loading.show();
