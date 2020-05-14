@@ -100,7 +100,12 @@
         },
         watch: {
             faxes(val) {
-                this.setAllFaxes(val);
+                if (!_.isEmpty(val)) {
+                    this.setAllFaxes(val);
+                } else {
+                    this.$emit('update:show', false);
+                    this.showNotif('warning', 'Список факсов пуст! Добавте факс.', 'center');
+                }
                 // if (!_.isEmpty(val)) {
                 //     this.allFaxes = _.map(_.filter(val, { uploaded_to_cargo: 0 }), ({ name, id }) => ({
                 //         label: name,

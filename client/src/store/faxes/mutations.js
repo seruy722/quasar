@@ -3,7 +3,11 @@ export const SET_FAXES = ((state, data) => {
 });
 
 export const ADD_FAX = ((state, data) => {
-  state.faxes.unshift(data);
+  if (_.isEmpty(state.faxes)) {
+    state.faxes.push(data);
+  } else {
+    state.faxes.unshift(data);
+  }
 });
 
 export const UPDATE_FAX = ((state, data) => {

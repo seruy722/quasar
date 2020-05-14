@@ -139,7 +139,7 @@ class StorehouseDataController extends Controller
             $saveData['shop'] = $data['shop'];
             Shop::firstOrCreate(['name' => $data['shop']]);
         }
-        if (array_key_exists('things', $data)) {
+        if (array_key_exists('things', $data) && $data['things']) {
             $things = json_decode($data['things']);
             foreach ($things as $item) {
                 Thingslist::firstOrCreate(['name' => $item->{'title'}]);

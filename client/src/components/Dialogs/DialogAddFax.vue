@@ -391,9 +391,7 @@
                         this.$axios.post(getUrl('addFax'), sendData)
                           .then(({ data: { fax } }) => {
                               this.$q.loading.hide();
-                              if (!_.isEmpty(this.$store.getters['faxes/getFaxes'])) {
-                                  this.$store.dispatch('faxes/addFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
-                              }
+                              this.$store.dispatch('faxes/addFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
                               this.close(this.faxData);
                               this.showNotif('success', 'Факс успешно добавлен.', 'center');
                           })
