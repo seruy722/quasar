@@ -17,17 +17,17 @@
     "build:android": "quasar build -m android"
   },
   "dependencies": {
-    "@quasar/extras": "^1.8.0",
+    "@quasar/extras": "^1.8.1",
     "axios": "^0.19.2",
     "date-fns": "^2.13.0",
     "ioredis": "^4.16.3",
     "lodash": "^4.17.15",
     "mobile-drag-drop": "^2.3.0-rc.2",
-    "quasar": "^1.11.1",
+    "quasar": "^1.11.2",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "validator": "^13.0.0",
-    "vue-i18n": "^8.17.5"
+    "vue-i18n": "^8.17.6"
   },
   "devDependencies": {
     "@quasar/app": "^1.8.6",
