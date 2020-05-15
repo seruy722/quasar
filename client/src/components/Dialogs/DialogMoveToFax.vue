@@ -52,7 +52,7 @@
 </template>
 
 <script>
-    import { getFaxes } from 'src/utils/FrequentlyCalledFunctions';
+    // import { getFaxes } from 'src/utils/FrequentlyCalledFunctions';
     import { getUrl } from 'src/tools/url';
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
     import showNotif from 'src/mixins/showNotif';
@@ -116,7 +116,7 @@
             show(val) {
                 if (val) {
                     this.$q.loading.show();
-                    Promise.all([getFaxes(this.$store)])
+                    Promise.all([this.$store.dispatch('faxes/fetchFaxes')])
                       .finally(() => {
                           this.$q.loading.hide();
                       });

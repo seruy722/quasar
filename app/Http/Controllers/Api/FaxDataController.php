@@ -144,25 +144,6 @@ class FaxDataController extends Controller
 
     public function getFaxDataQuery()
     {
-        $selectArr = [
-            'storehouse_data.id',
-            'storehouse_data.code_place',
-            'storehouse_data.code_client_id',
-            'storehouse_data.place',
-            'storehouse_data.kg',
-            'storehouse_data.for_kg',
-            'storehouse_data.for_place',
-            'storehouse_data.fax_id',
-            'storehouse_data.shop',
-            'storehouse_data.things',
-            'storehouse_data.notation',
-            'storehouse_data.category_id',
-            'storehouse_data.brand',
-            'storehouse_data.created_at',
-            'storehouse_data.updated_at',
-            'codes.code as code_client_name',
-            'categories.name as category_name'
-        ];
         $queryData = StorehouseData::select(
             'storehouse_data.id',
             'storehouse_data.code_place',
