@@ -41,6 +41,13 @@
           v-show="faxTableReactiveProperties.selected.length"
           @moveToFaxClick="moveToFax"
         />
+        <IconBtn
+          v-show="faxTableReactiveProperties.selected.length"
+          color="negative"
+          icon="delete"
+          :tooltip="$t('delete')"
+          @iconBtnClick="destroyEntry(faxTableReactiveProperties.selected)"
+        />
 
         <!--        <IconBtn-->
         <!--          icon="data_usage"-->
@@ -128,7 +135,7 @@
           :class="{table__tr_bold_text: props.row.brand, 'cursor-pointer': !combineTableData}"
           @click.stop="viewEditDialog(props, $event)"
         >
-          <q-td auto-width>
+          <q-td auto-width class="select_checkbox">
             <q-checkbox
               v-model="props.selected"
               dense
@@ -330,6 +337,13 @@
                 <!--                <Search v-model="search" />-->
                 <CountCategories :list="faxSideData" style="margin-bottom: 20px;" />
                 <q-list bordered separator>
+                  <q-item>
+                    <q-item-section>Код</q-item-section>
+                    <q-item-section>Клиент</q-item-section>
+                    <q-item-section>Мест</q-item-section>
+                    <q-item-section>Вес</q-item-section>
+                    <q-item-section>Категория</q-item-section>
+                  </q-item>
                   <q-slide-item
                     v-for="(item, index) in faxSideData"
                     :key="index"
@@ -340,11 +354,13 @@
                       <div>На склад</div>
                     </template>
 
-                    <q-item>
+                    <q-item :class="item.category_name === 'Бренд'?'text-bold':''">
+                      <q-item-section>{{ item.code_place }}</q-item-section>
                       <q-item-section>{{ item.code_client_name }}</q-item-section>
                       <q-item-section>{{ item.place }}</q-item-section>
                       <q-item-section>{{ item.kg }}</q-item-section>
-                      <q-item-section>{{ item.category_name }}</q-item-section>
+                      <q-item-section>{{ item.category_name }}
+                      </q-item-section>
                     </q-item>
                   </q-slide-item>
                 </q-list>
@@ -361,6 +377,13 @@
                 <!--                <Search v-model="searchStorehouseData" />-->
                 <CountCategories :list="storehouseSideData" style="margin-bottom: 20px;" />
                 <q-list bordered separator>
+                  <q-item>
+                    <q-item-section>Код</q-item-section>
+                    <q-item-section>Клиент</q-item-section>
+                    <q-item-section>Мест</q-item-section>
+                    <q-item-section>Вес</q-item-section>
+                    <q-item-section>Категория</q-item-section>
+                  </q-item>
                   <q-slide-item
                     v-for="(item, index) in storehouseSideData"
                     :key="index"
@@ -371,11 +394,13 @@
                       <div>В факс</div>
                     </template>
 
-                    <q-item>
+                    <q-item :class="item.category_name === 'Бренд'?'text-bold':''">
+                      <q-item-section>{{ item.code_place }}</q-item-section>
                       <q-item-section>{{ item.code_client_name }}</q-item-section>
                       <q-item-section>{{ item.place }}</q-item-section>
                       <q-item-section>{{ item.kg }}</q-item-section>
-                      <q-item-section>{{ item.category_name }}</q-item-section>
+                      <q-item-section>{{ item.category_name }}
+                      </q-item-section>
                     </q-item>
                   </q-slide-item>
                 </q-list>
@@ -639,6 +664,37 @@
             moveToFax() {
                 this.showMoveToFaxDialog = true;
             },
+            destroyEntry(data) {
+                if (!_.isEmpty(data)) {
+                    const ids = _.map(data, 'id');
+                    this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
+                        {
+                            label: 'Отмена',
+                            color: 'white',
+                            handler: () => {
+                                this.faxTableReactiveProperties.selected = [];
+                            },
+                        },
+                        {
+                            label: 'Удалить',
+                            color: 'white',
+                            handler: () => {
+                                this.$axios.post(getUrl('destroyStorehouseData'), { ids })
+                                  .then(({ data: { status } }) => {
+                                      devlog.log('status', status);
+                                      this.$store.dispatch('faxes/deleteEntryFromFaxData', ids);
+                                      // this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
+                                      this.faxTableReactiveProperties.selected = [];
+                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
+                                  })
+                                  .catch(() => {
+                                      devlog.error('Ошибка запроса - destroyEntry');
+                                  });
+                            },
+                        },
+                    ]);
+                }
+            },
             async getFax(id) {
                 if (_.isEmpty(this.currentFaxItem)) {
                     this.$axios.get(`${getUrl('fax')}/${id}`)
@@ -713,8 +769,9 @@
             //         transporterID,
             //     }, `${name}.xlsx`);
             // },
-            viewEditDialog(val) {
-                if (!this.combineTableData) {
+            viewEditDialog(val, event) {
+                devlog.log('viewEditDialog', _.get(event, 'target.classList'));
+                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox') && !this.combineTableData) {
                     this.$q.loading.show();
                     this.localFaxEditData = val;
                     this.localFaxEditData.combineTableData = this.combineTableData;

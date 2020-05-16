@@ -15,7 +15,7 @@ use App\Http\Controllers\Controller;
 class StorehouseDataController extends Controller
 {
     protected $rules = [
-        'code_place' => 'unique:storehouse_data',
+        'code_place' => 'required|max:12|unique:code_places',
         'code_client_id' => 'required|numeric',
         'kg' => 'required|numeric',
         'for_kg' => 'numeric',
@@ -232,6 +232,15 @@ class StorehouseDataController extends Controller
 
         $this->validate($request, $rul);
 
+        if (array_key_exists('code_place', $data)) {
+            $entry = StorehouseData::find($request->id);
+            if ($entry) {
+                \App\CodePlace::where(['code_place' => $entry->code_place])->delete();
+            }
+
+            \App\CodePlace::create(['code_place' => $data['code_place']]);
+        }
+
         StorehouseData::where('id', $request->id)->update($data);
         $this->storehouseDataHistory($request->id, $data, 'update', (new StorehouseData)->getTable());
 
@@ -377,7 +386,7 @@ class StorehouseDataController extends Controller
 
     public function updateFaxCombineData(Request $request)
     {
-        $data = $request->except('replacePrice');
+        $data = $request->all();
         $ids = [];
         foreach ($data as $elem) {
             array_push($ids, $elem['id']);
@@ -386,10 +395,10 @@ class StorehouseDataController extends Controller
                 array_push($ids, $item['id']);
                 $price = CodePrice::where('code_id', $item['code_client_id'])->where('category_id', $item['category_id'])->first();
                 if ($price) {
-                    if ($request->replacePrice && array_key_exists('for_kg', $elem)) {
+                    if ($elem['replacePrice'] && array_key_exists('for_kg', $elem)) {
                         $price->for_kg = $elem['for_kg'];
                     }
-                    if ($request->replacePrice && array_key_exists('for_place', $elem)) {
+                    if ($elem['replacePrice'] && array_key_exists('for_place', $elem)) {
                         $price->for_kg = $elem['for_place'];
                     }
                     $price->save();
@@ -414,6 +423,7 @@ class StorehouseDataController extends Controller
                         $needData['brand'] = false;
                     }
                 }
+                unset($needData['replacePrice']);
                 StorehouseData::where('id', $item['id'])->update($needData);
                 $this->storehouseDataHistory($item['id'], $needData, 'update', (new StorehouseData)->getTable());
             }

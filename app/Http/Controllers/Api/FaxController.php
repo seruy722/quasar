@@ -162,8 +162,6 @@ class FaxController extends Controller
             $data['arrival_date'] = null;
         }
 
-        $data['user_id'] = auth()->user()->id;
-
         Fax::where('id', $request->id)->update($data);
         $this->storeFaxHistory($request->id, $data, 'update', (new Fax)->getTable());
         return response(['fax' => $this->faxesList()->where('faxes.id', $request->id)->first()]);

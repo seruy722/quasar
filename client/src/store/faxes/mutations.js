@@ -33,6 +33,15 @@ export const DELETE_FAXES = ((state, data) => {
   });
 });
 
+export const DELETE_ENTRY_FROM_FAX_DATA = ((state, data) => {
+  _.forEach(data, (id) => {
+    const index = _.findIndex(state.faxData, { id });
+    if (index !== -1) {
+      state.faxData.splice(index, 1);
+    }
+  });
+});
+
 export const SET_CURRENT_FAX_ITEM = ((state, data) => {
   state.currentFaxItem = data;
 });

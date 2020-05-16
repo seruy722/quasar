@@ -275,26 +275,26 @@
                         default: 0,
                         value: 0,
                     },
-                    for_kg: {
-                        name: 'for_kg',
-                        type: 'number',
-                        label: 'За кг',
-                        require: false,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
-                    for_place: {
-                        name: 'for_place',
-                        type: 'number',
-                        label: 'За место',
-                        require: false,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
+                    // for_kg: {
+                    //     name: 'for_kg',
+                    //     type: 'number',
+                    //     label: 'За кг',
+                    //     require: false,
+                    //     requireError: 'Поле обьзательное для заполнения.',
+                    //     changeValue: false,
+                    //     default: 0,
+                    //     value: 0,
+                    // },
+                    // for_place: {
+                    //     name: 'for_place',
+                    //     type: 'number',
+                    //     label: 'За место',
+                    //     require: false,
+                    //     requireError: 'Поле обьзательное для заполнения.',
+                    //     changeValue: false,
+                    //     default: 0,
+                    //     value: 0,
+                    // },
                     category_id: {
                         name: 'category_id',
                         type: 'select',
@@ -375,9 +375,9 @@
                         }
                     });
                     this.things = _.get(this.entryData, 'row.things');
-                    this.storehouseData.code_place.readonly = true;
-                    delete this.storehouseData.for_kg;
-                    delete this.storehouseData.for_place;
+                    // this.storehouseData.code_place.readonly = true;
+                    // delete this.storehouseData.for_kg;
+                    // delete this.storehouseData.for_place;
                 }
             },
             categories: {

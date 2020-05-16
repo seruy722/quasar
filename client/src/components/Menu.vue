@@ -2,7 +2,7 @@
   <div
     data-vue-component-name="Menu"
   >
-    <IconBtn color="secondary">
+    <IconBtn color="secondary" tooltip="Добавить">
       <q-menu
         transition-show="flip-right"
         transition-hide="flip-left"

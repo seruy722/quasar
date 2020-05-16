@@ -107,7 +107,7 @@
                         label="История"
                         color="info"
                         style="max-width: 100px;"
-                        @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"
+                        @clickBaseBtn="getFaxesHistory(props.row.id, props.cols)"
                       />
                       <BaseBtn
                         label="Перейти"

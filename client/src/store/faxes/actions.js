@@ -25,6 +25,9 @@ export const updateFax = (({ commit }, data) => {
 export const deleteFaxes = (({ commit }, data) => {
   commit('DELETE_FAXES', data);
 });
+export const deleteEntryFromFaxData = (({ commit }, data) => {
+  commit('DELETE_ENTRY_FROM_FAX_DATA', data);
+});
 
 export const setCurrentFaxItem = (({ commit }, data) => {
   commit('SET_CURRENT_FAX_ITEM', data);

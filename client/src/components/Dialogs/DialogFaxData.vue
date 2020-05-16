@@ -389,7 +389,7 @@
                     });
                     this.things = _.get(val, 'row.things');
                     devlog.log('COMBINE', val);
-                    this.storehouseData.code_place.disable = true;
+                    // this.storehouseData.code_place.disable = true;
                     if (val.combineTableData) {
                         this.storehouseData.kg.disable = true;
                         this.storehouseData.shop.disable = true;
