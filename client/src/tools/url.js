@@ -40,6 +40,7 @@ const urls = {
   codeList: `${prefix}/codes-list`,
   clientData: `${prefix}/client-data`,
   codeExist: `${prefix}/check-code-exist`,
+  exportCustomers: `${prefix}/export-customers`,
   // getNewCodes: `${prefix}/get-new-codes`,
   codeHistory: `${prefix}/get-code-history`,
   validCustomerData: `${prefix}/valid-customer-data`,

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Fax;
+use App\Transporter;
 use App\TransporterFaxesPrice;
 use App\TransporterPrice;
 use App\User;
@@ -45,10 +47,15 @@ class TransporterFaxesPriceController extends Controller
     public function saveCategoriesPrice(Request $request)
     {
         $data = $request->all();
-        $faxId = 0;
+        $firstElem = current($data);
+        $faxId = $firstElem['fax_id'];
+        $fax = Fax::find($faxId);
+        $transporterId = $fax ? $fax->transporter_id : null;
         foreach ($data as $item) {
-            $faxId = $item['fax_id'];
             TransporterFaxesPrice::updateOrCreate(['category_price' => $item['category_price']], ['category_id' => $item['category_id'], 'fax_id' => $item['fax_id']]);
+            if ($transporterId) {
+                TransporterPrice::updateOrCreate(['transporter_id' => $transporterId, 'category_id' => $item['category_id']], ['for_kg' => $item['category_price']]);
+            }
         }
         return response(['transporterPriceData' => TransporterFaxesPrice::where('fax_id', $faxId)->get()]);
     }

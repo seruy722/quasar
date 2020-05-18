@@ -84,6 +84,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/update-customer', 'Api\CustomersController@update');
     Route::get('/destroy-customer/{id}', 'Api\CustomersController@destroy');
     Route::get('/get-customer-history/{id}', 'Api\CustomersController@getCustomerHistory');
+    Route::post('/export-customers', 'Api\CustomersController@export')->name('export customers')->middleware(['role_or_permission:admin|customers|export customers']);
 
     // CARGO_TABLE
     Route::post('/upload-cargo-table', 'CommonController@storeCargoTable');

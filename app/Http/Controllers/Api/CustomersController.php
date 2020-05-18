@@ -135,4 +135,9 @@ class CustomersController extends Controller
 
         return response(['customerHistory' => $customerHistory]);
     }
+
+    public function export(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CustomerExport($request->ids), 'customers.xlsx');
+    }
 }

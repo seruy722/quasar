@@ -6,7 +6,7 @@
       <Table
         :table-properties="transferTableProperties"
         :table-data="allCodes"
-        :table-reactive-properties="transferTableReactiveProperties"
+        :table-reactive-properties="customerTableReactiveProperties"
         title="Клиенты"
       >
         <template v-slot:top-buttons>
@@ -24,6 +24,13 @@
           <!--            @iconBtnClick="exportTransfers"-->
           <!--          />-->
           <Menu :items="['Код', 'Клиента']" />
+          <IconBtn
+            color="positive"
+            tooltip="Excel"
+            icon="explicit"
+            class="q-ml-sm"
+            @iconBtnClick="exportCustomers"
+          />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
         <template v-slot:inner-item="{props}">
@@ -53,12 +60,12 @@
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label :lines="2">
-<!--                    <IconBtn-->
-<!--                      dense-->
-<!--                      icon="add_circle"-->
-<!--                      tooltip="Добавить клиента"-->
-<!--                      @iconBtnClick="openClientAddDialog(props)"-->
-<!--                    />-->
+                    <!--                    <IconBtn-->
+                    <!--                      dense-->
+                    <!--                      icon="add_circle"-->
+                    <!--                      tooltip="Добавить клиента"-->
+                    <!--                      @iconBtnClick="openClientAddDialog(props)"-->
+                    <!--                    />-->
                     <IconBtn
                       dense
                       icon="history"
@@ -96,7 +103,7 @@
                   </q-item-section>
                 </q-item>
 
-                <q-item v-if="props.row.customers.length">
+                <q-item>
                   <q-item-section class="text-bold text-center">
                     <div class="row items-center justify-center">
                       <span>Клиенты</span>
@@ -450,7 +457,7 @@
                         },
                     ],
                 },
-                transferTableReactiveProperties: {
+                customerTableReactiveProperties: {
                     selected: [],
                     visibleColumns: ['code', 'cities', 'phones', 'created_at'],
                 },
@@ -491,7 +498,7 @@
                 if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
                     if (val) {
                         this.localProps = val;
-                        this.transferTableReactiveProperties.selected = [];
+                        this.customerTableReactiveProperties.selected = [];
                         setTimeout(() => {
                             val.selected = !val.selected;
                         }, 100);
@@ -545,13 +552,6 @@
                       callFunction(done);
                       this.$q.loading.hide();
                   });
-            },
-            exportTransfers() {
-                if (!_.isEmpty(this.allCodes)) {
-                    this.exportDataToExcel(getUrl('exportTransfers'), {
-                        ids: _.map(this.transferTableReactiveProperties.selected, 'id'),
-                    }, 'Переводы.xlsx');
-                }
             },
             async getCodeHistory(codeId, cols) {
                 devlog.log('codeId', codeId);
@@ -658,6 +658,13 @@
                         },
                     },
                 ]);
+            },
+            exportCustomers() {
+                if (!_.isEmpty(this.allCodes)) {
+                    this.exportDataToExcel(getUrl('exportCustomers'), {
+                        ids: _.map(this.customerTableReactiveProperties.selected, 'id'),
+                    }, 'Клиенты.xlsx');
+                }
             },
         },
     };

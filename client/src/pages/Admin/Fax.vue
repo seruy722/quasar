@@ -97,6 +97,12 @@
                   >
                     {{ col.value | numberFormatFilter }}
                   </ItemLabel>
+                  <ItemLabel
+                    v-else-if="col.field === 'notation'"
+                    :lines="4"
+                  >
+                    {{ col.value }}
+                  </ItemLabel>
                   <ItemLabel v-else>
                     {{ col.value }}
                   </ItemLabel>
@@ -188,6 +194,7 @@
               <q-input
                 v-model.number="props.row.for_kg"
                 type="number"
+                autofocus
                 dense
               />
               <q-checkbox

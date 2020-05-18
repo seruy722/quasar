@@ -284,7 +284,7 @@ class FaxDataController extends Controller
 
     public function updatePricesInFax($id)
     {
-        $fax = Fax::find($id);
+//        $fax = Fax::find($id);
         $faxData = StorehouseData::where('fax_id', $id)->get();
         $faxData->each(function ($item) {
             $price = CodePrice::where('code_id', $item->code_client_id)->where('category_id', $item->category_id)->first();
