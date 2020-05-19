@@ -45,7 +45,10 @@ class FaxMainSheetExport implements FromCollection, ShouldAutoSize, WithTitle, W
             ->groupBy('code_client_id', 'category_id')
             ->get();
 
-        $this->data = $this->data->sort(function ($a, $b) {
+        $this->data = $this->data->map(function ($item) {
+            $item['sum'] = round($item['sum']);
+            return $item;
+        })->sort(function ($a, $b) {
             if ($a['code'] == $b['code']) {
                 return 0;
             }
@@ -90,7 +93,10 @@ class FaxMainSheetExport implements FromCollection, ShouldAutoSize, WithTitle, W
             ->groupBy('code_client_id', 'category_id')
             ->get();
 
-        $this->data2 = $this->data2->sort(function ($a, $b) {
+        $this->data2 = $this->data2->map(function ($item) {
+            $item['sum'] = round($item['sum']);
+            return $item;
+        })->sort(function ($a, $b) {
             if ($a['code'] == $b['code']) {
                 return 0;
             }

@@ -45,7 +45,10 @@ class FaxPriceSheetExport implements FromCollection, ShouldAutoSize, WithTitle, 
             ->groupBy('code_client_id', 'category_id')
             ->get();
 
-        $this->data = $this->data->sort(function ($a, $b) {
+        $this->data = $this->data->map(function ($item) {
+            $item['sum'] = round($item['sum']);
+            return $item;
+        })->sort(function ($a, $b) {
             if ($a['code'] == $b['code']) {
                 return 0;
             }
