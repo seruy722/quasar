@@ -5,6 +5,8 @@
 /vendor
 .env
 .phpunit.result.cache
+qus.zip
+destroyedDepndencies
 Homestead.json
 Homestead.yaml
 npm-debug.log
