@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exports\StorehouseData;
+namespace App\Exports\Fax;
 
 use App\StorehouseData;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class StorehouseDataExport implements FromCollection, ShouldAutoSize, WithTitle, WithEvents, WithHeadings
+class FaxMainSheetExport implements FromCollection, ShouldAutoSize, WithTitle, WithEvents, WithHeadings
 {
     protected $data;
     protected $headers = ['Клиент', 'Мест', 'Вес', 'Категория'];
@@ -19,7 +19,7 @@ class StorehouseDataExport implements FromCollection, ShouldAutoSize, WithTitle,
     protected $sumKg = 0;
     protected $moreEntries = 2;
 
-    public function __construct()
+    public function __construct($id)
     {
         $data = StorehouseData::select('codes.code')
             ->selectRaw('SUM(storehouse_data.place) as place')
@@ -28,7 +28,7 @@ class StorehouseDataExport implements FromCollection, ShouldAutoSize, WithTitle,
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
             ->where('storehouse_data.storehouse_id', 1)
-            ->where('storehouse_data.fax_id', 0)
+            ->where('storehouse_data.fax_id', $id)
             ->where('storehouse_data.destroyed', false)
             ->groupBy('code_client_id', 'category_id')
             ->get();

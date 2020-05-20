@@ -276,11 +276,11 @@ class FaxDataController extends Controller
         return response(['faxData' => $this->setReplacePrice($this->groupedFaxData($faxID))]);
     }
 
-    public function export(Request $request)
-    {
-//        return response(['answ' => new FaxDataExport($request->faxID, $request->transporterID)]);
-        return Excel::download(new FaxDataExport($request->faxID, $request->transporterID), 'users.xlsx');
-    }
+//    public function export(Request $request)
+//    {
+////        return response(['answ' => new FaxDataExport($request->faxID, $request->transporterID)]);
+//        return Excel::download(new FaxDataExport($request->faxID, $request->transporterID), 'users.xlsx');
+//    }
 
     public function updatePricesInFax($id)
     {

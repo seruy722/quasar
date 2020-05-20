@@ -2,7 +2,7 @@
 
 namespace App\Exports\Fax\FaxExportForAdmin;
 
-use App\Exports\Fax\FaxData\FaxDataCommonExport;
+use App\Exports\Fax\FaxCommonSheetExport;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
@@ -16,8 +16,8 @@ class FaxSheetsExport implements WithMultipleSheets
     public function __construct($faxID)
     {
         $this->faxID = $faxID;
-//        $this->transporterID = $transporterID;
     }
+
     public function sheets(): array
     {
         $sheets = [];
