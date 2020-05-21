@@ -93,7 +93,7 @@ class FaxCommonSheetExport implements FromView, ShouldAutoSize, WithEvents, With
                 }
                 $header = 'A1:I1';
                 $cellRange = 'A1:I' . ($countMainTableEntries);
-                $cellRangeWithCategories = 'A1:I' . ($countMainTableEntries + 7);
+                $cellRangeWithCategories = 'A1:I' . ($countMainTableEntries + 4 + count($this->categories));
                 $event->sheet->getDelegate()->getStyle($header)->getFont()->setBold(500);
                 $event->sheet->getDelegate()->getStyle($cellRangeWithCategories)->getAlignment()->applyFromArray(array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
                 $event->sheet->getDelegate()->getStyle($cellRange)->getBorders()->getAllBorders()->applyFromArray(array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN));
