@@ -198,7 +198,7 @@ class FaxController extends Controller
 
     public function uploadToCargo(Request $request)
     {
-        $value = $request->value;
+        $value = !$request->value;
         $faxId = $request->id;
         $storeUpdateData = StorehouseData::where('fax_id', $faxId)->get();
         $storeUpdateData->each(function ($item) use($value) {

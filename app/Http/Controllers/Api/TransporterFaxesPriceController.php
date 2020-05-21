@@ -41,7 +41,17 @@ class TransporterFaxesPriceController extends Controller
 
     public function getTransporterPriceData($id)
     {
-        return response(['transporterPriceData' => auth()->user()->hasPermissionTo('view transporter fax price') ? TransporterFaxesPrice::where('fax_id', $id)->get() : null]);
+        if (auth()->user()->hasPermissionTo('view transporter fax price')) {
+            $transporterPrice = TransporterFaxesPrice::where('fax_id', $id)->get();
+            if ($transporterPrice->isEmpty()) {
+                $fax = Fax::find($id);
+                if ($fax) {
+                    $transporterPrice = TransporterPrice::select('for_kg as category_price', 'category_id')->where('transporter_id', $fax->transporter_id)->get();
+                }
+            }
+            return response(['transporterPriceData' => $transporterPrice]);
+        }
+        return response(['transporterPriceData' => null]);
     }
 
     public function saveCategoriesPrice(Request $request)

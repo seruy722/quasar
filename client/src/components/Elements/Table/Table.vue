@@ -30,20 +30,20 @@
 
         <q-space />
 
-<!--        <q-select-->
-<!--          v-model="tableReactiveProperties.visibleColumns"-->
-<!--          multiple-->
-<!--          borderless-->
-<!--          dense-->
-<!--          options-dense-->
-<!--          :display-value="$t('columns')"-->
-<!--          emit-value-->
-<!--          map-options-->
-<!--          :options="tableProperties.columns"-->
-<!--          option-value="name"-->
-<!--          style="min-width: 150px"-->
-<!--        />-->
-<!--        <q-space />-->
+        <!--        <q-select-->
+        <!--          v-model="tableReactiveProperties.visibleColumns"-->
+        <!--          multiple-->
+        <!--          borderless-->
+        <!--          dense-->
+        <!--          options-dense-->
+        <!--          :display-value="$t('columns')"-->
+        <!--          emit-value-->
+        <!--          map-options-->
+        <!--          :options="tableProperties.columns"-->
+        <!--          option-value="name"-->
+        <!--          style="min-width: 150px"-->
+        <!--        />-->
+        <!--        <q-space />-->
 
         <Search v-model="search" />
 
@@ -109,16 +109,27 @@
                 type: Array,
                 default: () => [],
             },
+            searchData: {
+                type: Array,
+                default: () => [],
+            },
         },
         data() {
             return {
-                search: '',
+                search: null,
                 pagination: {
                     rowsPerPage: 20,
                 },
                 searchField: 'Все',
                 searchOptionsFields: [],
             };
+        },
+        watch: {
+            search(val) {
+                if (!val) {
+                    this.$emit('update:searchData', []);
+                }
+            },
         },
         created() {
             // const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
@@ -145,10 +156,13 @@
                 const newCols = this.searchField === 'Все' ? cols : _.filter(cols, { name: this.searchField });
                 devlog.log('newCols', newCols);
                 const lowerTerms = terms ? terms.toLowerCase() : '';
-                return rows.filter(
+                const result = rows.filter(
                   (row) => newCols.some((col) => (`${cellValue(col, row)} `).toLowerCase()
                     .indexOf(lowerTerms) !== -1),
                 );
+                devlog.log('resultSerarch', result);
+                this.$emit('update:searchData', result);
+                return result;
             },
             customSort(rows, sortBy, descending) {
                 const data = [...rows];

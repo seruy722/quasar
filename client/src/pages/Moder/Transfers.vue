@@ -8,6 +8,7 @@
         :table-properties="transferTableProperties"
         :table-data="allTransfers"
         :table-reactive-properties="transferTableReactiveProperties"
+        :search-data.sync="searchDataFromTable"
         title="Переводы"
       >
         <template v-slot:top-buttons>
@@ -321,163 +322,176 @@
             </ItemLabel>
           </ItemSection>
         </ListItem>
+        <q-item>
+          <q-item-section class="text-center">По пользователям</q-item-section>
+        </q-item>
+        <q-item v-for="(user, id) in countTransfers.usersData" :key="id">
+          <q-item-section>
+            <q-item-label>{{ user.name }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ user.all }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ user.allSum }}</q-item-label>
+          </q-item-section>
+        </q-item>
       </List>
-      <PageSticky :offset="[18, 200]">
-        <Fab color="accent">
-          <FabAction
-            color="positive"
-            @fabActionClick="viewEditDialog"
-          />
-          <FabAction
-            icon="person"
-            @fabActionClick="showCodeDialog = true"
-          />
-          <PageScroller :offset="[4, 100]">
-            <FabAction icon="keyboard_arrow_up" />
-          </PageScroller>
-        </Fab>
-      </PageSticky>
-      <Dialog
-        :dialog="dialog"
-        :persistent="true"
-      >
-        <Card style="min-width: 320px;width: 100%;max-width: 500px;">
-          <CardSection class="row justify-between bg-grey q-mb-sm">
-            <span class="text-h6">{{ dialogTitle }}</span>
-            <div>
-              <IconBtn
-                v-if="localProps.row"
-                dense
-                icon="history"
-                tooltip="История"
-                @iconBtnClick="getTransfersHistory(localProps.row.id, localProps.cols)"
-              />
-
-              <IconBtn
-                dense
-                icon="clear"
-                tooltip="Закрыть"
-                @iconBtnClick="cancel(transferData)"
-              />
-            </div>
-          </CardSection>
-          <CardSection>
-            <div
-              v-for="(item, index) in transferData"
-              :key="index"
-            >
-              <BaseInput
-                v-if="item.type === 'text'"
-                v-model.trim="item.value"
-                :label="item.label"
-                :type="item.type"
-                :mask="item.mask"
-                :unmasked-value="item.unmaskedValue"
-                :change-value.sync="item.changeValue"
-                dense
-                :field="item.field"
-                :errors="errorsData"
-              />
-
-              <BaseInput
-                v-else-if="item.type === 'number'"
-                v-model.number="item.value"
-                :label="item.label"
-                :type="item.type"
-                :mask="item.mask"
-                :unmasked-value="item.unmaskedValue"
-                :change-value.sync="item.changeValue"
-                dense
-                :field="item.field"
-                :errors="errorsData"
-              />
-
-              <SearchSelect
-                v-else-if="item.type === 'searchSelect'"
-                v-model="item.value"
-                dense
-                :options="item.options"
-                :label="item.label"
-                :field="item.field"
-                :func-load-data="item.funcLoadData"
-                :change-value.sync="item.changeValue"
-                :errors="errorsData"
-              />
-
-              <BaseSelect
-                v-else-if="item.type === 'select'"
-                v-model="item.value"
-                :label="item.label"
-                :dense="true"
-                :options="item.options"
-                :field="item.field"
-                :change-value.sync="item.changeValue"
-                :errors="errorsData"
-              />
-
-              <BaseInput
-                v-else-if="item.type === 'date'"
-                v-model="item.value"
-                :label="item.label"
-                :errors="errorsData"
-                :field="item.field"
-                :readonly="item.readonly"
-                :mask="item.mask"
-                :change-value.sync="item.changeValue"
-                dense
-              >
-                <template v-slot:append>
-                  <Date
-                    :value.sync="item.value"
-                    :change-value.sync="item.changeValue"
-                  />
-                </template>
-              </BaseInput>
-            </div>
-          </CardSection>
-
-          <Separator />
-          <CardActions>
-            <BaseBtn
-              label="Отмена"
-              color="negative"
-              @clickBaseBtn="cancel(transferData)"
-            />
-            <BaseBtn
-              label="Сохранить"
-              color="positive"
-              @clickBaseBtn="checkErrors(transferData, updateData)"
-            />
-          </CardActions>
-        </Card>
-      </Dialog>
-      <DialogAddCode :show-dialog.sync="showCodeDialog" />
-
-      <Dialog
-        :dialog="dialogHistory"
-        :persistent="true"
-        :maximized="true"
-        transition-show="slide-up"
-        transition-hide="slide-down"
-      >
-        <Card style="max-width: 600px;">
-          <q-bar>
-            <q-space />
-            <IconBtn
-              flat
-              dense
-              icon="close"
-              tooltip="Закрыть"
-              @iconBtnClick="dialogHistory = false"
-            />
-          </q-bar>
-
-          <CardSection class="q-pt-none">
-            <TransferHistory :transfer-history-data="transferHistoryData" />
-          </CardSection>
-        </Card>
-      </Dialog>
     </PullRefresh>
+    <PageSticky :offset="[18, 200]">
+      <Fab color="accent">
+        <FabAction
+          color="positive"
+          @fabActionClick="viewEditDialog"
+        />
+        <FabAction
+          icon="person"
+          @fabActionClick="showCodeDialog = true"
+        />
+        <PageScroller :offset="[4, 100]">
+          <FabAction icon="keyboard_arrow_up" />
+        </PageScroller>
+      </Fab>
+    </PageSticky>
+    <Dialog
+      :dialog="dialog"
+      :persistent="true"
+    >
+      <Card style="min-width: 320px;width: 100%;max-width: 500px;">
+        <CardSection class="row justify-between bg-grey q-mb-sm">
+          <span class="text-h6">{{ dialogTitle }}</span>
+          <div>
+            <IconBtn
+              v-if="localProps.row"
+              dense
+              icon="history"
+              tooltip="История"
+              @iconBtnClick="getTransfersHistory(localProps.row.id, localProps.cols)"
+            />
+
+            <IconBtn
+              dense
+              icon="clear"
+              tooltip="Закрыть"
+              @iconBtnClick="cancel(transferData)"
+            />
+          </div>
+        </CardSection>
+        <CardSection>
+          <div
+            v-for="(item, index) in transferData"
+            :key="index"
+          >
+            <BaseInput
+              v-if="item.type === 'text'"
+              v-model.trim="item.value"
+              :label="item.label"
+              :type="item.type"
+              :mask="item.mask"
+              :unmasked-value="item.unmaskedValue"
+              :change-value.sync="item.changeValue"
+              dense
+              :field="item.field"
+              :errors="errorsData"
+            />
+
+            <BaseInput
+              v-else-if="item.type === 'number'"
+              v-model.number="item.value"
+              :label="item.label"
+              :type="item.type"
+              :mask="item.mask"
+              :unmasked-value="item.unmaskedValue"
+              :change-value.sync="item.changeValue"
+              dense
+              :field="item.field"
+              :errors="errorsData"
+            />
+
+            <SearchSelect
+              v-else-if="item.type === 'searchSelect'"
+              v-model="item.value"
+              dense
+              :options="item.options"
+              :label="item.label"
+              :field="item.field"
+              :func-load-data="item.funcLoadData"
+              :change-value.sync="item.changeValue"
+              :errors="errorsData"
+            />
+
+            <BaseSelect
+              v-else-if="item.type === 'select'"
+              v-model="item.value"
+              :label="item.label"
+              :dense="true"
+              :options="item.options"
+              :field="item.field"
+              :change-value.sync="item.changeValue"
+              :errors="errorsData"
+            />
+
+            <BaseInput
+              v-else-if="item.type === 'date'"
+              v-model="item.value"
+              :label="item.label"
+              :errors="errorsData"
+              :field="item.field"
+              :readonly="item.readonly"
+              :mask="item.mask"
+              :change-value.sync="item.changeValue"
+              dense
+            >
+              <template v-slot:append>
+                <Date
+                  :value.sync="item.value"
+                  :change-value.sync="item.changeValue"
+                />
+              </template>
+            </BaseInput>
+          </div>
+        </CardSection>
+
+        <Separator />
+        <CardActions>
+          <BaseBtn
+            label="Отмена"
+            color="negative"
+            @clickBaseBtn="cancel(transferData)"
+          />
+          <BaseBtn
+            label="Сохранить"
+            color="positive"
+            @clickBaseBtn="checkErrors(transferData, updateData)"
+          />
+        </CardActions>
+      </Card>
+    </Dialog>
+    <DialogAddCode :show-dialog.sync="showCodeDialog" />
+    <Dialog
+      :dialog="dialogHistory"
+      :persistent="true"
+      :maximized="true"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <Card style="max-width: 600px;">
+        <q-bar>
+          <q-space />
+          <IconBtn
+            flat
+            dense
+            icon="close"
+            tooltip="Закрыть"
+            @iconBtnClick="dialogHistory = false"
+          />
+        </q-bar>
+
+        <CardSection class="q-pt-none">
+          <TransferHistory :transfer-history-data="transferHistoryData" />
+        </CardSection>
+      </Card>
+    </Dialog>
   </q-page>
 </template>
 
@@ -547,6 +561,7 @@
         data() {
             return {
                 dialogHistory: false,
+                searchDataFromTable: [],
                 transferHistoryData: {
                     cols: {},
                     transferHistory: [],
@@ -753,21 +768,10 @@
                 return this.$store.getters['codes/getCodes'];
             },
             countTransfers() {
-                const { allTransfers } = this;
-                return {
-                    all: numberFormat(_.size(allTransfers)),
-                    allSum: numberFormat(countSumCollection(allTransfers, 'sum')),
-                    notIssued: numberFormat(_.size(_.filter(allTransfers, { status: 2 }))),
-                    notIssuedSum: numberFormat(countSumCollection(_.filter(allTransfers, { status: 2 }), 'sum')),
-                    issued: numberFormat(_.size(_.filter(allTransfers, { status: 3 }))),
-                    issuedSum: numberFormat(countSumCollection(_.filter(allTransfers, { status: 3 }), 'sum')),
-                    question: numberFormat(_.size(_.filter(allTransfers, { status: 1 }))),
-                    questionSum: numberFormat(countSumCollection(_.filter(allTransfers, { status: 1 }), 'sum')),
-                    cancel: numberFormat(_.size(_.filter(allTransfers, { status: 4 }))),
-                    cancelSum: numberFormat(countSumCollection(_.filter(allTransfers, { status: 4 }), 'sum')),
-                    returned: numberFormat(_.size(_.filter(allTransfers, { status: 5 }))),
-                    returnedSum: numberFormat(countSumCollection(_.filter(allTransfers, { status: 5 }), 'sum')),
-                };
+                if (_.isEmpty(this.searchDataFromTable)) {
+                    return this.countedData(this.allTransfers);
+                }
+                return this.countedData(this.searchDataFromTable);
             },
             countCheckedTransfers() {
                 return numberFormat(_.size(this.transferTableReactiveProperties.selected));
@@ -800,6 +804,33 @@
             this.getTransfers();
         },
         methods: {
+            countedData(data) {
+                const usersIds = _.uniq(_.map(data, 'user_id'));
+                const usersArray = [];
+                _.forEach(usersIds, (id) => {
+                    const userData = _.filter(data, { user_id: id });
+                    usersArray.push({
+                        name: _.get(_.first(userData), 'user_name'),
+                        all: numberFormat(_.size(userData)),
+                        allSum: numberFormat(countSumCollection(userData, 'sum')),
+                    });
+                });
+                return {
+                    all: numberFormat(_.size(data)),
+                    allSum: numberFormat(countSumCollection(data, 'sum')),
+                    notIssued: numberFormat(_.size(_.filter(data, { status: 2 }))),
+                    notIssuedSum: numberFormat(countSumCollection(_.filter(data, { status: 2 }), 'sum')),
+                    issued: numberFormat(_.size(_.filter(data, { status: 3 }))),
+                    issuedSum: numberFormat(countSumCollection(_.filter(data, { status: 3 }), 'sum')),
+                    question: numberFormat(_.size(_.filter(data, { status: 1 }))),
+                    questionSum: numberFormat(countSumCollection(_.filter(data, { status: 1 }), 'sum')),
+                    cancel: numberFormat(_.size(_.filter(data, { status: 4 }))),
+                    cancelSum: numberFormat(countSumCollection(_.filter(data, { status: 4 }), 'sum')),
+                    returned: numberFormat(_.size(_.filter(data, { status: 5 }))),
+                    returnedSum: numberFormat(countSumCollection(_.filter(data, { status: 5 }), 'sum')),
+                    usersData: usersArray,
+                };
+            },
             updateData(data) {
                 const sendData = _.cloneDeep(data);
                 devlog.log('DATA_N0', sendData);
