@@ -330,10 +330,10 @@
             <q-item-label>{{ user.name }}</q-item-label>
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ user.all }}</q-item-label>
+            <q-item-label>{{ user.all | numberFormatFilter }}</q-item-label>
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ user.allSum }}</q-item-label>
+            <q-item-label>{{ user.allSum | numberFormatFilter }}</q-item-label>
           </q-item-section>
         </q-item>
       </List>
@@ -811,10 +811,11 @@
                     const userData = _.filter(data, { user_id: id });
                     usersArray.push({
                         name: _.get(_.first(userData), 'user_name'),
-                        all: numberFormat(_.size(userData)),
-                        allSum: numberFormat(countSumCollection(userData, 'sum')),
+                        all: _.size(userData),
+                        allSum: countSumCollection(userData, 'sum'),
                     });
                 });
+                usersArray.sort((a, b) => b.allSum - a.allSum);
                 return {
                     all: numberFormat(_.size(data)),
                     allSum: numberFormat(countSumCollection(data, 'sum')),
