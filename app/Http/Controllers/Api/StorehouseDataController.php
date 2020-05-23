@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Category;
-use App\CodePrice;
-use App\History;
+use App\CodesPrices;
 use App\Shop;
-use App\Storehouse;
 use App\StorehouseData;
 use App\Thingslist;
 use Illuminate\Http\Request;
@@ -148,19 +146,25 @@ class StorehouseDataController extends Controller
         if (array_key_exists('for_kg', $data) && array_key_exists('for_place', $data)) {
             $saveData['for_kg'] = $data['for_kg'];
             $saveData['for_place'] = $data['for_place'];
-            $price = CodePrice::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg'], 'for_place' => $data['for_place'], 'user_id' => auth()->user()->id]);
+            $price = CodesPrices::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg'], 'for_place' => $data['for_place']]);
             $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_kg' => $data['for_kg'], 'for_place' => $data['for_place']];
-            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodePrice)->getTable());
+            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodesPrices)->getTable());
         } else if (array_key_exists('for_kg', $data)) {
             $saveData['for_kg'] = $data['for_kg'];
-            $price = CodePrice::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg'], 'user_id' => auth()->user()->id]);
+            $price = CodesPrices::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg']]);
             $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_kg' => $data['for_kg']];
-            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodePrice)->getTable());
+            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodesPrices)->getTable());
         } else if (array_key_exists('for_place', $data)) {
             $saveData['for_place'] = $data['for_place'];
-            $price = CodePrice::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_place' => $data['for_place'], 'user_id' => auth()->user()->id]);
+            $price = CodesPrices::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_place' => $data['for_place']]);
             $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_place' => $data['for_place']];
-            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodePrice)->getTable());
+            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodesPrices)->getTable());
+        } else {
+            $price = CodesPrices::where('code_id', $data['code_client_id'])->where('category_id', $category->id)->first();
+            if ($price) {
+                $saveData['for_kg'] = $price->for_kg;
+                $saveData['for_place'] = $price->for_place;
+            }
         }
 
         $storehouse = StorehouseData::create($saveData);
@@ -185,7 +189,7 @@ class StorehouseDataController extends Controller
             }
         }
         $entry = StorehouseData::find($request->id);
-        $price = CodePrice::where('code_id', $entry->code_client_id)->where('category_id', $entry->category_id)->first();
+        $price = CodesPrices::where('code_id', $entry->code_client_id)->where('category_id', $entry->category_id)->first();
         if ($price) {
             if ($request->replacePrice && array_key_exists('for_kg', $data)) {
                 $price->for_kg = $data['for_kg'];
@@ -205,7 +209,7 @@ class StorehouseDataController extends Controller
             if (array_key_exists('for_place', $data)) {
                 $arrForCreateCodePrice['for_place'] = $data['for_place'];
             }
-            CodePrice::create($arrForCreateCodePrice);
+            CodesPrices::create($arrForCreateCodePrice);
         }
 
         if (array_key_exists('for_kg', $data) && is_null($data['for_kg'])) {
@@ -393,7 +397,7 @@ class StorehouseDataController extends Controller
             $needData = array_diff_key($elem, array_flip(["arr", "id"]));
             foreach ($elem['arr'] as $item) {
                 array_push($ids, $item['id']);
-                $price = CodePrice::where('code_id', $item['code_client_id'])->where('category_id', $item['category_id'])->first();
+                $price = CodesPrices::where('code_id', $item['code_client_id'])->where('category_id', $item['category_id'])->first();
                 if ($price) {
                     if ($elem['replacePrice'] && array_key_exists('for_kg', $elem)) {
                         $price->for_kg = $elem['for_kg'];
@@ -413,7 +417,7 @@ class StorehouseDataController extends Controller
                     if (array_key_exists('for_place', $elem)) {
                         $arrForCreateCodePrice['for_place'] = $elem['for_place'];
                     }
-                    CodePrice::create($arrForCreateCodePrice);
+                    CodesPrices::create($arrForCreateCodePrice);
                 }
                 if (array_key_exists('category_id', $item)) {
                     $category = Category::find($item['category_id']);

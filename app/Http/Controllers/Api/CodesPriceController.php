@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\CodePrice;
+use App\CodesPrices;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -10,7 +10,7 @@ class CodesPriceController extends Controller
 {
     public function codePriceDataList()
     {
-        return CodePrice::select('code_prices.*', 'categories.name as category_name', 'codes.code as code_client_name')->leftJoin('categories', 'categories.id', '=', 'code_prices.category_id')->leftJoin('codes', 'codes.id', '=', 'code_prices.code_id');
+        return CodesPrices::select('code_prices.*', 'categories.name as category_name', 'codes.code as code_client_name')->leftJoin('categories', 'categories.id', '=', 'code_prices.category_id')->leftJoin('codes', 'codes.id', '=', 'code_prices.code_id');
 
     }
 
@@ -40,7 +40,7 @@ class CodesPriceController extends Controller
             $updateData['for_place'] = $request->for_place;
         }
 
-        $codePrice = CodePrice::updateOrCreate(['code_id' => $request->code_id, 'category_id' => $request->category_id], $updateData);
+        $codePrice = CodesPrices::updateOrCreate(['code_id' => $request->code_id, 'category_id' => $request->category_id], $updateData);
         $this->storeCodePriceHistory($codePrice->id, $request->all(), 'create');
         $codePriceCollection = $this->codePriceDataList();
         return response(['codePrice' => $codePriceCollection->where('code_prices.id', $codePrice->id)->first()]);
@@ -52,7 +52,7 @@ class CodesPriceController extends Controller
             'code_id' => 'required|numeric',
         ]);
 
-        $entry = CodePrice::where('code_id', $request->code_id)->where('category_id', $request->category_id)->first();
+        $entry = CodesPrices::where('code_id', $request->code_id)->where('category_id', $request->category_id)->first();
         if ($entry && $entry->id !== $request->id) {
             $category = \App\Category::find($request->category_id);
             return response(['error' => 'Категория ' . $category->name . ' уже есть у клиента', 'eid' => $entry]);
@@ -60,7 +60,7 @@ class CodesPriceController extends Controller
 
         $data = $request->except('id');
 
-        CodePrice::where('id', $request->id)->update($data);
+        CodesPrices::where('id', $request->id)->update($data);
         $this->storeCodePriceHistory($request->id, $request->all(), 'update');
         $codePriceCollection = $this->codePriceDataList();
         return response(['updatedCodePrice' => $codePriceCollection->where('code_prices.id', $request->id)->first()]);
@@ -68,7 +68,7 @@ class CodesPriceController extends Controller
 
     public function delete($id)
     {
-        CodePrice::destroy($id);
+        CodesPrices::destroy($id);
         $this->storeCodePriceHistory($id, [], 'delete');
         return response(['status' => true]);
     }
@@ -91,13 +91,13 @@ class CodesPriceController extends Controller
         }
         $data['user_name'] = auth()->user()->name;
         $data['user_id'] = auth()->user()->id;
-        $saveData = ['table' => (new CodePrice)->getTable(), 'action' => $action, 'entry_id' => $id, 'history_data' => json_encode($data)];
+        $saveData = ['table' => (new CodesPrices)->getTable(), 'action' => $action, 'entry_id' => $id, 'history_data' => json_encode($data)];
         \App\History::create($saveData);
     }
 
     public function getCodePriceHistory($id)
     {
-        $codePriceHistory = \App\History::where('table', (new CodePrice)->getTable())->where('entry_id', $id)->get();
+        $codePriceHistory = \App\History::where('table', (new CodesPrices)->getTable())->where('entry_id', $id)->get();
         return response(['codePriceHistory' => $codePriceHistory]);
     }
 

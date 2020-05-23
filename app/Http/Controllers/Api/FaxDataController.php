@@ -5,26 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\CategoriesPrice;
 use App\Category;
 use App\Code;
-use App\CodePrice;
-use App\Exports\Fax\FaxData\FaxDataExport;
-use App\Fax;
+use App\CodesPrices;
 use App\FaxData;
 use App\Shop;
 use App\StorehouseData;
 use App\Thingslist;
-use App\TransporterFaxesPrice;
-use App\TransporterPrice;
 use App\Http\Resources\FaxDataResource;
 use App\Imports\ImportData;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-use function foo\func;
 
 class FaxDataController extends Controller
 {
@@ -68,7 +58,7 @@ class FaxDataController extends Controller
                         // CATEGORY
                         $category = Category::firstOrCreate(['name' => $trimElem[8]], ['user_id' => auth()->user()->id]);
                         // PRICE
-                        $price = CodePrice::firstOrCreate(['code_id' => $code->id, 'category_id' => $category->id], ['for_kg' => 0, 'for_place' => 5, 'user_id' => auth()->user()->id]);
+                        $price = CodesPrices::firstOrCreate(['code_id' => $code->id, 'category_id' => $category->id], ['for_kg' => 0, 'for_place' => 5, 'user_id' => auth()->user()->id]);
                         // SHOP
                         $shop = Shop::firstOrCreate(['name' => $trimElem[4]]);
                         // THINGS
@@ -241,7 +231,7 @@ class FaxDataController extends Controller
         $faxID = $data[0]['fax_id'];
 
         foreach ($data as $item) {
-            $price = CodePrice::where('code_id', $item['code_id'])->where('category_id', $item['category_id'])->first();
+            $price = CodesPrices::where('code_id', $item['code_id'])->where('category_id', $item['category_id'])->first();
             if ($price) {
                 if (($item['for_kg'] && !$price->for_kg) || $item['change']) {
                     $price->for_kg = $item['for_kg'];
@@ -287,7 +277,7 @@ class FaxDataController extends Controller
 //        $fax = Fax::find($id);
         $faxData = StorehouseData::where('fax_id', $id)->get();
         $faxData->each(function ($item) {
-            $price = CodePrice::where('code_id', $item->code_client_id)->where('category_id', $item->category_id)->first();
+            $price = CodesPrices::where('code_id', $item->code_client_id)->where('category_id', $item->category_id)->first();
             if ($price) {
                 $item->for_kg = $price->for_kg;
                 $item->for_place = $price->for_place;

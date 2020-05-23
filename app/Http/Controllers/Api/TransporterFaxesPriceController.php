@@ -62,7 +62,7 @@ class TransporterFaxesPriceController extends Controller
         $fax = Fax::find($faxId);
         $transporterId = $fax ? $fax->transporter_id : null;
         foreach ($data as $item) {
-            TransporterFaxesPrice::updateOrCreate(['category_price' => $item['category_price']], ['category_id' => $item['category_id'], 'fax_id' => $item['fax_id']]);
+            TransporterFaxesPrice::updateOrCreate(['fax_id' => $item['fax_id'], 'category_id' => $item['category_id']], ['category_price' => $item['category_price']]);
             if ($transporterId) {
                 TransporterPrice::updateOrCreate(['transporter_id' => $transporterId, 'category_id' => $item['category_id']], ['for_kg' => $item['category_price']]);
             }
