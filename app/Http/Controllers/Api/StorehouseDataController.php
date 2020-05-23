@@ -193,9 +193,13 @@ class StorehouseDataController extends Controller
         if ($price) {
             if ($request->replacePrice && array_key_exists('for_kg', $data)) {
                 $price->for_kg = $data['for_kg'];
+            } else if (array_key_exists('for_kg', $data) && !$price->for_kg) {
+                $price->for_kg = $data['for_kg'];
             }
             if ($request->replacePrice && array_key_exists('for_place', $data)) {
-                $price->for_kg = $data['for_place'];
+                $price->for_place = $data['for_place'];
+            } else if (array_key_exists('for_place', $data) && !$price->for_place) {
+                $price->for_place = $data['for_place'];
             }
             $price->save();
         } else {
@@ -401,9 +405,13 @@ class StorehouseDataController extends Controller
                 if ($price) {
                     if ($elem['replacePrice'] && array_key_exists('for_kg', $elem)) {
                         $price->for_kg = $elem['for_kg'];
+                    } else if (array_key_exists('for_kg', $elem) && !$price->for_kg) {
+                        $price->for_kg = $elem['for_kg'];
                     }
                     if ($elem['replacePrice'] && array_key_exists('for_place', $elem)) {
                         $price->for_kg = $elem['for_place'];
+                    } else if (array_key_exists('for_place', $elem) && !$price->for_place) {
+                        $price->for_place = $elem['for_place'];
                     }
                     $price->save();
                 } else {
