@@ -47,12 +47,12 @@
               expand-icon-class="text-white"
             >
               <template v-slot:header>
-                <q-item-section avatar>
-                  <q-checkbox
-                    dense
-                    v-model="props.selected"
-                  />
-                </q-item-section>
+<!--                <q-item-section avatar>-->
+<!--                  <q-checkbox-->
+<!--                    v-model="props.selected"-->
+<!--                    dense-->
+<!--                  />-->
+<!--                </q-item-section>-->
 
                 <q-item-section>
                   <q-item-label :lines="2">
