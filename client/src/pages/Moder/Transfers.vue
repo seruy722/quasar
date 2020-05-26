@@ -8,7 +8,6 @@
         :table-properties="transferTableProperties"
         :table-data="allTransfers"
         :table-reactive-properties="transferTableReactiveProperties"
-        :search-data.sync="searchDataFromTable"
         title="Переводы"
       >
         <template v-slot:top-buttons>
@@ -24,6 +23,13 @@
             icon="explicit"
             class="q-ml-sm"
             @iconBtnClick="exportTransfers"
+          />
+          <IconBtn
+            color="orange"
+            tooltip="Статистика"
+            icon="show_chart"
+            class="q-ml-sm"
+            @iconBtnClick="openDialogStatistics"
           />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -41,65 +47,66 @@
               expand-icon-class="text-white"
             >
               <template v-slot:header>
-                <ItemSection avatar>
-                  <CheckBox
+                <q-item-section avatar>
+                  <q-checkbox
+                    dense
                     v-model="props.selected"
                   />
-                </ItemSection>
+                </q-item-section>
 
-                <ItemSection>
-                  <ItemLabel :lines="2">
+                <q-item-section>
+                  <q-item-label :lines="2">
                     {{ props.row.client_name }}
-                  </ItemLabel>
-                </ItemSection>
+                  </q-item-label>
+                </q-item-section>
               </template>
 
-              <List
+              <q-list
                 separator
                 dense
-                @clickList="viewEditDialog(props)"
+                @click="viewEditDialog(props)"
               >
-                <ListItem
+                <q-item
                   v-for="col in props.cols.filter(col => col.name !== 'desc')"
                   :key="col.name"
                 >
-                  <ItemSection>
-                    <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
-                  </ItemSection>
-                  <ItemSection side>
-                    <ItemLabel v-if="col.field === 'status_label'">
+                  <q-item-section>
+                    <q-item-label>{{ `${col.label}:` }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label v-if="col.field === 'status_label'">
                       <Badge :color="statusColor(col.value)">
                         {{ col.value }}
                       </Badge>
-                    </ItemLabel>
-                    <ItemLabel v-else-if="col.field === 'receiver_phone'">
+                    </q-item-label>
+                    <q-item-label v-else-if="col.field === 'receiver_phone'">
                       {{ col.value | phoneNumberFilter }}
-                    </ItemLabel>
-                    <ItemLabel v-else-if="col.field === 'receiver_name'">
+                    </q-item-label>
+                    <q-item-label v-else-if="col.field === 'receiver_name'">
                       {{ col.value }}
-                    </ItemLabel>
-                    <ItemLabel
+                    </q-item-label>
+                    <q-item-label
                       v-else-if="col.field === 'notation'"
                       :lines="3"
                     >
                       {{ col.value }}
-                    </ItemLabel>
-                    <ItemLabel v-else>
+                    </q-item-label>
+                    <q-item-label v-else>
                       {{ col.value }}
-                    </ItemLabel>
-                  </ItemSection>
-                </ListItem>
-                <ListItem>
-                  <ItemSection>
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>
                     <BaseBtn
                       label="История"
                       color="info"
                       style="max-width: 100px;margin: 0 auto;"
                       @clickBaseBtn="getTransfersHistory(props.row.id, props.cols)"
                     />
-                  </ItemSection>
-                </ListItem>
-              </List>
+                  </q-item-section>
+                </q-item>
+              </q-list>
             </q-expansion-item>
           </div>
         </template>
@@ -114,7 +121,7 @@
               auto-width
               class="select_checkbox"
             >
-              <CheckBox v-model="props.selected" />
+              <q-checkbox dense v-model="props.selected" />
             </q-td>
 
             <q-td
@@ -191,137 +198,137 @@
           </q-tr>
         </template>
       </Table>
-      <List
+      <q-list
         separator
         bordered
         dense
         style="max-width: 450px;margin: 20px auto;font-weight: bold;"
       >
-        <ListItem>
-          <ItemSection>
-            <ItemLabel>Статус</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>Количество</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel> Сумма</ItemLabel>
-          </ItemSection>
-        </ListItem>
+        <q-item>
+          <q-item-section>
+            <q-item-label>Статус</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Количество</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label> Сумма</q-item-label>
+          </q-item-section>
+        </q-item>
 
-        <ListItem>
-          <ItemSection>
-            <ItemLabel>
+        <q-item>
+          <q-item-section>
+            <q-item-label>
               <Badge :color="statusColor(3)">
                 Выдано
               </Badge>
-            </ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.issued }}</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.issuedSum }}</ItemLabel>
-          </ItemSection>
-        </ListItem>
+            </q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.issued }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.issuedSum }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
-        <ListItem>
-          <ItemSection>
-            <ItemLabel>
+        <q-item>
+          <q-item-section>
+            <q-item-label>
               <Badge :color="statusColor(2)">
                 Не выдан
               </Badge>
-            </ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.notIssued }}</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.notIssuedSum }}</ItemLabel>
-          </ItemSection>
-        </ListItem>
+            </q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.notIssued }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.notIssuedSum }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
-        <ListItem>
-          <ItemSection>
-            <ItemLabel>
+        <q-item>
+          <q-item-section>
+            <q-item-label>
               <Badge :color="statusColor(1)">
                 Вопрос
               </Badge>
-            </ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.question }}</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.questionSum }}</ItemLabel>
-          </ItemSection>
-        </ListItem>
+            </q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.question }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.questionSum }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
-        <ListItem>
-          <ItemSection>
-            <ItemLabel>
+        <q-item>
+          <q-item-section>
+            <q-item-label>
               <Badge :color="statusColor(4)">
                 Отменен
               </Badge>
-            </ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.cancel }}</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.cancelSum }}</ItemLabel>
-          </ItemSection>
-        </ListItem>
+            </q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.cancel }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.cancelSum }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
-        <ListItem>
-          <ItemSection>
-            <ItemLabel>
+        <q-item>
+          <q-item-section>
+            <q-item-label>
               <Badge :color="statusColor(5)">
                 Возврат
               </Badge>
-            </ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.returned }}</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.returnedSum }}</ItemLabel>
-          </ItemSection>
-        </ListItem>
+            </q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.returned }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.returnedSum }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
-        <ListItem>
-          <ItemSection>
-            <ItemLabel>
+        <q-item>
+          <q-item-section>
+            <q-item-label>
               Всего
-            </ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.all }}</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>{{ countTransfers.allSum }}</ItemLabel>
-          </ItemSection>
-        </ListItem>
+            </q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.all }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ countTransfers.allSum }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
-        <ListItem>
-          <ItemSection>
-            <ItemLabel>Выбранных</ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>
+        <q-item>
+          <q-item-section>
+            <q-item-label>Выбранных</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>
               <Badge color="info">
                 {{ countCheckedTransfers }}
               </Badge>
-            </ItemLabel>
-          </ItemSection>
-          <ItemSection>
-            <ItemLabel>
+            </q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>
               <Badge color="info">
                 {{ countSumCheckedTransfers }}
               </Badge>
-            </ItemLabel>
-          </ItemSection>
-        </ListItem>
+            </q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item>
           <q-item-section class="text-center">По пользователям</q-item-section>
         </q-item>
@@ -336,7 +343,7 @@
             <q-item-label>{{ user.allSum | numberFormatFilter }}</q-item-label>
           </q-item-section>
         </q-item>
-      </List>
+      </q-list>
     </PullRefresh>
     <PageSticky :offset="[18, 200]">
       <Fab color="accent">
@@ -357,8 +364,8 @@
       :dialog="dialog"
       :persistent="true"
     >
-      <Card style="min-width: 320px;width: 100%;max-width: 500px;">
-        <CardSection class="row justify-between bg-grey q-mb-sm">
+      <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
+        <q-card-section class="row justify-between bg-grey q-mb-sm">
           <span class="text-h6">{{ dialogTitle }}</span>
           <div>
             <IconBtn
@@ -376,8 +383,8 @@
               @iconBtnClick="cancel(transferData)"
             />
           </div>
-        </CardSection>
-        <CardSection>
+        </q-card-section>
+        <q-card-section>
           <div
             v-for="(item, index) in transferData"
             :key="index"
@@ -450,10 +457,10 @@
               </template>
             </BaseInput>
           </div>
-        </CardSection>
+        </q-card-section>
 
         <Separator />
-        <CardActions>
+        <q-card-action>
           <BaseBtn
             label="Отмена"
             color="negative"
@@ -464,8 +471,8 @@
             color="positive"
             @clickBaseBtn="checkErrors(transferData, updateData)"
           />
-        </CardActions>
-      </Card>
+        </q-card-action>
+      </q-card>
     </Dialog>
     <DialogAddCode :show-dialog.sync="showCodeDialog" />
     <Dialog
@@ -475,7 +482,7 @@
       transition-show="slide-up"
       transition-hide="slide-down"
     >
-      <Card style="max-width: 600px;">
+      <q-card style="max-width: 600px;">
         <q-bar>
           <q-space />
           <IconBtn
@@ -487,10 +494,274 @@
           />
         </q-bar>
 
-        <CardSection class="q-pt-none">
+        <q-card-section class="q-pt-none">
           <TransferHistory :transfer-history-data="transferHistoryData" />
-        </CardSection>
-      </Card>
+        </q-card-section>
+      </q-card>
+    </Dialog>
+    <Dialog
+      :dialog="dialogStatistics"
+      :persistent="true"
+      :maximized="true"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <q-card style="max-width: 600px;">
+        <q-bar>
+          <q-space />
+          <IconBtn
+            flat
+            dense
+            icon="close"
+            tooltip="Закрыть"
+            @iconBtnClick="dialogStatistics = false"
+          />
+        </q-bar>
+
+        <q-card-section>
+          <div class="column items-center">
+            <q-btn color="primary" :label="statisticsSelectData.label">
+              <q-menu
+                auto-close
+                transition-show="scale"
+                transition-hide="scale"
+              >
+                <q-list separator style="min-width: 100px">
+                  <q-item
+                    v-for="(item, index) in optionsStatistics"
+                    :key="index"
+                    clickable
+                    @click="setStatistics(item)"
+                  >
+                    <q-item-section>{{ item.label }}</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
+            <div>{{ viewPeriodDate }}</div>
+          </div>
+          <q-list
+            separator
+            bordered
+            dense
+            style="max-width: 450px;margin: 20px auto;font-weight: bold;"
+          >
+            <q-item>
+              <q-item-section class="statistics_title">По переводам</q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label>Статус</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Количество</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label> Сумма</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section>
+                <q-item-label>
+                  <Badge :color="statusColor(3)">
+                    Выдано
+                  </Badge>
+                </q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.issued }}</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.issuedSum }}</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section>
+                <q-item-label>
+                  <Badge :color="statusColor(2)">
+                    Не выдан
+                  </Badge>
+                </q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.notIssued }}</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.notIssuedSum }}</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section>
+                <q-item-label>
+                  <Badge :color="statusColor(1)">
+                    Вопрос
+                  </Badge>
+                </q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.question }}</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.questionSum }}</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section>
+                <q-item-label>
+                  <Badge :color="statusColor(4)">
+                    Отменен
+                  </Badge>
+                </q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.cancel }}</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.cancelSum }}</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section>
+                <q-item-label>
+                  <Badge :color="statusColor(5)">
+                    Возврат
+                  </Badge>
+                </q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.returned }}</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.returnedSum }}</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section>
+                <q-item-label>
+                  Всего
+                </q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.all }}</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ countTransfersStatisticsData.allSum }}</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section>
+                <q-item-label>Выбранных</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  <Badge color="info">
+                    {{ countCheckedTransfers }}
+                  </Badge>
+                </q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  <Badge color="info">
+                    {{ countSumCheckedTransfers }}
+                  </Badge>
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section class="statistics_title">По пользователям</q-item-section>
+            </q-item>
+            <q-item v-for="(user, id) in countTransfersStatisticsData.usersData" :key="id">
+              <q-item-section>
+                <q-item-label>{{ user.name }}</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ user.all | numberFormatFilter }}</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ user.allSum | numberFormatFilter }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <q-list
+            separator
+            bordered
+            dense
+            style="max-width: 450px;margin: 20px auto;font-weight: bold;"
+          >
+            <!--Топ 10 клиентов-->
+            <q-item>
+              <q-item-section class="statistics_title">Топ 10 клиентов</q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>Клиент</q-item-section>
+              <q-item-section>Количество</q-item-section>
+              <q-item-section>Сумма</q-item-section>
+            </q-item>
+            <q-item v-for="(user, index) in setClientStatistics()" :key="index">
+              <q-item-section>
+                <q-item-label> {{ user.name }}</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ user.count | numberFormatFilter }}</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ user.sum | numberFormatFilter }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card-section>
+      </q-card>
+    </Dialog>
+    <Dialog
+      :dialog="choosePeriodDialog"
+      :persistent="true"
+      transition-show="flip-up"
+      transition-hide="flip-down"
+    >
+      <q-card style="max-width: 600px;">
+        <q-bar></q-bar>
+        <q-card-section class="q-pt-none">
+          <div v-show="statisticsSelectData.value === 2">
+            <div class="row items-center">
+              <span>От:</span>
+              <DateWithInput
+                :value.sync="period.from"
+              />
+            </div>
+            <div class="row items-center">
+              <span>До:</span>
+              <DateWithInput
+                :value.sync="period.to"
+              />
+            </div>
+          </div>
+          <div v-show="statisticsSelectData.value === 3">
+            <DateWithInput
+              :value.sync="period.day"
+            />
+          </div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <OutlineBtn
+            label="Отмена"
+            dense
+            color="negative"
+            @clickOutlineBtn="choosePeriodDialog = false"
+          />
+          <OutlineBtn
+            dense
+            color="positive"
+            @clickOutlineBtn="setPeriod(period)"
+          />
+        </q-card-actions>
+      </q-card>
     </Dialog>
   </q-page>
 </template>
@@ -500,9 +771,6 @@
     import getFromSettings from 'src/tools/settings';
     import {
         formatToDotDate,
-        // isoDate,
-        // toDate,
-        // formatToMysql,
         reverseDate,
         addTime,
     } from 'src/utils/formatDate';
@@ -524,22 +792,17 @@
     import {
         // max,
         formatISO,
+        format,
     } from 'date-fns';
 
     export default {
         name: 'Transfers',
         components: {
             Table: () => import('src/components/Elements/Table/Table.vue'),
-            CheckBox: () => import('src/components/Elements/CheckBox.vue'),
+            // CheckBox: () => import('src/components/Elements/CheckBox.vue'),
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            Card: () => import('src/components/Elements/Card/Card.vue'),
-            CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
             Date: () => import('src/components/Date.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
+            DateWithInput: () => import('src/components/DateWithInput.vue'),
             BaseInput: () => import('src/components/Elements/BaseInput.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
@@ -553,15 +816,44 @@
             PageScroller: () => import('src/components/PageScroller.vue'),
             Badge: () => import('src/components/Elements/Badge.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
-            // Skeleton: () => import('src/components/Elements/Skeleton.vue'),
-            // TransfersListSkeleton: () => import('src/components/Skeletons/Transfers/TransfersListSkeleton.vue'),
+            OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
             TransferHistory: () => import('src/components/History/TransferHistory.vue'),
         },
         mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
         data() {
             return {
+                choosePeriodDialog: false,
+                viewPeriodDate: '',
+                period: {
+                    from: '',
+                    to: '',
+                    day: '',
+                },
+                statisticsSelectData: {
+                    label: 'Сегодня',
+                    value: 1,
+                },
+                optionsStatistics: [
+                    {
+                        label: 'Все',
+                        value: -1,
+                    },
+                    {
+                        label: 'Сегодня',
+                        value: 1,
+                    },
+                    {
+                        label: 'Выбрать период',
+                        value: 2,
+                    },
+                    {
+                        label: 'Выбрать день',
+                        value: 3,
+                    },
+                ],
                 dialogHistory: false,
-                searchDataFromTable: [],
+                dialogStatistics: false,
+                statisticsData: [],
                 transferHistoryData: {
                     cols: {},
                     transferHistory: [],
@@ -768,10 +1060,10 @@
                 return this.$store.getters['codes/getCodes'];
             },
             countTransfers() {
-                if (_.isEmpty(this.searchDataFromTable)) {
-                    return this.countedData(this.allTransfers);
-                }
-                return this.countedData(this.searchDataFromTable);
+                return this.countedData(this.allTransfers);
+            },
+            countTransfersStatisticsData() {
+                return this.countedData(this.statisticsData);
             },
             countCheckedTransfers() {
                 return numberFormat(_.size(this.transferTableReactiveProperties.selected));
@@ -804,6 +1096,91 @@
             this.getTransfers();
         },
         methods: {
+            setClientStatistics() {
+                const { allTransfers } = this;
+                const clientNamesArray = _.uniq(_.map(allTransfers, 'client_name'));
+                const clientsDataArray = [];
+                _.forEach(clientNamesArray, (clientName) => {
+                    const clientData = _.filter(allTransfers, { client_name: clientName });
+                    clientsDataArray.push({
+                        name: clientName,
+                        count: _.size(clientData),
+                        sum: _.sumBy(clientData, 'sum'),
+                    });
+                });
+                clientsDataArray.sort((a, b) => b.sum - a.sum);
+                devlog.log('dataCLIRNT', clientsDataArray.slice(0, 10));
+                return clientsDataArray.slice(0, 10);
+            },
+            setStatistics(val) {
+                switch (val.value) {
+                    case 1:
+                        this.statisticsSelectData = {
+                            label: 'Сегодня',
+                            value: 1,
+                        };
+                        this.setStatisticsData(this.allTransfers, format(new Date(), 'dd-MM-yyyy'));
+                        break;
+                    case 2:
+                        this.statisticsSelectData = {
+                            label: 'Выбрать период',
+                            value: 2,
+                        };
+                        this.choosePeriodDialog = true;
+                        break;
+                    case 3:
+                        this.statisticsSelectData = {
+                            label: 'Выбрать день',
+                            value: 3,
+                        };
+                        this.choosePeriodDialog = true;
+                        break;
+                    default:
+                        this.statisticsSelectData = {
+                            label: 'Все',
+                            value: -1,
+                        };
+                        this.setStatisticsData(this.allTransfers, null);
+                }
+            },
+            setPeriod(period) {
+                this.setStatisticsData(this.allTransfers, period);
+                this.choosePeriodDialog = false;
+            },
+            openDialogStatistics() {
+                if (this.statisticsSelectData.value === 1) {
+                    const today = format(new Date(), 'dd-MM-yyyy');
+                    this.period.from = today;
+                    this.period.to = today;
+                    this.period.day = today;
+                    this.viewPeriodDate = today;
+                    this.setStatisticsData(this.allTransfers, today);
+                }
+                this.dialogStatistics = true;
+            },
+            async setStatisticsData(data, date) {
+                const {
+                    /* eslint-disable-next-line */
+                    reverseDate,
+                } = await import('src/utils/formatDate');
+                if (this.statisticsSelectData.value === -1) {
+                    this.viewPeriodDate = '';
+                    this.statisticsData = _.cloneDeep(data);
+                } else if (_.isObject(date) && this.statisticsSelectData.value === 3) {
+                    this.viewPeriodDate = date.day;
+                    const { isEqual } = await import('date-fns');
+                    const day = reverseDate(date.day);
+                    this.statisticsData = _.filter(data, (item) => isEqual(new Date(reverseDate(item.created_at.slice(0, 10))), new Date(day)));
+                } else if (_.isObject(date) && this.statisticsSelectData.value === 2) {
+                    const from = new Date(reverseDate(date.from));
+                    const to = new Date(reverseDate(date.to));
+                    this.viewPeriodDate = `${date.from} - ${date.to}`;
+                    this.statisticsData = _.filter(data, (item) => (new Date(reverseDate(item.created_at.slice(0, 10))) >= from && new Date(reverseDate(item.created_at.slice(0, 10))) <= to));
+                } else {
+                    this.viewPeriodDate = date;
+                    this.statisticsData = _.filter(data, (item) => _.includes(item.created_at, date));
+                }
+            },
             countedData(data) {
                 const usersIds = _.uniq(_.map(data, 'user_id'));
                 const usersArray = [];
@@ -816,6 +1193,8 @@
                     });
                 });
                 usersArray.sort((a, b) => b.allSum - a.allSum);
+                devlog.log('usersArray', usersArray);
+                devlog.log('usersIds', usersIds);
                 return {
                     all: numberFormat(_.size(data)),
                     allSum: numberFormat(countSumCollection(data, 'sum')),
@@ -1027,4 +1406,7 @@
     border-color $info !important
   }
 
+  .statistics_title
+    background-color lightgrey
+    text-align center
 </style>
