@@ -51,15 +51,15 @@
             <q-expansion-item
               expand-separator
               class="shadow-1 overflow-hidden"
-              header-class="bg-secondary text-white"
-              style="border-radius: 30px;border: 1px solid #26A69A;"
+              :header-class="`${props.row.uploaded_to_cargo ? 'bg-green' : 'bg-red'} text-white`"
+              :style="`border-radius: 30px;border: 1px solid ${props.row.uploaded_to_cargo ? 'green' : 'red'};`"
               expand-icon-class="text-white"
             >
               <template v-slot:header>
                 <q-item-section avatar>
                   <q-checkbox
-                    dense
                     v-model="props.selected"
+                    dense
                   />
                 </q-item-section>
 

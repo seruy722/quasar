@@ -29,7 +29,7 @@
             tooltip="Статистика"
             icon="show_chart"
             class="q-ml-sm"
-            @iconBtnClick="openDialogStatistics"
+            @iconBtnClick="dialogStatistics = true"
           />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -75,9 +75,9 @@
                   </q-item-section>
                   <q-item-section side>
                     <q-item-label v-if="col.field === 'status_label'">
-                      <Badge :color="statusColor(col.value)">
+                      <q-badge :color="statusColor(col.value)">
                         {{ col.value }}
-                      </Badge>
+                      </q-badge>
                     </q-item-label>
                     <q-item-label v-else-if="col.field === 'receiver_phone'">
                       {{ col.value | phoneNumberFilter }}
@@ -163,9 +163,9 @@
               key="status_label"
               :props="props"
             >
-              <Badge :color="statusColor(props.row.status)">
+              <q-badge :color="statusColor(props.row.status)">
                 {{ props.row.status_label }}
-              </Badge>
+              </q-badge>
             </q-td>
 
             <q-td
@@ -198,152 +198,7 @@
           </q-tr>
         </template>
       </Table>
-      <q-list
-        separator
-        bordered
-        dense
-        style="max-width: 450px;margin: 20px auto;font-weight: bold;"
-      >
-        <q-item>
-          <q-item-section>
-            <q-item-label>Статус</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Количество</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label> Сумма</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item>
-          <q-item-section>
-            <q-item-label>
-              <Badge :color="statusColor(3)">
-                Выдано
-              </Badge>
-            </q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.issued }}</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.issuedSum }}</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item>
-          <q-item-section>
-            <q-item-label>
-              <Badge :color="statusColor(2)">
-                Не выдан
-              </Badge>
-            </q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.notIssued }}</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.notIssuedSum }}</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item>
-          <q-item-section>
-            <q-item-label>
-              <Badge :color="statusColor(1)">
-                Вопрос
-              </Badge>
-            </q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.question }}</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.questionSum }}</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item>
-          <q-item-section>
-            <q-item-label>
-              <Badge :color="statusColor(4)">
-                Отменен
-              </Badge>
-            </q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.cancel }}</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.cancelSum }}</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item>
-          <q-item-section>
-            <q-item-label>
-              <Badge :color="statusColor(5)">
-                Возврат
-              </Badge>
-            </q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.returned }}</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.returnedSum }}</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item>
-          <q-item-section>
-            <q-item-label>
-              Всего
-            </q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.all }}</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ countTransfers.allSum }}</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item>
-          <q-item-section>
-            <q-item-label>Выбранных</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              <Badge color="info">
-                {{ countCheckedTransfers }}
-              </Badge>
-            </q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              <Badge color="info">
-                {{ countSumCheckedTransfers }}
-              </Badge>
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item>
-          <q-item-section class="text-center">По пользователям</q-item-section>
-        </q-item>
-        <q-item v-for="(user, id) in countTransfers.usersData" :key="id">
-          <q-item-section>
-            <q-item-label>{{ user.name }}</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ user.all | numberFormatFilter }}</q-item-label>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ user.allSum | numberFormatFilter }}</q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
+      <CountTransfersData :enter-data="allTransfers" />
     </PullRefresh>
     <PageSticky :offset="[18, 200]">
       <Fab color="accent">
@@ -460,7 +315,7 @@
         </q-card-section>
 
         <Separator />
-        <q-card-action>
+        <q-card-actions>
           <BaseBtn
             label="Отмена"
             color="negative"
@@ -471,7 +326,7 @@
             color="positive"
             @clickBaseBtn="checkErrors(transferData, updateData)"
           />
-        </q-card-action>
+        </q-card-actions>
       </q-card>
     </Dialog>
     <DialogAddCode :show-dialog.sync="showCodeDialog" />
@@ -518,249 +373,9 @@
           />
         </q-bar>
 
-        <q-card-section>
-          <div class="column items-center">
-            <q-btn color="primary" :label="statisticsSelectData.label">
-              <q-menu
-                auto-close
-                transition-show="scale"
-                transition-hide="scale"
-              >
-                <q-list separator style="min-width: 100px">
-                  <q-item
-                    v-for="(item, index) in optionsStatistics"
-                    :key="index"
-                    clickable
-                    @click="setStatistics(item)"
-                  >
-                    <q-item-section>{{ item.label }}</q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-btn>
-            <div>{{ viewPeriodDate }}</div>
-          </div>
-          <q-list
-            separator
-            bordered
-            dense
-            style="max-width: 450px;margin: 20px auto;font-weight: bold;"
-          >
-            <q-item>
-              <q-item-section class="statistics_title">По переводам</q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Статус</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Количество</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label> Сумма</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label>
-                  <Badge :color="statusColor(3)">
-                    Выдано
-                  </Badge>
-                </q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.issued }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.issuedSum }}</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label>
-                  <Badge :color="statusColor(2)">
-                    Не выдан
-                  </Badge>
-                </q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.notIssued }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.notIssuedSum }}</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label>
-                  <Badge :color="statusColor(1)">
-                    Вопрос
-                  </Badge>
-                </q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.question }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.questionSum }}</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label>
-                  <Badge :color="statusColor(4)">
-                    Отменен
-                  </Badge>
-                </q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.cancel }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.cancelSum }}</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label>
-                  <Badge :color="statusColor(5)">
-                    Возврат
-                  </Badge>
-                </q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.returned }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.returnedSum }}</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label>
-                  Всего
-                </q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.all }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ countTransfersStatisticsData.allSum }}</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label>Выбранных</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>
-                  <Badge color="info">
-                    {{ countCheckedTransfers }}
-                  </Badge>
-                </q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>
-                  <Badge color="info">
-                    {{ countSumCheckedTransfers }}
-                  </Badge>
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section class="statistics_title">По пользователям</q-item-section>
-            </q-item>
-            <q-item v-for="(user, id) in countTransfersStatisticsData.usersData" :key="id">
-              <q-item-section>
-                <q-item-label>{{ user.name }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ user.all | numberFormatFilter }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ user.allSum | numberFormatFilter }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-          <q-list
-            separator
-            bordered
-            dense
-            style="max-width: 450px;margin: 20px auto;font-weight: bold;"
-          >
-            <!--Топ 10 клиентов-->
-            <q-item>
-              <q-item-section class="statistics_title">Топ 10 клиентов</q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section>Клиент</q-item-section>
-              <q-item-section>Количество</q-item-section>
-              <q-item-section>Сумма</q-item-section>
-            </q-item>
-            <q-item v-for="(user, index) in setClientStatistics()" :key="index">
-              <q-item-section>
-                <q-item-label> {{ user.name }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ user.count | numberFormatFilter }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ user.sum | numberFormatFilter }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card-section>
-      </q-card>
-    </Dialog>
-    <Dialog
-      :dialog="choosePeriodDialog"
-      :persistent="true"
-      transition-show="flip-up"
-      transition-hide="flip-down"
-    >
-      <q-card style="max-width: 600px;">
-        <q-bar></q-bar>
         <q-card-section class="q-pt-none">
-          <div v-show="statisticsSelectData.value === 2">
-            <div class="row items-center">
-              <span>От:</span>
-              <DateWithInput
-                :value.sync="period.from"
-              />
-            </div>
-            <div class="row items-center">
-              <span>До:</span>
-              <DateWithInput
-                :value.sync="period.to"
-              />
-            </div>
-          </div>
-          <div v-show="statisticsSelectData.value === 3">
-            <DateWithInput
-              :value.sync="period.day"
-            />
-          </div>
+          <TransfersStatistics :enter-data="allTransfers" />
         </q-card-section>
-        <q-card-actions align="right">
-          <OutlineBtn
-            label="Отмена"
-            dense
-            color="negative"
-            @clickOutlineBtn="choosePeriodDialog = false"
-          />
-          <OutlineBtn
-            dense
-            color="positive"
-            @clickOutlineBtn="setPeriod(period)"
-          />
-        </q-card-actions>
       </q-card>
     </Dialog>
   </q-page>
@@ -777,8 +392,7 @@
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
     import showNotif from 'src/mixins/showNotif';
     import ExportDataMixin from 'src/mixins/ExportData';
-    import { callFunction, countSumCollection, numberFormat } from 'src/utils/index';
-    // import { sortCollection } from 'src/utils/sort';
+    import { callFunction } from 'src/utils/index';
     import TransferMixin from 'src/mixins/Transfer';
     import {
         setMethodLabel,
@@ -789,20 +403,14 @@
         setDefaultData,
         getClientCodes,
     } from 'src/utils/FrequentlyCalledFunctions';
-    import {
-        // max,
-        formatISO,
-        format,
-    } from 'date-fns';
+    import { formatISO } from 'date-fns';
 
     export default {
         name: 'Transfers',
         components: {
             Table: () => import('src/components/Elements/Table/Table.vue'),
-            // CheckBox: () => import('src/components/Elements/CheckBox.vue'),
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
             Date: () => import('src/components/Date.vue'),
-            DateWithInput: () => import('src/components/DateWithInput.vue'),
             BaseInput: () => import('src/components/Elements/BaseInput.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
@@ -814,46 +422,16 @@
             Fab: () => import('src/components/Elements/Fab.vue'),
             FabAction: () => import('src/components/Elements/FabAction.vue'),
             PageScroller: () => import('src/components/PageScroller.vue'),
-            Badge: () => import('src/components/Elements/Badge.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
-            OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
             TransferHistory: () => import('src/components/History/TransferHistory.vue'),
+            CountTransfersData: () => import('src/components/Transfers/CountTransfersData.vue'),
+            TransfersStatistics: () => import('src/components/Transfers/TransfersStatistics.vue'),
         },
         mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
         data() {
             return {
-                choosePeriodDialog: false,
-                viewPeriodDate: '',
-                period: {
-                    from: '',
-                    to: '',
-                    day: '',
-                },
-                statisticsSelectData: {
-                    label: 'Сегодня',
-                    value: 1,
-                },
-                optionsStatistics: [
-                    {
-                        label: 'Все',
-                        value: -1,
-                    },
-                    {
-                        label: 'Сегодня',
-                        value: 1,
-                    },
-                    {
-                        label: 'Выбрать период',
-                        value: 2,
-                    },
-                    {
-                        label: 'Выбрать день',
-                        value: 3,
-                    },
-                ],
-                dialogHistory: false,
                 dialogStatistics: false,
-                statisticsData: [],
+                dialogHistory: false,
                 transferHistoryData: {
                     cols: {},
                     transferHistory: [],
@@ -1059,17 +637,11 @@
             clientCodes() {
                 return this.$store.getters['codes/getCodes'];
             },
-            countTransfers() {
-                return this.countedData(this.allTransfers);
-            },
-            countTransfersStatisticsData() {
-                return this.countedData(this.statisticsData);
-            },
             countCheckedTransfers() {
-                return numberFormat(_.size(this.transferTableReactiveProperties.selected));
+                return _.size(this.transferTableReactiveProperties.selected);
             },
             countSumCheckedTransfers() {
-                return numberFormat(countSumCollection(this.transferTableReactiveProperties.selected, 'sum'));
+                return _.sumBy(this.transferTableReactiveProperties.selected, 'sum');
             },
         },
         watch: {
@@ -1096,121 +668,6 @@
             this.getTransfers();
         },
         methods: {
-            setClientStatistics() {
-                const { allTransfers } = this;
-                const clientNamesArray = _.uniq(_.map(allTransfers, 'client_name'));
-                const clientsDataArray = [];
-                _.forEach(clientNamesArray, (clientName) => {
-                    const clientData = _.filter(allTransfers, { client_name: clientName });
-                    clientsDataArray.push({
-                        name: clientName,
-                        count: _.size(clientData),
-                        sum: _.sumBy(clientData, 'sum'),
-                    });
-                });
-                clientsDataArray.sort((a, b) => b.sum - a.sum);
-                devlog.log('dataCLIRNT', clientsDataArray.slice(0, 10));
-                return clientsDataArray.slice(0, 10);
-            },
-            setStatistics(val) {
-                switch (val.value) {
-                    case 1:
-                        this.statisticsSelectData = {
-                            label: 'Сегодня',
-                            value: 1,
-                        };
-                        this.setStatisticsData(this.allTransfers, format(new Date(), 'dd-MM-yyyy'));
-                        break;
-                    case 2:
-                        this.statisticsSelectData = {
-                            label: 'Выбрать период',
-                            value: 2,
-                        };
-                        this.choosePeriodDialog = true;
-                        break;
-                    case 3:
-                        this.statisticsSelectData = {
-                            label: 'Выбрать день',
-                            value: 3,
-                        };
-                        this.choosePeriodDialog = true;
-                        break;
-                    default:
-                        this.statisticsSelectData = {
-                            label: 'Все',
-                            value: -1,
-                        };
-                        this.setStatisticsData(this.allTransfers, null);
-                }
-            },
-            setPeriod(period) {
-                this.setStatisticsData(this.allTransfers, period);
-                this.choosePeriodDialog = false;
-            },
-            openDialogStatistics() {
-                if (this.statisticsSelectData.value === 1) {
-                    const today = format(new Date(), 'dd-MM-yyyy');
-                    this.period.from = today;
-                    this.period.to = today;
-                    this.period.day = today;
-                    this.viewPeriodDate = today;
-                    this.setStatisticsData(this.allTransfers, today);
-                }
-                this.dialogStatistics = true;
-            },
-            async setStatisticsData(data, date) {
-                const {
-                    /* eslint-disable-next-line */
-                    reverseDate,
-                } = await import('src/utils/formatDate');
-                if (this.statisticsSelectData.value === -1) {
-                    this.viewPeriodDate = '';
-                    this.statisticsData = _.cloneDeep(data);
-                } else if (_.isObject(date) && this.statisticsSelectData.value === 3) {
-                    this.viewPeriodDate = date.day;
-                    const { isEqual } = await import('date-fns');
-                    const day = reverseDate(date.day);
-                    this.statisticsData = _.filter(data, (item) => isEqual(new Date(reverseDate(item.created_at.slice(0, 10))), new Date(day)));
-                } else if (_.isObject(date) && this.statisticsSelectData.value === 2) {
-                    const from = new Date(reverseDate(date.from));
-                    const to = new Date(reverseDate(date.to));
-                    this.viewPeriodDate = `${date.from} - ${date.to}`;
-                    this.statisticsData = _.filter(data, (item) => (new Date(reverseDate(item.created_at.slice(0, 10))) >= from && new Date(reverseDate(item.created_at.slice(0, 10))) <= to));
-                } else {
-                    this.viewPeriodDate = date;
-                    this.statisticsData = _.filter(data, (item) => _.includes(item.created_at, date));
-                }
-            },
-            countedData(data) {
-                const usersIds = _.uniq(_.map(data, 'user_id'));
-                const usersArray = [];
-                _.forEach(usersIds, (id) => {
-                    const userData = _.filter(data, { user_id: id });
-                    usersArray.push({
-                        name: _.get(_.first(userData), 'user_name'),
-                        all: _.size(userData),
-                        allSum: countSumCollection(userData, 'sum'),
-                    });
-                });
-                usersArray.sort((a, b) => b.allSum - a.allSum);
-                devlog.log('usersArray', usersArray);
-                devlog.log('usersIds', usersIds);
-                return {
-                    all: numberFormat(_.size(data)),
-                    allSum: numberFormat(countSumCollection(data, 'sum')),
-                    notIssued: numberFormat(_.size(_.filter(data, { status: 2 }))),
-                    notIssuedSum: numberFormat(countSumCollection(_.filter(data, { status: 2 }), 'sum')),
-                    issued: numberFormat(_.size(_.filter(data, { status: 3 }))),
-                    issuedSum: numberFormat(countSumCollection(_.filter(data, { status: 3 }), 'sum')),
-                    question: numberFormat(_.size(_.filter(data, { status: 1 }))),
-                    questionSum: numberFormat(countSumCollection(_.filter(data, { status: 1 }), 'sum')),
-                    cancel: numberFormat(_.size(_.filter(data, { status: 4 }))),
-                    cancelSum: numberFormat(countSumCollection(_.filter(data, { status: 4 }), 'sum')),
-                    returned: numberFormat(_.size(_.filter(data, { status: 5 }))),
-                    returnedSum: numberFormat(countSumCollection(_.filter(data, { status: 5 }), 'sum')),
-                    usersData: usersArray,
-                };
-            },
             updateData(data) {
                 const sendData = _.cloneDeep(data);
                 devlog.log('DATA_N0', sendData);
