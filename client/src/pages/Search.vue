@@ -1,252 +1,382 @@
 <template>
-    <div
-        data-vue-component-name="Search"
-    >
-        <q-card>
-            <q-card-section>
-                <div class="text-h6">Поиск данных по таблицам</div>
+  <q-page
+    data-vue-component-name="Search"
+  >
+    <q-card>
+      <q-card-section>
+        <div class="text-h6 text-center">Поиск данных по таблицам</div>
+        <SearchSelect
+          v-model="clientId"
+          label="Клиент"
+          style="max-width: 300px;"
+          :dense="$q.screen.xs || $q.screen.sm"
+          :options="clientsOptions"
+        />
+      </q-card-section>
+      <q-card-section>
+        <q-tabs
+          v-model="tab"
+          indicator-color="yellow"
+          class="bg-primary text-white shadow-2"
+        >
+          <!--                    <q-tab name="cargo" icon="mail" label="КАРГО">-->
+          <!--                      <q-badge floating color="red">{{ badges.cargo }}</q-badge>-->
+          <!--                    </q-tab>-->
+          <!--                    <q-tab name="debts" icon="alarm" label="ДОЛГИ">-->
+          <!--                      <q-badge floating color="red">{{ badges.debts }}</q-badge>-->
+          <!--                    </q-tab>-->
+          <q-tab name="storehouse" icon="store" label="СКЛАД">
+            <q-badge floating color="red">{{ storehouseTableData.data.length }}</q-badge>
+          </q-tab>
+          <q-tab name="faxes" icon="library_books" label="ФАКСЫ">
+            <q-badge floating color="red">{{ faxesTableData.data.length }}</q-badge>
+          </q-tab>
+          <q-tab name="basket" icon="delete" label="Корзина">
+            <q-badge floating color="red">{{ basketTableData.data.length }}</q-badge>
+          </q-tab>
+        </q-tabs>
 
-                <SelectWithSearchInput
-                    :input-data="inputData"
-                    :options.sync="options"
-                    :search-options="searchOptions"
-                    :value.sync="inputData.value"
-                    class="q-gutter-md row"
-                    @selectSearchInput="getClientData(inputData.value)"
-                />
-            </q-card-section>
-            <q-card-section>
-                <q-tabs
-                    v-model="tab"
-                    indicator-color="yellow"
-                    class="bg-primary text-white shadow-2"
+        <q-separator />
+
+        <q-tab-panels v-model="tab" animated>
+          <q-tab-panel name="basket">
+            <BaseTable
+              title="Корзина"
+              :entry-data="basketTableData.data"
+              :entry-columns="basketTableData.columns"
+            >
+              <template v-slot:inner-item="{props}">
+                <div
+                  class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+                  :style="props.selected ? 'transform: scale(0.95);' : ''"
                 >
-                    <q-tab name="cargo" icon="mail" label="КАРГО">
-                        <Badge :badgeData="{value: badges.cargo}" />
-                    </q-tab>
-                    <q-tab name="debts" icon="alarm" label="ДОЛГИ">
-                        <Badge :badgeData="{value: badges.debts}" />
-                    </q-tab>
-                    <q-tab name="storehouse" icon="movie" label="СКЛАД">
-                        <Badge :badgeData="{value: badges.storehouse}" />
-                    </q-tab>
-                    <q-tab name="faxes" icon="movie" label="ФАКСЫ">
-                        <Badge :badgeData="{value: badges.faxes}" />
-                    </q-tab>
-                </q-tabs>
+                  <q-card :class="props.selected ? 'bg-grey-2' : ''">
+                    <q-list dense separator>
+                      <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
+                        <q-item-section>
+                          <q-item-label>{{ col.label }}</q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-item-label v-if="col.field === 'things'" caption lines="4">{{ col.value | thingsFilter }}
+                          </q-item-label>
+                          <q-item-label v-else-if="col.field === 'created_at'" caption>{{ col.value | formatToDotDate
+                            }}
+                          </q-item-label>
+                          <q-item-label v-else caption>{{ col.value }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card>
+                </div>
+              </template>
 
-                <q-separator />
+              <template v-slot:inner-body="{props}">
+                <q-tr :props="props">
+                  <q-td
+                    key="code_place"
+                    :props="props"
+                  >
+                    {{ props.row.code_place }}
+                  </q-td>
+                  <q-td
+                    key="code_client_name"
+                    :props="props"
+                  >
+                    {{ props.row.code_client_name }}
+                  </q-td>
+                  <q-td
+                    key="place"
+                    :props="props"
+                  >
+                    {{ props.row.place }}
+                  </q-td>
+                  <q-td
+                    key="kg"
+                    :props="props"
+                  >
+                    {{ props.row.kg }}
+                  </q-td>
+                  <q-td
+                    key="category_name"
+                    :props="props"
+                  >
+                    {{ props.row.category_name }}
+                  </q-td>
+                  <q-td
+                    key="fax_name"
+                    :props="props"
+                  >
+                    {{ props.row.fax_name }}
+                  </q-td>
+                  <q-td
+                    key="user_name"
+                    :props="props"
+                  >
+                    {{ props.row.user_name }}
+                  </q-td>
+                  <q-td
+                    key="shop"
+                    :props="props"
+                  >
+                    {{ props.row.shop }}
+                  </q-td>
+                  <q-td
+                    key="notation"
+                    :props="props"
+                  >
+                    {{ props.row.notation }}
+                  </q-td>
+                  <q-td
+                    key="created_at"
+                    :props="props"
+                  >
+                    {{ props.row.created_at | formatToDotDate }}
+                  </q-td>
+                  <q-td
+                    key="things"
+                    :props="props"
+                  >
+                    {{ props.row.things | thingsFilter }}
+                  </q-td>
+                </q-tr>
+              </template>
+            </BaseTable>
+          </q-tab-panel>
 
-                <q-tab-panels v-model="tab" animated>
-                    <q-tab-panel name="cargo">
-                        <Table
-                            :table-data-s="cargoTableData.data"
-                            :table-data="cargoTableData">
-                            <template v-slot:inner-bottom-row>
-                                <div>
-                                    <div v-if="cargoTableData.selected.length">
-                                        Сумма: {{ calcSelected }}
-                                    </div>
-                                    <div v-else>
-                                        Сумма: {{ calcData }}
-                                    </div>
-                                </div>
+          <q-tab-panel name="storehouse">
+            <BaseTable
+              title="Склад"
+              :entry-data="storehouseTableData.data"
+              :entry-columns="storehouseTableData.columns"
+            >
+              <template v-slot:inner-item="{props}">
+                <div
+                  class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+                  :style="props.selected ? 'transform: scale(0.95);' : ''"
+                >
+                  <q-card :class="props.selected ? 'bg-grey-2' : ''">
+                    <q-list dense separator>
+                      <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
+                        <q-item-section>
+                          <q-item-label>{{ col.label }}</q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-item-label v-if="col.field === 'things'" caption lines="4">{{ col.value | thingsFilter }}
+                          </q-item-label>
+                          <q-item-label v-else-if="col.field === 'created_at'" caption>{{ col.value | formatToDotDate
+                            }}
+                          </q-item-label>
+                          <q-item-label v-else caption>{{ col.value }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card>
+                </div>
+              </template>
 
-                            </template>
-                        </Table>
-                    </q-tab-panel>
+              <template v-slot:inner-body="{props}">
+                <q-tr :props="props">
+                  <q-td
+                    key="code_place"
+                    :props="props"
+                  >
+                    {{ props.row.code_place }}
+                  </q-td>
+                  <q-td
+                    key="code_client_name"
+                    :props="props"
+                  >
+                    {{ props.row.code_client_name }}
+                  </q-td>
+                  <q-td
+                    key="place"
+                    :props="props"
+                  >
+                    {{ props.row.place }}
+                  </q-td>
+                  <q-td
+                    key="kg"
+                    :props="props"
+                  >
+                    {{ props.row.kg }}
+                  </q-td>
+                  <q-td
+                    key="category_name"
+                    :props="props"
+                  >
+                    {{ props.row.category_name }}
+                  </q-td>
+                  <q-td
+                    key="user_name"
+                    :props="props"
+                  >
+                    {{ props.row.user_name }}
+                  </q-td>
+                  <q-td
+                    key="shop"
+                    :props="props"
+                  >
+                    {{ props.row.shop }}
+                  </q-td>
+                  <q-td
+                    key="notation"
+                    :props="props"
+                  >
+                    {{ props.row.notation }}
+                  </q-td>
+                  <q-td
+                    key="created_at"
+                    :props="props"
+                  >
+                    {{ props.row.created_at | formatToDotDate }}
+                  </q-td>
+                  <q-td
+                    key="things"
+                    :props="props"
+                  >
+                    {{ props.row.things | thingsFilter }}
+                  </q-td>
+                </q-tr>
+              </template>
+            </BaseTable>
+          </q-tab-panel>
+          <q-tab-panel name="faxes">
+            <BaseTable
+              title="Факсы"
+              :entry-data="faxesTableData.data"
+              :entry-columns="faxesTableData.columns"
+            >
+              <template v-slot:inner-item="{props}">
+                <div
+                  class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+                  :style="props.selected ? 'transform: scale(0.95);' : ''"
+                >
+                  <q-card :class="props.selected ? 'bg-grey-2' : ''">
+                    <q-list dense separator>
+                      <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
+                        <q-item-section>
+                          <q-item-label>{{ col.label }}</q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-item-label v-if="col.field === 'things'" caption lines="4">{{ col.value | thingsFilter }}
+                          </q-item-label>
+                          <q-item-label v-else-if="col.field === 'created_at'" caption>{{ col.value | formatToDotDate
+                            }}
+                          </q-item-label>
+                          <q-item-label v-else caption>{{ col.value }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card>
+                </div>
+              </template>
 
-                    <q-tab-panel name="debts">
-                        <Table
-                            :table-data-s="debtsTableData.data"
-                            :tableData="debtsTableData"
-                        >
-
-                        </Table>
-                    </q-tab-panel>
-
-                    <q-tab-panel name="storehouse">
-                        <Table
-                            :table-data-s="skladTableData.data"
-                            :tableData="skladTableData"
-                        >
-
-                        </Table>
-                    </q-tab-panel>
-                    <q-tab-panel name="faxes">
-                        <Table
-                            :table-data-s="faxesTableData.data"
-                            :tableData="faxesTableData"
-                        >
-                            <template v-slot:inner-body="{props}">
-                                <q-tr :props="props"
-                                      :class="[props.row.delivered ? 'table__tr_green_bg' : 'table__tr_red_bg']">
-                                    <q-td auto-width>
-                                        <q-checkbox v-model="props.selected" :dense="$q.screen.xs || $q.screen.sm" />
-                                    </q-td>
-
-                                    <q-td key="fax" :props="props">
-                                        {{ props.row.fax }}
-                                        <Icon
-                                            :name="props.expand ? 'arrow_drop_up' : 'arrow_drop_down'"
-                                            :size="$q.screen.xs"
-                                            :tooltip="props.expand ? 'hide' : 'reveal'"
-                                            @iconClick="props.expand = !props.expand"
-                                        />
-                                    </q-td>
-                                    <q-td key="place" :props="props">{{ props.row.place }}</q-td>
-                                    <q-td key="kg" :props="props">{{ props.row.kg }}</q-td>
-                                    <q-td key="category" :props="props">{{ props.row.category }}</q-td>
-                                    <q-td key="for_kg" :props="props">{{ props.row.for_kg }}</q-td>
-                                    <q-td key="for_place" :props="props">{{ props.row.for_place }}</q-td>
-                                    <q-td key="notation" :props="props">{{ props.row.notation }}</q-td>
-                                </q-tr>
-                                <q-tr v-show="props.expand">
-                                    <q-td colspan="100%">
-                                        <q-table
-                                            title="Treats"
-                                            :data="faxesTableData.data"
-                                            :columns="faxesTableData.columns"
-                                            row-key="name"
-                                        />
-                                    </q-td>
-                                </q-tr>
-                            </template>
-                        </Table>
-                    </q-tab-panel>
-                </q-tab-panels>
-            </q-card-section>
-        </q-card>
-    </div>
+              <template v-slot:inner-body="{props}">
+                <q-tr :props="props">
+                  <q-td
+                    key="code_place"
+                    :props="props"
+                  >
+                    {{ props.row.code_place }}
+                  </q-td>
+                  <q-td
+                    key="code_client_name"
+                    :props="props"
+                  >
+                    {{ props.row.code_client_name }}
+                  </q-td>
+                  <q-td
+                    key="place"
+                    :props="props"
+                  >
+                    {{ props.row.place }}
+                  </q-td>
+                  <q-td
+                    key="kg"
+                    :props="props"
+                  >
+                    {{ props.row.kg }}
+                  </q-td>
+                  <q-td
+                    key="category_name"
+                    :props="props"
+                  >
+                    {{ props.row.category_name }}
+                  </q-td>
+                  <q-td
+                    key="fax_name"
+                    :props="props"
+                  >
+                    {{ props.row.fax_name }}
+                  </q-td>
+                  <q-td
+                    key="user_name"
+                    :props="props"
+                  >
+                    {{ props.row.user_name }}
+                  </q-td>
+                  <q-td
+                    key="shop"
+                    :props="props"
+                  >
+                    {{ props.row.shop }}
+                  </q-td>
+                  <q-td
+                    key="notation"
+                    :props="props"
+                  >
+                    {{ props.row.notation }}
+                  </q-td>
+                  <q-td
+                    key="created_at"
+                    :props="props"
+                  >
+                    {{ props.row.created_at | formatToDotDate }}
+                  </q-td>
+                  <q-td
+                    key="things"
+                    :props="props"
+                  >
+                    {{ props.row.things | thingsFilter }}
+                  </q-td>
+                </q-tr>
+              </template>
+            </BaseTable>
+          </q-tab-panel>
+        </q-tab-panels>
+      </q-card-section>
+    </q-card>
+  </q-page>
 </template>
 
 <script>
-    import { getUrl } from 'src/tools/url';
-    // import { sortArrayCollection } from 'src/utils/sort';
-
     export default {
         name: 'Search',
         components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            SelectWithSearchInput: () => import('src/components/Elements/SelectWithSearchInput.vue'),
-            Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
-            Badge: () => import('src/components/Elements/Badge.vue'),
+            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+            BaseTable: () => import('src/components/Elements/Table/BaseTable.vue'),
         },
         data() {
             return {
-                options: [],
-                searchOptions: [],
-                badges: {
-                    cargo: 0,
-                    debts: 0,
-                    storehouse: 0,
-                    faxes: 0,
-                },
-                inputData: {
-                    options: [],
-                    objectOptions: [],
-                    value: null,
-                    label: this.$t('codes'),
-                    selected: [],
-                },
-                tab: 'cargo',
-                cargoTableData: {
+                clientId: null,
+                clientsOptions: [],
+                tab: 'storehouse',
+                storehouseTableData: {
                     data: [],
-                    title: '',
-                    viewBody: false,
-                    viewTop: true,
                     selected: [],
                     columns: [
                         {
-                            name: 'created_at',
-                            required: true,
-                            label: this.$t('date'),
+                            name: 'code_place',
+                            label: 'Код',
                             align: 'center',
-                            field: 'created_at',
+                            field: 'code_place',
                             sortable: true,
                         },
                         {
-                            name: 'type',
-                            label: this.$t('type'),
-                            field: 'type',
+                            name: 'code_client_name',
+                            label: 'Клиент',
                             align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sum',
-                            label: this.$t('sum'),
-                            field: 'sum',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                    visibleColumns: ['created_at', 'type', 'sum', 'notation'],
-                },
-                debtsTableData: {
-                    data: [],
-                    title: '',
-                    viewBody: false,
-                    viewTop: true,
-                    selected: [],
-                    columns: [
-                        {
-                            name: 'created_at',
-                            required: true,
-                            label: this.$t('date'),
-                            align: 'center',
-                            field: 'created_at',
-                            sortable: true,
-                        },
-                        {
-                            name: 'type',
-                            label: this.$t('type'),
-                            field: 'type',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sum',
-                            label: this.$t('sum'),
-                            field: 'sum',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                    visibleColumns: ['created_at', 'type', 'sum', 'notation'],
-                },
-                skladTableData: {
-                    data: [],
-                    title: this.$t('storehouse'),
-                    viewBody: false,
-                    viewTop: true,
-                    selected: [],
-                    columns: [
-                        {
-                            name: 'code',
-                            label: this.$t('code.one'),
-                            align: 'center',
-                            field: 'code',
-                            sortable: true,
-                        },
-                        {
-                            name: 'client',
-                            label: this.$t('customer'),
-                            align: 'center',
-                            field: 'client',
+                            field: 'code_client_name',
                             sortable: true,
                         },
                         {
@@ -264,9 +394,9 @@
                             sortable: true,
                         },
                         {
-                            name: 'category',
+                            name: 'category_name',
                             label: this.$t('category'),
-                            field: 'category',
+                            field: 'category_name',
                             align: 'center',
                             sortable: true,
                         },
@@ -278,16 +408,16 @@
                             sortable: true,
                         },
                         {
-                            name: 'city',
-                            label: this.$t('city'),
-                            field: 'city',
+                            name: 'notation',
+                            label: this.$t('notation'),
+                            field: 'notation',
                             align: 'center',
                             sortable: true,
                         },
                         {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
+                            name: 'created_at',
+                            label: 'Дата добавления',
+                            field: 'created_at',
                             align: 'center',
                             sortable: true,
                         },
@@ -299,20 +429,24 @@
                             sortable: true,
                         },
                     ],
-                    visibleColumns: ['code', 'client', 'place', 'kg', 'category', 'shop', 'city', 'notation', 'things'],
+                    visibleColumns: ['code_place', 'code_client_name', 'place', 'kg', 'category_name', 'shop', 'notation', 'things', 'created_at'],
                 },
-                faxesTableData: {
+                basketTableData: {
                     data: [],
-                    title: this.$t('storehouse'),
-                    viewBody: true,
-                    viewTop: true,
                     selected: [],
                     columns: [
                         {
-                            name: 'fax',
-                            label: this.$t('fax'),
+                            name: 'code_place',
+                            label: 'Код',
                             align: 'center',
-                            field: 'fax',
+                            field: 'code_place',
+                            sortable: true,
+                        },
+                        {
+                            name: 'code_client_name',
+                            label: 'Клиент',
+                            align: 'center',
+                            field: 'code_client_name',
                             sortable: true,
                         },
                         {
@@ -330,23 +464,30 @@
                             sortable: true,
                         },
                         {
-                            name: 'category',
+                            name: 'category_name',
                             label: this.$t('category'),
-                            field: 'category',
+                            field: 'category_name',
                             align: 'center',
                             sortable: true,
                         },
                         {
-                            name: 'for_kg',
-                            label: this.$t('forKg'),
-                            field: 'for_kg',
+                            name: 'fax_name',
+                            label: 'Факс',
+                            field: 'fax_name',
                             align: 'center',
                             sortable: true,
                         },
                         {
-                            name: 'for_place',
-                            label: this.$t('forPlace'),
-                            field: 'for_place',
+                            name: 'user_name',
+                            label: 'Пользователь',
+                            field: 'user_name',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'shop',
+                            label: this.$t('shop'),
+                            field: 'shop',
                             align: 'center',
                             sortable: true,
                         },
@@ -357,32 +498,125 @@
                             align: 'center',
                             sortable: true,
                         },
+                        {
+                            name: 'created_at',
+                            label: 'Дата удаления',
+                            field: 'created_at',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'things',
+                            label: this.$t('things'),
+                            field: 'things',
+                            align: 'center',
+                            sortable: true,
+                        },
                     ],
-                    visibleColumns: ['fax', 'place', 'kg', 'category', 'for_kg', 'for_place', 'notation'],
+                    visibleColumns: ['code_place', 'code_client_name', 'place', 'fax_name', 'kg', 'category_name', 'shop', 'notation', 'things', 'created_at'],
+                },
+                faxesTableData: {
+                    data: [],
+                    selected: [],
+                    columns: [
+                        {
+                            name: 'code_place',
+                            label: 'Код',
+                            align: 'center',
+                            field: 'code_place',
+                            sortable: true,
+                        },
+                        {
+                            name: 'code_client_name',
+                            label: 'Клиент',
+                            align: 'center',
+                            field: 'code_client_name',
+                            sortable: true,
+                        },
+                        {
+                            name: 'place',
+                            label: this.$t('place'),
+                            field: 'place',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'kg',
+                            label: this.$t('kg'),
+                            field: 'kg',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'category_name',
+                            label: this.$t('category'),
+                            field: 'category_name',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'fax_name',
+                            label: 'Факс',
+                            field: 'fax_name',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'user_name',
+                            label: 'Пользователь',
+                            field: 'user_name',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'shop',
+                            label: this.$t('shop'),
+                            field: 'shop',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'notation',
+                            label: this.$t('notation'),
+                            field: 'notation',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'created_at',
+                            label: 'Дата',
+                            field: 'created_at',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'things',
+                            label: this.$t('things'),
+                            field: 'things',
+                            align: 'center',
+                            sortable: true,
+                        },
+                    ],
+                    visibleColumns: ['code_place', 'code_client_name', 'place', 'fax_name', 'kg', 'category_name', 'shop', 'notation', 'things', 'created_at'],
                 },
             };
         },
-        computed: {
-            calcData() {
-                return this.calc(this.cargoTableData.data, 'sum');
-            },
-            calcSelected() {
-                return this.calc(this.cargoTableData.selected, 'sum');
+        watch: {
+            clientId(val) {
+                this.getClientData(val);
             },
         },
         created() {
             this.fetchClientList();
         },
         methods: {
-            fetchClientList() {
+            async fetchClientList() {
                 this.$q.loading.show();
-                this.$axios.get(getUrl('codeList'))
-                  .then(({ data }) => {
-                      devlog.log('RESPON', data);
-                      // const sorted = sortArrayCollection(data.data, 'label');
-                      // const clone = _.cloneDeep(data);
-                      this.searchOptions = data;
-                      this.options = data;
+                const { getUrl } = await import('src/tools/url');
+                await this.$axios.get(getUrl('codeList'))
+                  .then(({ data: { codeList } }) => {
+                      devlog.log('RESPON', codeList);
+                      this.clientsOptions = codeList;
                       this.$q.loading.hide();
                   })
                   .catch(() => {
@@ -392,54 +626,18 @@
             async getClientData(codeID) {
                 devlog.log('INPUTDATA', codeID);
                 this.$q.loading.show();
-                const tableTitle = _.find(this.searchOptions, { value: codeID }).label;
-                this.cargoTableData.title = tableTitle;
-                this.debtsTableData.title = tableTitle;
+                const { getUrl } = await import('src/tools/url');
                 await this.$axios.get(`${getUrl('clientData')}/${codeID}`)
-                  .then(({ data }) => {
-                      this.cargoTableData.data = data.cargo;
-                      this.debtsTableData.data = data.debts;
-                      this.skladTableData.data = data.storehouse;
-                      this.faxesTableData.data = this.prepareFaxesTableData(data.faxes);
-                      this.badges.cargo = data.sumCargo;
-                      this.badges.debts = data.sumDebts;
-                      this.badges.storehouse = data.storehouse.length;
-                      this.badges.faxes = data.faxesCount;
+                  .then(({ data: { storehouse, faxes, destroyed } }) => {
+                      this.storehouseTableData.data = storehouse;
+                      this.faxesTableData.data = faxes;
+                      this.basketTableData.data = _.map(destroyed, (item) => _.assign(item, JSON.parse(item.history_data)));
                       this.$q.loading.hide();
                   })
                   .catch((errors) => {
                       this.$q.loading.hide();
                       devlog.log(errors);
                   });
-            },
-            calc(arr, value) {
-                return _.sumBy(arr, value);
-            },
-            prepareFaxesTableData(data) {
-                const newArr = [];
-                _.forEach(data, (value) => {
-                    const obj = {};
-                    if (_.isArray(value)) {
-                        const first = _.first(value);
-                        _.assign(obj, first[0]);
-                        obj.arr = first;
-                        obj.kg = _.sumBy(first, 'kg');
-                        obj.place = _.sumBy(first, 'place');
-                        newArr.push(obj);
-                    } else if (_.isObject(value)) {
-                        _.forEach(value, (item) => {
-                            devlog.log('value', item);
-                            const obj2 = {};
-                            _.assign(obj2, item[0]);
-                            obj2.arr = item;
-                            obj2.kg = _.sumBy(item, 'kg');
-                            obj2.place = _.sumBy(item, 'place');
-                            newArr.push(obj2);
-                        });
-                    }
-                });
-                devlog.log('newArr', newArr);
-                return newArr;
             },
         },
     };

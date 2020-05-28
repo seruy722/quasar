@@ -27,7 +27,7 @@
           <IconBtn
             color="orange"
             tooltip="Статистика"
-            icon="show_chart"
+            icon="trending_up"
             class="q-ml-sm"
             @iconBtnClick="dialogStatistics = true"
           />

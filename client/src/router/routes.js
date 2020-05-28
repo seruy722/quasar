@@ -97,17 +97,21 @@ const routes = [
       //   },
       //   component: () => import('pages/Drafts.vue'),
       // },
-      // {
-      //   path: 'search',
-      //   name: 'search',
-      //   meta: {
-      //     title: 'search',
-      //     middleware: [
-      //       auth,
-      //     ],
-      //   },
-      //   component: () => import('pages/Search.vue'),
-      // },
+      {
+        path: 'search',
+        name: 'search',
+        meta: {
+          title: 'search',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin', 'moder'],
+            permissions: [],
+          },
+        },
+        component: () => import('pages/Search.vue'),
+      },
     ],
   },
   {

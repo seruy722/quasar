@@ -6,19 +6,14 @@ use App\cargoTable;
 use App\Category;
 use App\Code;
 use App\debtsTable;
-use App\Fax;
-use App\FaxData;
-use App\Http\Resources\FaxDataResource;
-use App\Http\Resources\FaxResource;
-use App\Http\Resources\SkladResource;
+use App\History;
 use App\Imports\ImportData;
 use App\Sklad;
+use App\StorehouseData;
 use App\Test;
-use function foo\func;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use mysql_xdevapi\Collection;
 
 class CommonController extends Controller
 {
@@ -142,18 +137,53 @@ class CommonController extends Controller
 
     public function getData($codeID)
     {
-        $cargo = cargoTable::where('code_id', $codeID)->get();
-        $debts = debtsTable::where('code_id', $codeID)->get();
-        $sklad = SkladResource::collection(Sklad::with(['customer', 'category'])->get());
-//        $faxesData = FaxDataResource::collection(FaxData::where('code_id', $codeID)->orderBy('created_at', 'DESC')->get());
-        $faxesData = FaxDataResource::collection(FaxData::with(['customer', 'category', 'fax'])->where('code_id', $codeID)->orderBy('id', 'DESC')->get());
-        $faxesData = $faxesData->groupBy('category_id')->map(function (\Illuminate\Support\Collection $category) {
-            return $category->groupBy(function ($kg) {
-                return (string)$kg->for_kg;
-            });
-        });
+        $storehouseData = StorehouseData::select(
+            'storehouse_data.id',
+            'storehouse_data.code_place',
+            'storehouse_data.code_client_id',
+            'storehouse_data.place',
+            'storehouse_data.kg',
+            'storehouse_data.fax_id',
+            'storehouse_data.shop',
+            'storehouse_data.things',
+            'storehouse_data.notation',
+            'storehouse_data.category_id',
+            'storehouse_data.brand',
+            'storehouse_data.created_at',
+            'codes.code as code_client_name',
+            'categories.name as category_name'
+        )
+            ->where('code_client_id', $codeID)
+            ->where('fax_id', 0)
+            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
+            ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
+            ->get();
+        $faxesData = StorehouseData::select(
+            'storehouse_data.id',
+            'storehouse_data.code_place',
+            'storehouse_data.code_client_id',
+            'storehouse_data.place',
+            'storehouse_data.kg',
+            'storehouse_data.fax_id',
+            'storehouse_data.shop',
+            'storehouse_data.things',
+            'storehouse_data.notation',
+            'storehouse_data.category_id',
+            'storehouse_data.brand',
+            'storehouse_data.created_at',
+            'codes.code as code_client_name',
+            'categories.name as category_name',
+            'faxes.name as fax_name'
+        )
+            ->where('code_client_id', $codeID)
+            ->where('fax_id', '>', 0)
+            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
+            ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
+            ->leftJoin('faxes', 'faxes.id', '=', 'storehouse_data.fax_id')
+            ->get();
+        $destroyedEntries = History::where('action', 'destroy')->where('history_data', 'like', '%' . '"code_client_id": ' . $codeID . '%')->get();
 
-        return response(['cargo' => $cargo, 'debts' => $debts, 'storehouse' => $sklad, 'faxes' => $faxesData, 'faxesCount' => FaxData::where('code_id', $codeID)->count(), 'sumCargo' => $cargo->sum('sum'), 'sumDebts' => $debts->sum('sum')]);
+        return response(['destroyed' => $destroyedEntries, 'storehouse' => $storehouseData, 'faxes' => $faxesData]);
     }
 
     public function uploadFaxes(Request $request)

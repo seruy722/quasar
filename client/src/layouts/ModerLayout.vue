@@ -67,8 +67,6 @@
 </template>
 
 <script>
-    // import { getLSKey } from 'src/tools/lsKeys';
-    // import showNotif from 'src/mixins/showNotif';
     import accessFunc from 'src/tools/access';
 
     export default {
@@ -76,7 +74,6 @@
         components: {
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
-        // mixins: [showNotif],
         data() {
             this.$_menu = [
                 {
@@ -109,7 +106,7 @@
                 {
                     title: 'faxes',
                     field: 'faxes',
-                    icon: 'person',
+                    icon: 'library_books',
                     access: {
                         roles: ['admin', 'fax'],
                         permissions: ['view faxes list'],
@@ -129,11 +126,15 @@
                     field: 'drafts',
                     icon: 'drafts',
                 },
-                // {
-                //     title: 'search',
-                //     field: 'search',
-                //     icon: 'search',
-                // },
+                {
+                    title: 'search',
+                    field: 'search',
+                    icon: 'search',
+                    access: {
+                        roles: ['admin', 'moder'],
+                        permissions: [],
+                    },
+                },
                 {
                     title: 'access',
                     field: 'access',
