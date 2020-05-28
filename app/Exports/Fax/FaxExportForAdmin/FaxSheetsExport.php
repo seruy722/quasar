@@ -11,19 +11,20 @@ class FaxSheetsExport implements WithMultipleSheets
     use Exportable;
 
     protected $faxID;
-    protected $transporterID;
+    protected $ids;
 
-    public function __construct($faxID)
+    public function __construct($faxID, $ids)
     {
         $this->faxID = $faxID;
+        $this->ids = $ids;
     }
 
     public function sheets(): array
     {
         $sheets = [];
-        $sheets[] = new FaxCommonSheetExport($this->faxID);
-        $sheets[] = new FaxMainSheetExport($this->faxID);
-        $sheets[] = new FaxPriceSheetExport($this->faxID);
+        $sheets[] = new FaxCommonSheetExport($this->faxID, $this->ids);
+        $sheets[] = new FaxMainSheetExport($this->faxID, $this->ids);
+        $sheets[] = new FaxPriceSheetExport($this->faxID, $this->ids);
         return $sheets;
     }
 }

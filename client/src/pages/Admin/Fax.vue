@@ -666,6 +666,7 @@
             exportFaxData() {
                 this.exportDataToExcel(getUrl('exportFaxAdminData'), {
                     id: this.currentFaxItem.id,
+                    ids: _.map(this.faxTableReactiveProperties.selected, 'id'),
                 }, `${this.currentFaxItem.name}.xlsx`);
             },
             searchInList(val, arrayName) {

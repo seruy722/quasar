@@ -29,7 +29,7 @@ class FaxPriceSheetExport implements FromCollection, ShouldAutoSize, WithTitle, 
     protected $brands;
     protected $data2;
 
-    public function __construct($faxID)
+    public function __construct($faxID, $ids)
     {
         $this->faxID = $faxID;
 
@@ -40,10 +40,27 @@ class FaxPriceSheetExport implements FromCollection, ShouldAutoSize, WithTitle, 
             ->selectRaw('AVG(storehouse_data.for_place)')
             ->selectRaw('SUM(storehouse_data.kg) * AVG(storehouse_data.for_kg) + AVG(storehouse_data.for_place) * SUM(storehouse_data.place)  as sum')
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
-            ->where('storehouse_data.fax_id', $this->faxID)
-            ->orderByRaw('CONVERT(codes.code, UNSIGNED INTEGER)')
-            ->groupBy('code_client_id', 'category_id')
-            ->get();
+//            ->where('storehouse_data.fax_id', $this->faxID)
+            ->groupBy('code_client_id', 'category_id');
+//            ->get();
+
+
+        $this->brands = StorehouseData::select('codes.code')
+            ->selectRaw('SUM(storehouse_data.place) as place')
+            ->selectRaw('SUM(storehouse_data.kg) as kg')
+            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
+//            ->where('storehouse_data.fax_id', $this->faxID)
+            ->where('storehouse_data.brand', true)
+            ->groupBy('code_client_id', 'category_id');
+//            ->get();
+
+        if (!empty($ids)) {
+            $this->brands = $this->brands->whereIn('storehouse_data.id', $ids)->get();
+            $this->data = $this->data->whereIn('storehouse_data.id', $ids)->get();
+        } else {
+            $this->brands = $this->brands->where('storehouse_data.fax_id', $this->faxID)->get();
+            $this->data = $this->data->where('storehouse_data.fax_id', $this->faxID)->get();
+        }
 
         $this->data = $this->data->map(function ($item) {
             $item['sum'] = round($item['sum']);
@@ -60,16 +77,8 @@ class FaxPriceSheetExport implements FromCollection, ShouldAutoSize, WithTitle, 
         $this->sumPlace = $this->countSum($this->data, 'place');
         $this->sumKg = $this->countSum($this->data, 'kg');
         $this->sum = $this->countSum($this->data, 'sum');
-
-        $this->brands = StorehouseData::select('codes.code')
-            ->selectRaw('SUM(storehouse_data.place) as place')
-            ->selectRaw('SUM(storehouse_data.kg) as kg')
-            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
-            ->where('storehouse_data.fax_id', $this->faxID)
-            ->where('storehouse_data.brand', true)
-            ->groupBy('code_client_id', 'category_id')
-            ->get();
     }
+
 
     public function countEntries()
     {

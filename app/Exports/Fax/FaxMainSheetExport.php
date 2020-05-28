@@ -19,7 +19,7 @@ class FaxMainSheetExport implements FromCollection, ShouldAutoSize, WithTitle, W
     protected $sumKg = 0;
     protected $moreEntries = 2;
 
-    public function __construct($id)
+    public function __construct($id, $ids)
     {
         $data = StorehouseData::select('codes.code')
             ->selectRaw('SUM(storehouse_data.place) as place')
@@ -28,10 +28,14 @@ class FaxMainSheetExport implements FromCollection, ShouldAutoSize, WithTitle, W
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
             ->where('storehouse_data.storehouse_id', 1)
-            ->where('storehouse_data.fax_id', $id)
             ->where('storehouse_data.destroyed', false)
-            ->groupBy('code_client_id', 'category_id')
-            ->get();
+            ->groupBy('code_client_id', 'category_id');
+
+        if (!empty($ids)) {
+            $data = $data->whereIn('storehouse_data.id', $ids)->get();
+        } else {
+            $data = $data->where('storehouse_data.fax_id', $id)->get();
+        }
 
 
         $categories = \App\Category::select('id as value', 'name as label')->get();

@@ -13,12 +13,14 @@ use Maatwebsite\Excel\Events\AfterSheet;
 class FaxCommonSheetExport implements FromView, ShouldAutoSize, WithEvents, WithTitle
 {
     protected $id;
+    protected $ids;
     protected $data;
     protected $categories;
 
-    public function __construct($id)
+    public function __construct($id, $ids)
     {
         $this->id = $id;
+        $this->ids = $ids;
     }
 
     public function view(): View
@@ -36,10 +38,8 @@ class FaxCommonSheetExport implements FromView, ShouldAutoSize, WithEvents, With
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
             ->orderBy('place', 'DESC')
             ->where('storehouse_data.storehouse_id', 1)
-            ->where('storehouse_data.fax_id', $this->id)
             ->where('storehouse_data.destroyed', false)
-            ->groupBy('category_id')
-            ->get();
+            ->groupBy('category_id');
 
         $data = StorehouseData::select(
             'storehouse_data.code_place',
@@ -54,9 +54,15 @@ class FaxCommonSheetExport implements FromView, ShouldAutoSize, WithEvents, With
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
             ->where('storehouse_data.storehouse_id', 1)
-            ->where('storehouse_data.fax_id', $this->id)
-            ->where('storehouse_data.destroyed', false)
-            ->get();
+            ->where('storehouse_data.destroyed', false);
+
+        if (!empty($this->ids)) {
+            $this->categories = $this->categories->whereIn('storehouse_data.id', $this->ids)->get();
+            $data = $data->whereIn('storehouse_data.id', $this->ids)->get();
+        } else {
+            $this->categories = $this->categories->where('storehouse_data.fax_id', $this->id)->get();
+            $data = $data->where('storehouse_data.fax_id', $this->id)->get();
+        }
 
         $this->data = $data->sort(function ($a, $b) {
             if ($a['code_client_name'] == $b['code_client_name']) {

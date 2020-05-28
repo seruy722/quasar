@@ -737,8 +737,10 @@
                 }
             },
             exportFaxData() {
+                const ids = _.map(this.faxTableReactiveProperties.selected, 'id');
                 this.exportDataToExcel(getUrl('exportFaxModerData'), {
                     id: this.currentFaxItem.id,
+                    ids,
                 }, `${this.currentFaxItem.name}.xlsx`);
             },
             searchInList(val, arrayName) {

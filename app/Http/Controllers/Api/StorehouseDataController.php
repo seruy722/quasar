@@ -282,9 +282,9 @@ class StorehouseDataController extends Controller
         return response($plucked);
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxSheetsExport(0), 'storehouseData.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxSheetsExport(0, $request->ids), 'storehouseData.xlsx');
     }
 
     public function storehouseDataHistory($id, $data, $action, $table)

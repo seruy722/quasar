@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Events\AfterSheet;
 class FaxMainSheetExport implements FromCollection, ShouldAutoSize, WithTitle, WithEvents, WithHeadings
 {
     protected $faxID;
+    protected $ids;
     protected $data;
     protected $headers = ['Клиент', 'Мест', 'Вес', 'За кг', 'За место', 'Сумма'];
     protected $countEntries;
@@ -29,9 +30,10 @@ class FaxMainSheetExport implements FromCollection, ShouldAutoSize, WithTitle, W
     protected $brands;
     protected $data2;
 
-    public function __construct($faxID)
+    public function __construct($faxID, $ids)
     {
         $this->faxID = $faxID;
+        $this->ids = $ids;
 
         $this->data = StorehouseData::select('codes.code as code')
             ->selectRaw('SUM(storehouse_data.place) as place')
@@ -40,12 +42,66 @@ class FaxMainSheetExport implements FromCollection, ShouldAutoSize, WithTitle, W
             ->selectRaw('AVG(storehouse_data.for_place)')
             ->selectRaw('SUM(storehouse_data.kg) * AVG(storehouse_data.for_kg) + AVG(storehouse_data.for_place) * SUM(storehouse_data.place)  as sum')
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
-            ->where('storehouse_data.fax_id', $this->faxID)
+//            ->where('storehouse_data.fax_id', $this->faxID)
+            ->groupBy('code_client_id', 'category_id');
+//            ->get();
+
+        $this->brands = StorehouseData::select('codes.code')
+            ->selectRaw('SUM(storehouse_data.place) as place')
+            ->selectRaw('SUM(storehouse_data.kg) as kg')
+            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
+//            ->where('storehouse_data.fax_id', $this->faxID)
+            ->where('storehouse_data.brand', true)
+            ->groupBy('code_client_id', 'category_id');
+//            ->get();
+
+        $this->categories = StorehouseData::select('categories.name')
+            ->selectRaw('SUM(storehouse_data.place) as place')
+            ->selectRaw('SUM(storehouse_data.kg) as kg')
+            ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
+//            ->where('storehouse_data.fax_id', $this->faxID)
+            ->orderBy('kg', 'DESC')
+            ->groupBy('category_id');
+//            ->get();
+
+        $this->data2 = StorehouseData::select('codes.code as code')
+            ->selectRaw('SUM(storehouse_data.place) as place')
+            ->selectRaw('SUM(storehouse_data.kg) as kg')
+            ->selectRaw('SUM(storehouse_data.kg) * AVG(storehouse_data.for_kg) + AVG(storehouse_data.for_place) * SUM(storehouse_data.place)  as sum')
+            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
+//            ->where('storehouse_data.fax_id', $this->faxID)
             ->orderByRaw('CONVERT(codes.code, UNSIGNED INTEGER)')
-            ->groupBy('code_client_id', 'category_id')
-            ->get();
+            ->groupBy('code_client_id', 'category_id');
+//            ->get();
+
+        if (!empty($ids)) {
+            $this->categories = $this->categories->whereIn('storehouse_data.id', $this->ids)->get();
+            $this->brands = $this->brands->whereIn('storehouse_data.id', $this->ids)->get();
+            $this->data2 = $this->data2->whereIn('storehouse_data.id', $this->ids)->get();
+            $this->data = $this->data->whereIn('storehouse_data.id', $this->ids)->get();
+        } else {
+            $this->categories = $this->categories->where('storehouse_data.fax_id', $this->faxID)->get();
+            $this->brands = $this->brands->where('storehouse_data.fax_id', $this->faxID)->get();
+            $this->data2 = $this->data2->where('storehouse_data.fax_id', $this->faxID)->get();
+            $this->data = $this->data->where('storehouse_data.fax_id', $this->faxID)->get();
+        }
+
+        $this->categoriesPrice = TransporterFaxesPrice::select('categories.name', 'transporter_faxes_prices.category_price as price')
+            ->leftJoin('categories', 'categories.id', '=', 'transporter_faxes_prices.category_id')
+            ->where('fax_id', $this->faxID)->get();
 
         $this->data = $this->data->map(function ($item) {
+            $item['sum'] = round($item['sum']);
+            return $item;
+        })->sort(function ($a, $b) {
+            if ($a['code'] == $b['code']) {
+                return 0;
+            }
+
+            return ($a['code'] < $b['code']) ? -1 : 1;
+        });
+
+        $this->data2 = $this->data2->map(function ($item) {
             $item['sum'] = round($item['sum']);
             return $item;
         })->sort(function ($a, $b) {
@@ -60,49 +116,6 @@ class FaxMainSheetExport implements FromCollection, ShouldAutoSize, WithTitle, W
         $this->sumPlace = $this->countSum($this->data, 'place');
         $this->sumKg = $this->countSum($this->data, 'kg');
         $this->sum = $this->countSum($this->data, 'sum');
-
-        $this->brands = StorehouseData::select('codes.code')
-            ->selectRaw('SUM(storehouse_data.place) as place')
-            ->selectRaw('SUM(storehouse_data.kg) as kg')
-            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
-            ->where('storehouse_data.fax_id', $this->faxID)
-            ->where('storehouse_data.brand', true)
-            ->groupBy('code_client_id', 'category_id')
-            ->get();
-
-        $this->categories = StorehouseData::select('categories.name')
-            ->selectRaw('SUM(storehouse_data.place) as place')
-            ->selectRaw('SUM(storehouse_data.kg) as kg')
-            ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
-            ->where('storehouse_data.fax_id', $this->faxID)
-            ->orderBy('kg', 'DESC')
-            ->groupBy('category_id')
-            ->get();
-
-        $this->categoriesPrice = TransporterFaxesPrice::select('categories.name', 'transporter_faxes_prices.category_price as price')
-            ->leftJoin('categories', 'categories.id', '=', 'transporter_faxes_prices.category_id')
-            ->where('fax_id', $this->faxID)->get();
-
-        $this->data2 = StorehouseData::select('codes.code as code')
-            ->selectRaw('SUM(storehouse_data.place) as place')
-            ->selectRaw('SUM(storehouse_data.kg) as kg')
-            ->selectRaw('SUM(storehouse_data.kg) * AVG(storehouse_data.for_kg) + AVG(storehouse_data.for_place) * SUM(storehouse_data.place)  as sum')
-            ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
-            ->where('storehouse_data.fax_id', $this->faxID)
-            ->orderByRaw('CONVERT(codes.code, UNSIGNED INTEGER)')
-            ->groupBy('code_client_id', 'category_id')
-            ->get();
-
-        $this->data2 = $this->data2->map(function ($item) {
-            $item['sum'] = round($item['sum']);
-            return $item;
-        })->sort(function ($a, $b) {
-            if ($a['code'] == $b['code']) {
-                return 0;
-            }
-
-            return ($a['code'] < $b['code']) ? -1 : 1;
-        });
 
         $this->data2->prepend(['Клиент', 'Мест', 'Вес', 'Сумма']);
         $this->data2->prepend(['name' => null, 'code' => null]);
