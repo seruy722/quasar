@@ -131,8 +131,8 @@
                     field: 'search',
                     icon: 'search',
                     access: {
-                        roles: ['admin', 'moder'],
-                        permissions: [],
+                        roles: ['admin'],
+                        permissions: ['view search page'],
                     },
                 },
                 {
