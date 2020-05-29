@@ -232,8 +232,8 @@ const routes = [
             auth,
           ],
           accessData: {
-            roles: ['admin', 'moder'],
-            permissions: [],
+            roles: ['admin'],
+            permissions: ['view search page'],
           },
         },
         component: () => import('pages/Search.vue'),
