@@ -6,11 +6,9 @@ use App\StorehouseData;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithTitle;
-use Maatwebsite\Excel\Events\AfterSheet;
 
-class FaxCommonSheetExport implements FromView, ShouldAutoSize, WithEvents, WithTitle
+class FaxCommonSheetExport implements FromView, ShouldAutoSize, WithTitle
 {
     protected $id;
     protected $ids;
@@ -49,7 +47,8 @@ class FaxCommonSheetExport implements FromView, ShouldAutoSize, WithEvents, With
             'categories.name as category_name',
             'storehouse_data.shop',
             'storehouse_data.notation',
-            'storehouse_data.things'
+            'storehouse_data.things',
+            'storehouse_data.brand'
         )
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
@@ -83,36 +82,5 @@ class FaxCommonSheetExport implements FromView, ShouldAutoSize, WithEvents, With
     public function title(): string
     {
         return 'Общее';
-    }
-
-    public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class => function (AfterSheet $event) {
-                $rows = $event->sheet->getDelegate()->toArray();
-                $countMainTableEntries = 0;
-                foreach ($rows as $key => $value) {
-                    if (!$value[2] && !$value[3] && !$value[7] && !$value[8]) {
-                        break;
-                    }
-                    $countMainTableEntries++;
-                }
-                $header = 'A1:I1';
-                $cellRange = 'A1:I' . ($countMainTableEntries);
-                $cellRangeWithCategories = 'A1:I' . ($countMainTableEntries + 4 + count($this->categories));
-                $event->sheet->getDelegate()->getStyle($header)->getFont()->setBold(500);
-                $event->sheet->getDelegate()->getStyle($cellRangeWithCategories)->getAlignment()->applyFromArray(array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
-                $event->sheet->getDelegate()->getStyle($cellRange)->getBorders()->getAllBorders()->applyFromArray(array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN));
-                // CATEGORIES
-                $categoriesCellRange = 'A' . ($countMainTableEntries + 4) . ':C' . ($countMainTableEntries + count($this->categories) + 4);
-                $event->sheet->getDelegate()->getStyle($categoriesCellRange)->getBorders()->getAllBorders()->applyFromArray(array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN));
-                $rows = $event->sheet->getDelegate()->toArray();
-                foreach ($rows as $key => $value) {
-                    if ($value[4] == 'Бренд' || $value[4] == 'Авиа') {
-                        $event->sheet->getDelegate()->getStyle('A' . ($key + 1) . ':I' . ($key + 1))->getFont()->setBold(500);
-                    }
-                }
-            }
-        ];
     }
 }
