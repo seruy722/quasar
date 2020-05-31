@@ -148,10 +148,12 @@ class FaxDataController extends Controller
             'storehouse_data.notation',
             'storehouse_data.category_id',
             'storehouse_data.brand',
+            'storehouse_data.delivery_method_id',
             'storehouse_data.created_at',
             'storehouse_data.updated_at',
             'codes.code as code_client_name',
-            'categories.name as category_name'
+            'categories.name as category_name',
+            'delivery_methods.name as delivery_method_name'
         );
         if (!auth()->user()->hasPermissionTo('view fax price')) {
             $queryData = StorehouseData::select(
@@ -166,14 +168,17 @@ class FaxDataController extends Controller
                 'storehouse_data.notation',
                 'storehouse_data.category_id',
                 'storehouse_data.brand',
+                'storehouse_data.delivery_method_id',
                 'storehouse_data.created_at',
                 'storehouse_data.updated_at',
                 'codes.code as code_client_name',
-                'categories.name as category_name'
+                'categories.name as category_name',
+                'delivery_methods.name as delivery_method_name'
             );
         }
         return $queryData->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
+            ->leftJoin('delivery_methods', 'delivery_methods.id', '=', 'storehouse_data.delivery_method_id')
             ->where('storehouse_data.storehouse_id', 1)
             ->where('storehouse_data.destroyed', false)
             ->orderBy('storehouse_data.id', 'desc');

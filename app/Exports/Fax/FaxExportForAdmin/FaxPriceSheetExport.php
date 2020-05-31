@@ -37,7 +37,7 @@ class FaxPriceSheetExport implements FromView, ShouldAutoSize, WithTitle
             ->selectRaw('SUM(storehouse_data.kg) * AVG(storehouse_data.for_kg) + AVG(storehouse_data.for_place) * SUM(storehouse_data.place)  as sum')
             ->selectRaw('AVG(storehouse_data.brand) as brand')
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
-            ->groupBy('code_client_id', 'category_id');
+            ->groupBy('code_client_id', 'category_id', 'delivery_method_id');
 
         if (!empty($this->ids)) {
             $this->data = $this->data->whereIn('storehouse_data.id', $this->ids)->get();

@@ -63,6 +63,7 @@ const urls = {
   cities: `${prefix}/cities`,
   thingsList: `${prefix}/thing-list`,
   shopsList: `${prefix}/shop-names`,
+  deliveryMethodsList: `${prefix}/delivery-methods-list`,
   transfers: `${prefix}/transfers`,
   updateTransfers: `${prefix}/update-transfers`,
   storeTransfers: `${prefix}/store-transfers`,

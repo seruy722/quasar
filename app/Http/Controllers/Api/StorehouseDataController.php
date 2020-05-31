@@ -63,13 +63,16 @@ class StorehouseDataController extends Controller
             'storehouse_data.notation',
             'storehouse_data.category_id',
             'storehouse_data.brand',
+            'storehouse_data.delivery_method_id',
             'storehouse_data.created_at',
             'storehouse_data.updated_at',
             'codes.code as code_client_name',
-            'categories.name as category_name'
+            'categories.name as category_name',
+            'delivery_methods.name as delivery_method_name'
         )
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
+            ->leftJoin('delivery_methods', 'delivery_methods.id', '=', 'storehouse_data.delivery_method_id')
             ->where('storehouse_data.storehouse_id', $id)
             ->where('storehouse_data.destroyed', false)
             ->orderBy('storehouse_data.id', 'desc');
@@ -125,6 +128,13 @@ class StorehouseDataController extends Controller
             'storehouse_id' => 1,
             'brand' => $category->name === 'Бренд',
         ];
+
+        $deliveryMethod = \App\CodeHasDeliveryMethod::where('code_id', $data['code_client_id'])->first();
+        if ($deliveryMethod) {
+            $saveData['delivery_method_id'] = $deliveryMethod->delivery_method_id;
+        } else {
+            \App\CodeHasDeliveryMethod::create(['code_id' => $data['code_client_id'], 'delivery_method_id' => 0]);
+        }
 
 
         if (array_key_exists('things', $data)) {
@@ -216,6 +226,12 @@ class StorehouseDataController extends Controller
             CodesPrices::create($arrForCreateCodePrice);
         }
 
+        if (array_key_exists('delivery_method_id', $data)) {
+            $entry = StorehouseData::find($request->id);
+            if ($entry) {
+                \App\CodeHasDeliveryMethod::updateOrCreate(['code_id' => $entry->code_client_id], ['delivery_method_id' => $data['delivery_method_id']]);
+            }
+        }
         if (array_key_exists('for_kg', $data) && is_null($data['for_kg'])) {
             $data['for_kg'] = 0;
         }
@@ -310,6 +326,12 @@ class StorehouseDataController extends Controller
                 $data['fax_name'] = $fax->name;
             } else {
                 $data['fax_name'] = 'Возврат на склад';
+            }
+        }
+        if (array_key_exists('delivery_method_id', $data)) {
+            $deliveryMethod = \App\CodeHasDeliveryMethod::find($data['delivery_method_id']);
+            if ($deliveryMethod) {
+                $data['delivery_method_name'] = $deliveryMethod->name;
             }
         }
         $data['user_name'] = auth()->user()->name;
@@ -435,7 +457,16 @@ class StorehouseDataController extends Controller
                         $needData['brand'] = false;
                     }
                 }
-                unset($needData['replacePrice']);
+                if (array_key_exists('delivery_method_id', $elem)) {
+                    $entry = StorehouseData::find($item['id']);
+                    if ($entry) {
+                        \App\CodeHasDeliveryMethod::updateOrCreate(['code_id' => $entry->code_client_id], ['delivery_method_id' => $elem['delivery_method_id']]);
+                    }
+                }
+                if (isset($needData['replacePrice'])) {
+                    unset($needData['replacePrice']);
+                }
+
                 StorehouseData::where('id', $item['id'])->update($needData);
                 $this->storehouseDataHistory($item['id'], $needData, 'update', (new StorehouseData)->getTable());
             }

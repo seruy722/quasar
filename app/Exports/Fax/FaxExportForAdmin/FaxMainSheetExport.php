@@ -39,9 +39,10 @@ class FaxMainSheetExport implements FromView, ShouldAutoSize, WithTitle
             ->selectRaw('AVG(storehouse_data.for_place) as for_place')
             ->selectRaw('SUM(storehouse_data.kg) * AVG(storehouse_data.for_kg) + AVG(storehouse_data.for_place) * SUM(storehouse_data.place)  as sum')
             ->selectRaw('AVG(storehouse_data.brand) as brand')
+            ->selectRaw('AVG(storehouse_data.delivery_method_id) as delivery_method_id')
             ->selectRaw('AVG(storehouse_data.code_client_id) as code_id')
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
-            ->groupBy('code_client_id', 'category_id');
+            ->groupBy('code_client_id', 'category_id', 'delivery_method_id');
 
         $this->categories = StorehouseData::select('categories.name')
             ->selectRaw('SUM(storehouse_data.place) as place')
@@ -78,18 +79,29 @@ class FaxMainSheetExport implements FromView, ShouldAutoSize, WithTitle
         $sdf = $this->data->map(function ($item) {
             return $item['code_id'];
         });
+        $deliveryMethodsId = $this->data->map(function ($item) {
+            return $item['delivery_method_id'];
+        });
         $customers = Customer::select('customers.*', 'cities.name AS city_name', 'codes.code as code')
             ->leftJoin('cities', 'cities.id', '=', 'customers.city_id')
             ->leftJoin('codes', 'codes.id', '=', 'customers.code_id')
             ->whereIn('customers.code_id', $sdf)
             ->get();
+        $deliveryMethods = \App\DeliveryMethod::whereIn('id', $deliveryMethodsId)->get();
 
-        $this->data = $this->data->map(function ($elem) use ($customers) {
+        $this->data = $this->data->map(function ($elem) use ($customers, $deliveryMethods) {
             $city = $customers->firstWhere('code_id', $elem['code_id']);
+            $deliveryMethod = $deliveryMethods->firstWhere('id', $elem['delivery_method_id']);
             if ($city) {
                 $elem['city_name'] = $city->city_name;
             } else {
                 $elem['city_name'] = null;
+            }
+
+            if ($deliveryMethod) {
+                $elem['delivery_method_name'] = $deliveryMethod->name;
+            } else {
+                $elem['delivery_method_name'] = null;
             }
             return $elem;
         })->sort(function ($a, $b) {

@@ -324,6 +324,15 @@
                         default: null,
                         value: null,
                     },
+                    delivery_method_id: {
+                        name: 'delivery_method_id',
+                        type: 'select',
+                        label: 'Способ доставки',
+                        options: [],
+                        changeValue: false,
+                        default: 0,
+                        value: 0,
+                    },
                     notation: {
                         name: 'notation',
                         type: 'text',
@@ -356,6 +365,9 @@
             },
             shopList() {
                 return this.$store.getters['shopsList/getShopsList'];
+            },
+            deliveryMethodsList() {
+                return this.$store.getters['deliveryMethods/getDeliveryMethodsList'];
             },
             size() {
                 const {
@@ -421,6 +433,12 @@
             shopList: {
                 handler: function set(val) {
                     this.storehouseData.shop.options = val;
+                },
+                immediate: true,
+            },
+            deliveryMethodsList: {
+                handler: function set(val) {
+                    this.storehouseData.delivery_method_id.options = val;
                 },
                 immediate: true,
             },

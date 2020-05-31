@@ -138,14 +138,27 @@
             saveData({ faxId: { value } }) {
                 devlog.log('VALS', value);
                 this.$q.loading.show();
-                const ids = _.map(this.values, 'id');
+                let ids = [];
+                if (_.has(_.first(this.values), 'arr')) {
+                    _.forEach(this.values, ({ arr }) => {
+                        _.forEach(arr, ({ id }) => {
+                            ids.push(id);
+                        });
+                    });
+                } else {
+                    ids = _.map(this.values, 'id');
+                }
                 this.$axios.post(getUrl('moveFromStorehouseToFax'), {
                     ids,
                     faxId: value,
                 })
                   .then(({ data }) => {
                       devlog.log('DDDDA', data);
-                      this.$store.dispatch('storehouse/destroyStorehouseData', ids);
+                      if (_.get(_.first(this.values), 'fax_id') > 0) {
+                          this.$store.dispatch('faxes/deleteEntryFromFaxData', ids);
+                      } else {
+                          this.$store.dispatch('storehouse/destroyStorehouseData', ids);
+                      }
                       this.$q.loading.hide();
                       this.close();
                       this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно перемещены.' : 'Запись успешно перемещена.', 'center');

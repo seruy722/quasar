@@ -15,6 +15,7 @@ import codes from './codes';
 import roles from './roles';
 import permissions from './permissions';
 import codesPrices from './codes-prices';
+import deliveryMethods from './delivery-methods-list';
 
 Vue.use(Vuex);
 
@@ -40,6 +41,7 @@ export default function (/* { ssrContext } */) {
       roles,
       permissions,
       codesPrices,
+      deliveryMethods,
     },
 
     // enable strict mode (adds overhead!)

@@ -38,7 +38,7 @@
         />
 
         <MoveToFaxBtn
-          v-show="faxTableReactiveProperties.selected.length"
+          v-show="faxTableReactiveProperties.selected.length && faxUploadStatus === 0"
           @moveToFaxClick="moveToFax"
         />
         <IconBtn
@@ -255,6 +255,28 @@
           </q-td>
 
           <q-td
+            key="delivery_method_name"
+            class="cursor-pointer"
+            :props="props"
+          >
+            {{ props.row.delivery_method_id | optionsFilter(deliveryMethodsList) }}
+            <PopupEdit
+              v-if="combineTableData"
+              :value.sync="props.row.delivery_method_id"
+              type="number"
+              :title="props.row.code_client_name"
+              @addToSave="addToAddSaveArray(props.row, 'delivery_method_id')"
+            >
+              <SearchSelect
+                v-model="props.row.delivery_method_id"
+                label="Способ доставки"
+                :dense="$q.screen.xs || $q.screen.sm"
+                :options="deliveryMethodsList"
+              />
+            </PopupEdit>
+          </q-td>
+
+          <q-td
             key="notation"
             :props="props"
           >
@@ -429,6 +451,7 @@
         getShopsList,
         setCategoriesStoreHouseData,
         combineStoreHouseData,
+        getDeliveryMethodsList,
         // getStorehouseTableData,
         getFaxes,
         // setFormatedDate,
@@ -546,6 +569,13 @@
                             sortable: true,
                         },
                         {
+                            name: 'delivery_method_name',
+                            label: 'Способ доставки',
+                            field: 'delivery_method_name',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'notation',
                             label: this.$t('notation'),
                             field: 'notation',
@@ -563,11 +593,11 @@
                 },
                 faxTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['code_client_name', 'place', 'kg', 'category_name'],
+                    visibleColumns: ['code_client_name', 'place', 'kg', 'category_name', 'delivery_method_name'],
                     title: '',
                 },
-                visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'category_name'],
-                fullVisibleColumns: ['code_place', 'code_client_name', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop'],
+                visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'category_name', 'delivery_method_name'],
+                fullVisibleColumns: ['code_place', 'code_client_name', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop', 'delivery_method_name'],
             };
         },
         computed: {
@@ -586,12 +616,12 @@
             faxName() {
                 return _.get(this.currentFaxItem, 'name');
             },
-            // storehouseData() {
-            //     return this.$store.getters['storehouse/getStorehouseData'];
-            // },
-            // fax() {
-            //     return _.find(this.$store.getters['faxes/getFaxes'], { id: this.$route.params.id });
-            // },
+            faxUploadStatus() {
+                return _.get(this.currentFaxItem, 'uploaded_to_cargo');
+            },
+            deliveryMethodsList() {
+                return this.$store.getters['deliveryMethods/getDeliveryMethodsList'];
+            },
         },
         watch: {
             faxData(val) {
@@ -601,8 +631,12 @@
                     const { fullVisibleColumns } = this;
                     const indexForKg = _.indexOf(visibleColumns, 'for_kg');
                     const indexForKg2 = _.indexOf(fullVisibleColumns, 'for_kg');
-                    visibleColumns.splice(indexForKg, 2);
-                    fullVisibleColumns.splice(indexForKg2, 2);
+                    if (indexForKg !== -1) {
+                        visibleColumns.splice(indexForKg, 2);
+                    }
+                    if (indexForKg2 !== -1) {
+                        fullVisibleColumns.splice(indexForKg2, 2);
+                    }
                 }
                 // const { faxData } = this;
                 if (this.combineTableData) {
@@ -626,36 +660,13 @@
                 },
                 immediate: true,
             },
-            // faxTableData(val) {
-            //     this.faxSideData = sortArrayCollection(val, 'code_client_name');
-            // },
-            // storehouseData(val) {
-            //     this.storehouseSideData = sortArrayCollection(_.cloneDeep(val), 'code_client_name');
-            // },
-            // search(val) {
-            //     if (_.trim(val)) {
-            //         this.faxSideData = this.searchInList(val, 'faxSideData');
-            //     } else {
-            //         this.faxSideData = _.filter(_.uniqBy([...this.faxSideData, ...this.faxTableData], 'id'), ({ id }) => !_.includes(this.faxSideDataTransferIds, id));
-            //     }
-            // },
-            // searchStorehouseData(val) {
-            //     if (_.trim(val)) {
-            //         this.storehouseSideData = this.searchInList(val, 'storehouseSideData');
-            //     } else {
-            //         this.storehouseSideData = _.filter(_.uniqBy([...this.storehouseData, ...this.storehouseSideData], 'id'), ({ id }) => !_.includes(this.storehouseSideDataTransferIds, id));
-            //     }
-            // },
         },
         mounted() {
             this.$q.loading.show();
-            Promise.all([this.getFax(this.$route.params.id), this.getFaxData(this.$route.params.id), getCategories(this.$store), getClientCodes(this.$store)])
+            Promise.all([this.getFax(this.$route.params.id), this.getFaxData(this.$route.params.id), getCategories(this.$store), getClientCodes(this.$store), getDeliveryMethodsList(this.$store)])
               .then(() => {
                   this.$q.loading.hide();
               });
-            // this.getFaxData(this.$route.params.id);
-            // getCategories(this.$store);
-            // getClientCodes(this.$store);
         },
         beforeDestroy() {
             clearTimeout(this.timer);
@@ -743,15 +754,6 @@
                     ids,
                 }, `${this.currentFaxItem.name}.xlsx`);
             },
-            searchInList(val, arrayName) {
-                const needle = val.toLowerCase();
-                devlog.log('this[arrayName]', this[arrayName]);
-                return _.filter(this[arrayName], (v) => _.includes(_.toLower(v.category_name), needle)
-                  || _.includes(_.toLower(v.code_client_name), needle));
-                // return this[arrayName].filter((v) => v.category_name.toLowerCase()
-                //   .indexOf(needle) > -1 || v.code_client_name.toLowerCase()
-                //   .indexOf(needle) > -1);
-            },
             async getFaxData(id) {
                 // this.$q.loading.show();
                 await this.$axios.get(`${getUrl('faxData')}/${id}`)
@@ -765,12 +767,6 @@
                       devlog.error('Ошибка получения данных факса');
                   });
             },
-            // exportFaxData({ id, name, transporter: { id: transporterID } }) {
-            //     this.exportDataToExcel(getUrl('exportFaxData'), {
-            //         faxID: id,
-            //         transporterID,
-            //     }, `${name}.xlsx`);
-            // },
             viewEditDialog(val, event) {
                 devlog.log('viewEditDialog', _.get(event, 'target.classList'));
                 if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox') && !this.combineTableData) {

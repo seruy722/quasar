@@ -191,6 +191,18 @@ export const getShopsList = (store) => {
   }
   return true;
 };
+
+/**
+ * Получение списка способов доставки
+ * @param store
+ * @return {boolean|*}
+ */
+export const getDeliveryMethodsList = (store) => {
+  if (_.isEmpty(store.getters['deliveryMethods/getDeliveryMethodsList'])) {
+    return store.dispatch('deliveryMethods/fetchDeliveryMethodsList');
+  }
+  return true;
+};
 /**
  * Получение и запись списка городов украины во vuex
  * @param store

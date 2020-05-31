@@ -148,6 +148,10 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::get('/shopsList', function () {
         return \App\Shop::select('id as value', 'name as label')->orderBy('name')->get();
     });
+    // DELIVERY METHODS LIST
+    Route::get('/delivery-methods-list', function () {
+        return \App\DeliveryMethod::select('id as value', 'name as label')->get();
+    });
     // TRANSFERS
     Route::get('/transfers', 'Api\TransferController@index')->name('view transfers list')->middleware(['role_or_permission:admin|transfers|view transfers list']);
     Route::post('/update-transfers', 'Api\TransferController@update')->name('update transfers data')->middleware(['role_or_permission:admin|transfers|update transfers data']);
