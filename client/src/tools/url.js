@@ -38,7 +38,7 @@ const urls = {
   getNewFax: `${prefix}/get-new-fax`,
   transfersStoreFax: `${prefix}/set-transfers-storehouse-fax`,
   codeList: `${prefix}/codes-list`,
-  clientData: `${prefix}/client-data`,
+  searchClientData: `${prefix}/client-data`,
   codeExist: `${prefix}/check-code-exist`,
   exportCustomers: `${prefix}/export-customers`,
   // getNewCodes: `${prefix}/get-new-codes`,

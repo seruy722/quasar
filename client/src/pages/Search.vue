@@ -5,13 +5,28 @@
     <q-card>
       <q-card-section>
         <div class="text-h6 text-center">Поиск данных по таблицам</div>
-        <SearchSelect
-          v-model="clientId"
-          label="Клиент"
-          style="max-width: 300px;"
-          :dense="$q.screen.xs || $q.screen.sm"
-          :options="clientsOptions"
-        />
+        <div style="max-width: 300px; text-align: center;">
+          <q-select
+            v-model="model"
+            :options="modelOptions"
+            label="Выберите поле для поиска"
+          />
+          <SearchSelect
+            v-show="model === 'Клиент'"
+            v-model="clientId"
+            label="Клиент"
+            style="max-width: 300px;"
+            :dense="$q.screen.xs || $q.screen.sm"
+            :options="clientsOptions"
+          />
+          <q-input
+            v-show="model === 'Код'"
+            v-model="codePlace"
+            mask="###/###/###"
+            label="Введите код"
+          />
+          <q-btn label="Найти" @click="getClientData(clientId, codePlace)" color="primary" class="q-mt-md" />
+        </div>
       </q-card-section>
       <q-card-section>
         <q-tabs
@@ -358,7 +373,10 @@
         },
         data() {
             return {
+                model: 'Код',
+                modelOptions: ['Код', 'Клиент'],
                 clientId: null,
+                codePlace: null,
                 clientsOptions: [],
                 tab: 'storehouse',
                 storehouseTableData: {
@@ -601,11 +619,6 @@
                 },
             };
         },
-        watch: {
-            clientId(val) {
-                this.getClientData(val);
-            },
-        },
         created() {
             this.fetchClientList();
         },
@@ -623,11 +636,20 @@
                       this.$q.loading.hide();
                   });
             },
-            async getClientData(codeID) {
+            async getClientData(codeID, codePlace) {
                 devlog.log('INPUTDATA', codeID);
                 this.$q.loading.show();
+                const sendData = {
+                    codeID,
+                    codePlace,
+                };
+                if (this.model === 'Код') {
+                    sendData.codeID = null;
+                } else if (this.model === 'Клиент') {
+                    sendData.codePlace = null;
+                }
                 const { getUrl } = await import('src/tools/url');
-                await this.$axios.get(`${getUrl('clientData')}/${codeID}`)
+                await this.$axios.post(getUrl('searchClientData'), sendData)
                   .then(({ data: { storehouse, faxes, destroyed } }) => {
                       this.storehouseTableData.data = storehouse;
                       this.faxesTableData.data = faxes;

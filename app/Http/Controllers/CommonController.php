@@ -135,7 +135,7 @@ class CommonController extends Controller
         return response(['status' => true]);
     }
 
-    public function getData($codeID)
+    public function getData(Request $request)
     {
         $storehouseData = StorehouseData::select(
             'storehouse_data.id',
@@ -153,11 +153,9 @@ class CommonController extends Controller
             'codes.code as code_client_name',
             'categories.name as category_name'
         )
-            ->where('code_client_id', $codeID)
             ->where('fax_id', 0)
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
-            ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
-            ->get();
+            ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id');
         $faxesData = StorehouseData::select(
             'storehouse_data.id',
             'storehouse_data.code_place',
@@ -175,13 +173,20 @@ class CommonController extends Controller
             'categories.name as category_name',
             'faxes.name as fax_name'
         )
-            ->where('code_client_id', $codeID)
             ->where('fax_id', '>', 0)
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
-            ->leftJoin('faxes', 'faxes.id', '=', 'storehouse_data.fax_id')
-            ->get();
-        $destroyedEntries = History::where('action', 'destroy')->where('history_data', 'like', '%' . '"code_client_id": ' . $codeID . '%')->get();
+            ->leftJoin('faxes', 'faxes.id', '=', 'storehouse_data.fax_id');
+        $destroyedEntries = [];
+        if ($request->codeID) {
+            $storehouseData = $storehouseData->where('code_client_id', $request->codeID)->get();
+            $faxesData = $faxesData->where('code_client_id', $request->codeID)->get();
+            $destroyedEntries = History::where('action', 'destroy')->where('history_data', 'like', '%' . '"code_client_id": ' . $request->codeID . '%')->get();
+        } else if ($request->codePlace) {
+            $storehouseData = $storehouseData->where('code_place', $request->codePlace)->get();
+            $faxesData = $faxesData->where('code_place', $request->codePlace)->get();
+            $destroyedEntries = History::where('action', 'destroy')->where('history_data', 'like', '%' . '"code_place": ' . $request->codePlace . '%')->get();
+        }
 
         return response(['destroyed' => $destroyedEntries, 'storehouse' => $storehouseData, 'faxes' => $faxesData]);
     }
