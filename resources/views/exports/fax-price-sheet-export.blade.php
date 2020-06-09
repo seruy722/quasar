@@ -18,7 +18,7 @@
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->kg }}</td>
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;color: #ff1a17;">{{ $elem->for_kg ? $elem->for_kg : null }}</td>
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;color: #ff1a17;">{{ $elem->for_place ? $elem->for_place : null }}</td>
-                <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->sum }}</td>
+                <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ round($elem->sum) }}</td>
             </tr>
         @else
             <tr>
