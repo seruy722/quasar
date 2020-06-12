@@ -2,8 +2,6 @@
 
 namespace App\Exports\Fax;
 
-use App\Exports\Fax\FaxCommonSheetExport;
-use App\Exports\Fax\FaxMainSheetExport;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 

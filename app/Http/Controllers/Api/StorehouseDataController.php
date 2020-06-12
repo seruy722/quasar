@@ -24,6 +24,7 @@ class StorehouseDataController extends Controller
         'category_id' => 'required|numeric',
         'destroyed' => 'required|boolean',
         'storehouse_id' => 'numeric',
+        'department' => 'nullable|string|max:150',
     ];
 
     public function stripData($value)
@@ -64,6 +65,7 @@ class StorehouseDataController extends Controller
             'storehouse_data.category_id',
             'storehouse_data.brand',
             'storehouse_data.delivery_method_id',
+            'storehouse_data.department',
             'storehouse_data.created_at',
             'storehouse_data.updated_at',
             'codes.code as code_client_name',
@@ -113,10 +115,10 @@ class StorehouseDataController extends Controller
             'notation' => 'nullable|max:255',
             'category_id' => 'required|numeric',
             'storehouse_id' => 'numeric',
+            'department' => 'nullable|string|max:150',
         ]);
 
         $data = $request->all();
-
 
         $category = Category::find($data['category_id']);
 
@@ -134,6 +136,13 @@ class StorehouseDataController extends Controller
             $saveData['delivery_method_id'] = $deliveryMethod->delivery_method_id;
         } else {
             \App\CodeHasDeliveryMethod::create(['code_id' => $data['code_client_id'], 'delivery_method_id' => 0]);
+        }
+
+        $department = \App\Department::where('code_id', $data['code_client_id'])->first();
+        if ($department) {
+            $saveData['department'] = $department->department;
+        } else {
+            \App\Department::create(['code_id' => $data['code_client_id'], 'department' => null]);
         }
 
 
@@ -461,6 +470,12 @@ class StorehouseDataController extends Controller
                     $entry = StorehouseData::find($item['id']);
                     if ($entry) {
                         \App\CodeHasDeliveryMethod::updateOrCreate(['code_id' => $entry->code_client_id], ['delivery_method_id' => $elem['delivery_method_id']]);
+                    }
+                }
+                if (array_key_exists('department', $elem)) {
+                    $entry = StorehouseData::find($item['id']);
+                    if ($entry) {
+                        \App\Department::updateOrCreate(['code_id' => $entry->code_client_id], ['department' => $elem['department']]);
                     }
                 }
                 if (isset($needData['replacePrice'])) {

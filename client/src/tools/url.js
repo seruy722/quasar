@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { get } from 'lodash';
 
 const prefix = 'api';
 
@@ -99,4 +99,4 @@ const urls = {
   },
 };
 
-export const getUrl = (value) => _.get(urls, value);
+export const getUrl = (value) => get(urls, value);

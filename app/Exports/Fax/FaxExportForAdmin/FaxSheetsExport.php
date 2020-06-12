@@ -25,6 +25,7 @@ class FaxSheetsExport implements WithMultipleSheets
         $sheets[] = new FaxCommonSheetExport($this->faxID, $this->ids);
         $sheets[] = new FaxMainSheetExport($this->faxID, $this->ids);
         $sheets[] = new FaxPriceSheetExport($this->faxID, $this->ids);
+        $sheets[] = new FaxPostSheetExport($this->faxID, $this->ids);
         return $sheets;
     }
 }

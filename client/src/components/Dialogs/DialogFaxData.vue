@@ -333,6 +333,14 @@
                         default: 0,
                         value: 0,
                     },
+                    department: {
+                        name: 'department',
+                        type: 'text',
+                        label: 'Отделение',
+                        changeValue: false,
+                        default: null,
+                        value: null,
+                    },
                     notation: {
                         name: 'notation',
                         type: 'text',

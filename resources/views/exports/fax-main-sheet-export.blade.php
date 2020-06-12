@@ -86,8 +86,8 @@
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Мест</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Вес</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сумма</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Город</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Способ доставки</th>
+{{--        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Город</th>--}}
+{{--        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Способ доставки</th>--}}
     </tr>
     </thead>
     <tbody>
@@ -98,8 +98,8 @@
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->place }}</td>
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->kg }}</td>
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ round($elem->sum) }}</td>
-                <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->city_name }}</td>
-                <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->delivery_method_name }}</td>
+{{--                <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->city_name }}</td>--}}
+{{--                <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->delivery_method_name }}</td>--}}
             </tr>
         @else
             <tr>
@@ -107,8 +107,8 @@
                 <td style="border: 1px solid black;text-align: center;">{{ $elem->place }}</td>
                 <td style="border: 1px solid black;text-align: center;">{{ $elem->kg }}</td>
                 <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{  round($elem->sum) }}</td>
-                <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{  $elem->city_name }}</td>
-                <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{  $elem->delivery_method_name }}</td>
+{{--                <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{  $elem->city_name }}</td>--}}
+{{--                <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{  $elem->delivery_method_name }}</td>--}}
             </tr>
         @endif
     @endforeach
@@ -117,7 +117,7 @@
         <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ $collection[0]->sum('place') }}</td>
         <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{ $collection[0]->sum('kg') }}</td>
         <td style="border: 1px solid black;text-align: center;font-weight:bold;background-color: #fffe0b">{{ round($collection[0]->sum('sum')) }}</td>
-        <td style="border: 1px solid black;text-align: center;font-weight:bold;"></td>
+{{--        <td style="border: 1px solid black;text-align: center;font-weight:bold;"></td>--}}
     </tr>
     </tbody>
 </table>

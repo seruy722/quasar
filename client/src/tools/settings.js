@@ -1,5 +1,5 @@
 import { i18n } from 'src/boot/i18n';
-import _ from 'lodash';
+import { get } from 'lodash';
 
 const settings = {
   defaultSelectElement: {
@@ -101,6 +101,6 @@ const settings = {
   },
 };
 
-export default function (value) {
-  return _.get(settings, value);
+export default function sett(value) {
+  return get(settings, value);
 }

@@ -277,6 +277,20 @@
           </q-td>
 
           <q-td
+            key="department"
+            :props="props"
+            class="cursor-pointer"
+          >
+            {{ props.row.department }}
+            <PopupEdit
+              v-if="combineTableData"
+              :value.sync="props.row.department"
+              :title="props.row.code_client_name"
+              @addToSave="addToAddSaveArray(props.row, 'department')"
+            />
+          </q-td>
+
+          <q-td
             key="notation"
             :props="props"
           >
@@ -576,6 +590,13 @@
                             sortable: true,
                         },
                         {
+                            name: 'department',
+                            label: 'Отделение',
+                            field: 'department',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'notation',
                             label: this.$t('notation'),
                             field: 'notation',
@@ -593,11 +614,11 @@
                 },
                 faxTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['code_client_name', 'place', 'kg', 'category_name', 'delivery_method_name'],
+                    visibleColumns: ['code_client_name', 'place', 'kg', 'category_name', 'delivery_method_name', 'department'],
                     title: '',
                 },
-                visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'category_name', 'delivery_method_name'],
-                fullVisibleColumns: ['code_place', 'code_client_name', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop', 'delivery_method_name'],
+                visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'category_name', 'delivery_method_name', 'department'],
+                fullVisibleColumns: ['code_place', 'code_client_name', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop', 'delivery_method_name', 'department'],
             };
         },
         computed: {
