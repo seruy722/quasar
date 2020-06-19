@@ -15,7 +15,6 @@ import {
  */
 export const checkDate = ((input) => _.isString(input) && !!new Date(input).getTime());
 
-
 export const today = () => new Date()
   .toLocaleDateString()
   .split('.')
@@ -128,7 +127,6 @@ export const formatTimer = ((date) => {
   }
   return result;
 });
-
 
 /**
  * Преобразует дату к формату: 2019/08

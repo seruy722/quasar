@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A Quasar Framework app",
   "productName": "App Cargo",
-  "cordovaId": "org.cordova.quasar.app",
   "author": "Den",
   "private": true,
   "scripts": {
@@ -22,12 +21,12 @@
     "date-fns": "^2.14.0",
     "lodash": "^4.17.15",
     "mobile-drag-drop": "^2.3.0-rc.2",
-    "quasar": "^1.12.4",
-    "validator": "^13.0.0",
+    "quasar": "^1.12.6",
+    "validator": "^13.1.1",
     "vue-i18n": "^8.18.2"
   },
   "devDependencies": {
-    "@quasar/app": "^1.9.6",
+    "@quasar/app": "2.0.0",
     "@vue/eslint-config-airbnb": "^5.0.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.2.0",
@@ -41,6 +40,14 @@
     "yarn": ">= 1.19.1"
   },
   "browserslist": [
-    "last 1 version, not dead, ie >= 11"
+    "last 10 Chrome versions",
+    "last 10 Firefox versions",
+    "last 4 Edge versions",
+    "last 7 Safari versions",
+    "last 8 Android versions",
+    "last 8 ChromeAndroid versions",
+    "last 8 FirefoxAndroid versions",
+    "last 10 iOS versions",
+    "last 5 Opera versions"
   ]
 }

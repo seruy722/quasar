@@ -49,19 +49,19 @@
                     {
                         label: 'Русский',
                         value: 'ru',
-                        icon: 'img:statics/icons/flag/ru.png',
+                        icon: 'img:icons/flag/ru.png',
                         active: true,
                     },
                     {
                         label: 'Turkish',
                         value: 'tr',
-                        icon: 'img:statics/icons/flag/tr.png',
+                        icon: 'img:icons/flag/tr.png',
                         active: false,
                     },
                     {
                         label: 'English',
                         value: 'en',
-                        icon: 'img:statics/icons/flag/en.png',
+                        icon: 'img:icons/flag/en.png',
                         active: false,
                     },
                 ],
@@ -76,7 +76,7 @@
                 const findActiveLang = _.find(this.langs, { active: true });
                 this.setLocale(findActiveLang);
             }
-            this.icon = `img:statics/icons/flag/${langFromLs ? langFromLs.value : this.$i18n.locale}.png`;
+            this.icon = `img:icons/flag/${langFromLs ? langFromLs.value : this.$i18n.locale}.png`;
         },
         methods: {
             setLocale(item) {

@@ -10,7 +10,6 @@ export const fetchTransporters = (({ commit }) => axiosInstance.get(getUrl('tran
     devlog.error(errors);
   }));
 
-
 export const setTransporterPrice = (({ commit }, data) => {
   commit('SET_TRANSPORTER_PRICE', data);
 });

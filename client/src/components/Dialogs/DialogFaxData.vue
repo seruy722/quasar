@@ -115,8 +115,6 @@
             class="q-ml-md"
             @iconBtnClick="showThingsDialog = true"
           />
-
-
           <div v-show="!withoutThings">
             <List
               dense

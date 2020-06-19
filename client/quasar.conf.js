@@ -2,7 +2,6 @@
 // https://quasar.dev/quasar-cli/quasar-conf-js
 const webpack = require('webpack');
 
-
 module.exports = function (ctx) {
   return {
     // app boot file (/src/boot)
@@ -35,11 +34,7 @@ module.exports = function (ctx) {
       // iconSet: 'ionicons-v4',
       lang: 'ru', // Quasar language
 
-      all: true, // --- includes everything; for dev only!
-
-      components: [],
-
-      directives: [],
+      importStrategy: 'all', // --- includes everything; for dev only!
 
       // Quasar plugins
       plugins: [],
@@ -56,8 +51,6 @@ module.exports = function (ctx) {
       },
     },
 
-    supportIE: false,
-
     build: {
       scopeHoisting: true,
       // vueRouterMode: 'history',
@@ -72,6 +65,7 @@ module.exports = function (ctx) {
           loader: 'eslint-loader',
           exclude: /node_modules/,
           options: {
+            /* eslint-disable-next-line */
             formatter: require('eslint')
               .CLIEngine
               .getFormatter('stylish'),
@@ -85,10 +79,10 @@ module.exports = function (ctx) {
       },
       env: ctx.dev
         ? { // so on dev we'll have
-          API: JSON.stringify('http://sp.com.ua/'),
+          API: 'http://sp.com.ua/',
         }
         : { // and on build (production):
-          API: JSON.stringify('http://servercargo007.net.ua/'),
+          API: 'http://servercargo007.net.ua/',
         },
     },
 
@@ -118,27 +112,27 @@ module.exports = function (ctx) {
         theme_color: '#027be3',
         icons: [
           {
-            src: 'statics/icons/icon-128x128.png',
+            src: 'icons/icon-128x128.png',
             sizes: '128x128',
             type: 'image/png',
           },
           {
-            src: 'statics/icons/icon-192x192.png',
+            src: 'icons/icon-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: 'statics/icons/icon-256x256.png',
+            src: 'icons/icon-256x256.png',
             sizes: '256x256',
             type: 'image/png',
           },
           {
-            src: 'statics/icons/icon-384x384.png',
+            src: 'icons/icon-384x384.png',
             sizes: '384x384',
             type: 'image/png',
           },
           {
-            src: 'statics/icons/icon-512x512.png',
+            src: 'icons/icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
           },
@@ -154,7 +148,7 @@ module.exports = function (ctx) {
     electron: {
       // bundler: 'builder', // or 'packager'
 
-      extendWebpack(cfg) {
+      extendWebpack() {
         // do something with Electron main process Webpack cfg
         // chainWebpack also available besides this extendWebpack
       },
