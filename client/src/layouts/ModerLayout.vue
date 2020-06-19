@@ -77,6 +77,15 @@
         data() {
             this.$_menu = [
                 {
+                    title: 'Карго Долги',
+                    field: 'cargo-debts',
+                    icon: 'assignment',
+                    access: {
+                        roles: ['admin'],
+                        permissions: [],
+                    },
+                },
+                {
                     title: 'storehouse',
                     field: 'storehouse',
                     icon: 'store',
@@ -136,9 +145,9 @@
                     },
                 },
                 {
-                    title: 'access',
+                    title: 'Доступы',
                     field: 'access',
-                    icon: 'update',
+                    icon: 'admin_panel_settings',
                     access: {
                         roles: ['admin'],
                         permissions: ['view access list'],

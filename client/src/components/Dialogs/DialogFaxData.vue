@@ -419,7 +419,7 @@
                         this.storehouseData.shop.disable = false;
                         this.storehouseData.notation.disable = false;
                     }
-                    if (!_.get(val, 'row.for_kg')) {
+                    if (!_.has(val, 'row.for_kg')) {
                         delete this.storehouseData.for_kg;
                         delete this.storehouseData.for_place;
                         this.showReplacePrice = false;

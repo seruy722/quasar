@@ -238,6 +238,21 @@ const routes = [
         },
         component: () => import('pages/Search.vue'),
       },
+      {
+        path: 'cargo-debts',
+        name: 'cargo-debts',
+        meta: {
+          title: 'cargo-debts',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin'],
+            permissions: [],
+          },
+        },
+        component: () => import('pages/CargoDebts.vue'),
+      },
     ],
   },
 ];
