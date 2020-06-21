@@ -207,6 +207,13 @@ class StorehouseDataController extends Controller
                 $data['brand'] = false;
             }
         }
+        if (array_key_exists('for_kg', $data) && is_null($data['for_kg'])) {
+            $data['for_kg'] = 0;
+        }
+
+        if (array_key_exists('for_place', $data) && is_null($data['for_place'])) {
+            $data['for_place'] = 0;
+        }
         $entry = StorehouseData::find($request->id);
         $price = CodesPrices::where('code_id', $entry->code_client_id)->where('category_id', $entry->category_id)->first();
         if ($price) {
@@ -240,13 +247,6 @@ class StorehouseDataController extends Controller
             if ($entry) {
                 \App\CodeHasDeliveryMethod::updateOrCreate(['code_id' => $entry->code_client_id], ['delivery_method_id' => $data['delivery_method_id']]);
             }
-        }
-        if (array_key_exists('for_kg', $data) && is_null($data['for_kg'])) {
-            $data['for_kg'] = 0;
-        }
-
-        if (array_key_exists('for_place', $data) && is_null($data['for_place'])) {
-            $data['for_place'] = 0;
         }
 
         if (array_key_exists('shop', $data) && $data['shop']) {
@@ -440,7 +440,7 @@ class StorehouseDataController extends Controller
                         $price->for_kg = $elem['for_kg'];
                     }
                     if ($elem['replacePrice'] && array_key_exists('for_place', $elem)) {
-                        $price->for_kg = $elem['for_place'];
+                        $price->for_place = $elem['for_place'];
                     } else if (array_key_exists('for_place', $elem) && !$price->for_place) {
                         $price->for_place = $elem['for_place'];
                     }
