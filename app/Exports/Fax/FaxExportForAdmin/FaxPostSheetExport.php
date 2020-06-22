@@ -39,7 +39,8 @@ class FaxPostSheetExport implements FromView, ShouldAutoSize, WithTitle
             'storehouse_data.kg',
             'storehouse_data.for_kg',
             'storehouse_data.for_place',
-            'storehouse_data.department'
+            'storehouse_data.department',
+            'storehouse_data.notation'
         )
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->where('storehouse_data.storehouse_id', 1)

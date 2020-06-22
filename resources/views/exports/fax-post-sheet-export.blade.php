@@ -10,6 +10,7 @@
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Способ доставки</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Отделение</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Телефон</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Примечания</th>
     </tr>
     </thead>
     <tbody>
@@ -24,6 +25,7 @@
             <td style="border: 1px solid black;text-align: center;">{{ $elem->delivery_method_name }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem->department }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem->phone }}</td>
+            <td style="border: 1px solid black;text-align: center;">{{ $elem->notation }}</td>
         </tr>
     @endforeach
     </tbody>
