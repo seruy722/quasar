@@ -21,15 +21,15 @@
     "date-fns": "^2.14.0",
     "lodash": "^4.17.15",
     "mobile-drag-drop": "^2.3.0-rc.2",
-    "quasar": "^1.12.6",
+    "quasar": "^1.12.8",
     "validator": "^13.1.1",
     "vue-i18n": "^8.18.2"
   },
   "devDependencies": {
-    "@quasar/app": "2.0.0",
+    "@quasar/app": "2.0.1",
     "@vue/eslint-config-airbnb": "^5.0.2",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.2.0",
+    "eslint": "^7.3.1",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-vue": "^6.2.2",
     "quasar-app-extension-ide-helper": "^1.0.0"
