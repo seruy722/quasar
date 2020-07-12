@@ -16,4 +16,12 @@ class CodesPrices extends Model
         }
         return null;
     }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        if ($value) {
+            return \Illuminate\Support\Carbon::parse($value)->toAtomString();
+        }
+        return null;
+    }
 }

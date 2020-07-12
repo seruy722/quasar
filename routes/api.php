@@ -89,6 +89,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     // CARGO_TABLE
     Route::post('/upload-cargo-table', 'CommonController@storeCargoTable');
     Route::post('/client-data', 'CommonController@getData');
+    Route::get('/get-all-cargo-data/{id}', 'Api\CargoController@index');
 
     // DEBTS_TABLE
     Route::post('/upload-debts-table', 'CommonController@storeDebtsTable');

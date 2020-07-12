@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Cargo;
 use App\cargoTable;
 use App\Category;
 use App\Code;
@@ -19,34 +20,50 @@ class CommonController extends Controller
 {
     public function storeCargoTable(Request $request)
     {
+//        if ($request->hasFile('upload')) {
+//            DB::statement("SET foreign_key_checks=0");
+//            Cargo::truncate();
+//            DB::statement("SET foreign_key_checks=1");
+//            $ImportedFaxArray = Excel::toArray(new ImportData, $request->file('upload'));
+//
+//            foreach ($ImportedFaxArray as $item) {
+//                foreach ($item as $elem) {
+//                    $trimElem = array_map('trim', $elem);
+//                    $code = Code::where('code', $trimElem[1])->first();
+//                    if (!$code) {
+//                        $code = Code::create(['code' => $trimElem[1]]);
+//                    }
+//                    Cargo::create([
+//                        'code_client_id' => $code->id,
+//                        'sum' => (int)$trimElem[2] * -1,
+//                        'notation' => $trimElem[3],
+//                        'created_at' => date("Y-m-d H:i:s", strtotime($trimElem[0])),
+//                    ]);
+//
+//                }
+//            }
+//        }
         if ($request->hasFile('upload')) {
-            DB::statement("SET foreign_key_checks=0");
-            cargoTable::truncate();
-            DB::statement("SET foreign_key_checks=1");
             $ImportedFaxArray = Excel::toArray(new ImportData, $request->file('upload'));
-
             foreach ($ImportedFaxArray as $item) {
                 foreach ($item as $elem) {
                     $trimElem = array_map('trim', $elem);
-                    $code = Code::where('code', $trimElem[3])->first();
+                    $code = Code::where('code', $trimElem[1])->first();
                     if (!$code) {
-                        $code = Code::create([
-                            'code' => $trimElem[3],
-                            'user_id' => $request->user()->id,
-                        ]);
+                        $code = Code::create(['code' => $trimElem[1]]);
                     }
-                    cargoTable::create([
-                        'type' => $trimElem[1] === 'Доход' ? 'Оплата' : 'Долг',
-                        'code_id' => $code->id,
+                    Cargo::create([
+                        'code_client_id' => $code->id,
+                        'type' => true,
                         'sum' => (int)$trimElem[2],
-                        'notation' => $trimElem[4],
+                        'notation' => $trimElem[3],
                         'created_at' => date("Y-m-d H:i:s", strtotime($trimElem[0])),
                     ]);
 
                 }
             }
         }
-        return response(['status' => true]);
+        return response()->json(null, 201);
     }
 
     public function storeDebtsTable(Request $request)

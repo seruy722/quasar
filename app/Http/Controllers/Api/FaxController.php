@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Cargo;
 use App\Fax;
 use App\FaxData;
 use App\Http\Resources\FaxDataCommonExportResource;
@@ -201,12 +202,35 @@ class FaxController extends Controller
         $value = !$request->value;
         $faxId = $request->id;
         $storeUpdateData = StorehouseData::where('fax_id', $faxId)->get();
-        $storeUpdateData->each(function ($item) use($value) {
-            $item->in_cargo = $value;
-            $item->save();
-            $this->storeFaxHistory($item['id'], ['in_cargo' => $value], 'update', (new StorehouseData)->getTable());
-        });
+//        return response(['ans' => $storeUpdateData]);
+
         Fax::where('id', $faxId)->update(['uploaded_to_cargo' => $value]);
+        if ($value) {
+            $storeUpdateData->each(function ($item) use ($value) {
+                $item->in_cargo = $value;
+                $item->save();
+                $arr = $item->toArray();
+                if (array_key_exists('destroyed', $arr)) {
+                    unset($arr['destroyed']);
+                }
+                if (array_key_exists('in_cargo', $arr)) {
+                    unset($arr['in_cargo']);
+                }
+                if (array_key_exists('created_at', $arr)) {
+                    unset($arr['created_at']);
+                }
+                $arr['sum'] = round($item->for_kg * $item->kg + $item->place * $item->for_place);
+
+                Cargo::create($arr);
+                $this->storeFaxHistory($item['id'], ['in_cargo' => $value], 'update', (new StorehouseData)->getTable());
+            });
+        } else {
+            $codePlaces = $storeUpdateData->map(function ($item) {
+                return $item->code_place;
+            });
+            Cargo::whereIn('code_place', $codePlaces)->delete();
+        }
+
         $this->storeFaxHistory($faxId, ['uploaded_to_cargo' => $value], 'update', (new Fax)->getTable());
 
         return response(['fax' => $this->faxesList()->where('faxes.id', $faxId)->first()]);

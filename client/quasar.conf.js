@@ -77,13 +77,12 @@ module.exports = function (ctx) {
           }),
         );
       },
-      env: ctx.dev
-        ? { // so on dev we'll have
-          API: 'http://sp.com.ua/',
-        }
-        : { // and on build (production):
-          API: 'http://servercargo007.net.ua/',
-        },
+      env: {
+        API: ctx.dev
+          ? 'http://sp.com.ua/'
+          : 'http://servercargo007.net.ua/',
+        MODER: true,
+      },
     },
 
     devServer: {
@@ -145,32 +144,32 @@ module.exports = function (ctx) {
       // noIosLegacyBuildFlag: true, // uncomment only if you know what you are doing
     },
 
-    electron: {
-      // bundler: 'builder', // or 'packager'
-
-      extendWebpack() {
-        // do something with Electron main process Webpack cfg
-        // chainWebpack also available besides this extendWebpack
-      },
-
-      packager: {
-        // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
-
-        // OS X / Mac App Store
-        // appBundleId: '',
-        // appCategoryType: '',
-        // osxSign: '',
-        // protocol: 'myapp://path',
-
-        // Windows only
-        // win32metadata: { ... }
-      },
-
-      builder: {
-        // https://www.electron.build/configuration/configuration
-
-        // appId: 'client2'
-      },
-    },
+    // electron: {
+    //   // bundler: 'builder', // or 'packager'
+    //
+    //   extendWebpack() {
+    //     // do something with Electron main process Webpack cfg
+    //     // chainWebpack also available besides this extendWebpack
+    //   },
+    //
+    //   packager: {
+    //     // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
+    //
+    //     // OS X / Mac App Store
+    //     // appBundleId: '',
+    //     // appCategoryType: '',
+    //     // osxSign: '',
+    //     // protocol: 'myapp://path',
+    //
+    //     // Windows only
+    //     // win32metadata: { ... }
+    //   },
+    //
+    //   builder: {
+    //     // https://www.electron.build/configuration/configuration
+    //
+    //     // appId: 'client2'
+    //   },
+    // },
   };
 };

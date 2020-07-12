@@ -13,7 +13,7 @@
       :subtitle="transfer.created_at"
       :icon="$action[transfer.action]"
     >
-      <List
+      <q-list
         separator
         dense
       >
@@ -21,43 +21,25 @@
           v-for="(history, i) in transfer"
           :key="i"
         >
-          <ListItem
+          <q-item
             v-if="historyData.cols[i] && i !== 'created_at'"
             dense
           >
-            <ItemSection>
-              <ItemLabel v-if="transfer.action !== 'create' && i !== 'created_at' && i !== 'user_name'">
-                <Badge color="warning">
+            <q-item-section>
+              <q-item-label v-if="transfer.action !== 'create' && i !== 'created_at' && i !== 'user_name'">
+                <q-badge color="warning">
                   {{ historyData.cols[i] }}
-                </Badge>
-              </ItemLabel>
-              <ItemLabel v-else>{{ historyData.cols[i] }}</ItemLabel>
-            </ItemSection>
-            <ItemSection side>
-              <ItemLabel
-                v-if="i === 'notation'"
-                :lines="3"
-              >
-                {{ history }}
-              </ItemLabel>
-              <ItemLabel
-                v-else-if="i === 'status_label'"
-              >
-                <Badge :color="statusColor(history)">
-                  {{ history }}
-                </Badge>
-              </ItemLabel>
-              <ItemLabel
-                v-else-if="i === 'receiver_phone'"
-              >
-                {{ history | phoneNumberFilter }}
-              </ItemLabel>
-              <ItemLabel v-else>{{ history }}</ItemLabel>
-            </ItemSection>
-          </ListItem>
+                </q-badge>
+              </q-item-label>
+              <q-item-label v-else>{{ historyData.cols[i] }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-item-label :lines="3">{{ history }}</q-item-label>
+            </q-item-section>
+          </q-item>
           <Separator v-if="historyData.cols[i]" />
         </div>
-      </List>
+      </q-list>
     </TimelineEntry>
   </q-timeline>
 </template>
@@ -70,11 +52,6 @@
         name: 'CodePriceHistory',
         components: {
             TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            Badge: () => import('src/components/Elements/Badge.vue'),
             Separator: () => import('src/components/Separator.vue'),
         },
         mixins: [TransferMixin],

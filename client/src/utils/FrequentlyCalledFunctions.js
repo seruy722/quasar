@@ -148,6 +148,53 @@ export const combineStoreHouseData = ((data) => {
 });
 
 /**
+ * Комбинирует одинаковые данные по code_client_id и category_id и fax_id
+ * @type {function(*=): []}
+ */
+export const combineCargoData = ((data) => {
+  const faxIds = _.uniq(_.map(data, 'fax_id'));
+  const newData = _.filter(data, (item) => item.type === 0 && item.fax_id > 0);
+  const newData3 = _.filter(data, { type: 1 });
+  const newData4 = _.filter(data, {
+    type: 0,
+    fax_id: 0,
+  });
+  console.log('newData', newData);
+  const clientsCategories2 = [];
+  _.forEach(faxIds, (id) => {
+    clientsCategories2.push(_.chain(newData)
+      .filter({ fax_id: id })
+      .groupBy('category_id')
+      .mapValues((values) => _.chain(values)
+        .groupBy('for_kg')
+        .mapValues((val) => _.chain(val)
+          .groupBy('for_place')
+          .value())
+        .value())
+      .value());
+  });
+
+  console.log('clientsCategories2', clientsCategories2);
+  const result = [];
+  _.forEach(clientsCategories2, (elem) => {
+    _.forEach(elem, (el) => {
+      _.forEach(_.values(el), (arr) => {
+        _.forEach((arr), (arr2) => {
+          devlog.log('ARR_EKL', arr2);
+          result.push(_.assign({}, _.first(arr2), {
+            kg: _.sumBy(arr2, 'kg'),
+            place: _.sumBy(arr2, 'place'),
+            sum: _.sumBy(arr2, 'sum'),
+            arr: arr2,
+          }));
+        });
+      });
+    });
+  });
+  result.push(...newData3, ...newData4);
+  return result;
+});
+/**
  * Получение и запись всех категорий во vuex
  * @param store
  * @return {boolean|*}

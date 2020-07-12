@@ -86,6 +86,7 @@ const urls = {
   updateCodePrice: `${prefix}/update-code-price`,
   getCodePriceHistory: `${prefix}/get-code-price-history`,
   getNewCodesPrices: `${prefix}/get-new-codes-prices`,
+  allCargoData: `${prefix}/get-all-cargo-data`,
   axiosData: {
     baseURL: process.env.API,
     // 'http://sp.com.ua'

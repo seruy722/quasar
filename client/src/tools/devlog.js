@@ -1,6 +1,6 @@
-const { DEV = false } = process.env;
+/* eslint-disable */
+const DEV = process.env.DEV;
 
-/* eslint-disable no-console */
 function log(...args) {
   if (DEV) {
     console.log(...args);

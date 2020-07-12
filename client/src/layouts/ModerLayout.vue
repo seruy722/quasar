@@ -134,6 +134,10 @@
                     title: 'drafts',
                     field: 'drafts',
                     icon: 'drafts',
+                    access: {
+                        roles: ['admin'],
+                        permissions: [],
+                    },
                 },
                 {
                     title: 'search',

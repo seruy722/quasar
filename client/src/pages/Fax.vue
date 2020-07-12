@@ -31,7 +31,7 @@
         />
 
         <IconBtn
-          v-show="!combineTableData"
+          v-show="!combineTableData && currentFaxItem.status !== 3"
           icon="sync_alt"
           tooltip="Трансфер данных"
           @iconBtnClick="openDialogTransferFromStorehouse"

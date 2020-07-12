@@ -321,6 +321,13 @@ class StorehouseDataController extends Controller
             }
 
         }
+        if (array_key_exists('code_id', $data)) {
+            $code = \App\Code::find($data['code_id']);
+            if ($code) {
+                $data['code_client_name'] = $code->code;
+            }
+
+        }
         if (array_key_exists('category_id', $data)) {
             $category = \App\Category::find($data['category_id']);
             if ($category) {
@@ -434,15 +441,24 @@ class StorehouseDataController extends Controller
                 array_push($ids, $item['id']);
                 $price = CodesPrices::where('code_id', $item['code_client_id'])->where('category_id', $item['category_id'])->first();
                 if ($price) {
+                    $priceDataCollection = collect($price->toArray());
                     if ($elem['replacePrice'] && array_key_exists('for_kg', $elem)) {
                         $price->for_kg = $elem['for_kg'];
+                        $priceData = $priceDataCollection->except(['created_at', 'updated_at', 'for_place']);
+                        $this->storehouseDataHistory($price->id, $priceData->all(), 'update', (new CodesPrices)->getTable());
                     } else if (array_key_exists('for_kg', $elem) && !$price->for_kg) {
                         $price->for_kg = $elem['for_kg'];
+                        $priceData = $priceDataCollection->except(['created_at', 'updated_at', 'for_place']);
+                        $this->storehouseDataHistory($price->id, $priceData->all(), 'update', (new CodesPrices)->getTable());
                     }
                     if ($elem['replacePrice'] && array_key_exists('for_place', $elem)) {
                         $price->for_place = $elem['for_place'];
+                        $priceData = $priceDataCollection->except(['created_at', 'updated_at', 'for_kg']);
+                        $this->storehouseDataHistory($price->id, $priceData->all(), 'update', (new CodesPrices)->getTable());
                     } else if (array_key_exists('for_place', $elem) && !$price->for_place) {
                         $price->for_place = $elem['for_place'];
+                        $priceData = $priceDataCollection->except(['created_at', 'updated_at', 'for_kg']);
+                        $this->storehouseDataHistory($price->id, $priceData->all(), 'update', (new CodesPrices)->getTable());
                     }
                     $price->save();
                 } else {
@@ -456,7 +472,8 @@ class StorehouseDataController extends Controller
                     if (array_key_exists('for_place', $elem)) {
                         $arrForCreateCodePrice['for_place'] = $elem['for_place'];
                     }
-                    CodesPrices::create($arrForCreateCodePrice);
+                    $newPrice = CodesPrices::create($arrForCreateCodePrice);
+                    $this->storehouseDataHistory($newPrice->id, $arrForCreateCodePrice, 'create', (new CodesPrices)->getTable());
                 }
                 if (array_key_exists('category_id', $item)) {
                     $category = Category::find($item['category_id']);

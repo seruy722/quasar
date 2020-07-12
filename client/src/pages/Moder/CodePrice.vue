@@ -325,7 +325,7 @@
                           this.codePriceHistoryData = historyData;
                       } else {
                           this.$q.loading.hide();
-                          this.showNotif('info', 'По этому переводу нет истории.', 'center');
+                          this.showNotif('info', 'По этому коду нет истории.', 'center');
                       }
                   })
                   .catch(() => {
