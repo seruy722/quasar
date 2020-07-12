@@ -159,7 +159,7 @@ export const combineCargoData = ((data) => {
     type: 0,
     fax_id: 0,
   });
-  console.log('newData', newData);
+  devlog.log('newData', newData);
   const clientsCategories2 = [];
   _.forEach(faxIds, (id) => {
     clientsCategories2.push(_.chain(newData)
@@ -174,7 +174,7 @@ export const combineCargoData = ((data) => {
       .value());
   });
 
-  console.log('clientsCategories2', clientsCategories2);
+  devlog.log('clientsCategories2', clientsCategories2);
   const result = [];
   _.forEach(clientsCategories2, (elem) => {
     _.forEach(elem, (el) => {
