@@ -21,7 +21,7 @@
     "date-fns": "^2.14.0",
     "lodash": "^4.17.19",
     "mobile-drag-drop": "^2.3.0-rc.2",
-    "quasar": "^1.12.11",
+    "quasar": "^1.12.12",
     "validator": "^13.1.1",
     "vue-i18n": "^8.18.2"
   },

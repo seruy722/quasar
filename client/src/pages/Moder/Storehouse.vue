@@ -16,11 +16,8 @@
           />
           <Menu />
 
-          <IconBtn
-            color="primary"
-            icon="sync"
-            tooltip="Обновить"
-            @iconBtnClick="refresh"
+          <UpdateBtn
+            @updateBtnClick="refresh"
           />
 
           <IconBtn
@@ -273,6 +270,7 @@
             CountCategories: () => import('src/components/CountCategories.vue'),
             DialogMoveToFax: () => import('src/components/Dialogs/DialogMoveToFax.vue'),
             MoveToFaxBtn: () => import('src/components/Buttons/MoveToFaxBtn.vue'),
+            UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
         },
         mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
         data() {

@@ -219,7 +219,7 @@ class FaxController extends Controller
                 if (array_key_exists('created_at', $arr)) {
                     unset($arr['created_at']);
                 }
-                $arr['sum'] = round($item->for_kg * $item->kg + $item->place * $item->for_place);
+                $arr['sum'] = round($item->for_kg * $item->kg + $item->place * $item->for_place) * -1;
 
                 Cargo::create($arr);
                 $this->storeFaxHistory($item['id'], ['in_cargo' => $value], 'update', (new StorehouseData)->getTable());

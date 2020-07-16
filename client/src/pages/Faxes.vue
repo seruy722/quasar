@@ -19,11 +19,8 @@
             @iconBtnClick="deleteFaxItems(faxesTableReactiveProperties.selected)"
           />
 
-          <IconBtn
-            color="primary"
-            icon="sync"
-            tooltip="Обновить"
-            @iconBtnClick="refresh"
+          <UpdateBtn
+            @updateBtnClick="refresh"
           />
           <!--          <IconBtn-->
           <!--            v-show="faxesTableReactiveProperties.selected.length > 1"-->
@@ -311,6 +308,7 @@
             FaxesHistory: () => import('components/History/FaxesHistory.vue'),
             Dialog: () => import('components/Dialogs/Dialog.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
+            UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
             // ListNumbered: () => import('components/ListNumbered.vue'),
         },
         filters: {

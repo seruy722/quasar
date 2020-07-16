@@ -11,11 +11,8 @@
         title="Переводы"
       >
         <template v-slot:top-buttons>
-          <IconBtn
-            color="primary"
-            icon="sync"
-            tooltip="Обновить"
-            @iconBtnClick="refresh"
+          <UpdateBtn
+            @updateBtnClick="refresh"
           />
           <IconBtn
             color="positive"
@@ -426,6 +423,7 @@
             TransferHistory: () => import('src/components/History/TransferHistory.vue'),
             CountTransfersData: () => import('src/components/Transfers/CountTransfersData.vue'),
             TransfersStatistics: () => import('src/components/Transfers/TransfersStatistics.vue'),
+            UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
         },
         mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
         data() {

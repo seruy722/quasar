@@ -67,6 +67,9 @@
                 <ItemSection>
                   <ItemLabel>За место</ItemLabel>
                 </ItemSection>
+                <ItemSection>
+                  <ItemLabel>Обновлено</ItemLabel>
+                </ItemSection>
 
                 <ItemSection side>
                   Управление
@@ -90,6 +93,10 @@
 
                 <ItemSection>
                   <ItemLabel>{{ elem.for_place }}</ItemLabel>
+                </ItemSection>
+
+                <ItemSection>
+                  <ItemLabel>{{ elem.updated_at }}</ItemLabel>
                 </ItemSection>
 
                 <ItemSection side>
@@ -248,6 +255,9 @@
                 this.$q.loading.show();
                 this.$axios.get(getUrl('getCodesPrices'))
                   .then(({ data: { codesPrice } }) => {
+                      _.forEach(codesPrice, (price) => {
+                          setFormatedDate(price, ['updated_at']);
+                      });
                       this.$store.dispatch('codesPrices/setCodesPrices', codesPrice);
                       this.$q.loading.hide();
                   })

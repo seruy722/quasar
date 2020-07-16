@@ -102,11 +102,42 @@ export const setCategoriesStoreHouseData = (data, transporterPrices) => {
 
   arr.sort((a, b) => b.place - a.place);
 
-  // arr.push(sumObjectForCategories(arr));
-
   return {
     categoriesList: arr,
     footer: sumObjectForCategories(arr, _.has(_.first(arr), 'for_kg')),
+  };
+};
+
+export const setCargoCategoriesData = (data) => {
+  const categoriesNames = _.uniq(_.map(data, 'category_name'));
+  const arr = [];
+
+  _.forEach(categoriesNames, (name) => {
+    const categoryArr = _.filter(data, {
+      category_name: name,
+      type: 0,
+    });
+    const obj = {
+      name,
+      place: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ place }) => place),
+      kg: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ kg }) => kg),
+      sum: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ sum }) => sum),
+    };
+    if (name) {
+      arr.push(obj);
+    }
+  });
+
+  arr.sort((a, b) => b.place - a.place);
+  const dt = _.filter(data, { type: 0 });
+  return {
+    categoriesList: arr,
+    footer: {
+      name: null,
+      place: countSumCollection(dt, ({ place }) => place),
+      kg: countSumCollection(dt, ({ kg }) => kg),
+      sum: countSumCollection(data, ({ sum }) => sum),
+    },
   };
 };
 
@@ -192,6 +223,7 @@ export const combineCargoData = ((data) => {
     });
   });
   result.push(...newData3, ...newData4);
+  result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   return result;
 });
 /**
