@@ -8,7 +8,7 @@
   >
     <q-card style="min-width: 320px;width: 100%;max-width: 1900px;">
       <q-card-section class="row justify-between bg-grey q-mb-sm">
-        <span class="text-h6">Просмотр записей</span>
+        <span class="text-h6">Просмотр записей долгов</span>
         <div>
           <IconBtn
             dense
@@ -163,20 +163,6 @@
                   :props="props"
                 >
                   {{ props.row.code_client_name }}
-                  <!--                    <PopupEdit-->
-                  <!--                      v-if="combineTableData"-->
-                  <!--                      :value.sync="props.row.code_client_id"-->
-                  <!--                      type="number"-->
-                  <!--                      :title="props.row.code_client_name"-->
-                  <!--                      @addToSave="addToAddSaveArray(props.row, 'code_client_id')"-->
-                  <!--                    >-->
-                  <!--                      <SearchSelect-->
-                  <!--                        v-model="props.row.code_client_id"-->
-                  <!--                        label="Клиент"-->
-                  <!--                        :dense="$q.screen.xs || $q.screen.sm"-->
-                  <!--                        :options="clientCodes"-->
-                  <!--                      />-->
-                  <!--                    </PopupEdit>-->
                 </q-td>
 
                 <q-td
@@ -288,6 +274,10 @@
         />
       </q-card-section>
     </q-card>
+    <DialogAddCargoDebtEntry
+      :entry-data.sync="dialogAddCargoDebtEntryData"
+      :show-dialog.sync="showDialogAddCargoDebtEntry"
+    />
   </Dialog>
 </template>
 
@@ -309,6 +299,7 @@
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             Table: () => import('src/components/Elements/Table/Table.vue'),
             CountCargoCategories: () => import('src/components/CountCargoCategories.vue'),
+            DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
             // IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             // PopupEdit: () => import('src/components/PopupEdit.vue'),
         },
@@ -324,6 +315,8 @@
         },
         data() {
             return {
+                dialogAddCargoDebtEntryData: {},
+                showDialogAddCargoDebtEntry: false,
                 clientCode: null,
                 tab: 'cargo',
                 // faxTableData: [],
@@ -466,6 +459,10 @@
             close() {
                 this.$emit('update:show', false);
                 this.$emit('update:values', []);
+            },
+            viewEditDialog(data) {
+                this.dialogAddCargoDebtEntryData = data;
+                this.showDialogAddCargoDebtEntry = true;
             },
         },
     };

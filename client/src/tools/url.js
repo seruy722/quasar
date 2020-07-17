@@ -88,6 +88,8 @@ const urls = {
   getNewCodesPrices: `${prefix}/get-new-codes-prices`,
   allCargoData: `${prefix}/get-all-cargo-data`,
   updateCargoPaymentEntry: `${prefix}/update-cargo-payment-entry`,
+  updateCargoDebtEntry: `${prefix}/update-cargo-debt-entry`,
+  createCargoPaymentEntry: `${prefix}/create-cargo-payment-entry`,
   deleteCargoEntry: `${prefix}/delete-cargo-entry`,
   axiosData: {
     baseURL: process.env.API,

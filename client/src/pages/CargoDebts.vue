@@ -5,7 +5,7 @@
   >
     <PullRefresh @refresh="refresh">
       <SearchSelect
-        v-model="clientCode"
+        v-model="currentCodeClientId"
         label="Клиент"
         :dense="$q.screen.xs || $q.screen.sm"
         :options="clientCodes"
@@ -40,19 +40,16 @@
                 title="Сводная"
               >
                 <template v-slot:top-buttons>
+                  <MenuCargo
+                    v-show="currentCodeClientId"
+                  />
                   <UpdateBtn
+                    v-show="currentCodeClientId"
                     @updateBtnClick="refresh"
                   />
                   <ExportBtn
                     @exportBtnClick="exportFaxData"
                   />
-                  <!--                <IconBtn-->
-                  <!--                  color="positive"-->
-                  <!--                  icon="explicit"-->
-                  <!--                  tooltip="excel"-->
-                  <!--                  @iconBtnClick="exportFaxData"-->
-                  <!--                />-->
-
                   <IconBtn
                     v-show="faxTableReactiveProperties.selected.length"
                     color="negative"
@@ -305,6 +302,10 @@
       :entry-data.sync="dialogAddCargoPaymentEntryData"
       :show-dialog.sync="showDialogAddCargoPaymentEntry"
     />
+    <DialogAddCargoDebtEntry
+      :entry-data.sync="dialogAddCargoDebtEntryData"
+      :show-dialog.sync="showDialogAddCargoDebtEntry"
+    />
   </q-page>
 </template>
 
@@ -317,19 +318,20 @@
             SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
             Table: () => import('src/components/Elements/Table/Table.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            // PopupEdit: () => import('src/components/PopupEdit.vue'),
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            DialogViewCargoData: () => import('src/components/Dialogs/CargoDebts/DialogViewCargoData.vue'),
+            DialogViewCargoData: () => import('src/components/CargoDebts/Dialogs/DialogViewCargoData.vue'),
             CountCargoCategories: () => import('src/components/CountCargoCategories.vue'),
             UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
             ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
-            DialogAddCargoPaymentEntry: () => import('src/components/Dialogs/CargoDebts/DialogAddCargoPaymentEntry.vue'),
+            DialogAddCargoPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPaymentEntry.vue'),
+            DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
+            MenuCargo: () => import('src/components/CargoDebts/MenuCargo.vue'),
         },
         mixins: [showNotif],
         data() {
             return {
-                clientCode: null,
+                paymentData: { code_client_id: this.currentCodeClientId },
                 tab: 'cargo',
                 faxTableProperties: {
                     columns: [
@@ -470,6 +472,8 @@
                 showDialogViewCargoData: false,
                 showDialogAddCargoPaymentEntry: false,
                 dialogAddCargoPaymentEntryData: {},
+                dialogAddCargoDebtEntryData: {},
+                showDialogAddCargoDebtEntry: false,
             };
         },
         computed: {
@@ -479,9 +483,17 @@
             cargo() {
                 return this.$store.getters['cargoDebts/getCargo'];
             },
+            currentCodeClientId: {
+                get: function get() {
+                    return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
+                },
+                set: function set(val) {
+                    this.$store.dispatch('cargoDebts/setCurrentCodeClientId', val);
+                },
+            },
         },
         watch: {
-            clientCode(id) {
+            currentCodeClientId(id) {
                 if (id) {
                     this.getClientData(id);
                 }
@@ -490,48 +502,40 @@
         async created() {
             const { getClientCodes } = await import('src/utils/FrequentlyCalledFunctions');
             getClientCodes(this.$store);
-            this.setClientCode();
         },
         methods: {
-            setClientCode() {
-                if (!_.isEmpty(this.cargo) && !this.clientCode) {
-                    this.clientCode = _.get(_.first(this.cargo), 'code_client_id');
-                }
-            },
             getClientData(clientId) {
                 this.$store.dispatch('cargoDebts/getCargoDebts', clientId);
             },
             viewEditDialog(data, event) {
                 devlog.log('data', data, event);
-                const arr = _.get(data, 'row.arr');
-                if (_.isEmpty(arr)) {
+                if (data.row.type) {
                     devlog.log('EMPTY');
                     this.dialogAddCargoPaymentEntryData = data;
                     this.showDialogAddCargoPaymentEntry = true;
-                } else if (_.size(arr) === 1) {
-                    devlog.log(1);
-                } else if (!_.includes(event.target.classList, 'faxName')) {
+                } else if (!data.row.type && !_.includes(event.target.classList, 'faxName') && _.size(_.get(data, 'row.arr')) > 1) {
                     this.entryData = _.get(data, 'row.arr');
                     this.showDialogViewCargoData = true;
+                } else if (!data.row.type) {
+                    this.dialogAddCargoDebtEntryData = data;
+                    this.showDialogAddCargoDebtEntry = true;
                 }
             },
             async refresh(done) {
-                if (this.clientCode) {
-                    if (!done) {
-                        this.$q.loading.show();
-                    }
-                    const { callFunction } = await import('src/utils/index');
-                    this.$store.dispatch('cargoDebts/getCargoDebts', this.clientCode)
-                      .then(() => {
-                          callFunction(done);
-                          this.$q.loading.hide();
-                          this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                      })
-                      .catch(() => {
-                          this.$q.loading.hide();
-                          callFunction(done);
-                      });
+                if (!done) {
+                    this.$q.loading.show();
                 }
+                const { callFunction } = await import('src/utils/index');
+                this.$store.dispatch('cargoDebts/getCargoDebts', this.currentCodeClientId)
+                  .then(() => {
+                      callFunction(done);
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
+                  })
+                  .catch(() => {
+                      this.$q.loading.hide();
+                      callFunction(done);
+                  });
             },
             exportFaxData() {
                 devlog.log('EXPORT');

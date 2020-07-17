@@ -7,15 +7,14 @@
   >
     <q-card style="min-width: 320px;width: 100%;max-width: 900px;">
       <q-card-section class="row justify-between items-center bg-grey q-mb-sm">
-        <span class="text-h6">{{ entryData.row ? 'Редактирование' : 'Новая запись' }}</span>
+        <span class="text-h6">{{ entryData.row ? 'Редактирование оплаты' : 'Новая запись оплаты' }}</span>
         <q-list
           dense
         >
           <q-item>
-            <q-item-section>
+            <q-item-section v-if="entryData.row">
               <q-item-label>
                 <IconBtn
-                  v-if="entryData.row"
                   dense
                   icon="history"
                   tooltip="История"
@@ -196,8 +195,16 @@
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
                         changeValue: false,
-                        default: '',
-                        value: '',
+                        default: new Date().toISOString()
+                          .slice(0, 10)
+                          .split('-')
+                          .reverse()
+                          .join('-'),
+                        value: new Date().toISOString()
+                          .slice(0, 10)
+                          .split('-')
+                          .reverse()
+                          .join('-'),
                     },
                     code_client_id: {
                         name: 'code_client_id',
@@ -264,6 +271,9 @@
                 }
                 return size;
             },
+            currentClientCodeId() {
+                return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
+            },
         },
         watch: {
             entryData(val) {
@@ -286,6 +296,10 @@
                 immediate: true,
             },
             showDialog(val) {
+                if (val && _.isEmpty(this.entryData)) {
+                    this.storehouseData.code_client_id.value = this.currentClientCodeId;
+                    this.storehouseData.code_client_id.changeValue = true;
+                }
                 this.show = val;
             },
             show(val) {
@@ -311,19 +325,17 @@
                 if (!this.entryData.row) {
                     // CREATE
                     this.$q.loading.show();
-                    // this.$axios.post(getUrl('addStorehouseData'), sendData)
-                    //   .then(({ data: { storehouseData, shopNames, thingsList } }) => {
-                    //       this.$store.commit('shopsList/SET_SHOPS_LIST', shopNames);
-                    //       this.$store.commit('thingsList/SET_THINGS_LIST', thingsList);
-                    //       this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(storehouseData, ['created_at']));
-                    //       // this.setChangeValue(this.storehouseData);
-                    //       this.$q.loading.hide();
-                    //       this.showNotif('success', 'Запись успешно добавлена.', 'center');
-                    //   })
-                    //   .catch((errors) => {
-                    //       this.errorsData.errors = _.get(errors, 'response.data.errors');
-                    //       this.$q.loading.hide();
-                    //   });
+                    this.$axios.post(getUrl('createCargoPaymentEntry'), sendData)
+                      .then(({ data: { answer } }) => {
+                          this.$store.dispatch('cargoDebts/addCargoEntry', answer);
+                          this.$q.loading.hide();
+                          this.showNotif('success', 'Запись успешно добавлена.', 'center');
+                          this.close(this.storehouseData);
+                      })
+                      .catch((errors) => {
+                          this.errorsData.errors = _.get(errors, 'response.data.errors');
+                          this.$q.loading.hide();
+                      });
                 } else if (!_.isEmpty(sendData)) {
                     // UPDATE
                     sendData.id = _.get(this.entryData, 'row.id');

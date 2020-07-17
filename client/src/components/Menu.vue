@@ -2,28 +2,31 @@
   <div
     data-vue-component-name="Menu"
   >
-    <IconBtn color="secondary" tooltip="Добавить">
+    <IconBtn
+      color="secondary"
+      tooltip="Добавить"
+    >
       <q-menu
         transition-show="flip-right"
         transition-hide="flip-left"
       >
-        <List
+        <q-list
           :dense="$q.screen.xs || $q.screen.sm"
           bordered
           padding
           separator
           class="q-px-sm"
         >
-          <ListItem
+          <q-item
             v-for="(item, index) in listItems"
             :key="index"
             v-ripple
             clickable
-            @listItemClick="onClick(item.click)"
+            @click="onClick(item.click)"
           >
-            <ItemSection>{{ item.title }}</ItemSection>
-          </ListItem>
-        </List>
+            <q-item-section>{{ item.title }}</q-item-section>
+          </q-item>
+        </q-list>
       </q-menu>
     </IconBtn>
 
@@ -66,15 +69,12 @@
     export default {
         name: 'Menu',
         components: {
-            List: () => import('src/components/Elements/List/List.vue'),
             DialogAddEntryOnStorehouse: () => import('src/components/Dialogs/DialogAddEntryOnStorehouse.vue'),
             DialogAddTransporter: () => import('src/components/Dialogs/DialogAddTransporter.vue'),
             DialogAddCategory: () => import('src/components/Dialogs/DialogAddCategory.vue'),
             DialogAddFax: () => import('src/components/Dialogs/DialogAddFax.vue'),
             DialogAddClient: () => import('src/components/Dialogs/DialogAddClient.vue'),
             DialogAddCode: () => import('src/components/Dialogs/DialogAddCode.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
         props: {

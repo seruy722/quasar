@@ -7,6 +7,9 @@ export const UPDATE_CARGO_ENTRY = (state, data) => {
     state.cargo.splice(index, 1, data);
   }
 };
+export const ADD_CARGO_ENTRY = (state, data) => {
+  state.cargo.push(data);
+};
 
 export const DELETE_CARGO_ENTRY = ((state, data) => {
   _.forEach(data, (id) => {
@@ -17,7 +20,6 @@ export const DELETE_CARGO_ENTRY = ((state, data) => {
   });
 });
 
-export const sort = (async (state) => {
-  const { toDate } = await import('src/utils/formatDate');
-  state.cargo.sort((a, b) => new Date(toDate(b.created_at)) - new Date(toDate(a.created_at)));
+export const SET_CURRENT_CODE_CLIENT_ID = ((state, id) => {
+  state.currentCodeClientId = id;
 });

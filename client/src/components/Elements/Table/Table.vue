@@ -85,6 +85,8 @@
 </template>
 
 <script>
+    import { toDate } from 'src/utils/formatDate';
+
     export default {
         name: 'Table',
         components: {
@@ -172,12 +174,15 @@
                     data.sort((a, b) => {
                         const x = descending ? b : a;
                         const y = descending ? a : b;
-                        // devlog.log('A', a[sortBy]);
+                        devlog.log('A', !_.isNaN(_.toNumber(a[sortBy])));
                         // devlog.log('B', b[sortBy]);
                         // devlog.log('descending', descending);
                         if (!_.isNaN(_.toNumber(a[sortBy])) && !_.isNaN(_.toNumber(b[sortBy]))) {
                             devlog.log('STRING_SORT', _.toNumber(a[sortBy]));
                             return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
+                        }
+                        if (sortBy === 'created_at' || sortBy === 'updated_at') {
+                            return new Date(toDate(x[sortBy])) - new Date(toDate(y[sortBy]));
                         }
                         let num = 0;
                         if (x[sortBy] > y[sortBy]) {

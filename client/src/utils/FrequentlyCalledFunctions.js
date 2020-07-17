@@ -217,7 +217,7 @@ export const combineCargoData = ((data) => {
             place: _.sumBy(arr2, 'place'),
             sum: _.sumBy(arr2, 'sum'),
             arr: arr2,
-          }));
+          }, { id: 0 }));
         });
       });
     });

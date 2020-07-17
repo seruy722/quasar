@@ -91,6 +91,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/client-data', 'CommonController@getData');
     Route::get('/get-all-cargo-data/{id}', 'Api\CargoController@index')->name('view cargo data')->middleware(['role_or_permission:admin|view cargo data']);
     Route::post('/update-cargo-payment-entry', 'Api\CargoController@updateCargoPaymentEntry')->name('update cargo payment entry')->middleware(['role_or_permission:admin|update cargo payment entry']);
+    Route::post('/update-cargo-debt-entry', 'Api\CargoController@updateCargoDebtEntry')->name('update cargo debt entry')->middleware(['role_or_permission:admin|update cargo debt entry']);
+    Route::post('/create-cargo-payment-entry', 'Api\CargoController@createCargoPaymentEntry')->name('create cargo payment entry')->middleware(['role_or_permission:admin|create cargo payment entry']);
     Route::post('/delete-cargo-entry', 'Api\CargoController@deleteCargoEntry')->name('delete cargo entry')->middleware(['role_or_permission:admin|delete cargo entry']);
 
     // DEBTS_TABLE
