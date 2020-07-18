@@ -155,6 +155,7 @@
     import {
         getClientCodes,
         getCategories,
+        getFaxes,
         // getShopsList,
         // setFormatedDate,
         // setChangeValue,
@@ -258,14 +259,14 @@
                         default: 0,
                         value: 0,
                     },
-                    sale: {
-                        name: 'sale',
-                        type: 'number',
-                        label: 'Скидка',
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
+                    // sale: {
+                    //     name: 'sale',
+                    //     type: 'number',
+                    //     label: 'Скидка',
+                    //     changeValue: false,
+                    //     default: 0,
+                    //     value: 0,
+                    // },
                     paid: {
                         name: 'paid',
                         type: 'select',
@@ -286,8 +287,16 @@
                         label: 'Категория',
                         field: 'category_id',
                         options: [],
-                        require: true,
-                        requireError: 'Поле обьзательное для заполнения.',
+                        funcLoadData: getCategories,
+                        changeValue: false,
+                        default: null,
+                        value: null,
+                    },
+                    fax_id: {
+                        type: 'select',
+                        label: 'Факс',
+                        field: 'fax_id',
+                        options: [],
                         changeValue: false,
                         default: null,
                         value: null,
@@ -333,6 +342,12 @@
             categories() {
                 return this.$store.getters['category/getCategories'];
             },
+            faxes() {
+                return _.map(this.$store.getters['faxes/getFaxes'], ({ name, id }) => ({
+                    label: name,
+                    value: id,
+                }));
+            },
         },
         watch: {
             entryData(val) {
@@ -355,14 +370,13 @@
                 immediate: true,
             },
             showDialog(val) {
-                if (val && _.isEmpty(this.entryData)) {
-                    this.storehouseData.code_client_id.value = this.currentClientCodeId;
-                    this.storehouseData.code_client_id.changeValue = true;
-                } else if (val) {
+                if (val) {
                     this.$q.loading.show();
-                    Promise.all([getCategories(this.$store)])
+                    Promise.all([getCategories(this.$store), getFaxes(this.$store)])
                       .then(() => {
+                          this.storehouseData.code_client_id.value = this.currentClientCodeId;
                           this.storehouseData.category_id.options = this.categories;
+                          this.storehouseData.fax_id.options = this.faxes;
                           this.show = val;
                           this.$q.loading.hide();
                       });
@@ -388,10 +402,11 @@
                 }
                 const { getUrl } = await import('src/tools/url');
                 const { setChangeValue } = await import('src/utils/FrequentlyCalledFunctions');
-                if (!this.entryData.row) {
+                if (!this.entryData.row && !_.isEmpty(sendData)) {
                     // CREATE
+                    sendData.code_client_id = this.storehouseData.code_client_id.value;
                     this.$q.loading.show();
-                    this.$axios.post(getUrl('createCargoPaymentEntry'), sendData)
+                    this.$axios.post(getUrl('createCargoDebtEntry'), sendData)
                       .then(({ data: { answer } }) => {
                           this.$store.dispatch('cargoDebts/addCargoEntry', answer);
                           this.$q.loading.hide();

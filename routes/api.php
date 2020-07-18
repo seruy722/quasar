@@ -94,6 +94,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/update-cargo-debt-entry', 'Api\CargoController@updateCargoDebtEntry')->name('update cargo debt entry')->middleware(['role_or_permission:admin|update cargo debt entry']);
     Route::post('/create-cargo-payment-entry', 'Api\CargoController@createCargoPaymentEntry')->name('create cargo payment entry')->middleware(['role_or_permission:admin|create cargo payment entry']);
     Route::post('/delete-cargo-entry', 'Api\CargoController@deleteCargoEntry')->name('delete cargo entry')->middleware(['role_or_permission:admin|delete cargo entry']);
+    Route::post('/create-cargo-debt-entry', 'Api\CargoController@createCargoDebtEntry')->name('create cargo debt entry')->middleware(['role_or_permission:admin|create cargo debt entry']);
+    Route::get('/general-cargo-data', 'Api\CargoController@getGeneralCargoData')->name('general cargo data')->middleware(['role_or_permission:admin|general-cargo-data']);
 
     // DEBTS_TABLE
     Route::post('/upload-debts-table', 'CommonController@storeDebtsTable');
@@ -163,6 +165,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/store-transfers', 'Api\TransferController@store')->name('store transfers data')->middleware(['role_or_permission:admin|transfers|store transfers data']);
     Route::post('/get-new-transfers', 'Api\TransferController@getNewTransfers')->name('get new transfers')->middleware(['role_or_permission:admin|transfers|get new transfers']);
     Route::post('/export-transfers', 'Api\TransferController@export')->name('export transfers')->middleware(['role_or_permission:admin|transfers|export transfers']);
+    Route::post('/add-transfers-to-debts', 'Api\TransferController@addTransfersToDebts')->name('add transfers to debts')->middleware(['role_or_permission:admin|add transfers to debts']);
     // TRANSFERS HISTORY
     Route::get('/transfers-history/{id}', 'Api\TransferController@getTransferHistory')->name('get transfer history')->middleware(['role_or_permission:admin|transfers|get transfer history']);
 

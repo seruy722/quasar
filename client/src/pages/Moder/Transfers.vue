@@ -28,6 +28,14 @@
             class="q-ml-sm"
             @iconBtnClick="dialogStatistics = true"
           />
+          <IconBtn
+            v-show="transferTableReactiveProperties.selected.length"
+            color="teal"
+            tooltip="Добавить в долги"
+            icon="move_to_inbox"
+            class="q-ml-sm"
+            @iconBtnClick="addToDebtsTable(transferTableReactiveProperties.selected)"
+          />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
         <template v-slot:inner-item="{props}">
@@ -44,12 +52,12 @@
               expand-icon-class="text-white"
             >
               <template v-slot:header>
-<!--                <q-item-section avatar>-->
-<!--                  <q-checkbox-->
-<!--                    v-model="props.selected"-->
-<!--                    dense-->
-<!--                  />-->
-<!--                </q-item-section>-->
+                <!--                <q-item-section avatar>-->
+                <!--                  <q-checkbox-->
+                <!--                    v-model="props.selected"-->
+                <!--                    dense-->
+                <!--                  />-->
+                <!--                </q-item-section>-->
 
                 <q-item-section>
                   <q-item-label :lines="2">
@@ -835,6 +843,37 @@
                   .catch(() => {
                       devlog.error('Ошибка при получении данных истории.');
                   });
+            },
+            addToDebtsTable(data) {
+                devlog.log('DATAAAA', data);
+                const ids = _.map(data, 'id');
+                this.showNotif('warning', _.size(ids) > 1 ? 'Добавить записи в талицу долгов?' : 'Добавить запись в талицу долгов?', 'center', [
+                    {
+                        label: 'Отмена',
+                        color: 'white',
+                        handler: () => {
+                            this.transferTableReactiveProperties.selected = [];
+                        },
+                    },
+                    {
+                        label: 'Добавить',
+                        color: 'white',
+                        handler: () => {
+                            this.$q.loading.show();
+                            this.$axios.post(getUrl('addTransfersToDebts'), { ids })
+                              .then(() => {
+                                  this.transferTableReactiveProperties.selected = [];
+                                  this.$q.loading.hide();
+                                  this.showNotif('success', 'Данные успешно добавлены в таблицу долгов', 'center');
+                              })
+                              .catch(() => {
+                                  this.$q.loading.hide();
+                                  this.showNotif('error', 'Произошла ошибка при добавлении данных', 'center');
+                                  devlog.error('Ошибка запроса - addTransfersToDebts');
+                              });
+                        },
+                    },
+                ]);
             },
         },
     };

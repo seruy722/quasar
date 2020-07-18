@@ -319,7 +319,6 @@
                 showDialogAddCargoDebtEntry: false,
                 clientCode: null,
                 tab: 'cargo',
-                // faxTableData: [],
                 faxTableProperties: {
                     columns: [
                         {
@@ -453,6 +452,13 @@
         computed: {
             clientCodes() {
                 return this.$store.getters['codes/getCodes'];
+            },
+        },
+        watch: {
+            showDialogAddCargoDebtEntry(val) {
+                if (!val) {
+                    this.close();
+                }
             },
         },
         methods: {

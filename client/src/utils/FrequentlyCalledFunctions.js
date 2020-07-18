@@ -183,10 +183,11 @@ export const combineStoreHouseData = ((data) => {
  * @type {function(*=): []}
  */
 export const combineCargoData = ((data) => {
-  const faxIds = _.uniq(_.map(data, 'fax_id'));
-  const newData = _.filter(data, (item) => item.type === 0 && item.fax_id > 0);
-  const newData3 = _.filter(data, { type: 1 });
-  const newData4 = _.filter(data, {
+  const formated = _.map(data, (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
+  const faxIds = _.uniq(_.map(formated, 'fax_id'));
+  const newData = _.filter(formated, (item) => item.type === 0 && item.fax_id > 0);
+  const newData3 = _.filter(formated, { type: 1 });
+  const newData4 = _.filter(formated, {
     type: 0,
     fax_id: 0,
   });
@@ -217,13 +218,24 @@ export const combineCargoData = ((data) => {
             place: _.sumBy(arr2, 'place'),
             sum: _.sumBy(arr2, 'sum'),
             arr: arr2,
-          }, { id: 0 }));
+          }, { id: uid() }));
         });
       });
     });
   });
   result.push(...newData3, ...newData4);
-  result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  result.sort((a, b) => {
+    const x = new Date(a.created_at);
+    const y = new Date(b.created_at);
+    if (x > y) {
+      return 1;
+    }
+    if (x === y) {
+      return 0;
+    }
+
+    return -1;
+  });
   return result;
 });
 /**

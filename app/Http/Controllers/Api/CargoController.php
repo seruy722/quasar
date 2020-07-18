@@ -3,11 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Cargo;
+use App\Debt;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class CargoController extends Controller
 {
+    public function getGeneralCargoData()
+    {
+        $data = Cargo::all();
+        return response(['sum' => $data->sum('sum'), 'kg' => $data->sum('kg'), 'place' => $data->sum('place'), 'sale' => $data->sum('sale')]);
+    }
+
     protected $rules = [
         'created_at' => 'required|string|max:100',
         'code_client_id' => 'required|numeric',
@@ -32,12 +39,27 @@ class CargoController extends Controller
             ->orderBy('id', 'DESC');
     }
 
+    public function queryDebt()
+    {
+        return Debt::select(
+            'debts.*',
+            'codes.code as code_client_name',
+            'users.name as user_name'
+        )
+            ->leftJoin('codes', 'codes.id', '=', 'debts.code_client_id')
+            ->leftJoin('users', 'users.id', '=', 'debts.user_id')
+            ->orderBy('id', 'DESC');
+    }
+
     public function index($id)
     {
         $cargo = $this->query()
             ->where('code_client_id', $id)
             ->get();
-        return response(['answer' => $cargo]);
+        $debt = $this->queryDebt()
+            ->where('code_client_id', $id)
+            ->get();
+        return response(['cargo' => $cargo, 'debts' => $debt]);
     }
 
     public function createCargoPaymentEntry(Request $request)
@@ -82,6 +104,33 @@ class CargoController extends Controller
         $entry = $this->query()->where('cargos.id', $request->id)->first();
         return response(['answer' => $entry]);
     }
+
+    public function createCargoDebtEntry(Request $request)
+    {
+        $data = $request->all();
+        $rul = [];
+        foreach ($this->rules as $key => $value) {
+            if (array_key_exists($key, $data)) {
+                $rul[$key] = $value;
+            }
+        }
+
+        $this->validate($request, $rul);
+
+        if (array_key_exists('created_at', $data)) {
+            $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
+        }
+        $entry = Cargo::create($data);
+        if (array_key_exists('for_kg', $data) || array_key_exists('for_place', $data) || array_key_exists('kg', $data) || array_key_exists('place', $data)) {
+            if ($entry) {
+                $entry->sum = round($entry->for_kg * $entry->kg + $entry->for_place * $entry->place) * -1;
+                $entry->save();
+            }
+        }
+        $entry = $this->query()->where('cargos.id', $entry->id)->first();
+        return response(['answer' => $entry]);
+    }
+
     public function updateCargoDebtEntry(Request $request)
     {
         $data = $request->except('id');
@@ -102,7 +151,15 @@ class CargoController extends Controller
         if (array_key_exists('sum', $data) && $data['sum'] > 0) {
             $data['sum'] = $data['sum'] * -1;
         }
+
         Cargo::where('id', $request->id)->update($data);
+        if (array_key_exists('for_kg', $data) || array_key_exists('for_place', $data) || array_key_exists('kg', $data) || array_key_exists('place', $data)) {
+            $entry = Cargo::find($request->id);
+            if ($entry) {
+                $entry->sum = round($entry->for_kg * $entry->kg + $entry->for_place * $entry->place);
+                $entry->save();
+            }
+        }
         $entry = $this->query()->where('cargos.id', $request->id)->first();
         return response(['answer' => $entry]);
     }

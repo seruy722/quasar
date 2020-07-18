@@ -32,15 +32,6 @@ class FaxController extends Controller
 
     protected function faxesList()
     {
-//        $fax1 = FaxData::select('categories.name')
-//            ->selectRaw('SUM(fax_data.place) as place')
-//            ->selectRaw('SUM(fax_data.kg) as kg')
-//            ->selectRaw('categories.id as category_id')
-//            ->leftJoin('categories', 'categories.id', '=', 'fax_data.category_id')
-//            ->where('fax_data.fax_id', $id)
-//            ->groupBy('category_id')
-//            ->get();
-//        return Fax::select('faxes.*, users.name')->leftJoin('users', 'users.id', '=', 'user_id')->get();
         return Fax::select(
             'faxes.*',
             'users.name as user_name',
@@ -51,26 +42,10 @@ class FaxController extends Controller
             ->leftJoin('transporters', 'transporters.id', '=', 'transporter_id')
             ->leftJoin('transports', 'transports.id', '=', 'transport_id')
             ->orderBy('faxes.id', 'DESC');
-//        return FaxResource::collection(Fax::with(['transport', 'transporter', 'user'])->orderBy('departure_date', 'DESC')->get());
     }
 
     public function getFaxesList()
     {
-//        $queryData = FaxData::select(
-//            'fax_data.*',
-//            'codes.code as customer_code'
-//        )
-//            ->join('codes', function ($join) {
-//                $join->on('codes.id', '=', 'fax_data.code_id');
-//            })
-//            ->where('fax_id', 1)
-//            ->orderByRaw('customer_code + 0')
-//            ->get();
-//
-//        $data = FaxDataCommonExportResource::collection($queryData);
-//        $data = $data->collection;
-
-
         return response(['faxesList' => $this->faxesList()->get()]);
     }
 

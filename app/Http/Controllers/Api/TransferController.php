@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Debt;
 use App\Transfer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Spatie\Permission\Models\Role;
 
 class TransferController extends Controller
 {
@@ -143,5 +143,21 @@ class TransferController extends Controller
     {
         $transfersHistory = \App\History::where('table', (new Transfer)->getTable())->where('entry_id', $id)->get();
         return response(['transferHistory' => $transfersHistory]);
+    }
+
+    public function addTransfersToDebts(Request $request)
+    {
+        $entryIds = $request->ids;
+        $transfersData = Transfer::whereIn('id', $entryIds)->get();
+        $transfersData->each(function ($item) {
+            $data = $item->toArray();
+            $data['sum'] = $data['sum'] * -1;
+            $data['code_client_id'] = $data['client_id'];
+            $data['transfer_id'] = $data['id'];
+            $data['commission'] = round(($data['sum'] / 100) * 1, 1);
+            $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
+            Debt::create($data);
+        });
+        return response()->json(null, 201);
     }
 }

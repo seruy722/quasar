@@ -21,8 +21,12 @@
             indicator-color="primary"
             align="justify"
           >
-            <q-tab name="cargo" label="Карго" />
-            <q-tab name="debts" label="Долги" />
+            <q-tab name="cargo" label="Карго">
+              <q-badge color="red">{{ cargo.length }}</q-badge>
+            </q-tab>
+            <q-tab name="debts" label="Долги">
+              <q-badge color="red">{{ debts.length }}</q-badge>
+            </q-tab>
           </q-tabs>
 
           <q-separator />
@@ -225,7 +229,9 @@
                       key="paid"
                       :props="props"
                     >
-                      {{ props.row.paid ? 'Да': props.row.type ? null : 'Нет' }}
+                      <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+                        props.row.type ? null : 'Нет' }}
+                      </q-badge>
                     </q-td>
 
                     <q-td
@@ -284,7 +290,201 @@
             </q-tab-panel>
 
             <q-tab-panel name="debts">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              <Table
+                :table-properties="faxDebtsTableProperties"
+                :table-data="debts"
+                :table-reactive-properties="faxTableDebtsReactiveProperties"
+                title="Сводная"
+              >
+                <template v-slot:top-buttons>
+                  <MenuCargo
+                    v-show="currentCodeClientId"
+                  />
+                  <UpdateBtn
+                    v-show="currentCodeClientId"
+                    @updateBtnClick="refresh"
+                  />
+                  <ExportBtn
+                    @exportBtnClick="exportFaxData"
+                  />
+                  <IconBtn
+                    v-show="faxTableReactiveProperties.selected.length"
+                    color="negative"
+                    icon="delete"
+                    :tooltip="$t('delete')"
+                    @iconBtnClick="destroyEntry(faxTableReactiveProperties.selected)"
+                  />
+
+                  <!--        <IconBtn-->
+                  <!--          icon="data_usage"-->
+                  <!--          color="orange"-->
+                  <!--          tooltip="Обновить цены"-->
+                  <!--          @iconBtnClick="updatePricesInFax(currentFaxItem.id)"-->
+                  <!--        />-->
+                </template>
+                <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
+                <template v-slot:inner-item="{props}">
+                  <div
+                    class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+                    :style="props.selected ? 'transform: scale(0.95);' : ''"
+                  >
+                    <q-expansion-item
+                      expand-separator
+                      class="shadow-1 overflow-hidden"
+                      header-class="bg-secondary text-white"
+                      style="border-radius: 30px;border: 1px solid #26A69A;"
+                      expand-icon-class="text-white"
+                    >
+                      <template v-slot:header>
+                        <q-item-section avatar>
+                          <q-checkbox
+                            v-model="props.selected"
+                            dense
+                          />
+                        </q-item-section>
+
+                        <q-item-section>
+                          <q-item-label :lines="2">
+                            {{ props.row.code_client_name }}
+                          </q-item-label>
+                        </q-item-section>
+                      </template>
+
+                      <q-list
+                        separator
+                        dense
+                      >
+                        <q-item
+                          v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                          :key="col.name"
+                          @click="viewEditDialog(props)"
+                        >
+                          <q-item-section>
+                            <q-item-label>{{ `${col.label}:` }}</q-item-label>
+                          </q-item-section>
+                          <q-item-section side>
+                            <q-item-label>
+                              {{ col.value }}
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                        <q-item>
+                          <q-item-section>
+                            <BaseBtn
+                              label="История"
+                              color="info"
+                              style="max-width: 100px;margin: 0 auto;"
+                              @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"
+                            />
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-expansion-item>
+                  </div>
+                </template>
+
+                <template v-slot:inner-body="{props}">
+                  <q-tr
+                    :props="props"
+                    class="cursor-pointer"
+                    :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
+                    @click.stop="viewEditDialog(props, $event)"
+                  >
+                    <q-td auto-width class="select_checkbox">
+                      <q-checkbox
+                        v-model="props.selected"
+                        dense
+                      />
+                    </q-td>
+
+                    <q-td
+                      key="created_at"
+                      :props="props"
+                    >
+                      {{ props.row.created_at }}
+                    </q-td>
+
+                    <q-td
+                      key="code_place"
+                      :props="props"
+                    >
+                      {{ props.row.code_place }}
+                    </q-td>
+
+                    <q-td
+                      key="code_client_name"
+                      :props="props"
+                    >
+                      {{ props.row.code_client_name }}
+                    </q-td>
+
+                    <q-td
+                      key="type"
+                      :props="props"
+                    >
+                      {{ props.row.type ? 'Оплата' : 'Долг' }}
+                    </q-td>
+
+                    <q-td
+                      key="place"
+                      :props="props"
+                    >
+                      {{ props.row.type ? null : props.row.place }}
+                    </q-td>
+
+                    <q-td
+                      key="kg"
+                      :props="props"
+                    >
+                      {{ props.row.type ? null : props.row.kg }}
+                    </q-td>
+
+                    <q-td
+                      key="for_kg"
+                      class="text-bold cursor-pointer"
+                      :props="props"
+                    >
+                      {{ props.row.type ? null : props.row.for_kg }}
+                    </q-td>
+
+                    <q-td
+                      key="for_place"
+                      class="text-bold cursor-pointer"
+                      :props="props"
+                    >
+                      {{ props.row.type ? null : props.row.for_place }}
+                    </q-td>
+
+                    <q-td
+                      key="sum"
+                      :props="props"
+                    >
+                      {{ props.row.sum | numberFormatFilter }}
+                    </q-td>
+                    <q-td
+                      key="commission"
+                      :props="props"
+                    >
+                      {{ props.row.commission }}
+                    </q-td>
+                    <q-td
+                      key="paid"
+                      :props="props"
+                    >
+                      <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+                        props.row.type ? null : 'Нет' }}
+                      </q-badge>
+                    </q-td>
+
+                    <q-td
+                      key="notation"
+                      :props="props"
+                    >
+                      {{ props.row.notation }}
+                    </q-td>
+                  </q-tr>
+                </template>
+              </Table>
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
@@ -331,7 +531,6 @@
         mixins: [showNotif],
         data() {
             return {
-                paymentData: { code_client_id: this.currentCodeClientId },
                 tab: 'cargo',
                 faxTableProperties: {
                     columns: [
@@ -474,6 +673,64 @@
                 dialogAddCargoPaymentEntryData: {},
                 dialogAddCargoDebtEntryData: {},
                 showDialogAddCargoDebtEntry: false,
+                faxDebtsTableProperties: {
+                    columns: [
+                        {
+                            name: 'created_at',
+                            label: 'Дата',
+                            align: 'center',
+                            field: 'created_at',
+                            sortable: true,
+                        },
+                        {
+                            name: 'code_client_name',
+                            label: 'Клиент',
+                            align: 'center',
+                            field: 'code_client_name',
+                            sortable: true,
+                        },
+                        {
+                            name: 'type',
+                            label: 'Тип',
+                            align: 'center',
+                            field: 'type',
+                            sortable: true,
+                        },
+                        {
+                            name: 'sum',
+                            label: 'Сумма',
+                            field: 'sum',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'commission',
+                            label: 'Комиссия',
+                            field: 'commission',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'paid',
+                            label: 'Оплачен',
+                            field: 'paid',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'notation',
+                            label: this.$t('notation'),
+                            field: 'notation',
+                            align: 'center',
+                            sortable: true,
+                        },
+                    ],
+                },
+                faxTableDebtsReactiveProperties: {
+                    selected: [],
+                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission'],
+                    title: '',
+                },
             };
         },
         computed: {
@@ -482,6 +739,9 @@
             },
             cargo() {
                 return this.$store.getters['cargoDebts/getCargo'];
+            },
+            debts() {
+                return this.$store.getters['cargoDebts/getDebts'];
             },
             currentCodeClientId: {
                 get: function get() {
@@ -502,6 +762,8 @@
         async created() {
             const { getClientCodes } = await import('src/utils/FrequentlyCalledFunctions');
             getClientCodes(this.$store);
+            const { getUrl } = await import('src/tools/url');
+            await this.$axios.get(getUrl('generalCargoData'));
         },
         methods: {
             getClientData(clientId) {
@@ -513,12 +775,9 @@
                     devlog.log('EMPTY');
                     this.dialogAddCargoPaymentEntryData = data;
                     this.showDialogAddCargoPaymentEntry = true;
-                } else if (!data.row.type && !_.includes(event.target.classList, 'faxName') && _.size(_.get(data, 'row.arr')) > 1) {
+                } else if (!data.row.type && !_.includes(event.target.classList, 'faxName')) {
                     this.entryData = _.get(data, 'row.arr');
                     this.showDialogViewCargoData = true;
-                } else if (!data.row.type) {
-                    this.dialogAddCargoDebtEntryData = data;
-                    this.showDialogAddCargoDebtEntry = true;
                 }
             },
             async refresh(done) {
@@ -540,8 +799,15 @@
             exportFaxData() {
                 devlog.log('EXPORT');
             },
-            destroyEntry(arr) {
-                const ids = _.map(arr, 'id');
+            destroyEntry(data) {
+                const ids = [];
+                _.forEach(data, ({ arr, id }) => {
+                    if (!_.isEmpty(arr)) {
+                        ids.push(..._.map(arr, 'id'));
+                    } else {
+                        ids.push(id);
+                    }
+                });
                 if (!_.isEmpty(ids)) {
                     this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
                         {
