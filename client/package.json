@@ -16,12 +16,12 @@
     "build:android": "quasar build -m android"
   },
   "dependencies": {
-    "@quasar/extras": "^1.8.2",
+    "@quasar/extras": "^1.9.0",
     "axios": "^0.19.2",
-    "date-fns": "^2.14.0",
+    "date-fns": "^2.15.0",
     "lodash": "^4.17.19",
     "mobile-drag-drop": "^2.3.0-rc.2",
-    "quasar": "^1.12.12",
+    "quasar": "^1.12.13",
     "validator": "^13.1.1",
     "vue-i18n": "^8.18.2"
   },
@@ -29,7 +29,7 @@
     "@quasar/app": "2.0.6",
     "@vue/eslint-config-airbnb": "^5.1.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.4.0",
+    "eslint": "^7.5.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-vue": "^6.2.2",
     "quasar-app-extension-ide-helper": "^1.0.0"
