@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Cargo;
 use App\Debt;
+use App\Transfer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -48,7 +49,7 @@ class CargoController extends Controller
         )
             ->leftJoin('codes', 'codes.id', '=', 'debts.code_client_id')
             ->leftJoin('users', 'users.id', '=', 'debts.user_id')
-            ->orderBy('id', 'DESC');
+            ->orderBy('debts.created_at', 'DESC');
     }
 
     public function index($id)
@@ -145,8 +146,6 @@ class CargoController extends Controller
 
         if (array_key_exists('created_at', $data)) {
             $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
-        } else {
-            $data['created_at'] = date("Y-m-d H:i:s");
         }
         if (array_key_exists('sum', $data) && $data['sum'] > 0) {
             $data['sum'] = $data['sum'] * -1;
@@ -168,5 +167,114 @@ class CargoController extends Controller
     {
         Cargo::destroy($request->ids);
         return response()->json(null, 201);
+    }
+
+    public function createDebtPaymentEntry(Request $request)
+    {
+        $data = $request->all();
+        $rul = [];
+        foreach ($this->rules as $key => $value) {
+            if (array_key_exists($key, $data)) {
+                $rul[$key] = $value;
+            }
+        }
+
+        $this->validate($request, $rul);
+
+        if (array_key_exists('created_at', $data)) {
+            $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
+        }
+        $data['type'] = true;
+        $entry = Debt::create($data);
+        $entry = $this->queryDebt()->where('debts.id', $entry->id)->first();
+        return response(['answer' => $entry]);
+    }
+
+    public function updateDebtPaymentEntry(Request $request)
+    {
+        $data = $request->except('id');
+        $rul = [];
+        foreach ($this->rules as $key => $value) {
+            if (array_key_exists($key, $data)) {
+                $rul[$key] = $value;
+            }
+        }
+
+        $this->validate($request, $rul);
+
+        if (array_key_exists('created_at', $data)) {
+            $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
+        }
+        if (array_key_exists('sum', $data) && $data['sum'] && $data['sum'] < 0) {
+            $data['sum'] = $data['sum'] * -1;
+        }
+        if (array_key_exists('commission', $data) && $data['commission'] && $data['commission'] < 0) {
+            $data['commission'] = $data['commission'] * -1;
+        }
+        Debt::where('id', $request->id)->update($data);
+        $entry = $this->queryDebt()->where('debts.id', $request->id)->first();
+        return response(['answer' => $entry]);
+    }
+
+    public function deleteDebtEntry(Request $request)
+    {
+        Debt::destroy($request->ids);
+        return response()->json(null, 201);
+    }
+
+    public function createDebtEntry(Request $request)
+    {
+        $data = $request->all();
+        $rul = [];
+        foreach ($this->rules as $key => $value) {
+            if (array_key_exists($key, $data)) {
+                $rul[$key] = $value;
+            }
+        }
+
+        $this->validate($request, $rul);
+
+        if (array_key_exists('created_at', $data)) {
+            $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
+        }
+        if ($data['sum'] && $data['sum'] > 0) {
+            $data['sum'] = $data['sum'] * -1;
+        }
+        if ($data['commission'] && $data['commission'] > 0) {
+            $data['commission'] = $data['commission'] * -1;
+        }
+        $entry = Debt::create($data);
+        $entry = $this->queryDebt()->where('debts.id', $entry->id)->first();
+        return response(['answer' => $entry]);
+    }
+
+    public function updateDebtEntry(Request $request)
+    {
+        $data = $request->all();
+        $rul = [];
+        foreach ($this->rules as $key => $value) {
+            if (array_key_exists($key, $data)) {
+                $rul[$key] = $value;
+            }
+        }
+
+        $this->validate($request, $rul);
+
+        if (array_key_exists('created_at', $data)) {
+            $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
+        }
+        if (array_key_exists('sum', $data) && $data['sum'] && $data['sum'] > 0) {
+            $data['sum'] = $data['sum'] * -1;
+        }
+        if (array_key_exists('commission', $data) && $data['commission'] && $data['commission'] > 0) {
+            $data['commission'] = $data['commission'] * -1;
+        }
+        Debt::where('id', $request->id)->update($data);
+        $debt = Debt::find($request->id);
+        if (array_key_exists('paid', $data)) {
+            Transfer::where('id', $debt->transfer_id)->update(['paid' => $data['paid']]);
+        }
+        $entry = $this->queryDebt()->where('debts.id', $request->id)->first();
+        return response(['answer' => $entry, '$debt' => $debt]);
     }
 }

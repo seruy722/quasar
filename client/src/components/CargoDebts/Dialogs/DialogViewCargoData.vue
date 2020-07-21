@@ -298,7 +298,7 @@
             // Separator: () => import('src/components/Separator.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             Table: () => import('src/components/Elements/Table/Table.vue'),
-            CountCargoCategories: () => import('src/components/CountCargoCategories.vue'),
+            CountCargoCategories: () => import('src/components/CargoDebts/CountCargoCategories.vue'),
             DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
             // IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             // PopupEdit: () => import('src/components/PopupEdit.vue'),

@@ -14,7 +14,7 @@
           <SearchSelect
             v-show="model === 'Клиент'"
             v-model="clientId"
-            label="Клиент"
+            label="Выберите код клиента"
             style="max-width: 300px;"
             :dense="$q.screen.xs || $q.screen.sm"
             :options="clientsOptions"
@@ -121,7 +121,9 @@
                     key="fax_name"
                     :props="props"
                   >
-                    {{ props.row.fax_name }}
+                    <router-link :to="{ name: 'fax', params: { id: props.row.fax_id }}">
+                      {{ props.row.fax_name }}
+                    </router-link>
                   </q-td>
                   <q-td
                     key="user_name"
@@ -322,7 +324,9 @@
                     key="fax_name"
                     :props="props"
                   >
-                    {{ props.row.fax_name }}
+                    <router-link :to="{ name: 'fax', params: { id: props.row.fax_id }}">
+                      {{ props.row.fax_name }}
+                    </router-link>
                   </q-td>
                   <q-td
                     key="user_name"
@@ -373,8 +377,8 @@
         },
         data() {
             return {
-                model: 'Код',
-                modelOptions: ['Код', 'Клиент'],
+                model: 'Клиент',
+                modelOptions: ['Клиент', 'Код'],
                 clientId: null,
                 codePlace: null,
                 clientsOptions: [],

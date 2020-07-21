@@ -149,14 +149,17 @@ class TransferController extends Controller
     {
         $entryIds = $request->ids;
         $transfersData = Transfer::whereIn('id', $entryIds)->get();
-        $transfersData->each(function ($item) {
-            $data = $item->toArray();
-            $data['sum'] = $data['sum'] * -1;
-            $data['code_client_id'] = $data['client_id'];
-            $data['transfer_id'] = $data['id'];
-            $data['commission'] = round(($data['sum'] / 100) * 1, 1);
-            $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
-            Debt::create($data);
+        $debts = Debt::all();
+        $transfersData->each(function ($item) use ($debts) {
+            if (!$debts->contains('transfer_id', $item->id)) {
+                $data = $item->toArray();
+                $data['sum'] = $data['sum'] * -1;
+                $data['code_client_id'] = $data['client_id'];
+                $data['transfer_id'] = $data['id'];
+                $data['commission'] = round(($data['sum'] / 100) * 1, 1);
+                $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
+                Debt::create($data);
+            }
         });
         return response()->json(null, 201);
     }

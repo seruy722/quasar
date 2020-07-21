@@ -25,3 +25,14 @@ export const deleteCargoEntry = (({ commit }, data) => {
 export const setCurrentCodeClientId = (({ commit }, id) => {
   commit('SET_CURRENT_CODE_CLIENT_ID', id);
 });
+
+export const addDebtEntry = (({ commit }, data) => {
+  commit('ADD_DEBT_ENTRY', data);
+});
+export const updateDebtEntry = (({ commit }, data) => {
+  commit('UPDATE_DEBT_ENTRY', data);
+});
+
+export const deleteDebtEntry = (({ commit }, data) => {
+  commit('DELETE_DEBT_ENTRY', data);
+});

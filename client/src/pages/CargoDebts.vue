@@ -148,7 +148,10 @@
                     :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
                     @click.stop="viewEditDialog(props, $event)"
                   >
-                    <q-td auto-width class="select_checkbox">
+                    <q-td
+                      auto-width
+                      class="select_checkbox"
+                    >
                       <q-checkbox
                         v-model="props.selected"
                         dense
@@ -287,6 +290,10 @@
                   </q-tr>
                 </template>
               </Table>
+              <CountCargoCategories
+                :list="cargo"
+                style="max-width: 500px;margin:0 auto;"
+              />
             </q-tab-panel>
 
             <q-tab-panel name="debts">
@@ -297,7 +304,7 @@
                 title="Сводная"
               >
                 <template v-slot:top-buttons>
-                  <MenuCargo
+                  <MenuDebt
                     v-show="currentCodeClientId"
                   />
                   <UpdateBtn
@@ -308,11 +315,11 @@
                     @exportBtnClick="exportFaxData"
                   />
                   <IconBtn
-                    v-show="faxTableReactiveProperties.selected.length"
+                    v-show="faxTableDebtsReactiveProperties.selected.length"
                     color="negative"
                     icon="delete"
                     :tooltip="$t('delete')"
-                    @iconBtnClick="destroyEntry(faxTableReactiveProperties.selected)"
+                    @iconBtnClick="destroyDebtEntry(faxTableDebtsReactiveProperties.selected)"
                   />
 
                   <!--        <IconBtn-->
@@ -388,9 +395,12 @@
                     :props="props"
                     class="cursor-pointer"
                     :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
-                    @click.stop="viewEditDialog(props, $event)"
+                    @click.stop="viewDebtEditDialog(props, $event)"
                   >
-                    <q-td auto-width class="select_checkbox">
+                    <q-td
+                      auto-width
+                      class="select_checkbox"
+                    >
                       <q-checkbox
                         v-model="props.selected"
                         dense
@@ -485,15 +495,16 @@
                   </q-tr>
                 </template>
               </Table>
+              <GeneralClientDebtsData
+                :list="debts"
+                title="Баланс"
+                style="max-width: 500px;margin:0 auto;"
+              />
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
       </div>
     </PullRefresh>
-    <CountCargoCategories
-      :list="cargo"
-      style="max-width: 500px;margin:0 auto;"
-    />
     <DialogViewCargoData
       :values.sync="entryData"
       :show.sync="showDialogViewCargoData"
@@ -505,6 +516,14 @@
     <DialogAddCargoDebtEntry
       :entry-data.sync="dialogAddCargoDebtEntryData"
       :show-dialog.sync="showDialogAddCargoDebtEntry"
+    />
+    <DialogAddDebtPaymentEntry
+      :entry-data.sync="dialogAddDebtPaymentEntryData"
+      :show-dialog.sync="showDialogAddDebtPaymentEntry"
+    />
+    <DialogAddDebEntry
+      :entry-data.sync="dialogAddDebtEntryData"
+      :show-dialog.sync="showDialogAddDebtEntry"
     />
   </q-page>
 </template>
@@ -520,13 +539,17 @@
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             DialogViewCargoData: () => import('src/components/CargoDebts/Dialogs/DialogViewCargoData.vue'),
-            CountCargoCategories: () => import('src/components/CountCargoCategories.vue'),
+            CountCargoCategories: () => import('src/components/CargoDebts/CountCargoCategories.vue'),
+            GeneralClientDebtsData: () => import('src/components/CargoDebts/GeneralClientDebtsData.vue'),
             UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
             ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
             DialogAddCargoPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPaymentEntry.vue'),
             DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
+            DialogAddDebtPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue'),
+            DialogAddDebEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue'),
             MenuCargo: () => import('src/components/CargoDebts/MenuCargo.vue'),
+            MenuDebt: () => import('src/components/CargoDebts/MenuDebt.vue'),
         },
         mixins: [showNotif],
         data() {
@@ -731,6 +754,10 @@
                     visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission'],
                     title: '',
                 },
+                showDialogAddDebtPaymentEntry: false,
+                dialogAddDebtPaymentEntryData: {},
+                showDialogAddDebtEntry: false,
+                dialogAddDebtEntryData: {},
             };
         },
         computed: {
@@ -758,6 +785,9 @@
                     this.getClientData(id);
                 }
             },
+            debts(val) {
+                devlog.log('debtsVal', val);
+            },
         },
         async created() {
             const { getClientCodes } = await import('src/utils/FrequentlyCalledFunctions');
@@ -769,15 +799,34 @@
             getClientData(clientId) {
                 this.$store.dispatch('cargoDebts/getCargoDebts', clientId);
             },
-            viewEditDialog(data, event) {
-                devlog.log('data', data, event);
-                if (data.row.type) {
-                    devlog.log('EMPTY');
-                    this.dialogAddCargoPaymentEntryData = data;
-                    this.showDialogAddCargoPaymentEntry = true;
-                } else if (!data.row.type && !_.includes(event.target.classList, 'faxName')) {
-                    this.entryData = _.get(data, 'row.arr');
-                    this.showDialogViewCargoData = true;
+            async viewEditDialog(data, event) {
+                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
+                    devlog.log('data', data, event);
+                    if (data.row.type) {
+                        devlog.log('EMPTY');
+                        this.dialogAddCargoPaymentEntryData = data;
+                        this.showDialogAddCargoPaymentEntry = true;
+                    } else if (!data.row.type && !_.includes(event.target.classList, 'faxName') && _.has(data, 'row.arr')) {
+                        const { setFormatedDate } = await import('src/utils/FrequentlyCalledFunctions');
+                        this.entryData = setFormatedDate(_.cloneDeep(_.get(data, 'row.arr')), ['created_at']);
+                        this.showDialogViewCargoData = true;
+                    } else {
+                        this.entryData = [_.get(data, 'row')];
+                        this.showDialogViewCargoData = true;
+                    }
+                }
+            },
+            viewDebtEditDialog(data, event) {
+                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
+                    devlog.log('data', data, event);
+                    if (data.row.type) {
+                        devlog.log('EMPTY');
+                        this.dialogAddDebtPaymentEntryData = data;
+                        this.showDialogAddDebtPaymentEntry = true;
+                    } else {
+                        this.dialogAddDebtEntryData = data;
+                        this.showDialogAddDebtEntry = true;
+                    }
                 }
             },
             async refresh(done) {
@@ -833,6 +882,39 @@
                                   .catch(() => {
                                       this.$q.loading.hide();
                                       devlog.error('Ошибка запроса - destroyEntry');
+                                  });
+                            },
+                        },
+                    ]);
+                }
+            },
+            destroyDebtEntry(data) {
+                const ids = _.map(data, 'id');
+                if (!_.isEmpty(ids)) {
+                    this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
+                        {
+                            label: 'Отмена',
+                            color: 'white',
+                            handler: () => {
+                                this.faxTableDebtsReactiveProperties.selected = [];
+                            },
+                        },
+                        {
+                            label: 'Удалить',
+                            color: 'white',
+                            handler: async () => {
+                                const { getUrl } = await import('src/tools/url');
+                                this.$q.loading.show();
+                                this.$axios.post(getUrl('deleteDebtEntry'), { ids })
+                                  .then(() => {
+                                      this.$store.dispatch('cargoDebts/deleteDebtEntry', ids);
+                                      this.faxTableDebtsReactiveProperties.selected = [];
+                                      this.$q.loading.hide();
+                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
+                                  })
+                                  .catch(() => {
+                                      this.$q.loading.hide();
+                                      devlog.error('Ошибка запроса - deleteDebtEntry');
                                   });
                             },
                         },
