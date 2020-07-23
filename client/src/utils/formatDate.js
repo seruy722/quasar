@@ -240,3 +240,8 @@ export const formatToPickerDate = ((date) => {
   }
   return date;
 });
+/**
+ * Преобразует дату в число без учета времени
+ * @type {function(*=): number}
+ */
+export const getDateWithoutTime = ((date) => Math.floor(new Date(date).getTime() / 86400000));

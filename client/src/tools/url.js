@@ -99,6 +99,9 @@ const urls = {
   deleteDebtEntry: `${prefix}/delete-debt-entry`,
   createDebtEntry: `${prefix}/create-debt-entry`,
   updateDebtEntry: `${prefix}/update-debt-entry`,
+  exportCargoData: `${prefix}/export-cargo-data`,
+  exportDebtsData: `${prefix}/export-debts-data`,
+  exportGeneralCargoData: `${prefix}/export-general-cargo-data`,
   axiosData: {
     baseURL: process.env.API,
     // 'http://sp.com.ua'

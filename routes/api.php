@@ -101,6 +101,9 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/delete-debt-entry', 'Api\CargoController@deleteDebtEntry')->name('delete debt entry')->middleware(['role_or_permission:admin|delete debt entry']);
     Route::post('/create-debt-entry', 'Api\CargoController@createDebtEntry')->name('create debt entry')->middleware(['role_or_permission:admin|create debt entry']);
     Route::post('/update-debt-entry', 'Api\CargoController@updateDebtEntry')->name('update debt entry')->middleware(['role_or_permission:admin|update debt entry']);
+    Route::post('/export-cargo-data', 'Api\CargoController@exportCargoData')->name('export cargo data')->middleware(['role_or_permission:admin|export cargo data']);
+    Route::post('/export-debts-data', 'Api\CargoController@exportDebtsData')->name('export debts data')->middleware(['role_or_permission:admin|export debts data']);
+    Route::post('/export-general-cargo-data', 'Api\CargoController@exportGeneralCargoData')->name('export general cargo data')->middleware(['role_or_permission:admin|export general cargo data']);
 
     // DEBTS_TABLE
     Route::post('/upload-debts-table', 'CommonController@storeDebtsTable');

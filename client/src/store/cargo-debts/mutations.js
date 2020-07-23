@@ -1,6 +1,12 @@
 export const SET_CARGO = (state, data) => {
   state.cargo = data;
 };
+export const SET_CARGO_FO_SEARCH = (state, data) => {
+  state.cargoForSearch = data;
+};
+export const SET_DEBTS_FO_SEARCH = (state, data) => {
+  state.debtsForSearch = data;
+};
 export const UPDATE_CARGO_ENTRY = (state, data) => {
   const index = _.findIndex(state.cargo, { id: data.id });
   if (index !== -1 && state.currentCodeClientId === data.code_client_id) {
@@ -33,9 +39,6 @@ export const SET_DEBTS = (state, data) => {
 };
 
 export const ADD_DEBT_ENTRY = (state, data) => {
-  devlog.log('ADD_DEBT_ENTRY', data);
-  devlog.log('state.currentCodeClientId', state.currentCodeClientId);
-  devlog.log('data.code_client_id', data.code_client_id);
   if (state.currentCodeClientId === data.code_client_id) {
     state.debts.push(data);
   }
@@ -57,4 +60,8 @@ export const DELETE_DEBT_ENTRY = ((state, data) => {
       state.debts.splice(index, 1);
     }
   });
+});
+
+export const SET_GENERAL_DATA = ((state, data) => {
+  state.generalData = data;
 });

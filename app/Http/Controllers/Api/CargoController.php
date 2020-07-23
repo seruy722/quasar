@@ -12,8 +12,9 @@ class CargoController extends Controller
 {
     public function getGeneralCargoData()
     {
-        $data = Cargo::all();
-        return response(['sum' => $data->sum('sum'), 'kg' => $data->sum('kg'), 'place' => $data->sum('place'), 'sale' => $data->sum('sale')]);
+        $cargo = Cargo::all();
+        $debts = Debt::all();
+        return response(['cargo' => ['sum' => $cargo->sum('sum'), 'kg' => $cargo->sum('kg'), 'place' => $cargo->sum('place'), 'sale' => $cargo->sum('sale')], 'debts' => ['sum' => $debts->sum('sum'), 'commission' => $debts->sum('commission')]]);
     }
 
     protected $rules = [
@@ -79,6 +80,7 @@ class CargoController extends Controller
             $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
         }
         $data['type'] = true;
+        $data['place'] = 0;
         $entry = Cargo::create($data);
         $entry = $this->query()->where('cargos.id', $entry->id)->first();
         return response(['answer' => $entry]);
@@ -277,4 +279,20 @@ class CargoController extends Controller
         $entry = $this->queryDebt()->where('debts.id', $request->id)->first();
         return response(['answer' => $entry, '$debt' => $debt]);
     }
+
+    public function exportCargoData(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoExport($request->data), 'transfers.xlsx');
+    }
+
+    public function exportDebtsData(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Debts\DebtsExport($request->data), 'transfers.xlsx');
+    }
+
+    public function exportGeneralCargoData(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoGeneralDataExport($request->data), 'transfers.xlsx');
+    }
+
 }
