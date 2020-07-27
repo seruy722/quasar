@@ -23,7 +23,7 @@
     "mobile-drag-drop": "^2.3.0-rc.2",
     "quasar": "^1.12.13",
     "validator": "^13.1.1",
-    "vue-i18n": "^8.18.2"
+    "vue-i18n": "^8.19.0"
   },
   "devDependencies": {
     "@quasar/app": "2.0.6",
