@@ -16,7 +16,7 @@
     >
       <q-card style="min-width: 320px;width: 100%;max-width: 900px;">
         <q-card-section class="row justify-between items-center bg-grey q-mb-sm">
-          <span class="text-h6">Выгрузка данных по карго</span>
+          <span class="text-h6">{{ title }}</span>
           <IconBtn
             dense
             icon="clear"
@@ -26,7 +26,10 @@
           />
         </q-card-section>
         <q-card-section>
-          <div class="row items-center" style="margin: 0 40px;text-align: center;">
+          <div
+            class="row items-center"
+            style="margin: 0 40px;text-align: center;"
+          >
             <q-select
               v-model="type"
               :options="typeOptions"
@@ -56,7 +59,22 @@
                 </q-list>
               </q-menu>
             </q-btn>
-            <div style="margin-left: 40px;">{{ viewPeriodDate }}</div>
+            <div style="margin-left: 40px;">
+              {{ viewPeriodDate }}
+            </div>
+            <q-btn
+              label="сводка по клиентам"
+              style="margin: 10px auto;"
+              color="orange"
+              @click="exportGeneralDataByClients(model)"
+            />
+            <q-btn
+              v-show="model === 'debts'"
+              label="сводка по комиссии"
+              style="margin: 10px auto;"
+              color="orange"
+              @click="exportGeneralDataByClients('commission')"
+            />
           </div>
           <Dialog
             :dialog="choosePeriodDialog"
@@ -132,6 +150,24 @@
             DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
         },
         mixins: [ExportDataMixin],
+        props: {
+            title: {
+                type: String,
+                default: '',
+            },
+            urlName: {
+                type: String,
+                default: '',
+            },
+            model: {
+                type: String,
+                default: '',
+            },
+            urlNameClients: {
+                type: String,
+                default: '',
+            },
+        },
         data() {
             return {
                 show: false,
@@ -196,7 +232,9 @@
                     this.period.to = null;
                     this.period.from = null;
                 } else if (val && this.selectData.value === 2) {
-                    this.viewPeriodDate = `С ${format(new Date(this.period.from), 'dd-MM-yyyy')} по ${format(new Date(this.period.to), 'dd-MM-yyyy')}`;
+                    const to = this.period.to ? format(new Date(this.period.to), 'dd-MM-yyyy') : '';
+                    const from = this.period.from ? format(new Date(this.period.from), 'dd-MM-yyyy') : '';
+                    this.viewPeriodDate = `С ${from} по ${to}`;
                 } else if (!val && this.selectData.value === 3) {
                     this.period.day = null;
                 } else if (val && this.selectData.value === 3) {
@@ -213,15 +251,21 @@
                 } else if (val.value === 3) {
                     this.choosePeriodDialog = true;
                 } else {
-                    [this.statisticsSelectData] = this.optionsStatistics;
+                    this.selectData = val;
+                    this.viewPeriodDate = '';
                 }
             },
             async exportFaxData(select, type, period) {
                 const sendData = {
                     type: type.value,
+                    day: null,
+                    period: {
+                        to: null,
+                        from: null,
+                    },
                 };
                 if (select.value === 1) {
-                    sendData.today = period.today;
+                    sendData.day = period.today;
                 } else if (select.value === 2) {
                     sendData.period = period;
                 } else if (select.value === 3) {
@@ -229,9 +273,14 @@
                 }
                 devlog.log(sendData);
                 const { getUrl } = await import('src/tools/url');
-                this.exportDataToExcel(getUrl('exportGeneralCargoData'), {
+                this.exportDataToExcel(getUrl(this.urlName), {
                     data: sendData,
                 }, 'Cargo.xlsx');
+                this.show = false;
+            },
+            async exportGeneralDataByClients(model) {
+                const { getUrl } = await import('src/tools/url');
+                this.exportDataToExcel(getUrl(this.urlNameClients), { model }, 'Cargo.xlsx');
             },
         },
     };

@@ -115,7 +115,12 @@
                     </q-item>
                   </q-list>
                   <q-card-actions align="right">
-                    <ExportMenuGeneralCargo />
+                    <ExportMenuGeneralCargo
+                      title="Выгрузка данных по карго"
+                      url-name="exportGeneralCargoData"
+                      url-name-clients="exportGeneralDataByClients"
+                      model="cargo"
+                    />
                   </q-card-actions>
                 </q-card-section>
                 <q-inner-loading :showing="generalCargoData.visible">
@@ -160,11 +165,19 @@
                     </q-item>
                   </q-list>
                   <q-card-actions align="right">
-                    dfsdfsd
+                    <ExportMenuGeneralCargo
+                      title="Выгрузка данных по долгах"
+                      url-name="exportGeneralDebtsData"
+                      url-name-clients="exportGeneralDataByClients"
+                      model="debts"
+                    />
                   </q-card-actions>
                 </q-card-section>
                 <q-inner-loading :showing="generalDebtsData.visible">
-                  <q-spinner-gears size="50px" color="primary" />
+                  <q-spinner-gears
+                    size="50px"
+                    color="primary"
+                  />
                 </q-inner-loading>
               </q-card>
             </q-tab-panel>

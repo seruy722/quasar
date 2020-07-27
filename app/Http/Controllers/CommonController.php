@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Cargo;
-use App\cargoTable;
 use App\Category;
 use App\Code;
+use App\Debt;
 use App\debtsTable;
 use App\History;
 use App\Imports\ImportData;
@@ -20,46 +20,59 @@ class CommonController extends Controller
 {
     public function storeCargoTable(Request $request)
     {
+        // CARGO
 //        if ($request->hasFile('upload')) {
 //            DB::statement("SET foreign_key_checks=0");
 //            Cargo::truncate();
 //            DB::statement("SET foreign_key_checks=1");
 //            $ImportedFaxArray = Excel::toArray(new ImportData, $request->file('upload'));
-//
 //            foreach ($ImportedFaxArray as $item) {
 //                foreach ($item as $elem) {
 //                    $trimElem = array_map('trim', $elem);
-//                    $code = Code::where('code', $trimElem[1])->first();
-//                    if (!$code) {
-//                        $code = Code::create(['code' => $trimElem[1]]);
-//                    }
+//                    $code = Code::firstOrCreate(['code' => $trimElem[3]]);
 //                    Cargo::create([
 //                        'code_client_id' => $code->id,
-//                        'sum' => (int)$trimElem[2] * -1,
-//                        'notation' => $trimElem[3],
+//                        'type' => $trimElem[1] === 'Доход',
+//                        'sum' => (int)$trimElem[2],
+//                        'notation' => $trimElem[4],
 //                        'created_at' => date("Y-m-d H:i:s", strtotime($trimElem[0])),
 //                    ]);
 //
 //                }
 //            }
 //        }
+        // DEBTS
+//        if ($request->hasFile('upload')) {
+//            DB::statement("SET foreign_key_checks=0");
+//            Debt::truncate();
+//            DB::statement("SET foreign_key_checks=1");
+//            $ImportedFaxArray = Excel::toArray(new ImportData, $request->file('upload'));
+//
+//            foreach ($ImportedFaxArray as $item) {
+//                foreach ($item as $elem) {
+//                    $trimElem = array_map('trim', $elem);
+//                    $code = Code::firstOrCreate(['code' => $trimElem[3]]);
+//                    Debt::create([
+//                        'type' => $trimElem[1] === 'Доход',
+//                        'code_client_id' => $code->id,
+//                        'sum' => (int)$trimElem[2],
+//                        'notation' => $trimElem[4],
+//                        'created_at' => date("Y-m-d H:i:s", strtotime($trimElem[0])),
+//                    ]);
+//                }
+//            }
+//        }
         if ($request->hasFile('upload')) {
             $ImportedFaxArray = Excel::toArray(new ImportData, $request->file('upload'));
+
             foreach ($ImportedFaxArray as $item) {
                 foreach ($item as $elem) {
                     $trimElem = array_map('trim', $elem);
-                    $code = Code::where('code', $trimElem[1])->first();
-                    if (!$code) {
-                        $code = Code::create(['code' => $trimElem[1]]);
-                    }
-                    Cargo::create([
-                        'code_client_id' => $code->id,
-                        'type' => true,
-                        'sum' => (int)$trimElem[2],
-                        'notation' => $trimElem[3],
-                        'created_at' => date("Y-m-d H:i:s", strtotime($trimElem[0])),
-                    ]);
+                    $code = Code::firstOrCreate(['code' => $trimElem[0]]);
 
+                    $entry = Debt::where('code_client_id', $code->id)->where('type', false)->first();
+                    $entry->commission = $trimElem[1] * -1;
+                    $entry->save();
                 }
             }
         }

@@ -39,11 +39,37 @@ class CargoGeneralDataExport implements FromView, ShouldAutoSize, WithTitle
             ->leftJoin('faxes', 'faxes.id', '=', 'cargos.fax_id')
             ->orderBy('created_at', 'DESC');
 
-        return $data->get();
+        if ($this->data['type'] === 1 && $this->data['day']) {
+            return $data->where('cargos.type', true)->whereDate('cargos.created_at', $this->data['day'])->take(500)->get();
+        } else if ($this->data['type'] === 0 && $this->data['day']) {
+            return $data->where('cargos.type', false)->whereDate('cargos.created_at', $this->data['day'])->take(500)->get();
+        } else if ($this->data['type'] === -1 && $this->data['day']) {
+            return $data->whereDate('cargos.created_at', $this->data['day'])->take(500)->get();
+        } else if ($this->data['type'] === 1 && $this->data['period']['from'] && $this->data['period']['to']) {
+            return $data->where('cargos.type', $this->data['type'])->whereDate('cargos.created_at', '>=', $this->data['period']['from'])->whereDate('cargos.created_at', '<=', $this->data['period']['to'])->take(500)->get();
+        } else if ($this->data['type'] === 0 && $this->data['period']['from'] && $this->data['period']['to']) {
+            return $data->where('cargos.type', $this->data['type'])->whereDate('cargos.created_at', '>=', $this->data['period']['from'])->whereDate('cargos.created_at', '<=', $this->data['period']['to'])->take(500)->get();
+        } else if ($this->data['type'] === -1 && $this->data['period']['from'] && $this->data['period']['to']) {
+            return $data->whereDate('.cargos.created_at', '>=', $this->data['period']['from'])->whereDate('cargos.created_at', '<=', $this->data['period']['to'])->take(500)->get();
+        } else if ($this->data['type'] === 1 && $this->data['period']['to']) {
+            return $data->where('cargos.type', $this->data['type'])->whereDate('cargos.created_at', '<=', $this->data['period']['to'])->take(500)->get();
+        } else if ($this->data['type'] === 0 && $this->data['period']['to']) {
+            return $data->where('cargos.type', $this->data['type'])->whereDate('cargos.created_at', '<=', $this->data['period']['to'])->take(500)->get();
+        } else if ($this->data['type'] === -1 && $this->data['period']['to']) {
+            return $data->whereDate('cargos.created_at', '<=', $this->data['period']['to'])->take(500)->get();
+        } else if ($this->data['type'] === 1 && $this->data['period']['from']) {
+            return $data->where('cargos.type', $this->data['type'])->whereDate('cargos.created_at', '>=', $this->data['period']['from'])->take(500)->get();
+        } else if ($this->data['type'] === 0 && $this->data['period']['from']) {
+            return $data->where('cargos.type', $this->data['type'])->whereDate('cargos.created_at', '>=', $this->data['period']['from'])->take(500)->get();
+        } else if ($this->data['type'] === -1 && $this->data['period']['from']) {
+            return $data->whereDate('cargos.created_at', '>=', $this->data['period']['from'])->take(500)->get();
+        }
+
+        return $data->take(500)->get();
     }
 
     public function title(): string
     {
-        return 'KKKK';
+        return 'КАРГО';
     }
 }

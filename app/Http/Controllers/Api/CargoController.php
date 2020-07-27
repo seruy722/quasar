@@ -295,4 +295,13 @@ class CargoController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoGeneralDataExport($request->data), 'transfers.xlsx');
     }
 
+    public function exportGeneralDebtsData(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Debts\DebtsGeneralDataExport($request->data), 'transfers.xlsx');
+    }
+    public function exportGeneralDataByClients(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\GeneralDataByClientsExport($request->model), 'transfers.xlsx');
+    }
+
 }
