@@ -276,6 +276,7 @@
                     this.$q.loading.show();
                 }
                 const { callFunction } = await import('src/utils/index');
+                this.$store.dispatch('cargoDebts/getGeneralData');
                 this.$store.dispatch('cargoDebts/getCargoDebts', this.currentCodeClientId)
                   .then(() => {
                       callFunction(done);

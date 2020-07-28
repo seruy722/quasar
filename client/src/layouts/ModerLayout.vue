@@ -151,7 +151,7 @@
                 {
                     title: 'Доступы',
                     field: 'access',
-                    icon: 'admin_panel_settings',
+                    icon: 'settings',
                     access: {
                         roles: ['admin'],
                         permissions: ['view access list'],
