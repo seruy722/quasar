@@ -27,12 +27,12 @@
           @iconBtnClick="destroyEntry(cargoTableReactiveProperties.selected)"
         />
 
-        <!--        <IconBtn-->
-        <!--          icon="data_usage"-->
-        <!--          color="orange"-->
-        <!--          tooltip="Обновить цены"-->
-        <!--          @iconBtnClick="updatePricesInFax(currentFaxItem.id)"-->
-        <!--        />-->
+        <IconBtn
+          v-show="cargoTableReactiveProperties.selected.length === 1"
+          icon="attach_money"
+          tooltip="Оплатить"
+          @iconBtnClick="pay(cargoTableReactiveProperties.selected[0])"
+        />
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
       <template v-slot:inner-item="{props}">
@@ -43,8 +43,8 @@
           <q-expansion-item
             expand-separator
             class="shadow-1 overflow-hidden"
-            header-class="bg-secondary text-white"
-            style="border-radius: 30px;border: 1px solid #26A69A;"
+            :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
+            :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
             expand-icon-class="text-white"
           >
             <template v-slot:header>
@@ -54,11 +54,30 @@
                   dense
                 />
               </q-item-section>
+              <q-item-section avatar>
+                <q-item-label>
+                  {{ props.row.sum | numberFormatFilter }}
+                </q-item-label>
+              </q-item-section>
 
               <q-item-section>
                 <q-item-label :lines="2">
-                  {{ props.row.code_client_name }}
+                  {{ props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name}` : props.row.type ?
+                  props.row.sum : props.row.notation
+                  }}
                 </q-item-label>
+              </q-item-section>
+
+              <q-item-section
+                avatar
+                side
+              >
+                <q-icon
+                  v-if="props.row.paid"
+                  name="money"
+                  size="md"
+                  color="white"
+                />
               </q-item-section>
             </template>
 
@@ -86,21 +105,44 @@
                   >
                     {{ col.value | numberFormatFilter }}
                   </q-item-label>
+                  <q-item-label
+                    v-else-if="col.field === 'sum'"
+                  >
+                    {{ col.value | numberFormatFilter }}
+                  </q-item-label>
+                  <q-item-label
+                    v-else-if="col.field === 'paid'"
+                  >
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+                      props.row.type ? null : 'Нет' }}
+                    </q-badge>
+                  </q-item-label>
+                  <q-item-label
+                    v-else-if="col.field === 'type'"
+                  >
+                    {{ col.value ? 'Оплата' : 'Долг' }}
+                  </q-item-label>
+                  <q-item-label
+                    v-else-if="col.field === 'notation'"
+                    :lines="3"
+                  >
+                    {{ col.value }}
+                  </q-item-label>
                   <q-item-label v-else>
                     {{ col.value }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item>
-                <q-item-section>
-                  <BaseBtn
-                    label="История"
-                    color="info"
-                    style="max-width: 100px;margin: 0 auto;"
-                    @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"
-                  />
-                </q-item-section>
-              </q-item>
+              <!--              <q-item>-->
+              <!--                <q-item-section>-->
+              <!--                  <BaseBtn-->
+              <!--                    label="История"-->
+              <!--                    color="info"-->
+              <!--                    style="max-width: 100px;margin: 0 auto;"-->
+              <!--                    @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"-->
+              <!--                  />-->
+              <!--                </q-item-section>-->
+              <!--              </q-item>-->
             </q-list>
           </q-expansion-item>
         </div>
@@ -272,6 +314,10 @@
       :entry-data.sync="dialogAddCargoPaymentEntryData"
       :show-dialog.sync="showDialogAddCargoPaymentEntry"
     />
+    <DialogAddCargoPayEntry
+      :entry-data.sync="dialogAddCargoPayEntryData"
+      :show-dialog.sync="showDialogAddCargoPayEntry"
+    />
     <DialogAddCargoDebtEntry
       :entry-data.sync="dialogAddCargoDebtEntryData"
       :show-dialog.sync="showDialogAddCargoDebtEntry"
@@ -289,11 +335,12 @@
             CountCargoCategories: () => import('src/components/CargoDebts/CountCargoCategories.vue'),
             GeneralClientCargoData: () => import('src/components/CargoDebts/GeneralClientCargoData.vue'),
             UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+            // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             DialogViewCargoData: () => import('src/components/CargoDebts/Dialogs/DialogViewCargoData.vue'),
             MenuCargo: () => import('src/components/CargoDebts/MenuCargo.vue'),
             DialogAddCargoPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPaymentEntry.vue'),
             DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
+            DialogAddCargoPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPayEntry.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
         },
@@ -448,6 +495,8 @@
                 dialogAddCargoPaymentEntryData: {},
                 dialogAddCargoDebtEntryData: {},
                 showDialogAddCargoDebtEntry: false,
+                dialogAddCargoPayEntryData: {},
+                showDialogAddCargoPayEntry: false,
             };
         },
         computed: {
@@ -539,6 +588,13 @@
                     }
                 });
                 return ids;
+            },
+            pay(data) {
+                if (!data.type && !data.paid) {
+                    this.dialogAddCargoPayEntryData = data;
+                    this.showDialogAddCargoPayEntry = true;
+                }
+                this.cargoTableReactiveProperties.selected = [];
             },
         },
     };

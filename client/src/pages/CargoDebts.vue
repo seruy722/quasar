@@ -1,7 +1,6 @@
 <template>
   <q-page
     data-vue-component-name="CargoDebts"
-    class="q-pa-md"
   >
     <PullRefresh @refresh="refresh">
       <div
@@ -181,11 +180,18 @@
                 </q-inner-loading>
               </q-card>
             </q-tab-panel>
-            <q-tab-panel name="cargo">
+
+            <q-tab-panel
+              name="cargo"
+              style="padding: 0;"
+            >
               <Cargo :refresh="refresh" />
             </q-tab-panel>
 
-            <q-tab-panel name="debts">
+            <q-tab-panel
+              name="debts"
+              style="padding: 0;"
+            >
               <Debts :refresh="refresh" />
             </q-tab-panel>
           </q-tab-panels>

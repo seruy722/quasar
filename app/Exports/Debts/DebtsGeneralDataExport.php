@@ -62,6 +62,8 @@ class DebtsGeneralDataExport implements FromView, ShouldAutoSize, WithTitle
             $this->query = $data->whereDate('debts.created_at', '>=', $this->data['period']['from'])->get();
         } else if ($this->data['type'] === 1 || $this->data['type'] === 0) {
             $this->query = $data->where('debts.type', $this->data['type'])->get();
+        } else if ($this->data['type'] === 1 || $this->data['type'] === 0) {
+            $this->query = $data->where('debts.type', $this->data['type'])->get();
         } else {
             $this->query = $data->get();
         }

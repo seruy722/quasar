@@ -65,3 +65,11 @@ export const DELETE_DEBT_ENTRY = ((state, data) => {
 export const SET_GENERAL_DATA = ((state, data) => {
   state.generalData = data;
 });
+export const UPDATE_OR_ADD_DEBT_ENTRY = ((state, data) => {
+  const index = _.findIndex(state.debts, { id: data.id });
+  if (index !== -1) {
+    state.debts.splice(index, 1, data);
+  } else {
+    state.debts.push(data);
+  }
+});

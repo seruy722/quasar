@@ -52,17 +52,28 @@
               expand-icon-class="text-white"
             >
               <template v-slot:header>
-                <!--                <q-item-section avatar>-->
-                <!--                  <q-checkbox-->
-                <!--                    v-model="props.selected"-->
-                <!--                    dense-->
-                <!--                  />-->
-                <!--                </q-item-section>-->
-
                 <q-item-section>
                   <q-item-label :lines="2">
                     {{ props.row.client_name }}
                   </q-item-label>
+                </q-item-section>
+
+                <q-item-section>
+                  <q-item-label>
+                    {{ props.row.sum }}
+                  </q-item-label>
+                </q-item-section>
+
+                <q-item-section
+                  avatar
+                  side
+                >
+                  <q-icon
+                    v-if="props.row.paid"
+                    name="money"
+                    size="md"
+                    color="white"
+                  />
                 </q-item-section>
               </template>
 
@@ -95,6 +106,12 @@
                       :lines="3"
                     >
                       {{ col.value }}
+                    </q-item-label>
+                    <q-item-label
+                      v-else-if="col.field === 'paid'"
+                      :lines="3"
+                    >
+                      {{ col.value ? 'Да' : 'Нет' }}
                     </q-item-label>
                     <q-item-label v-else>
                       {{ col.value }}
@@ -155,6 +172,13 @@
               :props="props"
             >
               {{ props.row.sum | numberFormatFilter }}
+            </q-td>
+
+            <q-td
+              key="paid"
+              :props="props"
+            >
+              {{ props.row.paid ? 'Да' : 'Нет' }}
             </q-td>
 
             <q-td
@@ -584,6 +608,13 @@
                             sortable: true,
                         },
                         {
+                            name: 'paid',
+                            label: 'Оплачен',
+                            field: 'paid',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'method_label',
                             label: 'Метод',
                             field: 'method_label',
@@ -629,7 +660,7 @@
                 },
                 transferTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at', 'issued_by'],
+                    visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at', 'issued_by', 'paid'],
                 },
             };
         },

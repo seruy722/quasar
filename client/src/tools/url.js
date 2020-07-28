@@ -104,6 +104,8 @@ const urls = {
   exportGeneralCargoData: `${prefix}/export-general-cargo-data`,
   exportGeneralDebtsData: `${prefix}/export-general-debts-data`,
   exportGeneralDataByClients: `${prefix}/export-general-data-by-clients`,
+  cargoPayEntry: `${prefix}/cargo-pay-entry`,
+  debtPayEntry: `${prefix}/debt-pay-entry`,
   axiosData: {
     baseURL: process.env.API,
     // 'http://sp.com.ua'

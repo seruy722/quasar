@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transfer extends Model
 {
-    protected $fillable = ['client_id', 'receiver_name', 'receiver_phone', 'sum', 'method', 'notation', 'status', 'user_id', 'issued_by'];
+    protected $fillable = ['client_id', 'receiver_name', 'receiver_phone', 'sum', 'method', 'notation', 'status', 'user_id', 'issued_by', 'paid'];
 
     public function getCreatedAtAttribute($value)
     {

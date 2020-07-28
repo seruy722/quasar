@@ -27,12 +27,12 @@
           @iconBtnClick="destroyDebtEntry(debtsTableReactiveProperties.selected)"
         />
 
-        <!--        <IconBtn-->
-        <!--          icon="data_usage"-->
-        <!--          color="orange"-->
-        <!--          tooltip="Обновить цены"-->
-        <!--          @iconBtnClick="updatePricesInFax(currentFaxItem.id)"-->
-        <!--        />-->
+        <IconBtn
+          v-show="debtsTableReactiveProperties.selected.length === 1"
+          icon="attach_money"
+          tooltip="Оплатить"
+          @iconBtnClick="pay(debtsTableReactiveProperties.selected[0])"
+        />
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
       <template v-slot:inner-item="{props}">
@@ -43,8 +43,8 @@
           <q-expansion-item
             expand-separator
             class="shadow-1 overflow-hidden"
-            header-class="bg-secondary text-white"
-            style="border-radius: 30px;border: 1px solid #26A69A;"
+            :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
+            :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
             expand-icon-class="text-white"
           >
             <template v-slot:header>
@@ -57,8 +57,20 @@
 
               <q-item-section>
                 <q-item-label :lines="2">
-                  {{ props.row.code_client_name }}
+                  {{ `${props.row.sum} / ${props.row.commission}` }}
                 </q-item-label>
+              </q-item-section>
+
+              <q-item-section
+                avatar
+                side
+              >
+                <q-icon
+                  v-if="props.row.paid"
+                  name="money"
+                  size="md"
+                  color="white"
+                />
               </q-item-section>
             </template>
 
@@ -74,21 +86,27 @@
                   <q-item-label>{{ `${col.label}:` }}</q-item-label>
                 </q-item-section>
                 <q-item-section side>
-                  <q-item-label>
+                  <q-item-label v-if="col.field === 'sum'">
+                    {{ col.value | numberFormatFilter }}
+                  </q-item-label>
+                  <q-item-label v-else-if="col.field === 'commission'">
+                    {{ col.value | numberFormatFilter }}
+                  </q-item-label>
+                  <q-item-label v-else>
                     {{ col.value }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item>
-                <q-item-section>
-                  <BaseBtn
-                    label="История"
-                    color="info"
-                    style="max-width: 100px;margin: 0 auto;"
-                    @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"
-                  />
-                </q-item-section>
-              </q-item>
+              <!--              <q-item>-->
+              <!--                <q-item-section>-->
+              <!--                  <BaseBtn-->
+              <!--                    label="История"-->
+              <!--                    color="info"-->
+              <!--                    style="max-width: 100px;margin: 0 auto;"-->
+              <!--                    @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"-->
+              <!--                  />-->
+              <!--                </q-item-section>-->
+              <!--              </q-item>-->
             </q-list>
           </q-expansion-item>
         </div>
@@ -208,6 +226,10 @@
       :entry-data.sync="dialogAddDebtPaymentEntryData"
       :show-dialog.sync="showDialogAddDebtPaymentEntry"
     />
+    <DialogAddDebtPayEntry
+      :entry-data.sync="dialogAddDebtPayEntryData"
+      :show-dialog.sync="showDialogAddDebtPayEntry"
+    />
     <DialogAddDebEntry
       :entry-data.sync="dialogAddDebtEntryData"
       :show-dialog.sync="showDialogAddDebtEntry"
@@ -223,12 +245,13 @@
         components: {
             Table: () => import('src/components/Elements/Table/Table.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+            // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             GeneralClientDebtsData: () => import('src/components/CargoDebts/GeneralClientDebtsData.vue'),
             UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
             ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
             DialogAddDebtPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue'),
             DialogAddDebEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue'),
+            DialogAddDebtPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPayEntry.vue'),
             MenuDebt: () => import('src/components/CargoDebts/MenuDebt.vue'),
         },
         mixins: [ExportDataMixin],
@@ -303,6 +326,8 @@
                 dialogAddDebtPaymentEntryData: {},
                 showDialogAddDebtEntry: false,
                 dialogAddDebtEntryData: {},
+                dialogAddDebtPayEntryData: {},
+                showDialogAddDebtPayEntry: false,
             };
         },
         computed: {
@@ -378,6 +403,13 @@
                         },
                     ]);
                 }
+            },
+            pay(data) {
+                if (!data.type && !data.paid) {
+                    this.dialogAddDebtPayEntryData = data;
+                    this.showDialogAddDebtPayEntry = true;
+                }
+                this.debtsTableReactiveProperties.selected = [];
             },
         },
     };

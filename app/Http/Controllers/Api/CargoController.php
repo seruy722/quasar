@@ -239,12 +239,15 @@ class CargoController extends Controller
         if (array_key_exists('created_at', $data)) {
             $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
         }
-        if ($data['sum'] && $data['sum'] > 0) {
+        if (array_key_exists('sum', $data) && $data['sum'] > 0) {
             $data['sum'] = $data['sum'] * -1;
         }
-        if ($data['commission'] && $data['commission'] > 0) {
+        if (array_key_exists('commission', $data) && $data['commission'] > 0) {
             $data['commission'] = $data['commission'] * -1;
+        } else {
+            $data['commission'] = ($data['sum'] / 100) * 1;
         }
+
         $entry = Debt::create($data);
         $entry = $this->queryDebt()->where('debts.id', $entry->id)->first();
         return response(['answer' => $entry]);
@@ -280,6 +283,63 @@ class CargoController extends Controller
         return response(['answer' => $entry, '$debt' => $debt]);
     }
 
+    public function cargoPayEntry(Request $request)
+    {
+        $data = $request->except('entry_id');
+        $rul = [];
+        foreach ($this->rules as $key => $value) {
+            if (array_key_exists($key, $data)) {
+                $rul[$key] = $value;
+            }
+        }
+
+        $this->validate($request, $rul);
+
+        if (array_key_exists('created_at', $data)) {
+            $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
+        }
+        $data['type'] = true;
+        $data['place'] = 0;
+        $entry = Cargo::create($data);
+        Cargo::where('id', $request->entry_id)->update(['paid' => true]);
+        $entries = $this->query()->whereIn('cargos.id', [$entry->id, $request->entry_id])->get();
+        return response(['answer' => $entries]);
+    }
+
+    public function debtPayEntry(Request $request)
+    {
+        $data = $request->except('entry_id');
+        $rul = [];
+        foreach ($this->rules as $key => $value) {
+            if (array_key_exists($key, $data)) {
+                $rul[$key] = $value;
+            }
+        }
+
+        $this->validate($request, $rul);
+
+        if (array_key_exists('created_at', $data)) {
+            $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
+        }
+        $data['type'] = true;
+        $entry = Debt::create($data);
+        $debt = Debt::find($request->entry_id);
+        $debt->paid = true;
+        $debt->save();
+        $newEntry = 0;
+        if ($debt->commission < $data['commission'] * -1) {
+            $newData = [];
+            $newData['code_client_id'] = $data['code_client_id'];
+            $newData['type'] = $data['type'];
+            $newData['notation'] = 'списалы';
+            $newData['commission'] = ($debt->commission + $data['commission']) * -1;
+            $newEntry = Debt::create($newData);
+        }
+        Transfer::where('id', $debt->transfer_id)->update(['paid' => true]);
+        $entries = $this->queryDebt()->whereIn('debts.id', [$entry->id, $debt->id, $newEntry->id])->get();
+        return response(['answer' => $entries]);
+    }
+
     public function exportCargoData(Request $request)
     {
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoExport($request->data), 'transfers.xlsx');
@@ -299,6 +359,7 @@ class CargoController extends Controller
     {
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Debts\DebtsGeneralDataExport($request->data), 'transfers.xlsx');
     }
+
     public function exportGeneralDataByClients(Request $request)
     {
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\GeneralDataByClientsExport($request->model), 'transfers.xlsx');

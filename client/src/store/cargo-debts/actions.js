@@ -48,3 +48,6 @@ export const getGeneralData = (async ({ commit }) => axiosInstance.get(getUrl('g
   .then(({ data }) => {
     commit('SET_GENERAL_DATA', data);
   }));
+export const updateOrAddDebtEntry = (({ commit }, data) => {
+  commit('UPDATE_OR_ADD_DEBT_ENTRY', data);
+});
