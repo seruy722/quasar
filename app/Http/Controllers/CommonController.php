@@ -201,7 +201,8 @@ class CommonController extends Controller
             'storehouse_data.created_at',
             'codes.code as code_client_name',
             'categories.name as category_name',
-            'faxes.name as fax_name'
+            'faxes.name as fax_name',
+            'faxes.status as fax_status'
         )
             ->where('fax_id', '>', 0)
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')

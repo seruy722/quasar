@@ -1,7 +1,7 @@
 <template>
   <div
     v-show="list.length"
-    data-vue-component-name="CountCategories"
+    data-vue-component-name="CountDataForSearch"
   >
     <div class="text-center text-bold text-uppercase q-mt-lg">{{ title }}</div>
     <q-list
@@ -60,7 +60,7 @@
 
 <script>
     export default {
-        name: 'CountCategories',
+        name: 'CountDataForSearch',
         props: {
             list: {
                 type: Array,

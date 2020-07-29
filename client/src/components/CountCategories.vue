@@ -75,7 +75,6 @@
 <script>
     import { setCategoriesStoreHouseData } from 'src/utils/FrequentlyCalledFunctions';
     import { getUrl } from 'src/tools/url';
-    import showNotif from 'src/mixins/showNotif';
 
     export default {
         name: 'CountCategories',
@@ -88,7 +87,6 @@
             PopupEdit: () => import('src/components/PopupEdit.vue'),
             BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
         },
-        mixins: [showNotif],
         props: {
             list: {
                 type: Array,

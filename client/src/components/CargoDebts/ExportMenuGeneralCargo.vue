@@ -256,6 +256,7 @@
                 }
             },
             async exportFaxData(select, type, period) {
+                const { getTimeZone } = await import('src/utils/formatDate');
                 const sendData = {
                     type: type.value,
                     day: null,
@@ -263,6 +264,7 @@
                         to: null,
                         from: null,
                     },
+                    timeZone: getTimeZone(),
                 };
                 if (select.value === 1) {
                     sendData.day = period.today;
@@ -275,12 +277,14 @@
                 const { getUrl } = await import('src/tools/url');
                 this.exportDataToExcel(getUrl(this.urlName), {
                     data: sendData,
-                }, 'Cargo.xlsx');
+                }, `${this.model}.xlsx`);
                 this.show = false;
             },
             async exportGeneralDataByClients(model) {
                 const { getUrl } = await import('src/tools/url');
-                this.exportDataToExcel(getUrl(this.urlNameClients), { model }, 'Cargo.xlsx');
+                this.exportDataToExcel(getUrl(this.urlNameClients), {
+                    model,
+                }, `${model}.xlsx`);
             },
         },
     };

@@ -140,6 +140,40 @@ export const setCargoCategoriesData = (data) => {
     },
   };
 };
+// export const setDataForSearch = (data) => {
+//   const faxesNames = _.uniq(_.map(data, 'fax_name'));
+//   const arr = [];
+//
+//   _.forEach(faxesNames, (name) => {
+//     const faxArr = _.filter(data, { fax_name: name });
+//     const categoriesNames = _.uniq(_.map(faxArr, 'category_name'));
+//     _.forEach(categoriesNames, (categoryName) => {
+//       const faxData = _.filter(faxArr, { category_name: categoryName });
+//
+//     });
+//     const obj = {
+//       name,
+//       place: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ place }) => place),
+//       kg: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ kg }) => kg),
+//       sum: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ sum }) => sum),
+//     };
+//     if (name) {
+//       arr.push(obj);
+//     }
+//   });
+//
+//   arr.sort((a, b) => b.place - a.place);
+//   const dt = _.filter(data, { type: 0 });
+//   return {
+//     categoriesList: arr,
+//     footer: {
+//       name: null,
+//       place: countSumCollection(dt, ({ place }) => place),
+//       kg: countSumCollection(dt, ({ kg }) => kg),
+//       sum: countSumCollection(data, ({ sum }) => sum),
+//     },
+//   };
+// };
 
 /**
  * Комбинирует одинаковые данные по code_client_id и category_name

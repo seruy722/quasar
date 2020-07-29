@@ -245,3 +245,8 @@ export const formatToPickerDate = ((date) => {
  * @type {function(*=): number}
  */
 export const getDateWithoutTime = ((date) => Math.floor(new Date(date).getTime() / 86400000));
+
+export const getTimeZone = (() => {
+  const timeZoneOffset = new Date().getTimezoneOffset();
+  return timeZoneOffset < 0 ? `+0${(timeZoneOffset / 60) * -1}:00` : `-0${(timeZoneOffset / 60)}:00`;
+});

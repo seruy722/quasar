@@ -53,113 +53,7 @@
 
         <q-separator />
 
-        <q-tab-panels v-model="tab" animated>
-          <q-tab-panel name="basket">
-            <BaseTable
-              title="Корзина"
-              :entry-data="basketTableData.data"
-              :entry-columns="basketTableData.columns"
-            >
-              <template v-slot:inner-item="{props}">
-                <div
-                  class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-                  :style="props.selected ? 'transform: scale(0.95);' : ''"
-                >
-                  <q-card :class="props.selected ? 'bg-grey-2' : ''">
-                    <q-list dense separator>
-                      <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
-                        <q-item-section>
-                          <q-item-label>{{ col.label }}</q-item-label>
-                        </q-item-section>
-                        <q-item-section side>
-                          <q-item-label v-if="col.field === 'things'" caption lines="4">{{ col.value | thingsFilter }}
-                          </q-item-label>
-                          <q-item-label v-else-if="col.field === 'created_at'" caption>{{ col.value | formatToDotDate
-                            }}
-                          </q-item-label>
-                          <q-item-label v-else caption>{{ col.value }}</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-card>
-                </div>
-              </template>
-
-              <template v-slot:inner-body="{props}">
-                <q-tr :props="props">
-                  <q-td
-                    key="code_place"
-                    :props="props"
-                  >
-                    {{ props.row.code_place }}
-                  </q-td>
-                  <q-td
-                    key="code_client_name"
-                    :props="props"
-                  >
-                    {{ props.row.code_client_name }}
-                  </q-td>
-                  <q-td
-                    key="place"
-                    :props="props"
-                  >
-                    {{ props.row.place }}
-                  </q-td>
-                  <q-td
-                    key="kg"
-                    :props="props"
-                  >
-                    {{ props.row.kg }}
-                  </q-td>
-                  <q-td
-                    key="category_name"
-                    :props="props"
-                  >
-                    {{ props.row.category_name }}
-                  </q-td>
-                  <q-td
-                    key="fax_name"
-                    :props="props"
-                  >
-                    <router-link :to="{ name: 'fax', params: { id: props.row.fax_id }}">
-                      {{ props.row.fax_name }}
-                    </router-link>
-                  </q-td>
-                  <q-td
-                    key="user_name"
-                    :props="props"
-                  >
-                    {{ props.row.user_name }}
-                  </q-td>
-                  <q-td
-                    key="shop"
-                    :props="props"
-                  >
-                    {{ props.row.shop }}
-                  </q-td>
-                  <q-td
-                    key="notation"
-                    :props="props"
-                  >
-                    {{ props.row.notation }}
-                  </q-td>
-                  <q-td
-                    key="created_at"
-                    :props="props"
-                  >
-                    {{ props.row.created_at | formatToDotDate }}
-                  </q-td>
-                  <q-td
-                    key="things"
-                    :props="props"
-                  >
-                    {{ props.row.things | thingsFilter }}
-                  </q-td>
-                </q-tr>
-              </template>
-            </BaseTable>
-          </q-tab-panel>
-
+        <q-tab-panels v-model="tab" animated swipeable>
           <q-tab-panel name="storehouse">
             <BaseTable
               title="Склад"
@@ -256,12 +150,130 @@
                 </q-tr>
               </template>
             </BaseTable>
+            <CountCategories
+              :list="storehouseTableData.data"
+              style="max-width: 600px;margin:0 auto;"
+            />
           </q-tab-panel>
           <q-tab-panel name="faxes">
             <BaseTable
               title="Факсы"
               :entry-data="faxesTableData.data"
               :entry-columns="faxesTableData.columns"
+            >
+              <template v-slot:inner-item="{props}">
+                <div
+                  class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+                  :style="props.selected ? 'transform: scale(0.95);' : ''"
+                >
+                  <q-card :class="props.selected ? 'bg-grey-2' : ''">
+                    <q-list dense separator>
+                      <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
+                        <q-item-section>
+                          <q-item-label>{{ col.label }}</q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-item-label v-if="col.field === 'things'" caption lines="4">{{ col.value | thingsFilter }}
+                          </q-item-label>
+                          <q-item-label v-else-if="col.field === 'created_at'" caption>{{ col.value | formatToDotDate
+                            }}
+                          </q-item-label>
+                          <q-item-label v-else caption>{{ col.value }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card>
+                </div>
+              </template>
+
+              <template v-slot:inner-body="{props}">
+                <q-tr :props="props">
+                  <q-td
+                    key="code_place"
+                    :props="props"
+                  >
+                    {{ props.row.code_place }}
+                  </q-td>
+                  <q-td
+                    key="code_client_name"
+                    :props="props"
+                  >
+                    {{ props.row.code_client_name }}
+                  </q-td>
+                  <q-td
+                    key="place"
+                    :props="props"
+                  >
+                    {{ props.row.place }}
+                  </q-td>
+                  <q-td
+                    key="kg"
+                    :props="props"
+                  >
+                    {{ props.row.kg }}
+                  </q-td>
+                  <q-td
+                    key="category_name"
+                    :props="props"
+                  >
+                    {{ props.row.category_name }}
+                  </q-td>
+                  <q-td
+                    key="fax_name"
+                    :props="props"
+                  >
+                    <router-link :to="{ name: 'fax', params: { id: props.row.fax_id }}">
+                      {{ props.row.fax_name }}
+                    </router-link>
+                  </q-td>
+                  <q-td
+                    key="fax_status"
+                    :props="props"
+                  >
+                    <q-badge>
+                      {{ props.row.fax_status | statusFilter }}
+                    </q-badge>
+                  </q-td>
+                  <q-td
+                    key="user_name"
+                    :props="props"
+                  >
+                    {{ props.row.user_name }}
+                  </q-td>
+                  <q-td
+                    key="shop"
+                    :props="props"
+                  >
+                    {{ props.row.shop }}
+                  </q-td>
+                  <q-td
+                    key="notation"
+                    :props="props"
+                  >
+                    {{ props.row.notation }}
+                  </q-td>
+                  <q-td
+                    key="created_at"
+                    :props="props"
+                  >
+                    {{ props.row.created_at | formatToDotDate }}
+                  </q-td>
+                  <q-td
+                    key="things"
+                    :props="props"
+                  >
+                    {{ props.row.things | thingsFilter }}
+                  </q-td>
+                </q-tr>
+              </template>
+            </BaseTable>
+<!--            <CountDataForSearch :list="faxesTableData.data" title="По факсам"/>-->
+          </q-tab-panel>
+          <q-tab-panel name="basket">
+            <BaseTable
+              title="Корзина"
+              :entry-data="basketTableData.data"
+              :entry-columns="basketTableData.columns"
             >
               <template v-slot:inner-item="{props}">
                 <div
@@ -369,11 +381,21 @@
 </template>
 
 <script>
+    import getFromSettings from 'src/tools/settings';
+
     export default {
         name: 'Search',
         components: {
             SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
             BaseTable: () => import('src/components/Elements/Table/BaseTable.vue'),
+            CountCategories: () => import('src/components/CountCategories.vue'),
+            // CountDataForSearch: () => import('src/components/CountDataForSearch.vue'),
+        },
+        filters: {
+            statusFilter(value) {
+                const options = getFromSettings('transportStatusOptions');
+                return _.get(_.find(options, { value }), 'label');
+            },
         },
         data() {
             return {
@@ -584,6 +606,13 @@
                             sortable: true,
                         },
                         {
+                            name: 'fax_status',
+                            label: 'Статус',
+                            field: 'fax_status',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'user_name',
                             label: 'Пользователь',
                             field: 'user_name',
@@ -619,7 +648,7 @@
                             sortable: true,
                         },
                     ],
-                    visibleColumns: ['code_place', 'code_client_name', 'place', 'fax_name', 'kg', 'category_name', 'shop', 'notation', 'things', 'created_at'],
+                    visibleColumns: ['code_place', 'code_client_name', 'place', 'fax_name', 'kg', 'category_name', 'shop', 'notation', 'things', 'created_at', 'fax_status'],
                 },
             };
         },
