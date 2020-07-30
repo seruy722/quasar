@@ -248,7 +248,7 @@ const routes = [
           ],
           accessData: {
             roles: ['admin'],
-            permissions: [],
+            permissions: ['general-cargo-data'],
           },
         },
         component: () => import('pages/CargoDebts.vue'),
