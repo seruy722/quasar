@@ -266,12 +266,23 @@
                     },
                     timeZone: getTimeZone(),
                 };
+                const { addTime } = await import('src/utils/formatDate');
                 if (select.value === 1) {
-                    sendData.day = period.today;
+                    sendData.day = addTime(period.today)
+                      .toISOString();
                 } else if (select.value === 2) {
                     sendData.period = period;
+                    if (period.to) {
+                        sendData.period.to = addTime(period.to)
+                          .toISOString();
+                    }
+                    if (period.from) {
+                        sendData.period.from = addTime(period.from)
+                          .toISOString();
+                    }
                 } else if (select.value === 3) {
-                    sendData.day = period.day;
+                    sendData.day = addTime(period.day)
+                      .toISOString();
                 }
                 devlog.log(sendData);
                 const { getUrl } = await import('src/tools/url');

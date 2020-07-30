@@ -291,16 +291,23 @@
                     sendData.created_at = addTime(reverseDate(sendData.created_at))
                       .toISOString();
                 }
-                sendData.entry_id = this.entryData.id;
+                if (_.has(this.entryData, 'arr') && _.size(this.entryData.arr) === 1) {
+                    sendData.entry_id = _.get(_.first(this.entryData.arr), 'id');
+                } else if (_.has(this.entryData, 'arr') && _.size(this.entryData.arr) > 1) {
+                    sendData.entry_id = _.map(this.entryData.arr, 'id');
+                } else {
+                    sendData.entry_id = this.entryData.id;
+                }
                 const { getUrl } = await import('src/tools/url');
                 // const { setChangeValue } = await import('src/utils/FrequentlyCalledFunctions');
                 devlog.log('saveData', sendData);
                 this.$q.loading.show();
                 this.$axios.post(getUrl('cargoPayEntry'), sendData)
                   .then(({ data: { answer } }) => {
+                      _.forEach(answer, (item) => {
+                          this.$store.dispatch('cargoDebts/updateOrAddCargoEntry', item);
+                      });
                       devlog.log('ANSWER', answer);
-                      this.$store.dispatch('cargoDebts/addCargoEntry', _.first(answer));
-                      this.$store.dispatch('cargoDebts/updateCargoEntry', _.last(answer));
                       this.$q.loading.hide();
                       this.showNotif('success', 'Запись успешно добавлена.', 'center');
                       this.close(this.storehouseData);

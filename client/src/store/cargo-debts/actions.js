@@ -51,3 +51,7 @@ export const getGeneralData = (async ({ commit }) => axiosInstance.get(getUrl('g
 export const updateOrAddDebtEntry = (({ commit }, data) => {
   commit('UPDATE_OR_ADD_DEBT_ENTRY', data);
 });
+
+export const updateOrAddCargoEntry = (({ commit }, data) => {
+  commit('UPDATE_OR_ADD_CARGO_ENTRY', data);
+});

@@ -239,6 +239,7 @@
 
 <script>
     import ExportDataMixin from 'src/mixins/ExportData';
+    import showNotif from 'src/mixins/showNotif';
 
     export default {
         name: 'Debts',
@@ -254,7 +255,7 @@
             DialogAddDebtPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPayEntry.vue'),
             MenuDebt: () => import('src/components/CargoDebts/MenuDebt.vue'),
         },
-        mixins: [ExportDataMixin],
+        mixins: [ExportDataMixin, showNotif],
         props: {
             refresh: {
                 type: Function,

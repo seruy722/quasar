@@ -35,29 +35,29 @@ class DebtsGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
             ->leftJoin('users', 'users.id', '=', 'debts.user_id');
         $query = null;
         if ($this->enterData['type'] === 1 && $this->enterData['day']) {
-            $query = $data->where('debts.type', true)->whereDate('debts.created_at', $this->enterData['day'])->get();
+            $query = $data->where('debts.type', true)->whereDate('debts.created_at', $this->getDateWithTimeZone($this->enterData['day'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 0 && $this->enterData['day']) {
-            $query = $data->where('debts.type', false)->whereDate('debts.created_at', $this->enterData['day'])->get();
+            $query = $data->where('debts.type', false)->whereDate('debts.created_at', $this->getDateWithTimeZone($this->enterData['day'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === -1 && $this->enterData['day']) {
-            $query = $data->whereDate('debts.created_at', $this->enterData['day'])->get();
+            $query = $data->whereDate('debts.created_at', $this->getDateWithTimeZone($this->enterData['day'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 1 && $this->enterData['period']['from'] && $this->enterData['period']['to']) {
-            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '>=', $this->enterData['period']['from'])->whereDate('debts.created_at', '<=', $this->enterData['period']['to'])->get();
+            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->whereDate('debts.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 0 && $this->enterData['period']['from'] && $this->enterData['period']['to']) {
-            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '>=', $this->enterData['period']['from'])->whereDate('debts.created_at', '<=', $this->enterData['period']['to'])->get();
+            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->whereDate('debts.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === -1 && $this->enterData['period']['from'] && $this->enterData['period']['to']) {
-            $query = $data->whereDate('.debts.created_at', '>=', $this->enterData['period']['from'])->whereDate('debts.created_at', '<=', $this->enterData['period']['to'])->get();
+            $query = $data->whereDate('.debts.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->whereDate('debts.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 1 && $this->enterData['period']['to']) {
-            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '<=', $this->enterData['period']['to'])->get();
+            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 0 && $this->enterData['period']['to']) {
-            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '<=', $this->enterData['period']['to'])->get();
+            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === -1 && $this->enterData['period']['to']) {
-            $query = $data->whereDate('debts.created_at', '<=', $this->enterData['period']['to']);
+            $query = $data->whereDate('debts.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'));
         } else if ($this->enterData['type'] === 1 && $this->enterData['period']['from']) {
-            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '>=', $this->enterData['period']['from'])->get();
+            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 0 && $this->enterData['period']['from']) {
-            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '>=', $this->enterData['period']['from'])->get();
+            $query = $data->where('debts.type', $this->enterData['type'])->whereDate('debts.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === -1 && $this->enterData['period']['from']) {
-            $query = $data->whereDate('debts.created_at', '>=', $this->enterData['period']['from'])->get();
+            $query = $data->whereDate('debts.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 1 || $this->enterData['type'] === 0) {
             $query = $data->where('debts.type', $this->enterData['type'])->get();
         } else if ($this->enterData['type'] === 1 || $this->enterData['type'] === 0) {
@@ -73,7 +73,7 @@ class DebtsGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 
             return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
         })->map(function ($item) {
-            return ['created_at' => Carbon::parse($item->created_at)->setTimezone($this->enterData['timeZone'])->format('d-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'sum' => $item->sum, 'commission' => $item->commission, 'paid' => $item->paid ? 'Да' : $item->type ? null : 'Нет', 'notation' => $item->notation, 'user_name' => $item->user_name];
+            return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'sum' => $item->sum, 'commission' => $item->commission, 'paid' => $item->paid ? 'Да' : $item->type ? null : 'Нет', 'notation' => $item->notation, 'user_name' => $item->user_name];
         });
         $this->data = $res2->all();
         return $this->data;
@@ -87,6 +87,11 @@ class DebtsGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
     public function headings(): array
     {
         return $this->headers;
+    }
+
+    public function getDateWithTimeZone($date, $format)
+    {
+        return Carbon::parse($date)->setTimezone($this->enterData['timeZone'])->format($format);
     }
 
     public function registerEvents(): array

@@ -37,29 +37,29 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
             ->leftJoin('faxes', 'faxes.id', '=', 'cargos.fax_id');
         $res = null;
         if ($this->enterData['type'] === 1 && $this->enterData['day']) {
-            $res = $data->where('cargos.type', true)->whereDate('cargos.created_at', $this->enterData['day'])->get();
+            $res = $data->where('cargos.type', true)->whereDate('cargos.created_at', $this->getDateWithTimeZone($this->enterData['day'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 0 && $this->enterData['day']) {
-            $res = $data->where('cargos.type', false)->whereDate('cargos.created_at', $this->enterData['day'])->get();
+            $res = $data->where('cargos.type', false)->whereDate('cargos.created_at', $this->getDateWithTimeZone($this->enterData['day'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === -1 && $this->enterData['day']) {
-            $res = $data->whereDate('cargos.created_at', $this->enterData['day'])->get();
+            $res = $data->whereDate('cargos.created_at', $this->getDateWithTimeZone($this->enterData['day'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 1 && $this->enterData['period']['from'] && $this->enterData['period']['to']) {
-            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '>=', $this->enterData['period']['from'])->whereDate('cargos.created_at', '<=', $this->enterData['period']['to'])->get();
+            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->whereDate('cargos.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 0 && $this->enterData['period']['from'] && $this->enterData['period']['to']) {
-            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '>=', $this->enterData['period']['from'])->whereDate('cargos.created_at', '<=', $this->enterData['period']['to'])->get();
+            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->whereDate('cargos.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === -1 && $this->enterData['period']['from'] && $this->enterData['period']['to']) {
-            $res = $data->whereDate('.cargos.created_at', '>=', $this->enterData['period']['from'])->whereDate('cargos.created_at', '<=', $this->enterData['period']['to'])->get();
+            $res = $data->whereDate('.cargos.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->whereDate('cargos.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 1 && $this->enterData['period']['to']) {
-            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '<=', $this->enterData['period']['to'])->get();
+            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 0 && $this->enterData['period']['to']) {
-            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '<=', $this->enterData['period']['to'])->get();
+            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === -1 && $this->enterData['period']['to']) {
-            $res = $data->whereDate('cargos.created_at', '<=', $this->enterData['period']['to'])->get();
+            $res = $data->whereDate('cargos.created_at', '<=', $this->getDateWithTimeZone($this->enterData['period']['to'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 1 && $this->enterData['period']['from']) {
-            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '>=', $this->enterData['period']['from'])->get();
+            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 0 && $this->enterData['period']['from']) {
-            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '>=', $this->enterData['period']['from'])->get();
+            $res = $data->where('cargos.type', $this->enterData['type'])->whereDate('cargos.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === -1 && $this->enterData['period']['from']) {
-            $res = $data->whereDate('cargos.created_at', '>=', $this->enterData['period']['from'])->get();
+            $res = $data->whereDate('cargos.created_at', '>=', $this->getDateWithTimeZone($this->enterData['period']['from'], 'Y-m-d'))->get();
         } else if ($this->enterData['type'] === 1 || $this->enterData['type'] === 0) {
             $res = $data->where('cargos.type', $this->enterData['type'])->get();
         } else {
@@ -102,7 +102,7 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 
             return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
         })->map(function ($item) {
-            return ['created_at' => Carbon::parse($item->created_at)->setTimezone($this->enterData['timeZone'])->format('d-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'place' => $item->place, 'kg' => $item->place, 'for_kg' => $item->for_kg, 'for_place' => $item->for_place, 'sum' => $item->sum, 'sale' => $item->sale, 'paid' => $item->paid ? 'Да' : $item->type ? null : 'Нет', 'category_name' => $item->category_name, 'fax_name' => $item->fax_name, 'notation' => $item->notation];
+            return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'place' => $item->place, 'kg' => $item->place, 'for_kg' => $item->for_kg, 'for_place' => $item->for_place, 'sum' => $item->sum, 'sale' => $item->sale, 'paid' => $item->paid ? 'Да' : $item->type ? null : 'Нет', 'category_name' => $item->category_name, 'fax_name' => $item->fax_name, 'notation' => $item->notation];
         });
         $this->data = $res2->all();
         return $this->data;
@@ -116,6 +116,11 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
     public function headings(): array
     {
         return $this->headers;
+    }
+
+    public function getDateWithTimeZone($date, $format)
+    {
+        return Carbon::parse($date)->setTimezone($this->enterData['timeZone'])->format($format);
     }
 
     public function registerEvents(): array

@@ -327,6 +327,7 @@
 
 <script>
     import ExportDataMixin from 'src/mixins/ExportData';
+    import showNotif from 'src/mixins/showNotif';
 
     export default {
         name: 'Cargo',
@@ -344,7 +345,7 @@
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
         },
-        mixins: [ExportDataMixin],
+        mixins: [ExportDataMixin, showNotif],
         props: {
             refresh: {
                 type: Function,

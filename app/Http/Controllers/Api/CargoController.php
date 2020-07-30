@@ -301,6 +301,13 @@ class CargoController extends Controller
         $data['type'] = true;
         $data['place'] = 0;
         $entry = Cargo::create($data);
+        $entryId = $request->entry_id;
+        if (is_array($entryId)) {
+            Cargo::whereIn('id', $entryId)->update(['paid' => true]);
+            array_push($entryId, $entry->id);
+            $entries = $this->query()->whereIn('cargos.id', $entryId)->get();
+            return response(['answer' => $entries]);
+        }
         Cargo::where('id', $request->entry_id)->update(['paid' => true]);
         $entries = $this->query()->whereIn('cargos.id', [$entry->id, $request->entry_id])->get();
         return response(['answer' => $entries]);
@@ -335,8 +342,14 @@ class CargoController extends Controller
             $newData['commission'] = ($debt->commission + $data['commission']) * -1;
             $newEntry = Debt::create($newData);
         }
-        Transfer::where('id', $debt->transfer_id)->update(['paid' => true]);
-        $entries = $this->queryDebt()->whereIn('debts.id', [$entry->id, $debt->id, $newEntry->id])->get();
+        if ($debt->transfer_id > 0) {
+            Transfer::where('id', $debt->transfer_id)->update(['paid' => true]);
+        }
+        $arrData = [$entry->id, $debt->id];
+        if ($newEntry) {
+            array_push($arrData, $newEntry->id);
+        }
+        $entries = $this->queryDebt()->whereIn('debts.id', $arrData)->get();
         return response(['answer' => $entries]);
     }
 

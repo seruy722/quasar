@@ -73,3 +73,11 @@ export const UPDATE_OR_ADD_DEBT_ENTRY = ((state, data) => {
     state.debts.push(data);
   }
 });
+export const UPDATE_OR_ADD_CARGO_ENTRY = ((state, data) => {
+  const index = _.findIndex(state.cargo, { id: data.id });
+  if (index !== -1) {
+    state.cargo.splice(index, 1, data);
+  } else {
+    state.cargo.push(data);
+  }
+});

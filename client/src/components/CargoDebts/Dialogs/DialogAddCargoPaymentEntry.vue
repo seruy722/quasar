@@ -222,8 +222,6 @@
                         name: 'sum',
                         type: 'number',
                         label: 'Сумма',
-                        require: true,
-                        requireError: 'Поле обьзательное для заполнения.',
                         changeValue: false,
                         default: 0,
                         value: 0,
