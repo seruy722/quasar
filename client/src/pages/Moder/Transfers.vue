@@ -64,6 +64,12 @@
                   </q-item-label>
                 </q-item-section>
 
+                <q-item-section>
+                  <q-item-label>
+                    {{ props.row.created_at.slice(0,5) }}
+                  </q-item-label>
+                </q-item-section>
+
                 <q-item-section
                   avatar
                   side
