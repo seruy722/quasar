@@ -70,4 +70,5 @@ export default {
   delete: 'Silmek',
   actions: 'Eylemleri',
   transfers: 'Transferler',
+  'cargo-debts': 'Kargo Borçları',
 };

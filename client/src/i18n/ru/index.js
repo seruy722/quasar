@@ -70,4 +70,5 @@ export default {
   delete: 'Удалить',
   actions: 'Действия',
   transfers: 'Переводы',
+  'cargo-debts': 'Карго Долги',
 };

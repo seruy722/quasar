@@ -148,16 +148,17 @@ class TransferController extends Controller
     public function addTransfersToDebts(Request $request)
     {
         $entryIds = $request->ids;
+        $date = $request->date;
         $transfersData = Transfer::whereIn('id', $entryIds)->get();
         $debts = Debt::all();
-        $transfersData->each(function ($item) use ($debts) {
+        $transfersData->each(function ($item) use ($debts, $date) {
             if (!$debts->contains('transfer_id', $item->id)) {
                 $data = $item->toArray();
                 $data['sum'] = $data['sum'] * -1;
                 $data['code_client_id'] = $data['client_id'];
                 $data['transfer_id'] = $data['id'];
                 $data['commission'] = round(($data['sum'] / 100) * 1, 1);
-                $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
+                $data['created_at'] = date("Y-m-d H:i:s", strtotime($date));
                 Debt::create($data);
             }
         });

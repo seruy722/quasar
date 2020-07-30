@@ -176,12 +176,13 @@ class FaxController extends Controller
     {
         $value = !$request->value;
         $faxId = $request->id;
+        $date = $request->date;
         $storeUpdateData = StorehouseData::where('fax_id', $faxId)->get();
 //        return response(['ans' => $storeUpdateData]);
 
         Fax::where('id', $faxId)->update(['uploaded_to_cargo' => $value]);
         if ($value) {
-            $storeUpdateData->each(function ($item) use ($value) {
+            $storeUpdateData->each(function ($item) use ($value, $date) {
                 $item->in_cargo = $value;
                 $item->save();
                 $arr = $item->toArray();
@@ -195,6 +196,7 @@ class FaxController extends Controller
                     unset($arr['created_at']);
                 }
                 $arr['sum'] = round($item->for_kg * $item->kg + $item->place * $item->for_place) * -1;
+                $arr['created_at'] = date('Y-m-d H:i:s',strtotime($date));
 
                 Cargo::create($arr);
                 $this->storeFaxHistory($item['id'], ['in_cargo' => $value], 'update', (new StorehouseData)->getTable());

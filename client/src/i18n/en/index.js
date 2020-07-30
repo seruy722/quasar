@@ -70,4 +70,5 @@ export default {
   delete: 'Delete',
   actions: 'Actions',
   transfers: 'Transfers',
+  'cargo-debts': 'Cargo Debts',
 };

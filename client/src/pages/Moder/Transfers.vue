@@ -407,6 +407,10 @@
         </q-card-section>
       </q-card>
     </Dialog>
+    <DialogChooseDate
+      :show-dialog.sync="showDialogChooseDate"
+      :date.sync="dialogChooseDateData"
+    />
   </q-page>
 </template>
 
@@ -456,6 +460,7 @@
             CountTransfersData: () => import('src/components/Transfers/CountTransfersData.vue'),
             TransfersStatistics: () => import('src/components/Transfers/TransfersStatistics.vue'),
             UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
+            DialogChooseDate: () => import('src/components/Dialogs/DialogChooseDate.vue'),
         },
         mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
         data() {
@@ -662,6 +667,9 @@
                     selected: [],
                     visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at', 'issued_by', 'paid'],
                 },
+                showDialogChooseDate: false,
+                dialogChooseDateData: null,
+                dialogChooseDataForSend: {},
             };
         },
         computed: {
@@ -699,6 +707,13 @@
                     }
                 },
                 immediate: true,
+            },
+            dialogChooseDateData(val) {
+                if (val) {
+                    this.dialogChooseDataForSend.date = addTime(val)
+                      .toISOString();
+                    this.addToDebtsTableFinish(this.dialogChooseDataForSend);
+                }
             },
         },
         mounted() {
@@ -875,6 +890,23 @@
                       devlog.error('Ошибка при получении данных истории.');
                   });
             },
+            addToDebtsTableFinish({ ids, date = null }) {
+                this.$q.loading.show();
+                this.$axios.post(getUrl('addTransfersToDebts'), {
+                    ids,
+                    date,
+                })
+                  .then(() => {
+                      this.transferTableReactiveProperties.selected = [];
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Данные успешно добавлены в таблицу долгов', 'center');
+                  })
+                  .catch(() => {
+                      this.$q.loading.hide();
+                      this.showNotif('error', 'Произошла ошибка при добавлении данных', 'center');
+                      devlog.error('Ошибка запроса - addTransfersToDebts');
+                  });
+            },
             addToDebtsTable(data) {
                 devlog.log('DATAAAA', data);
                 const ids = _.map(data, 'id');
@@ -890,18 +922,10 @@
                         label: 'Добавить',
                         color: 'white',
                         handler: () => {
-                            this.$q.loading.show();
-                            this.$axios.post(getUrl('addTransfersToDebts'), { ids })
-                              .then(() => {
-                                  this.transferTableReactiveProperties.selected = [];
-                                  this.$q.loading.hide();
-                                  this.showNotif('success', 'Данные успешно добавлены в таблицу долгов', 'center');
-                              })
-                              .catch(() => {
-                                  this.$q.loading.hide();
-                                  this.showNotif('error', 'Произошла ошибка при добавлении данных', 'center');
-                                  devlog.error('Ошибка запроса - addTransfersToDebts');
-                              });
+                            this.showDialogChooseDate = true;
+                            this.dialogChooseDataForSend = {
+                                ids,
+                            };
                         },
                     },
                 ]);

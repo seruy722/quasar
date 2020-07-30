@@ -92,6 +92,11 @@
                   <q-item-label v-else-if="col.field === 'commission'">
                     {{ col.value | numberFormatFilter }}
                   </q-item-label>
+                  <q-item-label v-else-if="col.field === 'paid'">
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+                      props.row.type ? null : 'Нет' }}
+                    </q-badge>
+                  </q-item-label>
                   <q-item-label v-else>
                     {{ col.value }}
                   </q-item-label>

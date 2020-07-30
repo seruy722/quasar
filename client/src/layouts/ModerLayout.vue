@@ -31,7 +31,10 @@
         <q-list padding>
           <q-item>
             <q-item-section avatar>
-              <q-icon name="account_circle" size="md" />
+              <q-icon
+                name="account_circle"
+                size="md"
+              />
             </q-item-section>
 
             <q-item-section class="text-bold">
@@ -186,12 +189,10 @@
         },
         watch: {
             userAccess(val) {
-                devlog.log('userAccessWATCH', val);
                 this.setMenu(val);
             },
         },
         created() {
-            devlog.log('userAccesscreated', this.userAccess);
             this.setMenu(this.userAccess);
         },
         methods: {
@@ -203,11 +204,8 @@
                         this.$router.push({ name: 'login' });
                         /* eslint-disable-next-line */
                         globalThis.location.reload();
-                        // location.reload();
                     } else {
-                        devlog.log('ROUTYFGHDH', this.$route);
                         this.$router.push({ name: field });
-                        // this.showNotif('error', 'У Вас нет доступа к этой странице.', 'center');
                     }
                 }
             },

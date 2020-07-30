@@ -115,7 +115,7 @@
                   </q-list>
                   <q-card-actions align="right">
                     <ExportMenuGeneralCargo
-                      title="Выгрузка данных по карго"
+                      title="Выгрузка по карго"
                       url-name="exportGeneralCargoData"
                       url-name-clients="exportGeneralDataByClients"
                       model="cargo"
@@ -165,7 +165,7 @@
                   </q-list>
                   <q-card-actions align="right">
                     <ExportMenuGeneralCargo
-                      title="Выгрузка данных по долгах"
+                      title="Выгрузка по долгах"
                       url-name="exportGeneralDebtsData"
                       url-name-clients="exportGeneralDataByClients"
                       model="debts"
