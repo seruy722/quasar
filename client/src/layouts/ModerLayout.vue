@@ -85,7 +85,7 @@
                     icon: 'assignment',
                     access: {
                         roles: ['admin'],
-                        permissions: [],
+                        permissions: ['general-cargo-data'],
                     },
                 },
                 {
