@@ -48,8 +48,12 @@ const routes = [
           middleware: [
             auth,
           ],
+          accessData: {
+            roles: ['admin', 'assistant'],
+            permissions: [],
+          },
         },
-        component: () => import('src/pages/Index.vue'),
+        component: () => import('src/pages/Assistant/CargoDebtsAssistant.vue'),
       },
     ],
   },

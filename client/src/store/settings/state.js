@@ -20,6 +20,15 @@ export default {
       },
     },
     {
+      title: 'Карго Долги',
+      field: 'cargo-debts-assistant',
+      icon: 'assignment',
+      access: {
+        roles: ['assistant'],
+        permissions: [],
+      },
+    },
+    {
       title: 'Склад',
       field: 'storehouse',
       icon: 'store',

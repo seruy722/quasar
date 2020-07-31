@@ -9,29 +9,12 @@
       title="Сводная"
     >
       <template v-slot:top-buttons>
-        <MenuDebt
-          v-show="currentCodeClientId"
-        />
         <UpdateBtn
           v-show="currentCodeClientId"
           @updateBtnClick="refresh"
         />
         <ExportBtn
           @exportBtnClick="exportFaxData(debtsTableReactiveProperties.selected)"
-        />
-        <IconBtn
-          v-show="debtsTableReactiveProperties.selected.length"
-          color="negative"
-          icon="delete"
-          :tooltip="$t('delete')"
-          @iconBtnClick="destroyDebtEntry(debtsTableReactiveProperties.selected)"
-        />
-
-        <IconBtn
-          v-show="debtsTableReactiveProperties.selected.length === 1"
-          icon="attach_money"
-          tooltip="Оплатить"
-          @iconBtnClick="pay(debtsTableReactiveProperties.selected[0])"
         />
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -190,40 +173,21 @@
       title="Баланс"
       style="max-width: 500px;margin:0 auto;"
     />
-    <DialogAddDebtPaymentEntry
-      :entry-data.sync="dialogAddDebtPaymentEntryData"
-      :show-dialog.sync="showDialogAddDebtPaymentEntry"
-    />
-    <DialogAddDebtPayEntry
-      :entry-data.sync="dialogAddDebtPayEntryData"
-      :show-dialog.sync="showDialogAddDebtPayEntry"
-    />
-    <DialogAddDebEntry
-      :entry-data.sync="dialogAddDebtEntryData"
-      :show-dialog.sync="showDialogAddDebtEntry"
-    />
   </div>
 </template>
 
 <script>
     import ExportDataMixin from 'src/mixins/ExportData';
-    import showNotif from 'src/mixins/showNotif';
 
     export default {
         name: 'Debts',
         components: {
             Table: () => import('src/components/Elements/Table/Table.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            GeneralClientDebtsData: () => import('src/components/CargoDebts/GeneralClientDebtsData.vue'),
             UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
             ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-            DialogAddDebtPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue'),
-            DialogAddDebEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue'),
-            DialogAddDebtPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPayEntry.vue'),
-            MenuDebt: () => import('src/components/CargoDebts/MenuDebt.vue'),
+            GeneralClientDebtsData: () => import('src/components/CargoDebts/GeneralClientDebtsData.vue'),
         },
-        mixins: [ExportDataMixin, showNotif],
+        mixins: [ExportDataMixin],
         props: {
             refresh: {
                 type: Function,
@@ -291,12 +255,6 @@
                     visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission'],
                     title: '',
                 },
-                showDialogAddDebtPaymentEntry: false,
-                dialogAddDebtPaymentEntryData: {},
-                showDialogAddDebtEntry: false,
-                dialogAddDebtEntryData: {},
-                dialogAddDebtPayEntryData: {},
-                showDialogAddDebtPayEntry: false,
             };
         },
         computed: {
@@ -308,19 +266,6 @@
             },
         },
         methods: {
-            viewDebtEditDialog(data, event) {
-                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
-                    devlog.log('data', data, event);
-                    if (data.row.type) {
-                        devlog.log('EMPTY');
-                        this.dialogAddDebtPaymentEntryData = data;
-                        this.showDialogAddDebtPaymentEntry = true;
-                    } else {
-                        this.dialogAddDebtEntryData = data;
-                        this.showDialogAddDebtEntry = true;
-                    }
-                }
-            },
             async exportFaxData(selected) {
                 let data = selected;
                 if (_.isEmpty(data)) {
@@ -339,46 +284,6 @@
                         data,
                     }, 'Debts.xlsx');
                 }
-            },
-            destroyDebtEntry(data) {
-                const ids = _.map(data, 'id');
-                if (!_.isEmpty(ids)) {
-                    this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
-                        {
-                            label: 'Отмена',
-                            color: 'white',
-                            handler: () => {
-                                this.debtsTableReactiveProperties.selected = [];
-                            },
-                        },
-                        {
-                            label: 'Удалить',
-                            color: 'white',
-                            handler: async () => {
-                                const { getUrl } = await import('src/tools/url');
-                                this.$q.loading.show();
-                                this.$axios.post(getUrl('deleteDebtEntry'), { ids })
-                                  .then(() => {
-                                      this.$store.dispatch('cargoDebts/deleteDebtEntry', ids);
-                                      this.debtsTableReactiveProperties.selected = [];
-                                      this.$q.loading.hide();
-                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
-                                  })
-                                  .catch(() => {
-                                      this.$q.loading.hide();
-                                      devlog.error('Ошибка запроса - deleteDebtEntry');
-                                  });
-                            },
-                        },
-                    ]);
-                }
-            },
-            pay(data) {
-                if (!data.type && !data.paid) {
-                    this.dialogAddDebtPayEntryData = data;
-                    this.showDialogAddDebtPayEntry = true;
-                }
-                this.debtsTableReactiveProperties.selected = [];
             },
         },
     };

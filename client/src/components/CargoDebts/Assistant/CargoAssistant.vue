@@ -1,37 +1,20 @@
 <template>
   <div
-    data-vue-component-name="Debts"
+    data-vue-component-name="Cargo"
   >
     <Table
-      :table-properties="debtsTableProperties"
-      :table-data="debts"
-      :table-reactive-properties="debtsTableReactiveProperties"
+      :table-properties="cargoTableProperties"
+      :table-data="cargo"
+      :table-reactive-properties="cargoTableReactiveProperties"
       title="Сводная"
     >
       <template v-slot:top-buttons>
-        <MenuDebt
-          v-show="currentCodeClientId"
-        />
         <UpdateBtn
           v-show="currentCodeClientId"
           @updateBtnClick="refresh"
         />
         <ExportBtn
-          @exportBtnClick="exportFaxData(debtsTableReactiveProperties.selected)"
-        />
-        <IconBtn
-          v-show="debtsTableReactiveProperties.selected.length"
-          color="negative"
-          icon="delete"
-          :tooltip="$t('delete')"
-          @iconBtnClick="destroyDebtEntry(debtsTableReactiveProperties.selected)"
-        />
-
-        <IconBtn
-          v-show="debtsTableReactiveProperties.selected.length === 1"
-          icon="attach_money"
-          tooltip="Оплатить"
-          @iconBtnClick="pay(debtsTableReactiveProperties.selected[0])"
+          @exportBtnClick="exportFaxData(cargoTableReactiveProperties.selected)"
         />
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -48,16 +31,20 @@
             expand-icon-class="text-white"
           >
             <template v-slot:header>
-              <q-item-section avatar>
-                <q-checkbox
-                  v-model="props.selected"
-                  dense
-                />
+              <q-item-section>
+                <q-checkbox v-model="props.selected"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ props.row.sum | numberFormatFilter }}
+                </q-item-label>
               </q-item-section>
 
               <q-item-section>
                 <q-item-label :lines="2">
-                  {{ `${props.row.sum} / ${props.row.commission}` }}
+                  {{ props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name}` : props.row.type ?
+                  props.row.sum : props.row.notation
+                  }}
                 </q-item-label>
               </q-item-section>
 
@@ -86,16 +73,39 @@
                   <q-item-label>{{ `${col.label}:` }}</q-item-label>
                 </q-item-section>
                 <q-item-section side>
-                  <q-item-label v-if="col.field === 'sum'">
+                  <q-item-label
+                    v-if="col.field === 'things'"
+                    :lines="10"
+                  >
+                    {{ col.value | thingsFilter }}
+                  </q-item-label>
+                  <q-item-label
+                    v-else-if="col.field === 'kg'"
+                  >
                     {{ col.value | numberFormatFilter }}
                   </q-item-label>
-                  <q-item-label v-else-if="col.field === 'commission'">
+                  <q-item-label
+                    v-else-if="col.field === 'sum'"
+                  >
                     {{ col.value | numberFormatFilter }}
                   </q-item-label>
-                  <q-item-label v-else-if="col.field === 'paid'">
+                  <q-item-label
+                    v-else-if="col.field === 'paid'"
+                  >
                     <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
                       props.row.type ? null : 'Нет' }}
                     </q-badge>
+                  </q-item-label>
+                  <q-item-label
+                    v-else-if="col.field === 'type'"
+                  >
+                    {{ col.value ? 'Оплата' : 'Долг' }}
+                  </q-item-label>
+                  <q-item-label
+                    v-else-if="col.field === 'notation'"
+                    :lines="3"
+                  >
+                    {{ col.value }}
                   </q-item-label>
                   <q-item-label v-else>
                     {{ col.value }}
@@ -122,7 +132,6 @@
           :props="props"
           class="cursor-pointer"
           :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
-          @click.stop="viewDebtEditDialog(props, $event)"
         >
           <q-td
             auto-width
@@ -142,6 +151,13 @@
           </q-td>
 
           <q-td
+            key="code_place"
+            :props="props"
+          >
+            {{ props.row.code_place }}
+          </q-td>
+
+          <q-td
             key="code_client_name"
             :props="props"
           >
@@ -156,16 +172,46 @@
           </q-td>
 
           <q-td
+            key="place"
+            :props="props"
+          >
+            {{ props.row.type ? null : props.row.place }}
+          </q-td>
+
+          <q-td
+            key="kg"
+            :props="props"
+          >
+            {{ props.row.type ? null : props.row.kg }}
+          </q-td>
+
+          <q-td
+            key="for_kg"
+            class="text-bold cursor-pointer"
+            :props="props"
+          >
+            {{ props.row.type ? null : props.row.for_kg }}
+          </q-td>
+
+          <q-td
+            key="for_place"
+            class="text-bold cursor-pointer"
+            :props="props"
+          >
+            {{ props.row.type ? null : props.row.for_place }}
+          </q-td>
+
+          <q-td
             key="sum"
             :props="props"
           >
             {{ props.row.sum | numberFormatFilter }}
           </q-td>
           <q-td
-            key="commission"
+            key="sale"
             :props="props"
           >
-            {{ Math.round(props.row.commission) }}
+            {{ props.row.type ? props.row.sale : null }}
           </q-td>
           <q-td
             key="paid"
@@ -177,53 +223,77 @@
           </q-td>
 
           <q-td
+            key="category_name"
+            :props="props"
+          >
+            {{ props.row.category_name }}
+          </q-td>
+          <q-td
+            key="fax_name"
+            :props="props"
+            class="faxName"
+          >
+            {{ props.row.fax_name }}
+          </q-td>
+
+          <q-td
             key="notation"
             :props="props"
           >
             {{ props.row.notation }}
           </q-td>
+
+          <q-td
+            key="shop"
+            :props="props"
+          >
+            {{ props.row.shop }}
+          </q-td>
+
+          <q-td
+            key="things"
+            :props="props"
+          >
+            {{ props.row.things | thingsFilter }}
+          </q-td>
+
+          <q-td
+            key="delivery_method_name"
+            :props="props"
+          >
+            {{ props.row.delivery_method_name }}
+          </q-td>
+
+          <q-td
+            key="department"
+            :props="props"
+          >
+            {{ props.row.department }}
+          </q-td>
         </q-tr>
       </template>
     </Table>
-    <GeneralClientDebtsData
-      :list="debts"
+    <GeneralClientCargoData
+      :list="cargo"
       title="Баланс"
-      style="max-width: 500px;margin:0 auto;"
-    />
-    <DialogAddDebtPaymentEntry
-      :entry-data.sync="dialogAddDebtPaymentEntryData"
-      :show-dialog.sync="showDialogAddDebtPaymentEntry"
-    />
-    <DialogAddDebtPayEntry
-      :entry-data.sync="dialogAddDebtPayEntryData"
-      :show-dialog.sync="showDialogAddDebtPayEntry"
-    />
-    <DialogAddDebEntry
-      :entry-data.sync="dialogAddDebtEntryData"
-      :show-dialog.sync="showDialogAddDebtEntry"
+      style="max-width: 500px;margin:20px auto;"
     />
   </div>
 </template>
 
 <script>
     import ExportDataMixin from 'src/mixins/ExportData';
-    import showNotif from 'src/mixins/showNotif';
 
     export default {
-        name: 'Debts',
+        name: 'Cargo',
         components: {
             Table: () => import('src/components/Elements/Table/Table.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            GeneralClientDebtsData: () => import('src/components/CargoDebts/GeneralClientDebtsData.vue'),
             UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
+            // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-            DialogAddDebtPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue'),
-            DialogAddDebEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue'),
-            DialogAddDebtPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPayEntry.vue'),
-            MenuDebt: () => import('src/components/CargoDebts/MenuDebt.vue'),
+            GeneralClientCargoData: () => import('src/components/CargoDebts/GeneralClientCargoData.vue'),
         },
-        mixins: [ExportDataMixin, showNotif],
+        mixins: [ExportDataMixin],
         props: {
             refresh: {
                 type: Function,
@@ -233,13 +303,20 @@
         },
         data() {
             return {
-                debtsTableProperties: {
+                cargoTableProperties: {
                     columns: [
                         {
                             name: 'created_at',
                             label: 'Дата',
                             align: 'center',
                             field: 'created_at',
+                            sortable: true,
+                        },
+                        {
+                            name: 'code_place',
+                            label: 'Код',
+                            align: 'center',
+                            field: 'code_place',
                             sortable: true,
                         },
                         {
@@ -257,6 +334,34 @@
                             sortable: true,
                         },
                         {
+                            name: 'place',
+                            label: this.$t('place'),
+                            field: 'place',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'kg',
+                            label: this.$t('kg'),
+                            field: 'kg',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'for_kg',
+                            label: this.$t('forKg'),
+                            field: 'for_kg',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'for_place',
+                            label: this.$t('forPlace'),
+                            field: 'for_place',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'sum',
                             label: 'Сумма',
                             field: 'sum',
@@ -264,9 +369,9 @@
                             sortable: true,
                         },
                         {
-                            name: 'commission',
-                            label: 'Комиссия',
-                            field: 'commission',
+                            name: 'sale',
+                            label: 'Скидка',
+                            field: 'sale',
                             align: 'center',
                             sortable: true,
                         },
@@ -278,107 +383,91 @@
                             sortable: true,
                         },
                         {
+                            name: 'category_name',
+                            label: this.$t('category'),
+                            field: 'category_name',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'fax_name',
+                            label: 'Факс',
+                            field: 'fax_name',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'notation',
                             label: this.$t('notation'),
                             field: 'notation',
                             align: 'center',
                             sortable: true,
                         },
+                        {
+                            name: 'shop',
+                            label: this.$t('shop'),
+                            field: 'shop',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'things',
+                            label: this.$t('things'),
+                            field: 'things',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'delivery_method_name',
+                            label: 'Способ доставки',
+                            field: 'delivery_method_name',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
+                            name: 'department',
+                            label: 'Отделение',
+                            field: 'department',
+                            align: 'center',
+                            sortable: true,
+                        },
                     ],
                 },
-                debtsTableReactiveProperties: {
+                cargoTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission'],
+                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'place', 'kg', 'for_kg', 'for_place', 'notation', 'category_name', 'fax_name', 'sale'],
                     title: '',
                 },
-                showDialogAddDebtPaymentEntry: false,
-                dialogAddDebtPaymentEntryData: {},
-                showDialogAddDebtEntry: false,
-                dialogAddDebtEntryData: {},
-                dialogAddDebtPayEntryData: {},
-                showDialogAddDebtPayEntry: false,
             };
         },
         computed: {
-            debts() {
-                return this.$store.getters['cargoDebts/getDebts'];
+            cargo() {
+                return this.$store.getters['cargoDebts/getCargo'];
             },
             currentCodeClientId() {
                 return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
             },
         },
         methods: {
-            viewDebtEditDialog(data, event) {
-                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
-                    devlog.log('data', data, event);
-                    if (data.row.type) {
-                        devlog.log('EMPTY');
-                        this.dialogAddDebtPaymentEntryData = data;
-                        this.showDialogAddDebtPaymentEntry = true;
-                    } else {
-                        this.dialogAddDebtEntryData = data;
-                        this.showDialogAddDebtEntry = true;
-                    }
-                }
-            },
             async exportFaxData(selected) {
                 let data = selected;
                 if (_.isEmpty(data)) {
-                    data = this.debts;
+                    data = this.cargo;
                 } else {
-                    const searchData = this.$store.getters['cargoDebts/getDebtsForSearch'];
+                    const searchData = this.$store.getters['cargoDebts/getCargoForSearch'];
                     const newArr = [];
                     _.forEach(data, ({ id }) => {
                         newArr.push(_.find(searchData, { id }));
                     });
+                    devlog.log('DSDGF', data);
                     data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
                 }
                 if (!_.isEmpty(data)) {
                     const { getUrl } = await import('src/tools/url');
-                    this.exportDataToExcel(getUrl('exportDebtsData'), {
+                    this.exportDataToExcel(getUrl('exportCargoData'), {
                         data,
-                    }, 'Debts.xlsx');
+                    }, 'Cargo.xlsx');
                 }
-            },
-            destroyDebtEntry(data) {
-                const ids = _.map(data, 'id');
-                if (!_.isEmpty(ids)) {
-                    this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
-                        {
-                            label: 'Отмена',
-                            color: 'white',
-                            handler: () => {
-                                this.debtsTableReactiveProperties.selected = [];
-                            },
-                        },
-                        {
-                            label: 'Удалить',
-                            color: 'white',
-                            handler: async () => {
-                                const { getUrl } = await import('src/tools/url');
-                                this.$q.loading.show();
-                                this.$axios.post(getUrl('deleteDebtEntry'), { ids })
-                                  .then(() => {
-                                      this.$store.dispatch('cargoDebts/deleteDebtEntry', ids);
-                                      this.debtsTableReactiveProperties.selected = [];
-                                      this.$q.loading.hide();
-                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
-                                  })
-                                  .catch(() => {
-                                      this.$q.loading.hide();
-                                      devlog.error('Ошибка запроса - deleteDebtEntry');
-                                  });
-                            },
-                        },
-                    ]);
-                }
-            },
-            pay(data) {
-                if (!data.type && !data.paid) {
-                    this.dialogAddDebtPayEntryData = data;
-                    this.showDialogAddDebtPayEntry = true;
-                }
-                this.debtsTableReactiveProperties.selected = [];
             },
         },
     };

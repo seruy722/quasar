@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Cargo;
+use App\City;
+use App\Code;
+use App\Customer;
 use App\Debt;
 use App\Transfer;
 use Illuminate\Http\Request;
@@ -55,6 +58,24 @@ class CargoController extends Controller
 
     public function index($id)
     {
+        if (auth()->user()->hasRole('assistant')) {
+            $cityId = City::where('name', 'Одесса')->first('id');
+            $customersCodes = Customer::where('city_id', $cityId->id)->get('code_id');
+            $access = $customersCodes->map(function ($item) {
+                return $item->code_id;
+            })->search($id);
+            if ($access !== false) {
+                $cargo = $this->query()
+                    ->where('code_client_id', $id)
+                    ->get();
+                $debt = $this->queryDebt()
+                    ->where('code_client_id', $id)
+                    ->get();
+                return response(['cargo' => $cargo, 'debts' => $debt]);
+            }
+
+            return response(['cargo' => [], 'debts' => [], 'acc' => $customersCodes]);
+        }
         $cargo = $this->query()
             ->where('code_client_id', $id)
             ->get();

@@ -48,3 +48,7 @@ export const setCodesWithCustomers = (({ commit }) => axiosInstance.get(getUrl('
 export const addCustomerToCodeWithCustomers = (({ commit }, data) => {
   commit('ADD_CODE_TO_CODE_WITH_CUSTOMERS', data);
 });
+
+export const setCodesAssistant = (({ commit }, data) => {
+  commit('SET_CODES_ASSISTANT', data);
+});

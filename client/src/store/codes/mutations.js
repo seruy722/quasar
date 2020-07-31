@@ -64,3 +64,7 @@ export const DELETE_CUSTOMER = ((state, data) => {
     }
   }
 });
+
+export const SET_CODES_ASSISTANT = ((state, data) => {
+  state.codes = data;
+});

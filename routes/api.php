@@ -61,6 +61,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::get('/check-code-exist/{code}', 'Api\CodesController@checkCodeExist');
     Route::post('/store-code', 'Api\CodesController@storeCode');
     Route::get('/codes-list', 'Api\CodesController@index');
+    Route::get('/codes-assistant', 'Api\CodesController@codesAssistantList');
 
     // STOREHOUSE
     Route::get('/store-house-data/{id}', 'Api\StorehouseDataController@getStorehouseData')->name('view storehouse data')->middleware(['role_or_permission:admin|storehouse|view storehouse data']);
@@ -89,7 +90,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     // CARGO_TABLE
     Route::post('/upload-cargo-table', 'CommonController@storeCargoTable');
     Route::post('/client-data', 'CommonController@getData');
-    Route::get('/get-all-cargo-data/{id}', 'Api\CargoController@index')->name('view cargo data')->middleware(['role_or_permission:admin|view cargo data|cargo']);
+    Route::get('/get-all-cargo-data/{id}', 'Api\CargoController@index')->name('view cargo data')->middleware(['role_or_permission:admin|view cargo data|cargo|assistant']);
     Route::post('/update-cargo-payment-entry', 'Api\CargoController@updateCargoPaymentEntry')->name('update cargo payment entry')->middleware(['role_or_permission:admin|update cargo payment entry']);
     Route::post('/update-cargo-debt-entry', 'Api\CargoController@updateCargoDebtEntry')->name('update cargo debt entry')->middleware(['role_or_permission:admin|update cargo debt entry']);
     Route::post('/create-cargo-payment-entry', 'Api\CargoController@createCargoPaymentEntry')->name('create cargo payment entry')->middleware(['role_or_permission:admin|create cargo payment entry']);

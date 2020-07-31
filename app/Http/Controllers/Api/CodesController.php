@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\City;
 use App\Code;
 use App\Customer;
 use App\Http\Resources\CodeResource;
@@ -160,5 +161,15 @@ class CodesController extends Controller
         $codeHistory = \App\History::where('table', (new Code)->getTable())->where('entry_id', $id)->get();
 
         return response(['codeHistory' => $codeHistory]);
+    }
+
+    public function codesAssistantList()
+    {
+        $cityId = City::where('name', 'Одесса')->first('id');
+        $customersCodes = Customer::where('city_id', $cityId->id)->get('code_id');
+        $access = $customersCodes->map(function ($item) {
+            return $item->code_id;
+        });
+        return response(['codes' => Code::select('id as value', 'code as label')->whereIn('id', $access->all())->get()]);
     }
 }
