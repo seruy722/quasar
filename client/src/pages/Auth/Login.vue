@@ -121,7 +121,7 @@
                           if (vm.toPath) {
                               vm.$router.push(vm.toPath);
                           } else {
-                              vm.$router.push({ name: 'transfers' })
+                              vm.$router.push({ name: 'index' })
                                 .catch((e) => {
                                     /* eslint-disable-next-line */
                                     console.error('transfersError', e);
@@ -139,7 +139,7 @@
                     if (vm.toPath) {
                         vm.$router.push(vm.toPath);
                     } else {
-                        vm.$router.push({ name: 'transfers' })
+                        vm.$router.push({ name: 'index' })
                           .catch((e) => {
                               /* eslint-disable-next-line */
                               console.error('transfersError2', e);
@@ -168,7 +168,7 @@
                   .then(({ data }) => {
                       this.$store.dispatch('auth/setUser', _.get(data, 'user'));
                       this.$q.localStorage.set(getLSKey('authToken'), _.get(data, 'access_token'));
-                      this.$router.push({ name: 'transfers' })
+                      this.$router.push({ name: 'index' })
                         .catch((e) => {
                             /* eslint-disable-next-line */
                             console.error('transfersError3', e);

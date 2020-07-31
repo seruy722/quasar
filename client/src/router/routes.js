@@ -9,9 +9,47 @@ const routes = [
         path: '',
         name: 'login',
         meta: {
-          title: 'Login',
+          title: 'Авторизация',
         },
         component: () => import('pages/Auth/Login.vue'),
+      },
+    ],
+  },
+  {
+    path: '/index',
+    component: () => import('layouts/StartLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'index',
+        meta: {
+          title: 'Главная',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin', 'moderator', 'assistant'],
+            permissions: [],
+          },
+        },
+        component: () => import('src/pages/Index.vue'),
+      },
+    ],
+  },
+  {
+    path: '/assistant',
+    component: () => import('layouts/AssistantLayout.vue'),
+    children: [
+      {
+        path: 'cargo-debts',
+        name: 'cargo-debts-assistant',
+        meta: {
+          title: 'Карго Долги',
+          middleware: [
+            auth,
+          ],
+        },
+        component: () => import('src/pages/Index.vue'),
       },
     ],
   },
@@ -23,7 +61,7 @@ const routes = [
         path: 'access',
         name: 'access',
         meta: {
-          title: 'access',
+          title: 'Доступы',
           middleware: [
             auth,
           ],
@@ -60,7 +98,7 @@ const routes = [
         path: 'admin-faxes',
         name: 'admin-faxes',
         meta: {
-          title: 'faxes',
+          title: 'Факсы админа',
           middleware: [
             auth,
           ],
@@ -75,7 +113,7 @@ const routes = [
         path: 'admin-faxes/:id',
         name: 'admin-fax',
         meta: {
-          title: 'admin-faxes',
+          title: 'Факсы админа',
           middleware: [
             auth,
           ],
@@ -122,7 +160,7 @@ const routes = [
         path: 'transfers',
         name: 'transfers',
         meta: {
-          title: 'transfers',
+          title: 'Переводы',
           middleware: [
             auth,
           ],
@@ -137,7 +175,7 @@ const routes = [
         path: 'storehouse',
         name: 'storehouse',
         meta: {
-          title: 'storehouse',
+          title: 'Склад',
           middleware: [
             auth,
           ],
@@ -152,7 +190,7 @@ const routes = [
         path: 'codes',
         name: 'codes',
         meta: {
-          title: 'codes',
+          title: 'Кода',
           middleware: [
             auth,
           ],
@@ -167,7 +205,7 @@ const routes = [
         path: 'codes-prices',
         name: 'codes-prices',
         meta: {
-          title: 'codes-prices',
+          title: 'Цены по кодам',
           middleware: [
             auth,
           ],
@@ -182,7 +220,7 @@ const routes = [
         path: 'faxes',
         name: 'faxes',
         meta: {
-          title: 'faxes',
+          title: 'Факсы',
           middleware: [
             auth,
           ],
@@ -197,7 +235,7 @@ const routes = [
         path: 'faxes/:id',
         name: 'fax',
         meta: {
-          title: 'fax',
+          title: 'Факс',
           middleware: [
             auth,
           ],
@@ -212,7 +250,7 @@ const routes = [
         path: 'drafts',
         name: 'drafts',
         meta: {
-          title: 'drafts',
+          title: 'Черновики',
           middleware: [
             auth,
           ],
@@ -227,7 +265,7 @@ const routes = [
         path: 'search',
         name: 'search',
         meta: {
-          title: 'search',
+          title: 'Поиск',
           middleware: [
             auth,
           ],
@@ -242,7 +280,7 @@ const routes = [
         path: 'cargo-debts',
         name: 'cargo-debts',
         meta: {
-          title: 'cargo-debts',
+          title: 'Карго Долги',
           middleware: [
             auth,
           ],
@@ -259,10 +297,10 @@ const routes = [
 
 // Always leave this as last one
 // if (process.env.MODE !== 'ssr') {
-  routes.push({
-    path: '*',
-    component: () => import('pages/Error404.vue'),
-  });
+routes.push({
+  path: '*',
+  component: () => import('pages/Error404.vue'),
+});
 // }
 
 export default routes;

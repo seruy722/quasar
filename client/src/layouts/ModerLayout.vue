@@ -56,7 +56,7 @@
             </q-item-section>
 
             <q-item-section>
-              {{ $t(item.title) }}
+              {{ item.title }}
             </q-item-section>
           </q-item>
         </q-list>
@@ -78,98 +78,6 @@
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
         data() {
-            this.$_menu = [
-                {
-                    title: 'Карго Долги',
-                    field: 'cargo-debts',
-                    icon: 'assignment',
-                    access: {
-                        roles: ['admin'],
-                        permissions: ['general-cargo-data'],
-                    },
-                },
-                {
-                    title: 'storehouse',
-                    field: 'storehouse',
-                    icon: 'store',
-                    access: {
-                        roles: ['admin', 'storehouse'],
-                        permissions: ['view storehouse data'],
-                    },
-                },
-                {
-                    title: 'codes',
-                    field: 'codes',
-                    icon: 'people',
-                    access: {
-                        roles: ['admin', 'codes'],
-                        permissions: ['view codes list'],
-                    },
-                },
-                {
-                    title: 'codes-prices',
-                    field: 'codes-prices',
-                    icon: 'money',
-                    access: {
-                        roles: ['admin', 'codes-prices'],
-                        permissions: ['get-codes-prices'],
-                    },
-                },
-                {
-                    title: 'faxes',
-                    field: 'faxes',
-                    icon: 'library_books',
-                    access: {
-                        roles: ['admin', 'fax'],
-                        permissions: ['view faxes list'],
-                    },
-                },
-                {
-                    title: 'transfers',
-                    field: 'transfers',
-                    icon: 'import_export',
-                    access: {
-                        roles: ['admin', 'transfers'],
-                        permissions: ['view transfers list'],
-                    },
-                },
-                {
-                    title: 'drafts',
-                    field: 'drafts',
-                    icon: 'drafts',
-                    access: {
-                        roles: ['admin'],
-                        permissions: [],
-                    },
-                },
-                {
-                    title: 'search',
-                    field: 'search',
-                    icon: 'search',
-                    access: {
-                        roles: ['admin'],
-                        permissions: ['view search page'],
-                    },
-                },
-                {
-                    title: 'Доступы',
-                    field: 'access',
-                    icon: 'settings',
-                    access: {
-                        roles: ['admin'],
-                        permissions: ['view access list'],
-                    },
-                },
-                {
-                    title: 'exit',
-                    field: 'exit',
-                    icon: 'exit_to_app',
-                    access: {
-                        roles: [],
-                        permissions: ['exit app'],
-                    },
-                },
-            ];
             return {
                 drawer: false,
                 miniState: true,
@@ -186,6 +94,9 @@
             userAccess() {
                 return _.get(this.$store.getters['auth/getUser'], 'access');
             },
+            mainMenu() {
+                return this.$store.getters['settings/getMenu'];
+            },
         },
         watch: {
             userAccess(val) {
@@ -200,10 +111,8 @@
                 if (this.$route.name !== field) {
                     if (field === 'exit') {
                         this.$q.localStorage.clear();
-                        this.$store.dispatch('auth/logout');
+                        this.$store.commit('auth/REMOVE_USER_DATA');
                         this.$router.push({ name: 'login' });
-                        /* eslint-disable-next-line */
-                        globalThis.location.reload();
                     } else {
                         this.$router.push({ name: field });
                     }
@@ -211,7 +120,7 @@
             },
             setMenu(userAccess) {
                 if (userAccess) {
-                    _.forEach(this.$_menu, (item) => {
+                    _.forEach(this.mainMenu, (item) => {
                         if (accessFunc(userAccess, item.access)) {
                             this.menu.push(item);
                         }

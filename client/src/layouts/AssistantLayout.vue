@@ -6,10 +6,9 @@
     <q-header elevated class="bg-primary">
       <q-toolbar>
         <IconBtn
-          dense
+          color="white"
           icon="menu"
           tooltip="Меню"
-          color="white"
           @iconBtnClick="drawer = !drawer"
         />
         <q-toolbar-title>{{ pageTitle }}</q-toolbar-title>
@@ -30,6 +29,19 @@
     >
       <q-scroll-area class="fit">
         <q-list padding>
+          <q-item>
+            <q-item-section avatar>
+              <q-icon
+                name="account_circle"
+                size="md"
+              />
+            </q-item-section>
+
+            <q-item-section class="text-bold">
+              {{ userName }}
+            </q-item-section>
+          </q-item>
+
           <q-item
             v-for="(item, index) in menu"
             :key="index"
@@ -61,7 +73,7 @@
     import accessFunc from 'src/tools/access';
 
     export default {
-        name: 'ModerLayout',
+        name: 'AssistantLayout',
         components: {
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
         },
@@ -75,6 +87,9 @@
         computed: {
             pageTitle() {
                 return this.$route.meta.title;
+            },
+            userName() {
+                return _.get(this.$store.getters['auth/getUser'], 'name');
             },
             userAccess() {
                 return _.get(this.$store.getters['auth/getUser'], 'access');
@@ -119,5 +134,5 @@
 <style lang="stylus">
   .my-menu-link
     color white
-    background #F2C037
+    background $orange_bg
 </style>

@@ -23,3 +23,9 @@ export const CHECK_USER_ACCESS = ((state, data) => {
   });
   return true;
 });
+
+export const REMOVE_USER_DATA = ((state) => {
+  state.user = null;
+  state.toPath = '';
+  state.usersWithRolesAndPermissions = [];
+});
