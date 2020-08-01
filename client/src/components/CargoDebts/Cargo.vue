@@ -6,7 +6,7 @@
       :table-properties="cargoTableProperties"
       :table-data="cargo"
       :table-reactive-properties="cargoTableReactiveProperties"
-      title="Сводная"
+      :title="titleTable"
     >
       <template v-slot:top-buttons>
         <MenuCargo
@@ -506,6 +506,9 @@
             },
             currentCodeClientId() {
                 return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
+            },
+            titleTable() {
+                return `Сумма: ${_.sumBy(this.cargo, 'sum')}, Скидки: ${_.sumBy(this.cargo, 'sale')}`;
             },
         },
         methods: {

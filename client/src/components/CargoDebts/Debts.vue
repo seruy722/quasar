@@ -6,7 +6,7 @@
       :table-properties="debtsTableProperties"
       :table-data="debts"
       :table-reactive-properties="debtsTableReactiveProperties"
-      title="Сводная"
+      :title="titleTable"
     >
       <template v-slot:top-buttons>
         <MenuDebt
@@ -305,6 +305,9 @@
             },
             currentCodeClientId() {
                 return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
+            },
+            titleTable() {
+                return `Сумма: ${_.sumBy(this.debts, 'sum')}, %: ${_.sumBy(this.debts, 'commission')}`;
             },
         },
         methods: {
