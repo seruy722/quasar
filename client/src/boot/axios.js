@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getUrl } from 'src/tools/url';
-import { LocalStorage, Notify } from 'quasar';
+import { LocalStorage } from 'quasar';
 import { getLSKey } from 'src/tools/lsKeys';
 
 // devlog.log('navigator.connection.type', navigator.connection.type);
@@ -32,11 +32,8 @@ export default ({ Vue, router }) => {
     //     store.commit('settings/setModal', true);
     // }
     if (status === 403) {
-      Notify.create({
-        position: 'center',
-        message: 'У Вас нет доступа к этому ресурсу.',
-        color: 'red',
-      });
+      /* eslint-disable-next-line */
+      console.error('У Вас нет доступа к этому ресурсу');
     } else if (status === 403) {
       router.push({ name: 'login' });
     }
