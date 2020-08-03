@@ -295,6 +295,21 @@ const routes = [
         },
         component: () => import('pages/CargoDebts.vue'),
       },
+      {
+        path: 'tasks',
+        name: 'tasks',
+        meta: {
+          title: 'Задачи',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin'],
+            permissions: [],
+          },
+        },
+        component: () => import('pages/Moder/Tasks.vue'),
+      },
     ],
   },
 ];

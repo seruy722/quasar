@@ -107,6 +107,11 @@ const urls = {
   exportGeneralDataByClients: `${prefix}/export-general-data-by-clients`,
   cargoPayEntry: `${prefix}/cargo-pay-entry`,
   debtPayEntry: `${prefix}/debt-pay-entry`,
+  getTasks: `${prefix}/get-tasks`,
+  storeTask: `${prefix}/store-task`,
+  usersList: `${prefix}/users-list`,
+  deleteTasks: `${prefix}/delete-tasks`,
+  updateTask: `${prefix}/update-task`,
   axiosData: {
     baseURL: process.env.API,
     // 'http://sp.com.ua'

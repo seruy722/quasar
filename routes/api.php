@@ -50,6 +50,10 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
         Route::post('/delete-permission-from-role-or-user', 'Api\PermissionController@deletePermissionFromRoleOrUser');
     });
 
+    // USERS
+    Route::get('/users-list', function () {
+        return \App\User::select('id as value', 'name as label')->orderBy('name')->get();
+    });
     // CODES
     Route::get('/codes', 'Api\CodesController@getCodesWithCustomers')->name('view codes list')->middleware(['role_or_permission:admin|codes|view codes list']);
     Route::get('/get-code-history/{id}', 'Api\CodesController@getCodeHistory')->name('get-code-history')->middleware(['role_or_permission:admin|codes|get-code-history']);
@@ -189,6 +193,12 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/update-code-price', 'Api\CodesPriceController@update')->name('update-code-price')->middleware(['role_or_permission:admin|codes-prices|update-code-price']);
     Route::get('/get-code-price-history/{id}', 'Api\CodesPriceController@getCodePriceHistory')->name('get-code-price-history')->middleware(['role_or_permission:admin|codes-prices|get-code-price-history']);
     Route::post('/get-new-codes-prices', 'Api\CodesPriceController@getNewCodesPrices')->name('get-new-codes-prices')->middleware(['role_or_permission:admin|codes-prices|get-new-codes-prices']);
+
+    // TASKS
+    Route::get('/get-tasks', 'Api\TaskController@index')->name('view tasks page')->middleware(['role_or_permission:admin|tasks|view tasks page']);
+    Route::post('/store-task', 'Api\TaskController@store')->name('store task')->middleware(['role_or_permission:admin|tasks|store task']);
+    Route::post('/delete-tasks', 'Api\TaskController@destroy')->name('delete tasks')->middleware(['role_or_permission:admin|tasks|delete tasks']);
+    Route::post('/update-task', 'Api\TaskController@update')->name('update task')->middleware(['role_or_permission:admin|tasks|update task']);
 
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды

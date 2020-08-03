@@ -30,3 +30,8 @@ export const userHaveAccess = ((data) => {
   devlog.log('data', data);
   return true;
 });
+
+export const fetchUsersList = (({ commit }) => axiosInstance.get(getUrl('usersList'))
+  .then(({ data }) => {
+    commit('SET_USERS_LIST', data);
+  }));

@@ -99,6 +99,55 @@ const settings = {
     destroy: 'delete',
     move: 'move_to_inbox',
   },
+  statusTask: [
+    {
+      label: 'Новая',
+      value: 1,
+      color: 'negative',
+    },
+    {
+      label: 'Отработано',
+      value: 2,
+      color: 'lightgrey',
+    },
+    {
+      label: 'Доработка',
+      value: 3,
+      color: 'pink',
+    },
+    {
+      label: 'Отменена',
+      value: 4,
+      color: 'grey',
+    },
+    {
+      label: 'Выполнено',
+      value: 5,
+      color: 'positive',
+    },
+  ],
+  sectionTask: [
+    {
+      label: 'Карго',
+      value: 1,
+    },
+    {
+      label: 'Долги',
+      value: 2,
+    },
+    {
+      label: 'Переводы',
+      value: 3,
+    },
+    {
+      label: 'Факсы',
+      value: 4,
+    },
+    {
+      label: 'Склад',
+      value: 5,
+    },
+  ],
 };
 
 export default function sett(value) {

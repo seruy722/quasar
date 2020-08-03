@@ -9,7 +9,7 @@
     @foreach($collection as $elem)
         <tr>
             <td style="border: 1px solid black;text-align: center;">{{ $elem['code_client_name'] }}</td>
-            <td style="border: 1px solid black;text-align: center;">{{ $elem['sum'] }}</td>
+            <td style="border: 1px solid black;text-align: center;">{{ round($elem['sum']) }}</td>
         </tr>
     @endforeach
 

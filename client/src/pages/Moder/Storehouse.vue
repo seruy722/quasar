@@ -75,6 +75,16 @@
                     {{ props.row.code_client_name }}
                   </q-item-label>
                 </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ props.row.kg }}
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ props.row.category_name }}
+                  </q-item-label>
+                </q-item-section>
               </template>
 
               <q-list

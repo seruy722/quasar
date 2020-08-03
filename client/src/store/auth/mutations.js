@@ -29,3 +29,7 @@ export const REMOVE_USER_DATA = ((state) => {
   state.toPath = '';
   state.usersWithRolesAndPermissions = [];
 });
+
+export const SET_USERS_LIST = ((state, data) => {
+  state.usersList = data;
+});

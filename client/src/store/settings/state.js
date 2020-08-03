@@ -83,6 +83,15 @@ export default {
       },
     },
     {
+      title: 'Задачи',
+      field: 'tasks',
+      icon: 'business',
+      access: {
+        roles: ['admin'],
+        permissions: [],
+      },
+    },
+    {
       title: 'Черновик',
       field: 'drafts',
       icon: 'drafts',

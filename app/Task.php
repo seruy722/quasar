@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
-    
-    protected $fillable = ['title', 'description', 'due'];
-    
-    public function creator()
+
+    protected $fillable = ['description', 'author_id', 'section_id', 'status_id', 'responsible_id'];
+
+    public function getCreatedAtAttribute($value)
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        if ($value) {
+            return \Illuminate\Support\Carbon::parse($value)->toAtomString();
+        }
+        return null;
     }
 }

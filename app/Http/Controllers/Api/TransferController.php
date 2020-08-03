@@ -157,7 +157,7 @@ class TransferController extends Controller
                 $data['sum'] = $data['sum'] * -1;
                 $data['code_client_id'] = $data['client_id'];
                 $data['transfer_id'] = $data['id'];
-                $data['commission'] = round(($data['sum'] / 100) * 1, 1);
+                $data['commission'] = round(($data['sum'] / 100) * 1);
                 $data['created_at'] = date("Y-m-d H:i:s", strtotime($date));
                 Debt::create($data);
             }
