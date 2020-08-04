@@ -27,6 +27,17 @@
                   <q-item-section>Добавить</q-item-section>
                 </q-item>
                 <q-item
+                  v-show="cargoTableReactiveProperties.selected.length === 1"
+                  v-close-popup
+                  clickable
+                  @click="update"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="edit" color="teal" />
+                  </q-item-section>
+                  <q-item-section>Редактировать</q-item-section>
+                </q-item>
+                <q-item
                   v-close-popup
                   clickable
                   @click="refresh"
@@ -36,16 +47,16 @@
                   </q-item-section>
                   <q-item-section>Обновить</q-item-section>
                 </q-item>
-                <q-item
-                  v-close-popup
-                  clickable
-                  @click="exportFaxData(cargoTableReactiveProperties.selected)"
-                >
-                  <q-item-section avatar>
-                    <q-icon name="explicit" color="positive" />
-                  </q-item-section>
-                  <q-item-section>Excel</q-item-section>
-                </q-item>
+                <!--                <q-item-->
+                <!--                  v-close-popup-->
+                <!--                  clickable-->
+                <!--                  @click="exportFaxData(cargoTableReactiveProperties.selected)"-->
+                <!--                >-->
+                <!--                  <q-item-section avatar>-->
+                <!--                    <q-icon name="explicit" color="positive" />-->
+                <!--                  </q-item-section>-->
+                <!--                  <q-item-section>Excel</q-item-section>-->
+                <!--                </q-item>-->
                 <q-item
                   v-show="cargoTableReactiveProperties.selected.length"
                   v-close-popup
@@ -392,6 +403,10 @@
                     }, 100);
                     this.showDialogAddTask = true;
                 }
+            },
+            update() {
+                this.entryData = { row: _.first(this.cargoTableReactiveProperties.selected) };
+                this.showDialogAddTask = true;
             },
         },
     };

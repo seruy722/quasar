@@ -66,8 +66,8 @@ class GeneralDataByClientsExport implements FromView, ShouldAutoSize, WithTitle
                     ->leftJoin('codes', 'codes.id', '=', 'debts.code_client_id');
                 $col = $this->query->where('code_client_id', $item->id)->get();
                 $sumComm = $col->sum('commission');
-                if (round($sumComm) >= 1) {
-                    array_push($arr, ['code_client_name' => $item->code, 'sum' => $sumComm]);
+                if ($sumComm) {
+                    array_push($arr, ['code_client_name' => $item->code, 'sum' => round($sumComm)]);
                 }
             }
         }
