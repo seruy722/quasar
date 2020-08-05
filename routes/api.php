@@ -113,6 +113,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/export-general-data-by-clients', 'Api\CargoController@exportGeneralDataByClients')->name('export general data by clients')->middleware(['role_or_permission:admin|export general data by clients']);
     Route::post('/cargo-pay-entry', 'Api\CargoController@cargoPayEntry')->name('cargo pay entry')->middleware(['role_or_permission:admin|cargo pay entry']);
     Route::post('/debt-pay-entry', 'Api\CargoController@debtPayEntry')->name('debt pay entry')->middleware(['role_or_permission:admin|debt pay entry']);
+    Route::get('/cargo-payments-all/{id}', 'Api\CargoController@cargoPaymentsAllForClient')->name('cargo payments all')->middleware(['role_or_permission:admin|cargo payments all']);
+    Route::get('/debts-payments-all/{id}', 'Api\CargoController@debtsPaymentsAllForClient')->name('debts payments all')->middleware(['role_or_permission:admin|debts payments all']);
 
     // DEBTS_TABLE
     Route::post('/upload-debts-table', 'CommonController@storeDebtsTable');

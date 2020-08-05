@@ -374,6 +374,37 @@ class CargoController extends Controller
         return response(['answer' => $entries]);
     }
 
+    public function cargoPaymentsAllForClient($id)
+    {
+        Cargo::where('type', false)->where('code_client_id', $id)->update(['paid' => true]);
+        $data = $this->query()
+            ->where('type', false)
+            ->where('code_client_id', $id)
+            ->get();
+        return response(['cargo' => $data]);
+    }
+
+    public function debtsPaymentsAllForClient($id)
+    {
+        Debt::where('type', false)->where('code_client_id', $id)->update(['paid' => true]);
+        $debts = Debt::where('type', false)->where('code_client_id', $id)->get();
+        $ids = [];
+        foreach ($debts as $item) {
+            if ($item->transfer_id) {
+                array_push($ids, $item->transfer_id);
+            }
+        }
+        if (!empty($ids)) {
+            Transfer::whereIn('id', $ids)->update(['paid' => true]);
+        }
+
+        $data = $this->queryDebt()
+            ->where('type', false)
+            ->where('code_client_id', $id)
+            ->get();
+        return response(['debts' => $data]);
+    }
+
     public function exportCargoData(Request $request)
     {
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoExport($request->data), 'transfers.xlsx');

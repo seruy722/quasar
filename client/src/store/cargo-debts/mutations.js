@@ -8,11 +8,22 @@ export const SET_DEBTS_FO_SEARCH = (state, data) => {
   state.debtsForSearch = data;
 };
 export const UPDATE_CARGO_ENTRY = (state, data) => {
-  const index = _.findIndex(state.cargo, { id: data.id });
-  if (index !== -1 && state.currentCodeClientId === data.code_client_id) {
-    state.cargo.splice(index, 1, data);
-  } else if (state.currentCodeClientId !== data.code_client_id) {
-    state.cargo.splice(index, 1);
+  if (_.isArray(data)) {
+    _.forEach(data, (item) => {
+      const index = _.findIndex(state.cargo, { id: item.id });
+      if (index !== -1 && state.currentCodeClientId === item.code_client_id) {
+        state.cargo.splice(index, 1, item);
+      } else if (state.currentCodeClientId !== item.code_client_id) {
+        state.cargo.splice(index, 1);
+      }
+    });
+  } else {
+    const index = _.findIndex(state.cargo, { id: data.id });
+    if (index !== -1 && state.currentCodeClientId === data.code_client_id) {
+      state.cargo.splice(index, 1, data);
+    } else if (state.currentCodeClientId !== data.code_client_id) {
+      state.cargo.splice(index, 1);
+    }
   }
 };
 export const ADD_CARGO_ENTRY = (state, data) => {
@@ -45,11 +56,22 @@ export const ADD_DEBT_ENTRY = (state, data) => {
 };
 
 export const UPDATE_DEBT_ENTRY = (state, data) => {
-  const index = _.findIndex(state.debts, { id: data.id });
-  if (index !== -1 && state.currentCodeClientId === data.code_client_id) {
-    state.debts.splice(index, 1, data);
-  } else if (state.currentCodeClientId !== data.code_client_id) {
-    state.debts.splice(index, 1);
+  if (_.isArray(data)) {
+    _.forEach(data, (item) => {
+      const index = _.findIndex(state.debts, { id: item.id });
+      if (index !== -1 && state.currentCodeClientId === item.code_client_id) {
+        state.debts.splice(index, 1, item);
+      } else if (state.currentCodeClientId !== item.code_client_id) {
+        state.debts.splice(index, 1);
+      }
+    });
+  } else {
+    const index = _.findIndex(state.debts, { id: data.id });
+    if (index !== -1 && state.currentCodeClientId === data.code_client_id) {
+      state.debts.splice(index, 1, data);
+    } else if (state.currentCodeClientId !== data.code_client_id) {
+      state.debts.splice(index, 1);
+    }
   }
 };
 

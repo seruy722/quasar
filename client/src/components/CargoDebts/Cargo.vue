@@ -33,6 +33,13 @@
           tooltip="Оплатить"
           @iconBtnClick="pay(cargoTableReactiveProperties.selected[0])"
         />
+        <IconBtn
+          v-show="currentCodeClientId"
+          icon="payments"
+          color="orange"
+          tooltip="Оплатить все"
+          @iconBtnClick="paymentsAll(currentCodeClientId)"
+        />
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
       <template v-slot:inner-item="{props}">
@@ -599,6 +606,35 @@
                     this.showDialogAddCargoPayEntry = true;
                 }
                 this.cargoTableReactiveProperties.selected = [];
+            },
+            async paymentsAll(id) {
+                if (id) {
+                    this.showNotif('warning', 'Перевести все данные клиента в статус оплаты?', 'center', [
+                        {
+                            label: 'Отмена',
+                            color: 'white',
+                            handler: () => {
+                            },
+                        },
+                        {
+                            label: 'OK',
+                            color: 'white',
+                            handler: async () => {
+                                const { getUrl } = await import('src/tools/url');
+                                this.$q.loading.show();
+                                this.$axios.get(`${getUrl('cargoPaymentsAll')}/${id}`)
+                                  .then(({ data: { cargo } }) => {
+                                      this.$store.dispatch('cargoDebts/updateCargoEntry', cargo);
+                                      this.$q.loading.hide();
+                                      this.showNotif('success', 'Данные по карго все переведены в статус оплаты.', 'center');
+                                  })
+                                  .catch(() => {
+                                      this.$q.loading.hide();
+                                  });
+                            },
+                        },
+                    ]);
+                }
             },
         },
     };

@@ -107,6 +107,8 @@ const urls = {
   exportGeneralDataByClients: `${prefix}/export-general-data-by-clients`,
   cargoPayEntry: `${prefix}/cargo-pay-entry`,
   debtPayEntry: `${prefix}/debt-pay-entry`,
+  cargoPaymentsAll: `${prefix}/cargo-payments-all`,
+  debtsPaymentsAll: `${prefix}/debts-payments-all`,
   getTasks: `${prefix}/get-tasks`,
   storeTask: `${prefix}/store-task`,
   usersList: `${prefix}/users-list`,
