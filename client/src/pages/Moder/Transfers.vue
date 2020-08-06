@@ -184,7 +184,9 @@
               key="paid"
               :props="props"
             >
-              {{ props.row.paid ? 'Да' : 'Нет' }}
+              <q-badge :color="props.row.paid ? 'positive': 'negative'">
+                {{ props.row.paid ? 'Да' : 'Нет' }}
+              </q-badge>
             </q-td>
 
             <q-td
