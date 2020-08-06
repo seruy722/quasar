@@ -144,6 +144,9 @@ class CargoController extends Controller
         if (array_key_exists('created_at', $data)) {
             $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
         }
+        if (array_key_exists('sum', $data) && $data['sum'] > 0) {
+            $data['sum'] = $data['sum'] * -1;
+        }
         $entry = Cargo::create($data);
         if (array_key_exists('for_kg', $data) || array_key_exists('for_place', $data) || array_key_exists('kg', $data) || array_key_exists('place', $data)) {
             if ($entry) {
