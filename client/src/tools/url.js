@@ -114,12 +114,11 @@ const urls = {
   usersList: `${prefix}/users-list`,
   deleteTasks: `${prefix}/delete-tasks`,
   updateTask: `${prefix}/update-task`,
+  storeTaskComment: `${prefix}/store-task-comment`,
+  getTaskComments: `${prefix}/get-task-comments`,
+  serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,
-    // 'http://sp.com.ua'
-    // headers: {
-    //     Accept: 'application/json',
-    // },
   },
   drafts: {
     codesWithoutInfo: `${prefix}/export-codes-without-customers`,

@@ -35,12 +35,14 @@ class CargoController extends Controller
             'codes.code as code_client_name',
             'categories.name as category_name',
             'delivery_methods.name as delivery_method_name',
-            'faxes.name as fax_name'
+            'faxes.name as fax_name',
+            'users.name as get_pay_user_name'
         )
             ->leftJoin('codes', 'codes.id', '=', 'cargos.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'cargos.category_id')
             ->leftJoin('delivery_methods', 'delivery_methods.id', '=', 'cargos.delivery_method_id')
             ->leftJoin('faxes', 'faxes.id', '=', 'cargos.fax_id')
+            ->leftJoin('users', 'users.id', '=', 'cargos.get_pay_user_id')
             ->orderBy('id', 'DESC');
     }
 
@@ -49,10 +51,12 @@ class CargoController extends Controller
         return Debt::select(
             'debts.*',
             'codes.code as code_client_name',
-            'users.name as user_name'
+            'users.name as user_name',
+            'authors.name as get_pay_user_name'
         )
             ->leftJoin('codes', 'codes.id', '=', 'debts.code_client_id')
             ->leftJoin('users', 'users.id', '=', 'debts.user_id')
+            ->leftJoin('users as authors', 'authors.id', '=', 'debts.get_pay_user_id')
             ->orderBy('debts.created_at', 'DESC');
     }
 

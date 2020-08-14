@@ -20,3 +20,11 @@ export const DELETE_TASKS = ((state, data) => {
     }
   });
 });
+
+export const SET_TASK_COMMENTS = ((state, data) => {
+  state.taskComments = data;
+});
+
+export const ADD_TASK_COMMENT = ((state, comment) => {
+  state.taskComments.push(comment);
+});

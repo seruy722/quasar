@@ -22,7 +22,7 @@
                   @click="showDialogAddTask = true"
                 >
                   <q-item-section avatar>
-                    <q-icon name="add" color="teal" />
+                    <q-icon name="add" color="positive" />
                   </q-item-section>
                   <q-item-section>Добавить</q-item-section>
                 </q-item>
@@ -94,7 +94,7 @@
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>
-                    {{ props.row.created_at }}
+                    {{ props.row.created_at.slice(0,5) }}
                   </q-item-label>
                 </q-item-section>
 
@@ -105,15 +105,11 @@
                 </q-item-section>
 
                 <q-item-section
-                  avatar
                   side
                 >
-                  <q-icon
-                    v-if="props.row.paid"
-                    name="money"
-                    size="md"
-                    color="white"
-                  />
+                  <q-item-label :lines="2">
+                    {{ props.row.responsible_name }}
+                  </q-item-label>
                 </q-item-section>
               </template>
 
@@ -178,7 +174,7 @@
           <q-tr
             :props="props"
             class="cursor-pointer"
-            @click.stop="viewEditDialog(props, $event)"
+            @click.stop="$router.push({name: 'task', params:{id:props.row.id}})"
           >
             <q-td
               auto-width

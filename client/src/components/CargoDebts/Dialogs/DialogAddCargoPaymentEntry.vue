@@ -150,15 +150,8 @@
 
 <script>
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
-    // import { getUrl } from 'src/tools/url';
     import showNotif from 'src/mixins/showNotif';
-    import {
-        getClientCodes,
-        // getCategories,
-        // getShopsList,
-        // setFormatedDate,
-        // setChangeValue,
-    } from 'src/utils/FrequentlyCalledFunctions';
+    import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
 
     export default {
         name: 'DialogAddCargoPaymentEntry',
@@ -242,10 +235,23 @@
                         default: '',
                         value: '',
                     },
+                    get_pay_user_id: {
+                        name: 'get_pay_user_id',
+                        type: 'select',
+                        label: 'Пользователь',
+                        options: [],
+                        changeValue: false,
+                        funcLoadData: getClientCodes,
+                        default: null,
+                        value: null,
+                    },
                 },
             };
         },
         computed: {
+            usersList() {
+                return this.$store.getters['auth/getUsersList'];
+            },
             clientCodes() {
                 return this.$store.getters['codes/getCodes'];
             },
@@ -293,10 +299,19 @@
                 },
                 immediate: true,
             },
+            usersList: {
+                handler: function set(val) {
+                    this.storehouseData.get_pay_user_id.options = val;
+                },
+                immediate: true,
+            },
             showDialog(val) {
                 if (val && _.isEmpty(this.entryData)) {
                     this.storehouseData.code_client_id.value = this.currentClientCodeId;
                     this.storehouseData.code_client_id.changeValue = true;
+                }
+                if (_.isEmpty(this.usersList)) {
+                    this.$store.dispatch('auth/fetchUsersList');
                 }
                 this.show = val;
             },

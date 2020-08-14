@@ -310,6 +310,21 @@ const routes = [
         },
         component: () => import('pages/Moder/Tasks.vue'),
       },
+      {
+        path: 'tasks/:id',
+        name: 'task',
+        meta: {
+          title: 'Задача',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin'],
+            permissions: [],
+          },
+        },
+        component: () => import('pages/Moder/Task.vue'),
+      },
     ],
   },
 ];
@@ -321,5 +336,4 @@ routes.push({
   component: () => import('pages/Error404.vue'),
 });
 // }
-
 export default routes;

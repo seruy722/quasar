@@ -229,10 +229,23 @@
                         default: '',
                         value: '',
                     },
+                    get_pay_user_id: {
+                        name: 'get_pay_user_id',
+                        type: 'select',
+                        label: 'Пользователь',
+                        options: [],
+                        changeValue: false,
+                        funcLoadData: getClientCodes,
+                        default: null,
+                        value: null,
+                    },
                 },
             };
         },
         computed: {
+            usersList() {
+                return this.$store.getters['auth/getUsersList'];
+            },
             clientCodes() {
                 return this.$store.getters['codes/getCodes'];
             },
@@ -277,10 +290,19 @@
                 },
                 immediate: true,
             },
+            usersList: {
+                handler: function set(val) {
+                    this.storehouseData.get_pay_user_id.options = val;
+                },
+                immediate: true,
+            },
             showDialog(val) {
                 this.storehouseData.code_client_id.changeValue = true;
                 this.storehouseData.sum.changeValue = true;
                 this.storehouseData.commission.changeValue = true;
+                if (_.isEmpty(this.usersList)) {
+                    this.$store.dispatch('auth/fetchUsersList');
+                }
                 this.show = val;
             },
             show(val) {

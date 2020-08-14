@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Debt extends Model
+class Comment extends Model
 {
-    protected $fillable = ['code_client_id', 'type', 'sum', 'notation', 'user_id', 'transfer_id', 'paid', 'created_at', 'commission', 'get_pay_user_id'];
+    protected $fillable = ['title', 'task_id', 'author_id'];
 
     public function getCreatedAtAttribute($value)
     {
@@ -14,5 +14,10 @@ class Debt extends Model
             return \Illuminate\Support\Carbon::parse($value)->toAtomString();
         }
         return null;
+    }
+
+    public function files()
+    {
+        return $this->belongsToMany(File::class, 'comment_files', 'comment_id', 'file_id');
     }
 }

@@ -189,6 +189,13 @@
           >
             {{ props.row.notation }}
           </q-td>
+
+          <q-td
+            key="get_pay_user_name"
+            :props="props"
+          >
+            {{ props.row.get_pay_user_name }}
+          </q-td>
         </q-tr>
       </template>
     </Table>
@@ -291,11 +298,18 @@
                             align: 'center',
                             sortable: true,
                         },
+                        {
+                            name: 'get_pay_user_name',
+                            label: 'Пользователь',
+                            field: 'get_pay_user_name',
+                            align: 'center',
+                            sortable: true,
+                        },
                     ],
                 },
                 debtsTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission'],
+                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission', 'get_pay_user_name'],
                     title: '',
                 },
                 showDialogAddDebtPaymentEntry: false,
