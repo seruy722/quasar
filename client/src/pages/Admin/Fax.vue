@@ -689,9 +689,16 @@
                 }
             },
             exportFaxData() {
+                devlog.log(this.faxTableReactiveProperties.selected);
+                const ids = [];
+                _.forEach(this.faxTableReactiveProperties.selected, ({ arr }) => {
+                    _.forEach(arr, (elem) => {
+                        ids.push(elem.id);
+                    });
+                });
                 this.exportDataToExcel(getUrl('exportFaxAdminData'), {
                     id: this.currentFaxItem.id,
-                    ids: _.map(this.faxTableReactiveProperties.selected, 'id'),
+                    ids,
                 }, `${this.currentFaxItem.name}.xlsx`);
             },
             async getFaxData(id) {
