@@ -202,6 +202,10 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/delete-tasks', 'Api\TaskController@destroy')->name('delete tasks')->middleware(['role_or_permission:admin|tasks|delete tasks']);
     Route::post('/update-task', 'Api\TaskController@update')->name('update task')->middleware(['role_or_permission:admin|tasks|update task']);
 
+    // COMMENTS
+    Route::post('/store-task-comment', 'Api\CommentController@store')->name('store task comment')->middleware(['role_or_permission:admin|comments|store task comment']);
+    Route::get('/get-task-comments/{id}', 'Api\CommentController@index')->name('get task comments')->middleware(['role_or_permission:admin|comments|get task comments']);
+
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды
     Route::get('/export-brands-customers', function () {
