@@ -80,7 +80,6 @@
             :style="props.selected ? 'transform: scale(0.95);' : ''"
           >
             <q-expansion-item
-              v-model="expand"
               expand-separator
               class="shadow-1 overflow-hidden"
               :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
@@ -89,51 +88,45 @@
               @before-show="beforeShow"
             >
               <template v-slot:header>
-                <q-item-section avatar>
-                  <q-checkbox
-                    v-model="props.selected"
-                    dense
-                  />
-                </q-item-section>
+<!--                <q-item-section avatar>-->
+<!--                  <q-checkbox-->
+<!--                    v-model="props.selected"-->
+<!--                    dense-->
+<!--                  />-->
+<!--                </q-item-section>-->
                 <q-item-section>
                   <q-item-label>
-                    {{ props.row.date }}
+                    {{ props.row.formatDate }}
                   </q-item-label>
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>
-                    {{ props.row.comments.length }}
+                    {{ props.row.author_name }}
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ props.row.code_client_name }}
                   </q-item-label>
                 </q-item-section>
               </template>
               <q-chat-message
-                v-for="(com, index) in props.row.comments"
-                :key="index"
-                :name="com.author_name"
-                :text="[com.title]"
-                :stamp="com.formatDate"
-                :sent="userId !== com.author_id"
+                :text="[props.row.title]"
+                :stamp="props.row.formatDate"
+                :sent="userId !== props.row.author_id"
                 bg-color="lightgrey"
               >
-                <template v-slot:avatar>
-                  <q-avatar
-                    :color="userId !== com.author_id ? 'primary': 'secondary'"
-                    text-color="white"
-                  >
-                    {{ com.author_name.slice(0,2).toUpperCase() }}
-                  </q-avatar>
-                </template>
                 <q-list
                   class="bg-white"
                   separator
                   bordered
                 >
                   <q-item
-                    v-for="(file, ind) in com.files"
+                    v-for="(file, ind) in props.row.files"
                     :key="ind"
                     clickable
                     class="cursor-pointer"
-                    @click="viewImageGallery(com.files, ind + 1)"
+                    @click="viewImageGallery(props.row.files, ind + 1)"
                   >
                     <q-item-section avatar>
                       <q-avatar
@@ -162,9 +155,10 @@
                   </q-item>
                 </q-list>
                 <div
-                  v-if="com.code_client_name"
+                  v-if="props.row.code_client_name"
                   class="q-mt-sm"
-                >Клиент: {{ com.code_client_name }}
+                >
+                  Клиент: {{ props.row.code_client_name }}
                 </div>
               </q-chat-message>
             </q-expansion-item>
@@ -244,9 +238,9 @@
                             sortable: true,
                         },
                         {
-                            name: 'date',
+                            name: 'formatDate',
                             label: 'Дата',
-                            field: 'date',
+                            field: 'formatDate',
                             align: 'center',
                             sortable: true,
                         },
@@ -254,7 +248,7 @@
                 },
                 cargoTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['created_at', 'author_name', 'description', 'section_name', 'status_name', 'responsible_name', 'date'],
+                    visibleColumns: ['created_at', 'author_name', 'description', 'section_name', 'status_name', 'responsible_name', 'formatDate'],
                     title: '',
                 },
                 menuList: [],
@@ -266,7 +260,6 @@
                 filesGallery: [],
                 slide: 1,
                 extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
-                expand: false,
             };
         },
         computed: {
@@ -388,7 +381,6 @@
             },
             beforeShow() {
                 devlog.log('beforeShow');
-                this.expand = true;
             },
         },
     };
