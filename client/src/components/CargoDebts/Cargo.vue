@@ -589,10 +589,15 @@
                 } else {
                     const searchData = this.$store.getters['cargoDebts/getCargoForSearch'];
                     const newArr = [];
-                    _.forEach(data, ({ id }) => {
-                        newArr.push(_.find(searchData, { id }));
+                    _.forEach(data, ({ id, arr }) => {
+                        if (!_.isEmpty(arr)) {
+                            _.forEach(arr, ({ id: ID }) => {
+                                newArr.push(_.find(searchData, { id: ID }));
+                            });
+                        } else {
+                            newArr.push(_.find(searchData, { id }));
+                        }
                     });
-                    devlog.log('DSDGF', data);
                     data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
                 }
                 if (!_.isEmpty(data)) {

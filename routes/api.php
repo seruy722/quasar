@@ -203,8 +203,9 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/update-task', 'Api\TaskController@update')->name('update task')->middleware(['role_or_permission:admin|tasks|update task']);
 
     // COMMENTS
-    Route::post('/store-task-comment', 'Api\CommentController@store')->name('store task comment')->middleware(['role_or_permission:admin|comments|store task comment']);
-    Route::get('/get-task-comments/{id}', 'Api\CommentController@index')->name('get task comments')->middleware(['role_or_permission:admin|comments|get task comments']);
+    Route::post('/store-comment', 'Api\CommentController@store')->name('store comment')->middleware(['role_or_permission:admin|comments|store comment']);
+    Route::get('/get-task-comments/{id}', 'Api\CommentController@getTaskComment')->name('get task comments')->middleware(['role_or_permission:admin|comments|get task comments']);
+    Route::get('/get-documents-comments', 'Api\CommentController@getDocumentsComment')->name('get documents comments')->middleware(['role_or_permission:admin|documents|get documents comments']);
 
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды

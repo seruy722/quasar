@@ -93,7 +93,6 @@ export const formatToHoursMinutes = ((date) => {
  * @returns string
  */
 export const formatToDotDate = ((date) => {
-  devlog.log('DDF', date);
   if (checkDate(date)) {
     return new Intl.DateTimeFormat('ru',
       {

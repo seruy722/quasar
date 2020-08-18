@@ -7,6 +7,7 @@
     :value="value"
     :dense="dense"
     :multiple="multiple"
+    :clearable="clearable"
     use-input
     data-vue-component-name="SearchSelect"
     emit-value
@@ -60,6 +61,10 @@
                 default: false,
             },
             multiple: {
+                type: Boolean,
+                default: false,
+            },
+            clearable: {
                 type: Boolean,
                 default: false,
             },

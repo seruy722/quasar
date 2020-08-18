@@ -126,41 +126,7 @@
                     <q-item-label>{{ `${col.label}:` }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    <q-item-label
-                      v-if="col.field === 'things'"
-                      :lines="10"
-                    >
-                      {{ col.value | thingsFilter }}
-                    </q-item-label>
-                    <q-item-label
-                      v-else-if="col.field === 'kg'"
-                    >
-                      {{ col.value | numberFormatFilter }}
-                    </q-item-label>
-                    <q-item-label
-                      v-else-if="col.field === 'sum'"
-                    >
-                      {{ col.value | numberFormatFilter }}
-                    </q-item-label>
-                    <q-item-label
-                      v-else-if="col.field === 'paid'"
-                    >
-                      <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-                        {{ props.row.paid ? 'Да': props.row.type ? null : 'Нет' }}
-                      </q-badge>
-                    </q-item-label>
-                    <q-item-label
-                      v-else-if="col.field === 'type'"
-                    >
-                      {{ col.value ? 'Оплата' : 'Долг' }}
-                    </q-item-label>
-                    <q-item-label
-                      v-else-if="col.field === 'notation'"
-                      :lines="3"
-                    >
-                      {{ col.value }}
-                    </q-item-label>
-                    <q-item-label v-else>
+                    <q-item-label>
                       {{ col.value }}
                     </q-item-label>
                   </q-item-section>

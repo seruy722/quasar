@@ -19,6 +19,7 @@ import deliveryMethods from './delivery-methods-list';
 import cargoDebts from './cargo-debts';
 import settings from './settings';
 import tasks from './tasks';
+import documents from './documents';
 
 Vue.use(Vuex);
 
@@ -48,6 +49,7 @@ export default function (/* { ssrContext } */) {
       cargoDebts,
       settings,
       tasks,
+      documents,
     },
 
     // enable strict mode (adds overhead!)

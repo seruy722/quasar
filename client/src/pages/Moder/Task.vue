@@ -22,21 +22,39 @@
               {{ com.author_name.slice(0,2).toUpperCase() }}
             </q-avatar>
           </template>
-          <div class="q-pa-md">
-            <div class="row justify-center q-gutter-sm">
-              <q-intersection
-                v-for="(file, ind) in com.files"
-                :key="ind"
-                once
-                transition="scale"
-                class="example-item cursor-pointer"
-              >
-                <q-card @click="viewImageGallery(com.files, ind + 1)" class="q-ma-sm">
-                  <img :src="`${fileUrl()}${file.path}`">
-                </q-card>
-              </q-intersection>
-            </div>
-          </div>
+          <q-list
+            class="bg-white"
+            separator
+            bordered
+          >
+            <q-item
+              v-for="(file, ind) in com.files"
+              :key="ind"
+              clickable
+              class="cursor-pointer"
+              @click="viewImageGallery(com.files, ind + 1)"
+            >
+              <q-item-section avatar>
+                <q-avatar v-if="file.ext === 'xlsx' || file.ext === 'txt'" rounded color="primary" text-color="white">{{
+                  file.ext }}
+                </q-avatar>
+                <div
+                  v-else
+                  class="example-item"
+                >
+                  <q-img
+                    :src="`${fileUrl()}${file.path}`"
+                    style="max-width: 100%;"
+                  />
+                </div>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ file.name }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-chat-message>
         <q-separator color="orange" size="3px" />
         <div class="q-pa-md" style="max-width: 500px;">
@@ -65,13 +83,25 @@
                   removable
                   @remove="cancelFile(index)"
                 >
-                  <q-avatar>
-                    <img :src="file.url" style="max-width: 100%">
+                  <q-avatar
+                    v-if="file.ext === 'xlsx' || file.ext === 'txt'"
+                    square
+                    color="teal"
+                    text-color="white"
+                    icon="directions"
+                  />
+                  <q-avatar
+                    v-else
+                    square
+                  >
+                    <q-img
+                      :src="file.url"
+                      style="max-width: 100%"
+                    />
                   </q-avatar>
                   <div class="ellipsis relative-position">
                     {{ file.name }}
                   </div>
-
                   <q-tooltip>
                     {{ file.name }}
                   </q-tooltip>
@@ -93,27 +123,11 @@
         </div>
       </div>
     </PullRefresh>
-    <q-dialog v-model="showImageGallery">
-      <q-card style="width: 100%;">
-        <q-card-section>
-          <q-carousel
-            v-model="slide"
-            swipeable
-            animated
-            :arrows="filesGallery.length > 1"
-            infinite
-          >
-            <q-carousel-slide
-              v-for="(file, index) in filesGallery"
-              :key="index"
-              :name="index + 1"
-              :img-src="`${fileUrl()}${file.path}`"
-              style="background-size: contain;background-repeat: no-repeat;"
-            />
-          </q-carousel>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+    <DialogShowImageGallery
+      :show-dialog.sync="showDialogImageGallery"
+      :files="filesGallery"
+      :slide="slide"
+    />
   </q-page>
 </template>
 
@@ -123,12 +137,14 @@
     export default {
         name: 'Task',
         components: {
-            PullRefresh: () => import('src/components/PullRefresh.vue'),
+            PullRefresh: () => import('components/PullRefresh.vue'),
+            DialogShowImageGallery: () => import('components/Tasks/DialogShowImageGallery.vue'),
+            // IFrameDocs: () => import('components/IFrameDocs.vue'),
         },
         mixins: [showNotif],
         data() {
             return {
-                showImageGallery: false,
+                showDialogImageGallery: false,
                 filesGallery: [],
                 slide: 1,
                 text: '',
@@ -163,7 +179,7 @@
 
                 if (this.text || files.length > 0) {
                     const { getUrl } = await import('src/tools/url');
-                    this.$axios.post(getUrl('storeTaskComment'), formData)
+                    this.$axios.post(getUrl('storeComment'), formData)
                       .then(({ data: { comment } }) => {
                           devlog.log('comment', comment);
                           this.$store.dispatch('tasks/addTaskComment', comment);
@@ -192,12 +208,20 @@
             },
             viewImageGallery(files, slide) {
                 devlog.log(this.$route, process);
-                this.slide = slide;
-                this.filesGallery = files;
-                this.showImageGallery = true;
-            },
-            fileUrl() {
-                return process.env.DEV ? 'http://sp.com.ua/storage/' : 'http://servercargo007.net.ua/storage/app/public/';
+                const file = files[slide - 1];
+                if (file.ext === 'txt' || file.ext === 'xlsx') {
+                    devlog.log(file.path);
+                    const link = document.createElement('a');
+                    link.href = `${this.fileUrl()}${file.path}`;
+                    link.setAttribute('download', file.name);
+                    link.setAttribute('target', '_blank');
+                    document.body.appendChild(link);
+                    link.click();
+                } else {
+                    this.slide = slide;
+                    this.filesGallery = _.filter(files, ({ ext }) => ext !== 'xlsx' && ext !== 'txt');
+                    this.showDialogImageGallery = true;
+                }
             },
             async refresh(done) {
                 if (!done) {
@@ -215,15 +239,21 @@
                       callFunction(done);
                   });
             },
+            fileUrl() {
+                return process.env.DEV ? 'http://sp.com.ua/storage/' : 'http://servercargo007.net.ua/storage/app/public/';
+            },
         },
     };
 </script>
 
-<style lang="sass" scoped>
-  .example-item
-    height: 150px
-    width: 150px
-    overflow: hidden
-  .q-avatar
-    margin: 0 5px
+<style lang="scss" scoped>
+  .example-item {
+    width: 150px;
+    overflow: hidden;
+  }
+
+  .q-avatar {
+    margin: 0 5px;
+  }
+
 </style>

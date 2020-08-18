@@ -325,6 +325,21 @@ const routes = [
         },
         component: () => import('pages/Moder/Task.vue'),
       },
+      {
+        path: 'documents',
+        name: 'documents',
+        meta: {
+          title: 'Документы',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin'],
+            permissions: [],
+          },
+        },
+        component: () => import('pages/Moder/Documents.vue'),
+      },
     ],
   },
 ];

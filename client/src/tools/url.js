@@ -114,8 +114,9 @@ const urls = {
   usersList: `${prefix}/users-list`,
   deleteTasks: `${prefix}/delete-tasks`,
   updateTask: `${prefix}/update-task`,
-  storeTaskComment: `${prefix}/store-task-comment`,
+  storeComment: `${prefix}/store-comment`,
   getTaskComments: `${prefix}/get-task-comments`,
+  getDocumentsComments: `${prefix}/get-documents-comments`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,

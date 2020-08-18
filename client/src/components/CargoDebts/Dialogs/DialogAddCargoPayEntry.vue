@@ -228,8 +228,8 @@
                         options: [],
                         changeValue: false,
                         funcLoadData: getClientCodes,
-                        default: null,
-                        value: null,
+                        default: 0,
+                        value: 0,
                     },
                 },
             };

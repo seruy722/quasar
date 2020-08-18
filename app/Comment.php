@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-    protected $fillable = ['title', 'task_id', 'author_id'];
+    protected $fillable = ['title', 'task_id', 'author_id', 'code_client_id'];
 
     public function getCreatedAtAttribute($value)
     {

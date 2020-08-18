@@ -101,6 +101,15 @@ export default {
       },
     },
     {
+      title: 'Документы',
+      field: 'documents',
+      icon: 'assignment',
+      access: {
+        roles: ['admin'],
+        permissions: ['view documents page'],
+      },
+    },
+    {
       title: 'Поиск',
       field: 'search',
       icon: 'search',

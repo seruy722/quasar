@@ -11,32 +11,54 @@ use Illuminate\Support\Facades\Storage;
 
 class CommentController extends Controller
 {
-    public function query($id)
+    public function query()
     {
         return Comment::with('files')
-            ->select('comments.*', 'users.name as author_name')
+            ->select('comments.*', 'users.name as author_name', 'codes.code as code_client_name')
             ->leftJoin('users', 'users.id', '=', 'comments.author_id')
-            ->where('task_id', $id);
+            ->leftJoin('codes', 'codes.id', '=', 'comments.code_client_id');
     }
 
-    public function index($id)
+    public function getTaskComment($id)
     {
-        return response(['comments' => $this->query($id)->get()]);
+        return response(['comments' => $this->query()->where('task_id', $id)->get()]);
     }
 
     public function store(Request $request)
     {
         $filesIds = [];
         foreach ($request->allFiles() as $file) {
-            $fileHash = 'img_' . date("Y-m-d") . '_' . microtime(true);
+            $fileName = $file->getClientOriginalName();
             $path = Storage::disk('public')->put('/images', $file);
-            $fileData = File::create(['name' => $fileHash, 'size' => $file->getSize(), 'ext' => $file->getClientOriginalExtension(), 'path' => $path]);
+            $fileData = File::create(['name' => $fileName, 'size' => $file->getSize(), 'ext' => $file->getClientOriginalExtension(), 'path' => $path]);
             array_push($filesIds, $fileData->id);
         }
-        $comment = Comment::create(['title' => $request->title, 'task_id' => $request->task_id, 'author_id' => auth()->user()->id]);
+        $saveArr = [
+            'author_id' => auth()->user()->id,
+        ];
+        if ($request->title) {
+            $saveArr['title'] = $request->title;
+        }
+        if ($request->task_id) {
+            $saveArr['task_id'] = $request->task_id;
+        }
+        if ($request->code_client_id) {
+            $saveArr['code_client_id'] = $request->code_client_id;
+        }
+        $comment = Comment::create($saveArr);
         foreach ($filesIds as $id) {
             CommentFiles::create(['comment_id' => $comment->id, 'file_id' => $id]);
         }
-        return response(['comment' => $this->query($request->task_id)->where('comments.id', $comment->id)->first()]);
+
+        if ($request->task_id) {
+            return response(['comment' => $this->query()->where('task_id', $request->task_id)->where('comments.id', $comment->id)->first()]);
+        }
+
+        return response(['comment' => $this->query()->where('task_id', 0)->where('comments.id', $comment->id)->first()]);
+    }
+
+    public function getDocumentsComment()
+    {
+        return response(['documents' => $this->query()->where('task_id', 0)->get()]);
     }
 }

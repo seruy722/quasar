@@ -8,7 +8,7 @@
       :visible-columns="tableReactiveProperties.visibleColumns"
       :pagination.sync="pagination"
       :selection="tableProperties.selection || 'multiple'"
-      :grid="$q.screen.lt.sm"
+      :grid="$q.screen.lt.sm || grid"
       dense
       row-key="id"
       :selected.sync="tableReactiveProperties.selected"
@@ -114,6 +114,10 @@
             searchData: {
                 type: Array,
                 default: () => [],
+            },
+            grid: {
+                type: Boolean,
+                default: false,
             },
         },
         data() {
