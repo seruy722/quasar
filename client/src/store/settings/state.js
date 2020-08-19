@@ -105,7 +105,7 @@ export default {
       field: 'documents',
       icon: 'assignment',
       access: {
-        roles: ['admin'],
+        roles: ['admin', 'documents', 'comments'],
         permissions: ['view documents page'],
       },
     },

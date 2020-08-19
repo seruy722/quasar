@@ -334,7 +334,7 @@ const routes = [
             auth,
           ],
           accessData: {
-            roles: ['admin'],
+            roles: ['admin', 'documents', 'comments'],
             permissions: [],
           },
         },
