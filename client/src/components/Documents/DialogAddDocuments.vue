@@ -189,9 +189,11 @@
                 _.forEach(files, (file, index) => {
                     formData.set(`img${index}`, file);
                 });
-                formData.set('title', _.startCase(this.text));
                 if (this.codeClientId) {
                     formData.set('code_client_id', this.codeClientId);
+                }
+                if (this.text) {
+                    formData.set('title', _.startCase(this.text));
                 }
 
                 if (this.text || files.length > 0) {
