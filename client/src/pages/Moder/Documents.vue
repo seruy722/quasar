@@ -85,7 +85,6 @@
               :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
               :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
               expand-icon-class="text-white"
-              @before-show="beforeShow"
             >
               <template v-slot:header>
                 <q-item-section>
@@ -173,6 +172,7 @@
 
 <script>
     import showNotif from 'src/mixins/showNotif';
+    import filesMixin from 'src/mixins/files';
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
 
     export default {
@@ -184,7 +184,7 @@
             DialogAddDocuments: () => import('components/Documents/DialogAddDocuments.vue'),
             DialogShowImageGallery: () => import('components/Tasks/DialogShowImageGallery.vue'),
         },
-        mixins: [showNotif, CheckErrorsMixin],
+        mixins: [showNotif, CheckErrorsMixin, filesMixin],
         data() {
             return {
                 cargoTableProperties: {
@@ -329,31 +329,13 @@
             viewImageGallery(files, slide) {
                 const file = files[slide - 1];
                 if (_.includes(this.extensions, file.ext)) {
-                    devlog.log(file.path);
-                    const link = document.createElement('a');
-                    link.href = `${this.fileUrl()}${file.path}`;
-                    link.setAttribute('download', file.name);
-                    link.setAttribute('target', '_blank');
-                    document.body.appendChild(link);
-                    link.click();
+                    this.downloadFromIndex(slide, files);
                 } else {
                     this.filesGallery = _.filter(files, ({ ext }) => !_.includes(this.extensions, ext));
                     const indexFile = _.findIndex(this.filesGallery, { id: file.id });
                     this.slide = indexFile + 1;
                     this.showDialogImageGallery = true;
                 }
-            },
-            fileUrl() {
-                return process.env.DEV ? 'http://sp.com.ua/storage/' : 'http://servercargo007.net.ua/storage/app/public/';
-            },
-            getFileExt({ name }) {
-                if (name) {
-                    return name.slice(name.lastIndexOf('.') + 1);
-                }
-                return name;
-            },
-            beforeShow() {
-                devlog.log('beforeShow');
             },
         },
     };

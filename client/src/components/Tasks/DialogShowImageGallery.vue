@@ -18,6 +18,22 @@
             :img-src="`${fileUrl()}${file.path}`"
             style="background-size: contain;background-repeat: no-repeat;"
           />
+          <template v-slot:control>
+            <q-carousel-control
+              position="bottom-right"
+              :offset="[3, 3]"
+            >
+              <q-btn
+                push
+                round
+                dense
+                color="white"
+                icon="vertical_align_bottom"
+                text-color="primary"
+                @click="downloadFromIndex(slide, files)"
+              />
+            </q-carousel-control>
+          </template>
         </q-carousel>
       </q-card-section>
     </q-card>
@@ -25,8 +41,11 @@
 </template>
 
 <script>
+    import filesMixin from 'src/mixins/files';
+
     export default {
         name: 'DialogShowImageGallery',
+        mixins: [filesMixin],
         props: {
             showDialog: {
                 type: Boolean,
@@ -57,11 +76,6 @@
                 set: function set(val) {
                     this.$emit('update:slide', val);
                 },
-            },
-        },
-        methods: {
-            fileUrl() {
-                return process.env.DEV ? 'http://sp.com.ua/storage/' : 'http://servercargo007.net.ua/storage/app/public/';
             },
         },
     };
