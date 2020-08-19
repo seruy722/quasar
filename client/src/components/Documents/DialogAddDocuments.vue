@@ -8,62 +8,36 @@
     <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
       <q-card-section>
         <q-list
-          v-for="(file, index) in files"
-          :key="index"
           separator
           bordered
         >
           <q-item
-            v-if="extensions.includes(getFileExt(file))"
+            v-for="(file, index) in files"
+            :key="index"
             clickable
           >
             <q-item-section>
               <q-avatar
+                v-if="extensions.includes(getFileExt(file))"
                 rounded
                 color="primary"
                 text-color="white"
               >
                 {{ getFileExt(file) }}
               </q-avatar>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>
-                {{ file.name }}
-                <q-tooltip>{{ file.name }}</q-tooltip>
-              </q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-btn
-                class="gt-xs"
-                size="12px"
-                flat
-                dense
-                round
-                icon="clear"
-                @click="remove(index)"
-              />
-            </q-item-section>
-          </q-item>
-          <q-item v-else>
-            <q-item-section>
               <q-img
+                v-else
                 :src="file.url"
                 style="max-width: 100%"
               />
             </q-item-section>
-            <q-item-section>
-              <q-item-label lines="8">
-                {{ file.name }}
-                <q-tooltip>{{ file.name }}</q-tooltip>
-              </q-item-label>
-            </q-item-section>
             <q-item-section side>
               <q-btn
-                class="gt-xs"
                 size="12px"
                 flat
                 dense
                 round
+                color="negative"
                 icon="clear"
                 @click="remove(index)"
               />
@@ -211,6 +185,7 @@
                       })
                       .catch(() => {
                           this.$q.loading.hide();
+                          this.showNotif('warning', 'Файлы из google диска не загружаются!', 'center');
                           devlog.error('storeComment');
                       });
                 } else {
