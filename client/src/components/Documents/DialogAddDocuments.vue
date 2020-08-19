@@ -195,6 +195,7 @@
                 }
 
                 if (this.text || files.length > 0) {
+                    this.$q.loading.show();
                     const { getUrl } = await import('src/tools/url');
                     this.$axios.post(getUrl('storeComment'), formData)
                       .then(({ data: { comment } }) => {
@@ -203,9 +204,11 @@
                           this.text = '';
                           this.files = [];
                           this.codeClientId = null;
+                          this.$q.loading.hide();
                           this.showNotif('success', 'Данные успешно сохранены', 'center');
                       })
                       .catch(() => {
+                          this.$q.loading.hide();
                           devlog.error('storeComment');
                       });
                 } else {

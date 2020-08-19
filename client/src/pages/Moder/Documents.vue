@@ -88,12 +88,6 @@
               @before-show="beforeShow"
             >
               <template v-slot:header>
-<!--                <q-item-section avatar>-->
-<!--                  <q-checkbox-->
-<!--                    v-model="props.selected"-->
-<!--                    dense-->
-<!--                  />-->
-<!--                </q-item-section>-->
                 <q-item-section>
                   <q-item-label>
                     {{ props.row.formatDate }}
@@ -172,7 +166,7 @@
     <DialogShowImageGallery
       :show-dialog.sync="showDialogImageGallery"
       :files="filesGallery"
-      :slide="slide"
+      :slide.sync="slide"
     />
   </q-page>
 </template>
@@ -196,13 +190,6 @@
                 cargoTableProperties: {
                     columns: [
                         {
-                            name: 'created_at',
-                            label: 'Дата',
-                            align: 'center',
-                            field: 'created_at',
-                            sortable: true,
-                        },
-                        {
                             name: 'author_name',
                             label: 'Автор',
                             align: 'center',
@@ -210,31 +197,17 @@
                             sortable: true,
                         },
                         {
-                            name: 'description',
+                            name: 'title',
                             label: 'Описание',
                             align: 'center',
-                            field: 'description',
+                            field: 'title',
                             sortable: true,
                         },
                         {
-                            name: 'section_name',
-                            label: 'Раздел',
+                            name: 'code_client_name',
+                            label: 'Клиент',
                             align: 'center',
-                            field: 'section_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'status_name',
-                            label: 'Статус',
-                            field: 'status_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'responsible_name',
-                            label: 'Ответственный',
-                            field: 'responsible_name',
-                            align: 'center',
+                            field: 'code_client_name',
                             sortable: true,
                         },
                         {
@@ -248,7 +221,7 @@
                 },
                 cargoTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['created_at', 'author_name', 'description', 'section_name', 'status_name', 'responsible_name', 'formatDate'],
+                    visibleColumns: ['author_name', 'title', 'code_client_name', 'formatDate'],
                     title: '',
                 },
                 menuList: [],
@@ -354,7 +327,6 @@
                 }
             },
             viewImageGallery(files, slide) {
-                devlog.log(this.$route, process);
                 const file = files[slide - 1];
                 if (_.includes(this.extensions, file.ext)) {
                     devlog.log(file.path);
@@ -365,8 +337,9 @@
                     document.body.appendChild(link);
                     link.click();
                 } else {
-                    this.slide = slide;
                     this.filesGallery = _.filter(files, ({ ext }) => !_.includes(this.extensions, ext));
+                    const indexFile = _.findIndex(this.filesGallery, { id: file.id });
+                    this.slide = indexFile + 1;
                     this.showDialogImageGallery = true;
                 }
             },

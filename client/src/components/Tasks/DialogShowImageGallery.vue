@@ -6,10 +6,9 @@
     <q-card style="width: 100%;">
       <q-card-section>
         <q-carousel
-          v-model="currentSlide"
+          v-model="slider"
           swipeable
           animated
-          :arrows="files.length > 1"
           infinite
         >
           <q-carousel-slide
@@ -42,11 +41,6 @@
                 default: () => ([]),
             },
         },
-        data() {
-            return {
-                currentSlide: 1,
-            };
-        },
         computed: {
             show: {
                 get: function get() {
@@ -56,10 +50,13 @@
                     this.$emit('update:showDialog', val);
                 },
             },
-        },
-        watch: {
-            slide(val) {
-                this.currentSlide = val;
+            slider: {
+                get: function get() {
+                    return this.slide;
+                },
+                set: function set(val) {
+                    this.$emit('update:slide', val);
+                },
             },
         },
         methods: {
