@@ -22,7 +22,7 @@ export default {
     {
       title: 'Задолженность',
       field: 'payment-arrears',
-      icon: 'assignment',
+      icon: 'local_atm',
       access: {
         roles: ['admin'],
         permissions: ['get payment arrears'],

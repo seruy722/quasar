@@ -139,9 +139,11 @@
             async getPaymentArrears() {
                 const { getUrl } = await import('src/tools/url');
                 return this.$axios.get(getUrl('paymentArrears'))
-                  .then(({ data: { debts, cargo } }) => {
+                  .then(async ({ data: { debts, cargo } }) => {
+                      const { fullDate } = await import('src/utils/formatDate');
+                      const { combineCargoData } = await import('src/utils/FrequentlyCalledFunctions');
                       this.debts = debts;
-                      this.cargo = cargo;
+                      this.cargo = _.map(_.orderBy(combineCargoData(cargo), (item) => new Date(item.created_at), 'desc'), (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
                   })
                   .catch(() => {
                       devlog.error('PaymentArrear');
