@@ -20,6 +20,15 @@ export default {
       },
     },
     {
+      title: 'Задолженность',
+      field: 'payment-arrears',
+      icon: 'assignment',
+      access: {
+        roles: ['admin'],
+        permissions: ['get payment arrears'],
+      },
+    },
+    {
       title: 'Карго Долги',
       field: 'cargo-debts-assistant',
       icon: 'assignment',

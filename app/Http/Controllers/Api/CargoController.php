@@ -7,6 +7,7 @@ use App\City;
 use App\Code;
 use App\Customer;
 use App\Debt;
+use App\PaymentArrear;
 use App\Transfer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -410,6 +411,21 @@ class CargoController extends Controller
             ->where('code_client_id', $id)
             ->get();
         return response(['debts' => $data]);
+    }
+
+    public function getPaymentArrears()
+    {
+        $cargo = PaymentArrear::where('table_name', (new Cargo)->getTable())->first();
+        $debts = PaymentArrear::where('table_name', (new Debt())->getTable())->first();
+        $cargoIds = [];
+        $debtsIds = [];
+        if ($cargo) {
+            $cargoIds = json_decode($cargo->entries_id);
+        }
+        if ($debts) {
+            $debtsIds = json_decode($debts->entries_id);
+        }
+        return response(['cargo' => $this->query()->whereIn('cargos.id', $cargoIds)->get(), 'debts' => $this->queryDebt()->whereIn('debts.id', $debtsIds)->get()]);
     }
 
     public function exportCargoData(Request $request)

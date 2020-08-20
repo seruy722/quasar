@@ -207,6 +207,10 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::get('/get-task-comments/{id}', 'Api\CommentController@getTaskComment')->name('get task comments')->middleware(['role_or_permission:admin|comments|get task comments']);
     Route::get('/get-documents-comments', 'Api\CommentController@getDocumentsComment')->name('get documents comments')->middleware(['role_or_permission:admin|documents|get documents comments']);
 
+    // PAYMENTARREARS
+    Route::get('/get-payment-arrears', 'Api\CargoController@getPaymentArrears')->name('get payment arrears')->middleware(['role_or_permission:admin|arrears|get payment arrears']);
+
+
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды
     Route::get('/export-brands-customers', function () {

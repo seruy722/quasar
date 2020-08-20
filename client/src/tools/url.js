@@ -117,6 +117,7 @@ const urls = {
   storeComment: `${prefix}/store-comment`,
   getTaskComments: `${prefix}/get-task-comments`,
   getDocumentsComments: `${prefix}/get-documents-comments`,
+  paymentArrears: `${prefix}/get-payment-arrears`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,

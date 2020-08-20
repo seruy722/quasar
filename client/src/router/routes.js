@@ -296,6 +296,21 @@ const routes = [
         component: () => import('pages/CargoDebts.vue'),
       },
       {
+        path: 'payment-arrears',
+        name: 'payment-arrears',
+        meta: {
+          title: 'Задолженность',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin'],
+            permissions: ['general-cargo-data'],
+          },
+        },
+        component: () => import('pages/PaymentArrears.vue'),
+      },
+      {
         path: 'tasks',
         name: 'tasks',
         meta: {
