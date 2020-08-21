@@ -365,6 +365,10 @@
                 default: () => {
                 },
             },
+            list: {
+                type: Array,
+                default: () => ([]),
+            },
         },
         data() {
             return {
@@ -522,7 +526,7 @@
         },
         computed: {
             cargo() {
-                return this.$store.getters['cargoDebts/getCargo'];
+                return _.isEmpty(this.list) ? this.$store.getters['cargoDebts/getCargo'] : this.list;
             },
             currentCodeClientId() {
                 return this.$store.getters['cargoDebts/getCurrentCodeClientId'];

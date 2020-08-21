@@ -55,14 +55,20 @@
               name="cargo"
               style="padding: 0;"
             >
-              <Cargo :refresh="refresh" />
+              <Cargo
+                :refresh="refresh"
+                :list="cargo"
+              />
             </q-tab-panel>
 
             <q-tab-panel
               name="debts"
               style="padding: 0;"
             >
-              <Debts :refresh="refresh" />
+              <Debts
+                :refresh="refresh"
+                :list="debts"
+              />
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
@@ -142,8 +148,13 @@
                   .then(async ({ data: { debts, cargo } }) => {
                       const { fullDate } = await import('src/utils/formatDate');
                       const { combineCargoData } = await import('src/utils/FrequentlyCalledFunctions');
-                      this.debts = debts;
-                      this.cargo = _.map(_.orderBy(combineCargoData(cargo), (item) => new Date(item.created_at), 'desc'), (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
+                      this.debts = _.map(debts, (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
+                      const clientIds = _.uniq(_.map(cargo, 'code_client_id'));
+                      const cargoArr = [];
+                      _.forEach(clientIds, (id) => {
+                          cargoArr.push(...combineCargoData(_.filter(cargo, { code_client_id: id })));
+                      });
+                      this.cargo = _.map(_.orderBy(cargoArr, (item) => new Date(item.created_at), 'desc'), (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
                   })
                   .catch(() => {
                       devlog.error('PaymentArrear');

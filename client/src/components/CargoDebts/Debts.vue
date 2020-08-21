@@ -244,6 +244,10 @@
                 default: () => {
                 },
             },
+            list: {
+                type: Array,
+                default: () => ([]),
+            },
         },
         data() {
             return {
@@ -322,7 +326,7 @@
         },
         computed: {
             debts() {
-                return this.$store.getters['cargoDebts/getDebts'];
+                return _.isEmpty(this.list) ? this.$store.getters['cargoDebts/getDebts'] : this.list;
             },
             currentCodeClientId() {
                 return this.$store.getters['cargoDebts/getCurrentCodeClientId'];

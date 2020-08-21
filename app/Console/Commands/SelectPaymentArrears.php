@@ -44,25 +44,25 @@ class SelectPaymentArrears extends Command
         PaymentArrear::truncate();
         $cargoIds = [];
         $debtsIds = [];
-        $cargo = Cargo::where('paid', false)->whereDate('created_at', '>=', '2020-08-01')->get();
-        $debts = Debt::where('paid', false)->whereDate('created_at', '>=', '2020-08-01')->get();
+        $cargo = Cargo::where('paid', false)->where('type', false)->whereDate('created_at', '>=', '2020-08-01')->get();
+        $debts = Debt::where('paid', false)->where('type', false)->whereDate('created_at', '>=', '2020-08-01')->get();
         foreach ($cargo as $item) {
             $dt = Carbon::parse($item->created_at);
-            if ($dt->diffInDays($dt->copy()->addWeek()) >= 7) {
-                array_push($cargoIds, $item);
+            if ($dt->diffInDays(Carbon::now()) >= 7) {
+                array_push($cargoIds, $item->id);
             }
         }
         foreach ($debts as $item) {
             $dt = Carbon::parse($item->created_at);
-            if ($dt->diffInDays($dt->copy()->addWeek()) >= 7) {
-                array_push($debtsIds, $item);
+            if ($dt->diffInDays(Carbon::now()) >= 7) {
+                array_push($debtsIds, $item->id);
             }
         }
         if (!empty($cargoIds)) {
-            PaymentArrear::create(['table_name' => (new Cargo)->getTable(), 'entries_id' => json_encode($cargoIds->pluck('id'))]);
+            PaymentArrear::create(['table_name' => (new Cargo)->getTable(), 'entries_id' => json_encode($cargoIds)]);
         }
         if (!empty($debtsIds)) {
-            PaymentArrear::create(['table_name' => (new Debt)->getTable(), 'entries_id' => json_encode($debtsIds->pluck('id'))]);
+            PaymentArrear::create(['table_name' => (new Debt)->getTable(), 'entries_id' => json_encode($debtsIds)]);
         }
         return 'Успешно';
     }
