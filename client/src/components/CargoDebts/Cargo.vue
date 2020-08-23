@@ -69,7 +69,7 @@
 
               <q-item-section>
                 <q-item-label :lines="2">
-                  {{ props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name}` : props.row.type ?
+                  {{ props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name || ''}` : props.row.type ?
                   props.row.sum : props.row.notation
                   }}
                 </q-item-label>
@@ -80,11 +80,14 @@
                 side
               >
                 <q-icon
-                  v-if="props.row.paid"
+                  v-if="props.row.paid && !list.length"
                   name="money"
                   size="md"
                   color="white"
                 />
+                <q-item-label v-else-if="list.length">
+                  {{ props.row.code_client_name }}
+                </q-item-label>
               </q-item-section>
             </template>
 

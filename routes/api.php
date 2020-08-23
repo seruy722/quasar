@@ -206,6 +206,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/store-comment', 'Api\CommentController@store')->name('store comment')->middleware(['role_or_permission:admin|comments|store comment']);
     Route::get('/get-task-comments/{id}', 'Api\CommentController@getTaskComment')->name('get task comments')->middleware(['role_or_permission:admin|comments|get task comments']);
     Route::get('/get-documents-comments', 'Api\CommentController@getDocumentsComment')->name('get documents comments')->middleware(['role_or_permission:admin|documents|get documents comments']);
+    Route::post('/remove-comment-file', 'Api\CommentController@removeCommentFile')->name('remove comment file')->middleware(['role_or_permission:admin|task|remove comment file']);
+    Route::post('/delete-comments', 'Api\CommentController@deleteComments')->name('delete-comments')->middleware(['role_or_permission:admin|task|delete-comments']);
 
     // PAYMENTARREARS
     Route::get('/get-payment-arrears', 'Api\CargoController@getPaymentArrears')->name('get payment arrears')->middleware(['role_or_permission:admin|arrears|get payment arrears']);

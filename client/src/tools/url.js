@@ -118,6 +118,8 @@ const urls = {
   getTaskComments: `${prefix}/get-task-comments`,
   getDocumentsComments: `${prefix}/get-documents-comments`,
   paymentArrears: `${prefix}/get-payment-arrears`,
+  removeCommentFile: `${prefix}/remove-comment-file`,
+  deleteComments: `${prefix}/delete-comments`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,

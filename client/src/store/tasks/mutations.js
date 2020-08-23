@@ -28,3 +28,20 @@ export const SET_TASK_COMMENTS = ((state, data) => {
 export const ADD_TASK_COMMENT = ((state, comment) => {
   state.taskComments.push(comment);
 });
+export const UPDATE_TASK_COMMENT = ((state, comment) => {
+  const index = _.findIndex(state.taskComments, { id: comment.id });
+  if (index !== -1) {
+    state.taskComments.splice(index, 1, comment);
+  } else {
+    state.taskComments.push(comment);
+  }
+});
+
+export const DELETE_TASK_COMMENTS = ((state, ids) => {
+  _.forEach(ids, (id) => {
+    const index = _.findIndex(state.taskComments, { id });
+    if (index !== -1) {
+      state.taskComments.splice(index, 1);
+    }
+  });
+});

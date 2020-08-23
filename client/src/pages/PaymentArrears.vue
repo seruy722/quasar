@@ -154,7 +154,7 @@
                       _.forEach(clientIds, (id) => {
                           cargoArr.push(...combineCargoData(_.filter(cargo, { code_client_id: id })));
                       });
-                      this.cargo = _.map(_.orderBy(cargoArr, (item) => new Date(item.created_at), 'desc'), (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
+                      this.cargo = _.map(_.orderBy(cargoArr, (item) => new Date(item.created_at), 'asc'), (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
                   })
                   .catch(() => {
                       devlog.error('PaymentArrear');

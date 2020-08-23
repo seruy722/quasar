@@ -316,16 +316,6 @@
             //     this.entryData = { row: _.first(this.cargoTableReactiveProperties.selected) };
             //     this.showDialogAddTask = true;
             // },
-            selectedFiles(value) {
-                this.files = _.map(value, (file) => {
-                    file.url = URL.createObjectURL(file);
-                    return file;
-                });
-                devlog.log('CVB', value);
-                if (_.isNull(value)) {
-                    this.files = [];
-                }
-            },
             viewImageGallery(files, slide) {
                 const file = files[slide - 1];
                 if (_.includes(this.extensions, file.ext)) {

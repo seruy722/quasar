@@ -45,6 +45,9 @@ class CommentController extends Controller
         if ($request->code_client_id) {
             $saveArr['code_client_id'] = $request->code_client_id;
         }
+        if ($request->created_at) {
+            $saveArr['created_at'] = date('Y-m-d H:i:s',strtotime($request->created_at));
+        }
         $comment = Comment::create($saveArr);
         foreach ($filesIds as $id) {
             CommentFiles::create(['comment_id' => $comment->id, 'file_id' => $id]);
@@ -60,5 +63,30 @@ class CommentController extends Controller
     public function getDocumentsComment()
     {
         return response(['documents' => $this->query()->where('task_id', 0)->get()]);
+    }
+
+    public function removeCommentFile(Request $request)
+    {
+        Storage::disk('public')->delete('/' . $request->filePath);
+        File::destroy($request->fileId);
+        CommentFiles::where('file_id', $request->fileId)->delete();
+        return response(['comment' => $this->query()->where('comments.id', $request->commentId)->first()]);
+    }
+
+    public function deleteComments(Request $request)
+    {
+        $ids = $request->ids;
+        $comments = $this->query()->whereIn('comments.id', $ids)->get();
+        CommentFiles::whereIn('comment_id', $ids)->delete();
+        foreach ($comments as $comment) {
+            if (!empty($comment->files)) {
+                foreach ($comment->files as $file) {
+                    Storage::disk('public')->delete('/' . $file->path);
+                    $file->delete();
+                }
+            }
+            $comment->delete();
+        }
+        return response(['status' => true]);
     }
 }

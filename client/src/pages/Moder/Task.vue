@@ -1,154 +1,253 @@
 <template>
   <q-page
     data-vue-component-name="Task"
-    class="q-pa-md row justify-center"
   >
     <PullRefresh @refresh="refresh">
-      <div style="width: 100%; max-width: 1000px">
-        <q-chat-message
-          v-for="(com, index) in comments"
-          :key="index"
-          :name="com.author_name"
-          :text="[com.title]"
-          :stamp="com.created_at"
-          :sent="userId !== com.author_id"
-          bg-color="lightgrey"
-        >
-          <template v-slot:avatar>
-            <q-avatar
-              :color="userId !== com.author_id ? 'primary': 'secondary'"
-              text-color="white"
+      <Table
+        :table-properties="cargoTableProperties"
+        :table-data="comments"
+        :table-reactive-properties="cargoTableReactiveProperties"
+        title="Задача"
+        grid
+      >
+        <template v-slot:top-buttons>
+          <MenuBtn>
+            <q-menu
+              transition-show="scale"
+              transition-hide="scale"
             >
-              {{ com.author_name.slice(0,2).toUpperCase() }}
-            </q-avatar>
-          </template>
-          <q-list
-            class="bg-white"
-            separator
-            bordered
+              <q-list separator style="min-width: 100px">
+                <q-item
+                  v-close-popup
+                  clickable
+                  @click="showDialogAddTaskComment = true"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="add" color="positive" />
+                  </q-item-section>
+                  <q-item-section>Добавить</q-item-section>
+                </q-item>
+                <!--                <q-item-->
+                <!--                  v-show="cargoTableReactiveProperties.selected.length === 1"-->
+                <!--                  v-close-popup-->
+                <!--                  clickable-->
+                <!--                  @click="update"-->
+                <!--                >-->
+                <!--                  <q-item-section avatar>-->
+                <!--                    <q-icon name="edit" color="teal" />-->
+                <!--                  </q-item-section>-->
+                <!--                  <q-item-section>Редактировать</q-item-section>-->
+                <!--                </q-item>-->
+                <q-item
+                  v-close-popup
+                  clickable
+                  @click="refresh"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="sync" color="primary" />
+                  </q-item-section>
+                  <q-item-section>Обновить</q-item-section>
+                </q-item>
+                <!--                <q-item-->
+                <!--                  v-close-popup-->
+                <!--                  clickable-->
+                <!--                  @click="exportFaxData(cargoTableReactiveProperties.selected)"-->
+                <!--                >-->
+                <!--                  <q-item-section avatar>-->
+                <!--                    <q-icon name="explicit" color="positive" />-->
+                <!--                  </q-item-section>-->
+                <!--                  <q-item-section>Excel</q-item-section>-->
+                <!--                </q-item>-->
+                <q-item
+                  v-show="cargoTableReactiveProperties.selected.length"
+                  v-close-popup
+                  clickable
+                  @click="destroyComment(cargoTableReactiveProperties.selected)"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="delete" color="negative" />
+                  </q-item-section>
+                  <q-item-section>Удалить</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </MenuBtn>
+        </template>
+        <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
+        <template v-slot:inner-item="{props}">
+          <div
+            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+            :style="props.selected ? 'transform: scale(0.95);' : ''"
           >
-            <q-item
-              v-for="(file, ind) in com.files"
-              :key="ind"
-              clickable
-              class="cursor-pointer"
-              @click="viewImageGallery(com.files, ind + 1)"
+            <q-expansion-item
+              expand-separator
+              class="shadow-1 overflow-hidden"
+              :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
+              :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
+              expand-icon-class="text-white"
             >
-              <q-item-section avatar>
-                <q-avatar v-if="file.ext === 'xlsx' || file.ext === 'txt'" rounded color="primary" text-color="white">{{
-                  file.ext }}
-                </q-avatar>
-                <div
-                  v-else
-                  class="example-item"
-                >
-                  <q-img
-                    :src="`${fileUrl()}${file.path}`"
-                    style="max-width: 100%;"
+              <template v-slot:header>
+                <q-item-section avatar>
+                  <q-checkbox
+                    v-model="props.selected"
+                    dense
                   />
-                </div>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>
-                  {{ file.name }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-chat-message>
-        <q-separator color="orange" size="3px" />
-        <div class="q-pa-md" style="max-width: 500px;">
-          <div class="q-gutter-md">
-            <q-input
-              v-model="text"
-              placeholder="Сообщение"
-              filled
-              autogrow
-              clearable
-            />
-
-            <q-file
-              label="Выберите файлы"
-              outlined
-              multiple
-              clearable
-              style="max-width: 400px"
-              :value="files"
-              @input="selectedFiles"
-            >
-              <template v-slot:file="{ index, file }">
-                <q-chip
-                  class="full-width q-my-xs"
-                  square
-                  removable
-                  @remove="cancelFile(index)"
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ props.row.formatDate.slice(0,10) }}
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ props.row.author_name }}
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ props.row.code_client_name }}
+                  </q-item-label>
+                </q-item-section>
+              </template>
+              <q-chat-message
+                :text="[props.row.title]"
+                :stamp="props.row.formatDate"
+                :sent="userId !== props.row.author_id"
+                bg-color="lightgrey"
+              >
+                <q-list
+                  class="bg-white"
+                  separator
+                  bordered
                 >
-                  <q-avatar
-                    v-if="file.ext === 'xlsx' || file.ext === 'txt'"
-                    square
-                    color="teal"
-                    text-color="white"
-                    icon="directions"
-                  />
-                  <q-avatar
-                    v-else
-                    square
+                  <q-item
+                    v-for="(file, ind) in props.row.files"
+                    :key="ind"
+                    clickable
+                    class="cursor-pointer"
+                    @click="viewImageGallery(props.row.files, ind + 1)"
                   >
-                    <q-img
-                      :src="file.url"
-                      style="max-width: 100%"
-                    />
-                  </q-avatar>
-                  <div class="ellipsis relative-position">
-                    {{ file.name }}
-                  </div>
-                  <q-tooltip>
-                    {{ file.name }}
-                  </q-tooltip>
-                </q-chip>
-              </template>
-
-              <template v-slot:after>
-                <q-btn
-                  color="primary"
-                  dense
-                  icon="send"
-                  round
-                  :disable="files.length === 0 && !text"
-                  @click="saveData(files)"
-                />
-              </template>
-            </q-file>
+                    <q-item-section avatar>
+                      <q-avatar
+                        v-if="extensions.includes(getFileExt(file))"
+                        rounded
+                        color="primary"
+                        text-color="white"
+                      >
+                        {{ getFileExt(file) }}
+                      </q-avatar>
+                      <div
+                        v-else
+                        class="example-item"
+                      >
+                        <q-img
+                          :src="`${fileUrl()}${file.path}`"
+                          style="max-width: 100%;"
+                        />
+                      </div>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>
+                        {{ file.name }}
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-btn
+                        size="12px"
+                        flat
+                        dense
+                        round
+                        color="negative"
+                        icon="clear"
+                        @click.stop="remove(file.id, props.row.id, file.path)"
+                      />
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+                <div
+                  v-if="props.row.code_client_name"
+                  class="q-mt-sm"
+                >
+                  Клиент: {{ props.row.code_client_name }}
+                </div>
+              </q-chat-message>
+            </q-expansion-item>
           </div>
-        </div>
-      </div>
+        </template>
+      </Table>
     </PullRefresh>
     <DialogShowImageGallery
       :show-dialog.sync="showDialogImageGallery"
       :files="filesGallery"
       :slide="slide"
     />
+    <DialogAddTaskComment
+      :show-dialog.sync="showDialogAddTaskComment"
+    />
   </q-page>
 </template>
 
 <script>
     import showNotif from 'src/mixins/showNotif';
+    import filesMixin from 'src/mixins/files';
 
     export default {
         name: 'Task',
         components: {
             PullRefresh: () => import('components/PullRefresh.vue'),
             DialogShowImageGallery: () => import('components/Tasks/DialogShowImageGallery.vue'),
+            MenuBtn: () => import('components/Buttons/MenuBtn.vue'),
+            Table: () => import('components/Elements/Table/Table.vue'),
+            DialogAddTaskComment: () => import('components/Tasks/DialogAddTaskComment.vue'),
             // IFrameDocs: () => import('components/IFrameDocs.vue'),
         },
-        mixins: [showNotif],
+        mixins: [showNotif, filesMixin],
         data() {
             return {
+                cargoTableProperties: {
+                    columns: [
+                        {
+                            name: 'author_name',
+                            label: 'Автор',
+                            align: 'center',
+                            field: 'author_name',
+                            sortable: true,
+                        },
+                        {
+                            name: 'title',
+                            label: 'Описание',
+                            align: 'center',
+                            field: 'title',
+                            sortable: true,
+                        },
+                        {
+                            name: 'code_client_name',
+                            label: 'Клиент',
+                            align: 'center',
+                            field: 'code_client_name',
+                            sortable: true,
+                        },
+                        {
+                            name: 'formatDate',
+                            label: 'Дата',
+                            field: 'formatDate',
+                            align: 'center',
+                            sortable: true,
+                        },
+                    ],
+                },
+                cargoTableReactiveProperties: {
+                    selected: [],
+                    visibleColumns: ['author_name', 'title', 'code_client_name', 'formatDate'],
+                    title: '',
+                },
                 showDialogImageGallery: false,
+                showDialogAddTaskComment: false,
                 filesGallery: [],
                 slide: 1,
                 text: '',
                 files: [],
+                extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
             };
         },
         computed: {
@@ -169,57 +268,14 @@
             }
         },
         methods: {
-            async saveData(files) {
-                const formData = new FormData();
-                _.forEach(files, (file, index) => {
-                    formData.set(`img${index}`, file);
-                });
-                formData.set('title', _.startCase(this.text));
-                formData.set('task_id', this.$route.params.id);
-
-                if (this.text || files.length > 0) {
-                    const { getUrl } = await import('src/tools/url');
-                    this.$axios.post(getUrl('storeComment'), formData)
-                      .then(({ data: { comment } }) => {
-                          devlog.log('comment', comment);
-                          this.$store.dispatch('tasks/addTaskComment', comment);
-                          this.text = '';
-                          this.files = [];
-                      })
-                      .catch(() => {
-                          devlog.error('storeTaskComment');
-                      });
-                } else {
-                    this.showNotif('warning', 'Введите сообщение или выберите файл!', 'center');
-                }
-            },
-            selectedFiles(value) {
-                this.files = _.map(value, (file) => {
-                    file.url = URL.createObjectURL(file);
-                    return file;
-                });
-                devlog.log('CVB', value);
-                if (_.isNull(value)) {
-                    this.files = [];
-                }
-            },
-            cancelFile(index) {
-                this.files.splice(index, 1);
-            },
             viewImageGallery(files, slide) {
-                devlog.log(this.$route, process);
                 const file = files[slide - 1];
-                if (file.ext === 'txt' || file.ext === 'xlsx') {
-                    devlog.log(file.path);
-                    const link = document.createElement('a');
-                    link.href = `${this.fileUrl()}${file.path}`;
-                    link.setAttribute('download', file.name);
-                    link.setAttribute('target', '_blank');
-                    document.body.appendChild(link);
-                    link.click();
+                if (_.includes(this.extensions, file.ext)) {
+                    this.downloadFromIndex(slide, files);
                 } else {
-                    this.slide = slide;
-                    this.filesGallery = _.filter(files, ({ ext }) => ext !== 'xlsx' && ext !== 'txt');
+                    this.filesGallery = _.filter(files, ({ ext }) => !_.includes(this.extensions, ext));
+                    const indexFile = _.findIndex(this.filesGallery, { id: file.id });
+                    this.slide = indexFile + 1;
                     this.showDialogImageGallery = true;
                 }
             },
@@ -239,8 +295,52 @@
                       callFunction(done);
                   });
             },
-            fileUrl() {
-                return process.env.DEV ? 'http://sp.com.ua/storage/' : 'http://servercargo007.net.ua/storage/app/public/';
+            async remove(fileId, commentId, filePath) {
+                this.showNotif('warning', 'Удалить файл?', 'center', [
+                    {
+                        label: 'Отмена',
+                        color: 'white',
+                        handler: () => {
+                        },
+                    },
+                    {
+                        label: 'Удалить',
+                        color: 'white',
+                        handler: async () => {
+                            this.$q.loading.show();
+                            const { getUrl } = await import('src/tools/url');
+                            devlog.log(fileId, commentId);
+                            this.$axios.post(getUrl('removeCommentFile'), {
+                                fileId,
+                                commentId,
+                                filePath,
+                            })
+                              .then(({ data: { comment } }) => {
+                                  this.$q.loading.hide();
+                                  this.$store.dispatch('tasks/updateTaskComment', comment);
+                              })
+                              .catch(() => {
+                                  this.$q.loading.hide();
+                              });
+                        },
+                    },
+                ]);
+            },
+            async destroyComment(selected) {
+                const ids = _.map(selected, 'id');
+                devlog.log(ids);
+                devlog.log(selected);
+                this.$q.loading.show();
+                const { getUrl } = await import('src/tools/url');
+                this.$axios.post(getUrl('deleteComments'), { ids })
+                  .then(() => {
+                      this.$store.dispatch('tasks/deleteTaskComments', ids);
+                      this.$q.loading.hide();
+                  })
+                  .catch(() => {
+                      this.$q.loading.hide();
+                      devlog.error('deleteComments');
+                  });
             },
         },
     };

@@ -22,3 +22,11 @@ export const fetchTaskComments = (({ commit }, id) => axiosInstance.get(`${getUr
 export const addTaskComment = (({ commit }, comment) => {
   commit('ADD_TASK_COMMENT', comment);
 });
+
+export const updateTaskComment = (({ commit }, data) => {
+  commit('UPDATE_TASK_COMMENT', data);
+});
+
+export const deleteTaskComments = (({ commit }, data) => {
+  commit('DELETE_TASK_COMMENTS', data);
+});
