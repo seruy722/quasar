@@ -182,7 +182,6 @@ class CodesController extends Controller
             return $entry->code_client_id;
         })->unique()->values()->all();
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CustomerExport($res), 'customers.xlsx');
-        return response(['as' => $res]);
     }
 
     public function exportCustomersWhoLeft()
@@ -199,6 +198,8 @@ class CodesController extends Controller
                 if ($dt->diffInDays(Carbon::now()) >= 31) {
                     array_push($ids, $id);
                 }
+            } else {
+                array_push($ids, $id);
             }
         }
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CustomerExport($ids), 'customers.xlsx');
