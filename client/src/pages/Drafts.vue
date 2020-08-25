@@ -87,9 +87,13 @@
       </div>
     </div>
 
-    <div>
+    <div style="border: 1px solid blue;">
       Клиенты которые получают бренд
       <q-btn label="GET" @click="getBrandClients" />
+    </div>
+    <div style="border: 1px solid blue;">
+      Клиенты которые не получали товар больше месяца
+      <q-btn label="GET" @click="exportCustomersWhoLeft" />
     </div>
 
     <div>
@@ -291,6 +295,31 @@
             getBrandClients() {
                 this.$axios({
                     url: getUrl('drafts.brandsCustomers'),
+                    method: 'GET',
+                    responseType: 'blob', // important
+                    // headers: {
+                    //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    // },
+                })
+                  .then((response) => {
+                      devlog.log('RES_BLOB', response);
+                      if (!window.navigator.msSaveOrOpenBlob) {
+                          // BLOB NAVIGATOR
+                          const url = window.URL.createObjectURL(new Blob([response.data]));
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.setAttribute('download', 'brands.xlsx');
+                          document.body.appendChild(link);
+                          link.click();
+                      } else {
+                          // BLOB FOR EXPLORER 11
+                          window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
+                      }
+                  });
+            },
+            exportCustomersWhoLeft() {
+                this.$axios({
+                    url: getUrl('exportCustomersWhoLeft'),
                     method: 'GET',
                     responseType: 'blob', // important
                     // headers: {

@@ -46,7 +46,7 @@ class CommentController extends Controller
             $saveArr['code_client_id'] = $request->code_client_id;
         }
         if ($request->created_at) {
-            $saveArr['created_at'] = date('Y-m-d H:i:s',strtotime($request->created_at));
+            $saveArr['created_at'] = date('Y-m-d H:i:s', strtotime($request->created_at));
         }
         $comment = Comment::create($saveArr);
         foreach ($filesIds as $id) {
@@ -82,7 +82,7 @@ class CommentController extends Controller
             if (!empty($comment->files)) {
                 foreach ($comment->files as $file) {
                     Storage::disk('public')->delete('/' . $file->path);
-                    $file->delete();
+                    File::destroy($file->id);
                 }
             }
             $comment->delete();

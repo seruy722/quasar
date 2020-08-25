@@ -27,17 +27,17 @@
                   </q-item-section>
                   <q-item-section>Добавить</q-item-section>
                 </q-item>
-                <!--                <q-item-->
-                <!--                  v-show="cargoTableReactiveProperties.selected.length === 1"-->
-                <!--                  v-close-popup-->
-                <!--                  clickable-->
-                <!--                  @click="update"-->
-                <!--                >-->
-                <!--                  <q-item-section avatar>-->
-                <!--                    <q-icon name="edit" color="teal" />-->
-                <!--                  </q-item-section>-->
-                <!--                  <q-item-section>Редактировать</q-item-section>-->
-                <!--                </q-item>-->
+                <q-item
+                  v-show="cargoTableReactiveProperties.selected.length === 1"
+                  v-close-popup
+                  clickable
+                  @click="addFileToComment(cargoTableReactiveProperties.selected[0])"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="attach_file" color="teal" />
+                  </q-item-section>
+                  <q-item-section>Добавить файл</q-item-section>
+                </q-item>
                 <q-item
                   v-close-popup
                   clickable
@@ -183,6 +183,7 @@
     />
     <DialogAddTaskComment
       :show-dialog.sync="showDialogAddTaskComment"
+      :add-file-to-comment.sync="addFileToCom"
     />
   </q-page>
 </template>
@@ -248,6 +249,7 @@
                 text: '',
                 files: [],
                 extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
+                addFileToCom: false,
             };
         },
         computed: {
@@ -341,6 +343,12 @@
                       this.$q.loading.hide();
                       devlog.error('deleteComments');
                   });
+            },
+            addFileToComment(selected) {
+                const { id: commentId } = selected;
+                devlog.log(commentId);
+                this.addFileToCom = true;
+                this.showDialogAddTaskComment = true;
             },
         },
     };

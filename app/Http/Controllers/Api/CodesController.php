@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Cargo;
 use App\City;
 use App\Code;
 use App\Customer;
@@ -9,6 +10,7 @@ use App\Http\Resources\CodeResource;
 use App\Imports\ImportData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -171,5 +173,34 @@ class CodesController extends Controller
             return $item->code_id;
         });
         return response(['codes' => Code::select('id as value', 'code as label')->whereIn('id', $access->all())->get()]);
+    }
+
+    public function getCustomersWhoGetTheBrand()
+    {
+        $entries = Cargo::where('type', false)->where('brand', true)->get('code_client_id');
+        $res = $entries->map(function ($entry) {
+            return $entry->code_client_id;
+        })->unique()->values()->all();
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CustomerExport($res), 'customers.xlsx');
+        return response(['as' => $res]);
+    }
+
+    public function exportCustomersWhoLeft()
+    {
+        $entries = Code::all('id');
+        $res = $entries->map(function ($entry) {
+            return $entry->id;
+        })->unique()->values()->all();
+        $ids = [];
+        foreach ($res as $id) {
+            $cargoEntry = Cargo::where('type', false)->where('code_client_id', $id)->orderBy('created_at', 'desc')->first();
+            if ($cargoEntry) {
+                $dt = Carbon::parse($cargoEntry->created_at);
+                if ($dt->diffInDays(Carbon::now()) >= 31) {
+                    array_push($ids, $id);
+                }
+            }
+        }
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CustomerExport($ids), 'customers.xlsx');
     }
 }

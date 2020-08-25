@@ -68,6 +68,12 @@
                 </q-item-label>
               </q-item-section>
 
+              <q-item-section>
+                <q-item-label>
+                  {{ props.row.code_client_name }}
+                </q-item-label>
+              </q-item-section>
+
               <q-item-section
                 avatar
                 side

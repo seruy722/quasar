@@ -148,7 +148,7 @@
                   .then(async ({ data: { debts, cargo } }) => {
                       const { fullDate } = await import('src/utils/formatDate');
                       const { combineCargoData } = await import('src/utils/FrequentlyCalledFunctions');
-                      this.debts = _.map(debts, (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
+                      this.debts = _.map(_.orderBy(debts, (item) => new Date(item.created_at), 'asc'), (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
                       const clientIds = _.uniq(_.map(cargo, 'code_client_id'));
                       const cargoArr = [];
                       _.forEach(clientIds, (id) => {

@@ -120,6 +120,8 @@ const urls = {
   paymentArrears: `${prefix}/get-payment-arrears`,
   removeCommentFile: `${prefix}/remove-comment-file`,
   deleteComments: `${prefix}/delete-comments`,
+  exportCustomersWhoLeft: `${prefix}/export-customers-who-left`,
+  addFileToComment: `${prefix}/add-file-to-comment`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,
