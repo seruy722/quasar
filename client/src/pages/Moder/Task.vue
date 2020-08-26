@@ -28,6 +28,16 @@
                   <q-item-section>Добавить</q-item-section>
                 </q-item>
                 <q-item
+                  v-close-popup
+                  clickable
+                  @click="editTaskComment(cargoTableReactiveProperties.selected[0])"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="explicit" color="positive" />
+                  </q-item-section>
+                  <q-item-section>Редактировать</q-item-section>
+                </q-item>
+                <q-item
                   v-show="cargoTableReactiveProperties.selected.length === 1"
                   v-close-popup
                   clickable
@@ -48,16 +58,6 @@
                   </q-item-section>
                   <q-item-section>Обновить</q-item-section>
                 </q-item>
-                <!--                <q-item-->
-                <!--                  v-close-popup-->
-                <!--                  clickable-->
-                <!--                  @click="exportFaxData(cargoTableReactiveProperties.selected)"-->
-                <!--                >-->
-                <!--                  <q-item-section avatar>-->
-                <!--                    <q-icon name="explicit" color="positive" />-->
-                <!--                  </q-item-section>-->
-                <!--                  <q-item-section>Excel</q-item-section>-->
-                <!--                </q-item>-->
                 <q-item
                   v-show="cargoTableReactiveProperties.selected.length"
                   v-close-popup
@@ -184,6 +184,8 @@
     <DialogAddTaskComment
       :show-dialog.sync="showDialogAddTaskComment"
       :add-file-to-comment.sync="addFileToCom"
+      :comment-id="commentId"
+      :edit-data.sync="entryData"
     />
   </q-page>
 </template>
@@ -250,6 +252,8 @@
                 files: [],
                 extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
                 addFileToCom: false,
+                commentId: 0,
+                entryData: {},
             };
         },
         computed: {
@@ -346,9 +350,16 @@
             },
             addFileToComment(selected) {
                 const { id: commentId } = selected;
+                this.commentId = commentId;
                 devlog.log(commentId);
                 this.addFileToCom = true;
                 this.showDialogAddTaskComment = true;
+            },
+            editTaskComment(data) {
+                const { id: commentId } = data;
+                this.commentId = commentId;
+                this.showDialogAddTaskComment = true;
+                this.entryData = data;
             },
         },
     };

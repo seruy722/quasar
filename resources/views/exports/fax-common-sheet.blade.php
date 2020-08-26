@@ -2,13 +2,13 @@
     <thead>
     <tr>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Код</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Клиент</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Мест</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Вес</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Категория</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Магазин</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Примечания</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Опись вложения</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кл</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">М</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">В</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кат</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Маг</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Прим</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Оп вл</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">К-тво</th>
     </tr>
     </thead>

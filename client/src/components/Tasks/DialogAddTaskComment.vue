@@ -73,7 +73,7 @@
           :value.sync="localDate"
         />
       </q-card-section>
-      <q-card-section>
+      <q-card-section v-show="!isEdit">
         <q-file
           ref="input"
           label="Выберите файлы"
@@ -129,6 +129,10 @@
                 type: Number,
                 default: 0,
             },
+            editData: {
+                type: Object,
+                default: () => ({}),
+            },
         },
         data() {
             return {
@@ -152,6 +156,16 @@
             },
             clientCodes() {
                 return this.$store.getters['codes/getCodes'];
+            },
+            isEdit() {
+                return !_.isEmpty(this.editData);
+            },
+        },
+        watch: {
+            editData(val) {
+                this.text = val.title;
+                this.localDate = val.created_at;
+                this.codeClientId = val.code_client_id;
             },
         },
         created() {
@@ -212,6 +226,24 @@
                               this.$store.dispatch('tasks/updateTaskComment', comment);
                               this.files = [];
                               this.$emit('update:addFileToComment', false);
+                              this.show = false;
+                              this.$q.loading.hide();
+                              this.showNotif('success', 'Файл успешно добавлен', 'center');
+                          })
+                          .catch(() => {
+                              this.$q.loading.hide();
+                              this.showNotif('warning', 'Файлы из google диска не загружаются!', 'center');
+                              devlog.error('storeComment');
+                          });
+                    } else if (this.isEdit) {
+                        formData.set('comment_id', this.commentId);
+                        this.$axios.post(getUrl('updateCommentData'), formData)
+                          .then(({ data: { comment } }) => {
+                              devlog.log('comment', comment);
+                              this.$store.dispatch('tasks/updateTaskComment', comment);
+                              this.files = [];
+                              this.$emit('update:addFileToComment', false);
+                              this.show = false;
                               this.$q.loading.hide();
                               this.showNotif('success', 'Файл успешно добавлен', 'center');
                           })

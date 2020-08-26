@@ -31,6 +31,13 @@
         />
 
         <IconBtn
+          color="positive"
+          icon="directions_bus"
+          tooltip="Одесса-Харьков"
+          @iconBtnClick="exportFaxDataOdessaKharkov"
+        />
+
+        <IconBtn
           v-show="!combineTableData"
           icon="sync_alt"
           tooltip="Трансфер данных"
@@ -851,6 +858,16 @@
                       this.$q.loading.hide();
                       devlog.error('Ошибка получения данных факса');
                   });
+            },
+            exportFaxDataOdessaKharkov() {
+                const ids = [];
+                _.forEach(this.faxTableReactiveProperties.selected, ({ arr }) => {
+                    ids.push(..._.map(arr, 'id'));
+                });
+                this.exportDataToExcel(getUrl('exportFaxDataOdessaKharkov'), {
+                    id: this.currentFaxItem.id,
+                    ids,
+                }, `Одесса-Харьков ${this.currentFaxItem.name}.xlsx`);
             },
         },
     };

@@ -3,17 +3,17 @@
     <tr>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Дата</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Тип</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Клиент</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Мест</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Вес</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">За кг</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">За место</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сумма</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Скидки</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Оплачен</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Категория</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Факс</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Примечания</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кл</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">М</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">В</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">За к</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">За м</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сум</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Ск</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Опл</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кат</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Фак</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Прим</th>
     </tr>
     </thead>
     <tbody>

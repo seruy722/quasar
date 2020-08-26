@@ -1,10 +1,10 @@
 <table>
     <thead>
     <tr>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Клиент</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Мест</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Вес</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Категория</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кл</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">М</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">В</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кат</th>
     </tr>
     </thead>
     <tbody>

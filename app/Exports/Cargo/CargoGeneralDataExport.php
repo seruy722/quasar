@@ -15,7 +15,7 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 {
     protected $data;
     protected $enterData;
-    protected $headers = ['Дата', 'Тип', 'Клиент', 'Мест', 'Вес', 'За кг', 'За место', 'Сумма', 'Скидки', 'Оплачен', 'Категория', 'Факс', 'Примечания'];
+    protected $headers = ['Дата', 'Тип', 'Кл', 'М', 'В', 'За к', 'За м', 'Сум', 'Скд', 'Опл', 'Кат', 'Фак', 'Прим'];
 
     public function __construct($enterData)
     {

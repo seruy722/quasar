@@ -89,4 +89,58 @@ class CommentController extends Controller
         }
         return response(['status' => true]);
     }
+
+    public function addFileToComment(Request $request)
+    {
+        $filesIds = [];
+        foreach ($request->allFiles() as $file) {
+            $fileName = $file->getClientOriginalName();
+            $path = Storage::disk('public')->put('/images', $file);
+            $fileData = File::create(['name' => $fileName, 'size' => $file->getSize(), 'ext' => $file->getClientOriginalExtension(), 'path' => $path]);
+            array_push($filesIds, $fileData->id);
+        }
+        $saveArr = [
+            'author_id' => auth()->user()->id,
+        ];
+        if ($request->title) {
+            $saveArr['title'] = $request->title;
+        }
+        if ($request->task_id) {
+            $saveArr['task_id'] = $request->task_id;
+        }
+        if ($request->code_client_id) {
+            $saveArr['code_client_id'] = $request->code_client_id;
+        }
+        if ($request->created_at) {
+            $saveArr['created_at'] = date('Y-m-d H:i:s', strtotime($request->created_at));
+        }
+        foreach ($filesIds as $id) {
+            CommentFiles::create(['comment_id' => $request->comment_id, 'file_id' => $id]);
+        }
+
+        return response(['comment' => $this->query()->where('task_id', $request->task_id)->where('comments.id', $request->comment_id)->first()]);
+    }
+
+    public function updateCommentData(Request $request)
+    {
+        $saveArr = [
+            'author_id' => auth()->user()->id,
+        ];
+        if ($request->title) {
+            $saveArr['title'] = $request->title;
+        }
+        if ($request->task_id) {
+            $saveArr['task_id'] = $request->task_id;
+        }
+        if ($request->code_client_id) {
+            $saveArr['code_client_id'] = $request->code_client_id;
+        }
+        if ($request->created_at) {
+            $saveArr['created_at'] = date('Y-m-d H:i:s', strtotime($request->created_at));
+        }
+
+        Comment::where('id', $request->comment_id)->update($saveArr);
+
+        return response(['comment' => $this->query()->where('task_id', $request->task_id)->where('comments.id', $request->comment_id)->first()]);
+    }
 }

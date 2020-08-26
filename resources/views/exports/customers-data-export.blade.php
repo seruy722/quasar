@@ -1,12 +1,12 @@
 <table>
     <thead>
     <tr>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Клиент</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Имя</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Телефон</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Город</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Способ доставки</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Отделение</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кл</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Им</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Тел</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Гор</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сп. доставки</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Отд</th>
     </tr>
     </thead>
     <tbody>

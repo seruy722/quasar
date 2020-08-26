@@ -6,6 +6,7 @@ use App\CategoriesPrice;
 use App\Category;
 use App\Code;
 use App\CodesPrices;
+use App\Customer;
 use App\FaxData;
 use App\Shop;
 use App\StorehouseData;
@@ -303,5 +304,30 @@ class FaxDataController extends Controller
     public function exportAdmin(Request $request)
     {
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxExportForAdmin\FaxSheetsExport($request->id, $request->ids), 'storehouseData.xlsx');
+    }
+
+    public function exportFaxDataOdessaKharkov(Request $request)
+    {
+        $ids = $request->ids;
+        $faxEntries = StorehouseData::where('fax_id', $request->id)->get(['code_client_id', 'id']);
+        $codeClientId = $faxEntries->map(function ($item) {
+            return $item->code_client_id;
+        })->unique()->values()->all();
+        $customers = Customer::select(
+            'customers.*', 'cities.name AS city_name',
+            'codes.code as code',
+            'codes.id as code_client_id'
+        )
+            ->leftJoin('cities', 'cities.id', '=', 'customers.city_id')
+            ->leftJoin('codes', 'codes.id', '=', 'customers.code_id')
+            ->whereIn('customers.code_id', $codeClientId)
+            ->get();
+        foreach ($faxEntries as $elem) {
+            $customer = $customers->firstWhere('code_client_id', $elem->code_client_id);
+            if ($customer && $customer->city_name === 'Харьков') {
+                array_push($ids, $elem->id);
+            }
+        }
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxExportForAdmin\FaxSheetsExport($request->id, array_unique($ids)), 'storehouseData.xlsx');
     }
 }

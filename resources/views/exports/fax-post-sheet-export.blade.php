@@ -1,16 +1,16 @@
 <table>
     <thead>
     <tr>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Клиент</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кл</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Код</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Вес</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сумма</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Имя</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Город</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Способ доставки</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Отделение</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Телефон</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Примечания</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">В</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сум</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Им</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Гор</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сп. доставки</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Отд</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Тел</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">При</th>
     </tr>
     </thead>
     <tbody>
@@ -67,9 +67,9 @@
 <table>
     <thead>
     <tr>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Способ доставки</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Мест</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Вес</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сп доставки</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">М</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">В</th>
     </tr>
     </thead>
     <tbody>

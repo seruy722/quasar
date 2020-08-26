@@ -266,7 +266,7 @@ class FaxController extends Controller
             StorehouseData::create($elem->toArray());
         });
         $transporter = Transporter::find($firstElem['transporter_id']);
-        $fax->name = 'JOIN_Факс ' . $transporter->name . ' ' . $faxData->sum('place') . 'м_' . $faxData->sum('kg') . 'кг';
+        $fax->name = 'JOIN_Деберц ' . $transporter->name . ' ' . $faxData->sum('place') . 'м_' . $faxData->sum('kg') . 'кг';
         $fax->join_faxes_ids = 'dfsdfsd';
         $fax->save();
 

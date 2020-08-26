@@ -122,6 +122,8 @@ const urls = {
   deleteComments: `${prefix}/delete-comments`,
   exportCustomersWhoLeft: `${prefix}/export-customers-who-left`,
   addFileToComment: `${prefix}/add-file-to-comment`,
+  updateCommentData: `${prefix}/update-comment-data`,
+  exportFaxDataOdessaKharkov: `${prefix}/export-fax-admin-data-odessa-kharkov`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,

@@ -3,11 +3,11 @@
     <tr>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Дата</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Тип</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Клиент</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сумма</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Комиссия</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Оплачен</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Примечания</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кл</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сум</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Ком</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Опл</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Прим</th>
     </tr>
     </thead>
     <tbody>

@@ -143,6 +143,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::get('/update-prices-in-fax/{id}', 'Api\FaxDataController@updatePricesInFax')->name('update-prices-in-fax')->middleware(['role_or_permission:admin|fax|update-prices-in-fax']);
     Route::post('/export-fax-moder-data', 'Api\FaxDataController@exportModer');
     Route::post('/export-fax-admin-data', 'Api\FaxDataController@exportAdmin');
+    Route::post('/export-fax-admin-data-odessa-kharkov', 'Api\FaxDataController@exportFaxDataOdessaKharkov')->name('export fax admin data odessa kharkov')->middleware(['role_or_permission:admin|fax|export fax admin data odessa kharkov']);
 
     // CATEGORIES
     Route::get('/categories', 'Api\CategoryController@index');
@@ -209,6 +210,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/remove-comment-file', 'Api\CommentController@removeCommentFile')->name('remove comment file')->middleware(['role_or_permission:admin|task|remove comment file']);
     Route::post('/delete-comments', 'Api\CommentController@deleteComments')->name('delete-comments')->middleware(['role_or_permission:admin|task|delete-comments']);
     Route::post('/add-file-to-comment', 'Api\CommentController@addFileToComment')->name('add file to comment')->middleware(['role_or_permission:admin|task|add file to comment']);
+    Route::post('/update-comment-data', 'Api\CommentController@updateCommentData')->name('update comment data')->middleware(['role_or_permission:admin|task|update comment data']);
 
     // PAYMENTARREARS
     Route::get('/get-payment-arrears', 'Api\CargoController@getPaymentArrears')->name('get payment arrears')->middleware(['role_or_permission:admin|arrears|get payment arrears']);
