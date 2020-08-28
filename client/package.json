@@ -16,9 +16,9 @@
     "build:android": "quasar build -m android"
   },
   "dependencies": {
-    "@quasar/extras": "^1.9.4",
+    "@quasar/extras": "^1.9.5",
     "axios": "^0.20.0",
-    "date-fns": "^2.15.0",
+    "date-fns": "^2.16.0",
     "lodash": "^4.17.20",
     "mobile-drag-drop": "^2.3.0-rc.2",
     "quasar": "^1.13.1",
