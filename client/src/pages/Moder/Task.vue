@@ -1,8 +1,8 @@
 <template>
-  <q-page
-    data-vue-component-name="Task"
-  >
-    <PullRefresh @refresh="refresh">
+  <PullRefresh @refresh="refresh">
+    <q-page
+      data-vue-component-name="Task"
+    >
       <Table
         :table-properties="cargoTableProperties"
         :table-data="comments"
@@ -28,12 +28,13 @@
                   <q-item-section>Добавить</q-item-section>
                 </q-item>
                 <q-item
+                  v-show="cargoTableReactiveProperties.selected.length === 1"
                   v-close-popup
                   clickable
                   @click="editTaskComment(cargoTableReactiveProperties.selected[0])"
                 >
                   <q-item-section avatar>
-                    <q-icon name="explicit" color="positive" />
+                    <q-icon name="edit" color="teal" />
                   </q-item-section>
                   <q-item-section>Редактировать</q-item-section>
                 </q-item>
@@ -175,19 +176,19 @@
           </div>
         </template>
       </Table>
-    </PullRefresh>
-    <DialogShowImageGallery
-      :show-dialog.sync="showDialogImageGallery"
-      :files="filesGallery"
-      :slide="slide"
-    />
-    <DialogAddTaskComment
-      :show-dialog.sync="showDialogAddTaskComment"
-      :add-file-to-comment.sync="addFileToCom"
-      :comment-id="commentId"
-      :edit-data.sync="entryData"
-    />
-  </q-page>
+      <DialogShowImageGallery
+        :show-dialog.sync="showDialogImageGallery"
+        :files="filesGallery"
+        :slide="slide"
+      />
+      <DialogAddTaskComment
+        :show-dialog.sync="showDialogAddTaskComment"
+        :add-file-to-comment.sync="addFileToCom"
+        :comment-id="commentId"
+        :edit-data.sync="entryData"
+      />
+    </q-page>
+  </PullRefresh>
 </template>
 
 <script>

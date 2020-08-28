@@ -48,6 +48,9 @@ class CommentController extends Controller
         if ($request->created_at) {
             $saveArr['created_at'] = date('Y-m-d H:i:s', strtotime($request->created_at));
         }
+        if ($request->section) {
+            $saveArr['section'] = $request->section;
+        }
         $comment = Comment::create($saveArr);
         foreach ($filesIds as $id) {
             CommentFiles::create(['comment_id' => $comment->id, 'file_id' => $id]);

@@ -20,6 +20,7 @@ import cargoDebts from './cargo-debts';
 import settings from './settings';
 import tasks from './tasks';
 import documents from './documents';
+import questions from './questions';
 
 Vue.use(Vuex);
 
@@ -50,6 +51,7 @@ export default function (/* { ssrContext } */) {
       settings,
       tasks,
       documents,
+      questions,
     },
 
     // enable strict mode (adds overhead!)

@@ -123,6 +123,11 @@ const urls = {
   exportCustomersWhoLeft: `${prefix}/export-customers-who-left`,
   addFileToComment: `${prefix}/add-file-to-comment`,
   updateCommentData: `${prefix}/update-comment-data`,
+  storeQuestion: `${prefix}/store-question`,
+  getQuestions: `${prefix}/get-questions`,
+  deleteQuestions: `${prefix}/delete-questions`,
+  updateQuestion: `${prefix}/update-question`,
+  addQuestionComment: `${prefix}/add-question-comment`,
   exportFaxDataOdessaKharkov: `${prefix}/export-fax-admin-data-odessa-kharkov`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {

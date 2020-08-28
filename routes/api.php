@@ -215,6 +215,12 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     // PAYMENTARREARS
     Route::get('/get-payment-arrears', 'Api\CargoController@getPaymentArrears')->name('get payment arrears')->middleware(['role_or_permission:admin|arrears|get payment arrears']);
 
+    // QUESTIONS
+    Route::get('/get-questions', 'Api\QuestionController@index')->name('view questions page')->middleware(['role_or_permission:admin|questions|view questions page']);
+    Route::post('/store-question', 'Api\QuestionController@store')->name('store task')->middleware(['role_or_permission:admin|questions|store question']);
+    Route::post('/delete-questions', 'Api\QuestionController@deleteQuestions')->name('delete questions')->middleware(['role_or_permission:admin|questions|delete questions']);
+    Route::post('/update-question', 'Api\QuestionController@updateQuestion')->name('update question')->middleware(['role_or_permission:admin|questions|update question']);
+    Route::post('/add-question-comment', 'Api\QuestionController@addQuestionComment')->name('add question comment')->middleware(['role_or_permission:admin|question|add question comment']);
 
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды

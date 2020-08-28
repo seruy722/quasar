@@ -1,9 +1,10 @@
-import { formatToDotDate } from 'src/utils/formatDate';
+import { formatToDotDate, fullDate } from 'src/utils/formatDate';
 import { numberFormat } from 'src/utils/index';
 
 export default async ({ Vue }) => {
   Vue.filter('filterFromSelectData', (val, data) => _.get(_.find(data, { value: val }), 'label'));
   Vue.filter('formatToDotDate', (val) => formatToDotDate(val));
+  Vue.filter('formatToDashDate', (val) => fullDate(val));
   Vue.filter('thingsFilter', (val) => {
     if (val) {
       try {

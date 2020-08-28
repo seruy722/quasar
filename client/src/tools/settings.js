@@ -126,6 +126,23 @@ const settings = {
       color: 'positive',
     },
   ],
+  statusQuestion: [
+    {
+      label: 'Новый',
+      value: 0,
+      color: 'negative',
+    },
+    {
+      label: 'Отработано',
+      value: 1,
+      color: 'lightgrey',
+    },
+    {
+      label: 'Выполнено',
+      value: 2,
+      color: 'positive',
+    },
+  ],
   sectionTask: [
     {
       label: 'Карго',

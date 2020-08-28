@@ -29,6 +29,15 @@ export default {
       },
     },
     {
+      title: 'Вопросы',
+      field: 'questions',
+      icon: 'help_center',
+      access: {
+        roles: ['admin', 'questions'],
+        permissions: [],
+      },
+    },
+    {
       title: 'Карго Долги',
       field: 'cargo-debts-assistant',
       icon: 'assignment',

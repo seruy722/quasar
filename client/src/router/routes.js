@@ -311,6 +311,21 @@ const routes = [
         component: () => import('pages/PaymentArrears.vue'),
       },
       {
+        path: 'questions',
+        name: 'questions',
+        meta: {
+          title: 'Вопросы',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin', 'questions'],
+            permissions: [],
+          },
+        },
+        component: () => import('pages/Moder/Questions.vue'),
+      },
+      {
         path: 'tasks',
         name: 'tasks',
         meta: {
