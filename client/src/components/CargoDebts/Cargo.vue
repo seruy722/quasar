@@ -271,6 +271,13 @@
           </q-td>
 
           <q-td
+            key="get_pay_user_name"
+            :props="props"
+          >
+            {{ props.row.get_pay_user_name }}
+          </q-td>
+
+          <q-td
             key="notation"
             :props="props"
           >
@@ -303,12 +310,6 @@
             :props="props"
           >
             {{ props.row.department }}
-          </q-td>
-          <q-td
-            key="get_pay_user_name"
-            :props="props"
-          >
-            {{ props.row.get_pay_user_name }}
           </q-td>
         </q-tr>
       </template>
@@ -367,10 +368,6 @@
                 type: Function,
                 default: () => {
                 },
-            },
-            list: {
-                type: Array,
-                default: () => ([]),
             },
         },
         data() {
@@ -471,6 +468,13 @@
                             sortable: true,
                         },
                         {
+                            name: 'get_pay_user_name',
+                            label: 'Пользователь',
+                            field: 'get_pay_user_name',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'notation',
                             label: this.$t('notation'),
                             field: 'notation',
@@ -505,13 +509,7 @@
                             align: 'center',
                             sortable: true,
                         },
-                        {
-                            name: 'get_pay_user_name',
-                            label: 'Пользователь',
-                            field: 'get_pay_user_name',
-                            align: 'center',
-                            sortable: true,
-                        },
+
                     ],
                 },
                 cargoTableReactiveProperties: {
@@ -529,7 +527,7 @@
         },
         computed: {
             cargo() {
-                return _.isEmpty(this.list) ? this.$store.getters['cargoDebts/getCargo'] : this.list;
+                return this.$store.getters['cargoDebts/getCargo'];
             },
             currentCodeClientId() {
                 return this.$store.getters['cargoDebts/getCurrentCodeClientId'];

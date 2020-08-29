@@ -130,7 +130,7 @@
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    <q-item-label>
+                    <q-item-label lines="3">
                       {{ props.row.title }}
                     </q-item-label>
                   </q-item-section>
@@ -233,11 +233,11 @@
       </Table>
       <DialogQuestionsComment
         :show-dialog.sync="showDialogAddComment"
-        :question-id="questionId"
+        :question-id.sync="questionId"
       />
       <DialogAddQuestion
         :show-dialog.sync="showDialogAddQuestion"
-        :entry-data="entryData"
+        :entry-data.sync="entryData"
       />
       <DialogShowImageGallery
         :show-dialog.sync="showDialogImageGallery"

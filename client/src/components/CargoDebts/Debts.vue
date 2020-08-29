@@ -190,17 +190,17 @@
           </q-td>
 
           <q-td
-            key="notation"
-            :props="props"
-          >
-            {{ props.row.notation }}
-          </q-td>
-
-          <q-td
             key="get_pay_user_name"
             :props="props"
           >
             {{ props.row.get_pay_user_name }}
+          </q-td>
+
+          <q-td
+            key="notation"
+            :props="props"
+          >
+            {{ props.row.notation }}
           </q-td>
         </q-tr>
       </template>
@@ -250,10 +250,6 @@
                 default: () => {
                 },
             },
-            list: {
-                type: Array,
-                default: () => ([]),
-            },
         },
         data() {
             return {
@@ -302,19 +298,20 @@
                             sortable: true,
                         },
                         {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
                             name: 'get_pay_user_name',
                             label: 'Пользователь',
                             field: 'get_pay_user_name',
                             align: 'center',
                             sortable: true,
                         },
+                        {
+                            name: 'notation',
+                            label: this.$t('notation'),
+                            field: 'notation',
+                            align: 'center',
+                            sortable: true,
+                        },
+
                     ],
                 },
                 debtsTableReactiveProperties: {
@@ -332,7 +329,7 @@
         },
         computed: {
             debts() {
-                return _.isEmpty(this.list) ? this.$store.getters['cargoDebts/getDebts'] : this.list;
+                return this.$store.getters['cargoDebts/getDebts'];
             },
             currentCodeClientId() {
                 return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
