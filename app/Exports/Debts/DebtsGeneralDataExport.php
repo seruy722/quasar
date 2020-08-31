@@ -16,7 +16,7 @@ class DebtsGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 {
     protected $data;
     protected $enterData;
-    protected $headers = ['Дата', 'Тип', 'Кл', 'Сум', 'Ком', 'Опл', 'Прим', 'Пол'];
+    protected $headers = ['Дата', 'Тип', 'Деберц', 'Очки', 'Ком', 'Опл', 'Прим', 'Пол'];
 
     public function __construct($data)
     {

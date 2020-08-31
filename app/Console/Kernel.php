@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         'App\Console\Commands\SelectPaymentArrears',
+        'App\Console\Commands\DestroyTokens',
     ];
 
     /**
@@ -25,6 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('select:payment:arrears');
+        $schedule->command('destroy:tokens');
     }
 
     /**

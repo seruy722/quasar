@@ -64,6 +64,6 @@ class SelectPaymentArrears extends Command
         if (!empty($debtsIds)) {
             PaymentArrear::create(['table_name' => (new Debt)->getTable(), 'entries_id' => json_encode($debtsIds)]);
         }
-        return 'Успешно';
+        return true;
     }
 }

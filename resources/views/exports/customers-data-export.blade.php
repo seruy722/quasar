@@ -1,7 +1,7 @@
 <table>
     <thead>
     <tr>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кл</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Деберц</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Им</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Тел</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Гор</th>

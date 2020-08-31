@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Events\AfterSheet;
 class TransfersExport implements FromCollection, ShouldAutoSize, WithHeadings, WithEvents
 {
     protected $data;
-    protected $headers = ['Кл', 'Полч', 'Тел полч', 'Сум', 'Мет', 'Прим', 'Стс', 'Доб', 'Выд', 'Пол'];
+    protected $headers = ['Деберц', 'Полч', 'Тел полч', 'Очки', 'Мет', 'Прим', 'Стс', 'Доб', 'Выд', 'Пол'];
     protected $transferStatus = [1 => 'Вопрос', 2 => 'Не выдан', 3 => 'Выдано', 4 => 'Отменен', 5 => 'Возврат'];
     protected $transferMethod = [1 => 'Деньги', 2 => 'Товар деньги'];
 

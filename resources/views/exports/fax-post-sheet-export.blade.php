@@ -1,10 +1,10 @@
 <table>
     <thead>
     <tr>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кл</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Деберц</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Код</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">В</th>
-        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сум</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Очки</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Им</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Гор</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сп. доставки</th>
