@@ -38,6 +38,13 @@
         />
 
         <IconBtn
+          color="positive"
+          icon="directions_railway"
+          tooltip="Одесса"
+          @iconBtnClick="exportFaxDataOdessa"
+        />
+
+        <IconBtn
           v-show="!combineTableData"
           icon="sync_alt"
           tooltip="Трансфер данных"
@@ -865,6 +872,16 @@
                     ids.push(..._.map(arr, 'id'));
                 });
                 this.exportDataToExcel(getUrl('exportFaxDataOdessaKharkov'), {
+                    id: this.currentFaxItem.id,
+                    ids,
+                }, `Одесса-Харьков ${this.currentFaxItem.name}.xlsx`);
+            },
+            exportFaxDataOdessa() {
+                const ids = [];
+                _.forEach(this.faxTableReactiveProperties.selected, ({ arr }) => {
+                    ids.push(..._.map(arr, 'id'));
+                });
+                this.exportDataToExcel(getUrl('exportFaxDataOdessa'), {
                     id: this.currentFaxItem.id,
                     ids,
                 }, `Одесса-Харьков ${this.currentFaxItem.name}.xlsx`);

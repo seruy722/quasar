@@ -129,6 +129,7 @@ const urls = {
   updateQuestion: `${prefix}/update-question`,
   addQuestionComment: `${prefix}/add-question-comment`,
   exportFaxDataOdessaKharkov: `${prefix}/export-fax-admin-data-odessa-kharkov`,
+  exportFaxDataOdessa: `${prefix}/export-fax-admin-data-odessa`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,

@@ -1,30 +1,18 @@
 <template>
   <q-page>
-    <!--    <q-list padding>-->
-    <!--      <q-item-->
-    <!--        v-for="(item, index) in menu"-->
-    <!--        :key="index"-->
-    <!--        v-ripple-->
-    <!--        :active="$route.name === item.field"-->
-    <!--        clickable-->
-    <!--        active-class="my-menu-link"-->
-    <!--        class="q-ma-sm"-->
-    <!--        @click="onClickDrawerMenu(item)"-->
-    <!--      >-->
-    <!--        <q-item-section avatar>-->
-    <!--          <q-icon :name="item.icon" />-->
-    <!--        </q-item-section>-->
-
-    <!--        <q-item-section>-->
-    <!--          {{ $t(item.title) }}-->
-    <!--        </q-item-section>-->
-    <!--      </q-item>-->
-    <!--    </q-list>-->
     <q-bar>
       <div class="text-weight-bold">
         Cargo 007
       </div>
       <q-space />
+      <q-btn
+        v-show="false"
+        dense
+        color="deep-orange"
+        round
+        icon="wifi_off"
+        @click="closeUsersAccess"
+      />
       <div>{{ userName }}</div>
     </q-bar>
     <div class="row justify-center q-gutter-sm">
@@ -48,6 +36,10 @@
         </q-card>
       </q-intersection>
     </div>
+    <DialogInput
+      :show-dialog.sync="showDialogInput"
+      :key-data.sync="dialogDialogInputKey"
+    />
   </q-page>
 </template>
 
@@ -59,9 +51,14 @@
 
     export default {
         name: 'PageIndex',
+        components: {
+            DialogInput: () => import('components/Dialogs/DialogInput.vue'),
+        },
         data() {
             return {
                 menu: [],
+                showDialogInput: false,
+                dialogDialogInputKey: null,
             };
         },
         computed: {
@@ -78,6 +75,11 @@
         watch: {
             userAccess(val) {
                 this.setMenu(val);
+            },
+            dialogDialogInputKey(val) {
+                if (val) {
+                    this.closeUsersAccess();
+                }
             },
         },
         created() {
@@ -103,6 +105,10 @@
                         }
                     });
                 }
+            },
+            closeUsersAccess() {
+                this.showDialogInput = true;
+                devlog.log('closeUsersAccess');
             },
         },
     };
