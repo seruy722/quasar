@@ -351,6 +351,8 @@ class FaxDataController extends Controller
             $customer = $customers->firstWhere('code_client_id', $elem->code_client_id);
             if ($customer && $customer->city_name !== 'Харьков') {
                 array_push($ids, $elem->id);
+            } else if (!$customer) {
+                array_push($ids, $elem->id);
             }
         }
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxExportForAdmin\FaxSheetsExport($request->id, array_unique($ids)), 'storehouseData.xlsx');

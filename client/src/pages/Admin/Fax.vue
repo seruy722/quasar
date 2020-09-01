@@ -884,7 +884,7 @@
                 this.exportDataToExcel(getUrl('exportFaxDataOdessa'), {
                     id: this.currentFaxItem.id,
                     ids,
-                }, `Одесса-Харьков ${this.currentFaxItem.name}.xlsx`);
+                }, `Одесса ${this.currentFaxItem.name}.xlsx`);
             },
         },
     };
