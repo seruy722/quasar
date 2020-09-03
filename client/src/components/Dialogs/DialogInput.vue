@@ -7,7 +7,12 @@
   >
     <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
       <q-card-section class="bg-grey q-mb-sm">
-        <q-input v-model="key" label="Введите ключ" />
+        <q-input
+          v-model="key"
+          label="Введите ключ"
+          autofocus
+          :rules="[val => !!val || 'Поле обьязательное']"
+        />
       </q-card-section>
 
       <Separator />
@@ -67,10 +72,13 @@
         methods: {
             close() {
                 this.$emit('update:keyData', null);
+                this.key = null;
                 this.show = false;
             },
             save(val) {
                 this.$emit('update:keyData', val);
+                this.key = null;
+                this.show = false;
             },
         },
     };

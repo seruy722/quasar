@@ -6,12 +6,11 @@
       </div>
       <q-space />
       <q-btn
-        v-show="false"
         dense
         color="deep-orange"
         round
         icon="wifi_off"
-        @click="closeUsersAccess"
+        @click="showDialogInput = true"
       />
       <div>{{ userName }}</div>
     </q-bar>
@@ -78,7 +77,7 @@
             },
             dialogDialogInputKey(val) {
                 if (val) {
-                    this.closeUsersAccess();
+                    this.closeUsersAccess(val);
                 }
             },
         },
@@ -106,9 +105,23 @@
                     });
                 }
             },
-            closeUsersAccess() {
-                this.showDialogInput = true;
-                devlog.log('closeUsersAccess');
+            async closeUsersAccess(key) {
+                const { getUrl } = await import('src/tools/url');
+                if (key === 'lions') {
+                    this.$axios.post(getUrl('closeUsersAccess'), { key })
+                      .then(({ data: { answer } }) => {
+                          if (answer) {
+                              this.dialogDialogInputKey = null;
+                              this.$q.localStorage.clear();
+                              this.$store.commit('auth/REMOVE_USER_DATA');
+                              this.$router.push({ name: 'login' });
+                          }
+                      });
+                    devlog.log('CLOSE');
+                } else {
+                    this.dialogDialogInputKey = null;
+                    devlog.log('CLOSE_FALSE');
+                }
             },
         },
     };

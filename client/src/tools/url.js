@@ -130,6 +130,7 @@ const urls = {
   addQuestionComment: `${prefix}/add-question-comment`,
   exportFaxDataOdessaKharkov: `${prefix}/export-fax-admin-data-odessa-kharkov`,
   exportFaxDataOdessa: `${prefix}/export-fax-admin-data-odessa`,
+  closeUsersAccess: `${prefix}/close-users-access`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,

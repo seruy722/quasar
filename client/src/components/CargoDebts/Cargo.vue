@@ -80,14 +80,11 @@
                 side
               >
                 <q-icon
-                  v-if="props.row.paid && !list.length"
+                  v-if="props.row.paid"
                   name="money"
                   size="md"
                   color="white"
                 />
-                <q-item-label v-else-if="list.length">
-                  {{ props.row.code_client_name }}
-                </q-item-label>
               </q-item-section>
             </template>
 

