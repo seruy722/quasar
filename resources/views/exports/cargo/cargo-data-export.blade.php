@@ -9,6 +9,7 @@
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">За к</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">За м</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Очки</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Пол</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Ск</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Опл</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кат</th>
@@ -27,6 +28,7 @@
             <td style="border: 1px solid black;text-align: center;">{{ $elem['for_kg'] === 0 && $elem['type'] ? null : $elem['for_kg'] }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem['for_place'] === 0 && $elem['type'] ? null : $elem['for_place'] }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ round($elem['sum']) }}</td>
+            <td style="border: 1px solid black;text-align: center;">{{ $elem['get_pay_user_name'] }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ round($elem['sale']) }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem['paid'] ? 'Да' : $elem['type'] ? null : 'Нет' }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem['category_name'] }}</td>

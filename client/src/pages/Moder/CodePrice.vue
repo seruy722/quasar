@@ -4,133 +4,163 @@
     class="q-pa-md"
   >
     <PullRefresh @refresh="refresh">
-      MONEY
-      <IconBtn
-        color="teal"
-        icon="add_box"
-        tooltip="Добавить"
-        @iconBtnClick="addCodeWithCategory"
-      />
-      <IconBtn
-        color="primary"
-        icon="sync"
-        tooltip="Обновить"
-        @iconBtnClick="refresh"
-      />
-      <Search v-model="search" :style="`max-width:${$q.screen.xs ? '100%':'250px'};margin: 10px;`" />
-      <div style="max-width: 800px">
-        <List
-          dense
-          bordered
-        >
-          <q-expansion-item
-            v-for="(item, index) in codesPricesData"
-            :key="index"
-            icon="explore"
-            label="Роли"
-            expand-separator
+      <Table
+        :table-properties="transferTableProperties"
+        :table-data="codesPriceData"
+        :table-reactive-properties="transferTableReactiveProperties"
+        title="Цены"
+      >
+        <template v-slot:top-buttons>
+          <IconBtn
+            color="teal"
+            icon="add_box"
+            tooltip="Добавить"
+            @iconBtnClick="addCodeWithCategory"
+          />
+          <UpdateBtn
+            @updateBtnClick="refresh"
+          />
+        </template>
+        <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
+        <template v-slot:inner-item="{props}">
+          <div
+            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+            :style="props.selected ? 'transform: scale(0.95);' : ''"
           >
-            <template v-slot:header>
-              <q-item-section>
-                <ItemLabel>
-                  <Badge>{{ index }}</Badge>
-                </ItemLabel>
-              </q-item-section>
-
-              <q-item-section>
-                <ItemLabel>
-                  <IconBtn
-                    flat
-                    dense
-                    icon="add_circle"
-                    tooltip="Добавить"
-                    @iconBtnClick="openDialogAddCodePrice(item[0].code_id)"
-                  />
-                </ItemLabel>
-              </q-item-section>
-            </template>
-            <List
-              dense
-              bordered
-              separator
-              class="q-ml-md"
+            <q-expansion-item
+              expand-separator
+              class="shadow-1 overflow-hidden"
+              style="border-radius: 30px;border: 1px solid;"
+              expand-icon-class="text-white"
             >
-              <ListItem class="text-bold text-center">
-                <ItemSection>
-                  <ItemLabel>Категория</ItemLabel>
-                </ItemSection>
+              <template v-slot:header>
+                <q-item-section>
+                  <q-item-label :lines="2">
+                    {{ props.row.code }}
+                  </q-item-label>
+                </q-item-section>
 
-                <ItemSection>
-                  <ItemLabel>За кг</ItemLabel>
-                </ItemSection>
+                <q-item-section>
+                  <q-item-label>
+                    {{ props.row.data.length }}
+                  </q-item-label>
+                </q-item-section>
+              </template>
 
-                <ItemSection>
-                  <ItemLabel>За место</ItemLabel>
-                </ItemSection>
-                <ItemSection>
-                  <ItemLabel>Обновлено</ItemLabel>
-                </ItemSection>
-
-                <ItemSection side>
-                  Управление
-                </ItemSection>
-              </ListItem>
-
-              <ListItem
-                v-for="(elem, i) in item"
-                :key="i"
-                class="text-center"
+              <q-list
+                dense
+                bordered
+                separator
+                class="q-ma-md"
               >
-                <ItemSection>
-                  <ItemLabel :lines="3">
-                    <Badge color="positive">{{ elem.category_name }}</Badge>
-                  </ItemLabel>
-                </ItemSection>
+                <q-item class="text-bold text-center">
+                  <q-item-section>
+                    <q-item-label>Категория</q-item-label>
+                  </q-item-section>
 
-                <ItemSection>
-                  <ItemLabel>{{ elem.for_kg }}</ItemLabel>
-                </ItemSection>
+                  <q-item-section>
+                    <q-item-label>За кг</q-item-label>
+                  </q-item-section>
 
-                <ItemSection>
-                  <ItemLabel>{{ elem.for_place }}</ItemLabel>
-                </ItemSection>
+                  <q-item-section>
+                    <q-item-label>За место</q-item-label>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Обновлено</q-item-label>
+                  </q-item-section>
 
-                <ItemSection>
-                  <ItemLabel>{{ elem.updated_at }}</ItemLabel>
-                </ItemSection>
+                  <q-item-section side>
+                    Управление
+                  </q-item-section>
+                </q-item>
 
-                <ItemSection side>
-                  <div class="row">
-                    <IconBtn
-                      flat
-                      dense
-                      icon="history"
-                      tooltip="История"
-                      @iconBtnClick="getCodePriceHistory(elem.id)"
-                    />
-                    <IconBtn
-                      flat
-                      dense
-                      icon="edit"
-                      color="teal"
-                      tooltip="Редактировать"
-                      @iconBtnClick="openDialogAddCodePriceForUpdate(elem)"
-                    />
-                    <IconBtn
-                      flat
-                      dense
-                      icon="delete"
-                      color="negative"
-                      tooltip="Удалить"
-                      @iconBtnClick="deleteCodePrice(elem)"
-                    />
-                  </div>
-                </ItemSection>
-              </ListItem>
-            </List>
-          </q-expansion-item>
-        </List>
-      </div>
+                <q-item
+                  v-for="(elem, i) in props.row.data"
+                  :key="i"
+                  class="text-center"
+                >
+                  <q-item-section>
+                    <q-item-label :lines="3">
+                      <q-badge color="positive">{{ elem.category_name }}</q-badge>
+                    </q-item-label>
+                  </q-item-section>
+
+                  <q-item-section>
+                    <q-item-label>{{ elem.for_kg }}</q-item-label>
+                  </q-item-section>
+
+                  <q-item-section>
+                    <q-item-label>{{ elem.for_place }}</q-item-label>
+                  </q-item-section>
+
+                  <q-item-section>
+                    <q-item-label>{{ elem.updated_at }}</q-item-label>
+                  </q-item-section>
+
+                  <q-item-section side>
+                    <div class="row">
+                      <IconBtn
+                        flat
+                        dense
+                        icon="history"
+                        tooltip="История"
+                        @iconBtnClick="getCodePriceHistory(elem.id)"
+                      />
+                      <IconBtn
+                        flat
+                        dense
+                        icon="edit"
+                        color="teal"
+                        tooltip="Редактировать"
+                        @iconBtnClick="openDialogAddCodePriceForUpdate(elem)"
+                      />
+                      <IconBtn
+                        flat
+                        dense
+                        icon="delete"
+                        color="negative"
+                        tooltip="Удалить"
+                        @iconBtnClick="deleteCodePrice(elem)"
+                      />
+                    </div>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+          </div>
+        </template>
+
+        <template v-slot:inner-body="{props}">
+          <q-tr
+            :props="props"
+            class="text-bold cursor-pointer"
+            @click.stop="viewEditDialog(props, $event)"
+          >
+            <q-td
+              auto-width
+              class="select_checkbox"
+            >
+              <q-checkbox
+                v-model="props.selected"
+                dense
+              />
+            </q-td>
+
+            <q-td
+              key="code"
+              :props="props"
+            >
+              {{ props.row.code }}
+            </q-td>
+
+            <!--            <q-td-->
+            <!--              key="actions"-->
+            <!--              :props="props"-->
+            <!--            >-->
+            <!--            </q-td>-->
+          </q-tr>
+        </template>
+      </Table>
       <DialogAddCodePrice
         :show-dialog.sync="showDialogAddCodePrice"
         :code-id.sync="codeId"
@@ -147,7 +177,7 @@
         transition-show="slide-up"
         transition-hide="slide-down"
       >
-        <Card style="max-width: 600px;">
+        <q-card style="max-width: 600px;">
           <q-bar>
             <q-space />
             <IconBtn
@@ -159,10 +189,109 @@
             />
           </q-bar>
 
-          <CardSection class="q-pt-none">
+          <q-card-section class="q-pt-none">
             <CodePriceHistory :history-data="codePriceHistoryData" />
-          </CardSection>
-        </Card>
+          </q-card-section>
+        </q-card>
+      </Dialog>
+      <Dialog
+        :dialog="dialogViewCodeData"
+        :persistent="true"
+        transition-show="slide-up"
+        transition-hide="slide-down"
+      >
+        <q-card style="width: 100%;max-width: 800px;">
+          <q-bar>
+            {{ codeName }}
+            <q-space />
+            <q-btn
+              dense
+              flat
+              icon="close"
+              color="negative"
+              @click="dialogViewCodeData = false"
+            />
+          </q-bar>
+          <q-list
+            dense
+            bordered
+            separator
+            class="q-ma-md"
+          >
+            <q-item class="text-bold text-center">
+              <q-item-section>
+                <q-item-label>Категория</q-item-label>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>За кг</q-item-label>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>За место</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Обновлено</q-item-label>
+              </q-item-section>
+
+              <q-item-section side>
+                Управление
+              </q-item-section>
+            </q-item>
+
+            <q-item
+              v-for="(elem, i) in codeData"
+              :key="i"
+              class="text-center"
+            >
+              <q-item-section>
+                <q-item-label :lines="3">
+                  <q-badge color="positive">{{ elem.category_name }}</q-badge>
+                </q-item-label>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>{{ elem.for_kg }}</q-item-label>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>{{ elem.for_place }}</q-item-label>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>{{ elem.updated_at }}</q-item-label>
+              </q-item-section>
+
+              <q-item-section side>
+                <div class="row">
+                  <IconBtn
+                    flat
+                    dense
+                    icon="history"
+                    tooltip="История"
+                    @iconBtnClick="getCodePriceHistory(elem.id)"
+                  />
+                  <IconBtn
+                    flat
+                    dense
+                    icon="edit"
+                    color="teal"
+                    tooltip="Редактировать"
+                    @iconBtnClick="openDialogAddCodePriceForUpdate(elem)"
+                  />
+                  <IconBtn
+                    flat
+                    dense
+                    icon="delete"
+                    color="negative"
+                    tooltip="Удалить"
+                    @iconBtnClick="deleteCodePrice(elem)"
+                  />
+                </div>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card>
       </Dialog>
     </PullRefresh>
   </q-page>
@@ -177,31 +306,18 @@
         setFormatedDate,
         prepareHistoryData,
     } from 'src/utils/FrequentlyCalledFunctions';
-    import {
-        isoDate,
-        toDate,
-        formatToMysql,
-    } from 'src/utils/formatDate';
-    import { max } from 'date-fns';
     import { callFunction } from 'src/utils/index';
-    import { sortCollection } from 'src/utils/sort';
 
     export default {
         name: 'CodePrice',
         components: {
-            List: () => import('src/components/Elements/List/List.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            Badge: () => import('src/components/Elements/Badge.vue'),
+            Table: () => import('src/components/Elements/Table/Table.vue'),
+            UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
             IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
             DialogAddCodePrice: () => import('src/components/Dialogs/DialogAddCodePrice.vue'),
             CodePriceHistory: () => import('src/components/History/CodePriceHistory.vue'),
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            Card: () => import('src/components/Elements/Card/Card.vue'),
-            // CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-            Search: () => import('src/components/Search.vue'),
+            // Search: () => import('src/components/Search.vue'),
             // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             DialogAddNewCodePrice: () => import('src/components/Dialogs/DialogAddNewCodePrice.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
@@ -217,6 +333,32 @@
                 dialogHistory: false,
                 search: null,
                 codesPricesData: [],
+                transferTableProperties: {
+                    columns: [
+                        {
+                            name: 'code',
+                            label: 'Код',
+                            align: 'center',
+                            field: 'code',
+                            sortable: true,
+                            // sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+                        },
+                        // {
+                        //     name: 'actions',
+                        //     label: 'Действия',
+                        //     field: 'actions',
+                        //     align: 'center',
+                        //     sortable: true,
+                        // },
+                    ],
+                },
+                transferTableReactiveProperties: {
+                    selected: [],
+                    visibleColumns: ['code'],
+                },
+                dialogViewCodeData: false,
+                codeData: [],
+                codeName: null,
             };
         },
         computed: {
@@ -253,7 +395,7 @@
             },
             getCodesPrices() {
                 this.$q.loading.show();
-                this.$axios.get(getUrl('getCodesPrices'))
+                return this.$axios.get(getUrl('getCodesPrices'))
                   .then(({ data: { codesPrice } }) => {
                       _.forEach(codesPrice, (price) => {
                           setFormatedDate(price, ['updated_at']);
@@ -343,41 +485,26 @@
                   });
             },
             async refresh(done) {
-                const codesData = _.flattenDeep(_.values(this.codesPriceData));
-                devlog.log(codesData);
-                // callFunction(done);
-                await this.$axios.post(getUrl('getNewCodesPrices'), {
-                    created_at: isoDate(max(_.map(codesData, (item) => new Date(toDate(item.created_at))))),
-                    updated_at: formatToMysql(max(_.map(codesData, (item) => new Date(item.updated_at)))),
-                })
-                  .then(({ data: { updatedAndNewCodesPricesData } }) => {
-                      devlog.log('DTA', updatedAndNewCodesPricesData);
-                      if (!_.isEmpty(updatedAndNewCodesPricesData)) {
-                          const createdItems = [];
-                          _.forEach(updatedAndNewCodesPricesData, (item) => {
-                              const find = _.some(codesData, ['id', item.id]);
-                              if (find) {
-                                  this.$store.dispatch('codesPrices/updateCodePrice', this.setAdditionalData([item]));
-                              } else {
-                                  createdItems.push(item);
-                              }
-                          });
-
-                          if (!_.isEmpty(createdItems)) {
-                              _.forEach(sortCollection(createdItems, 'id'), (elem) => {
-                                  this.$store.dispatch('codesPrices/addNewCodePrice', this.setAdditionalData([elem]));
-                              });
-                          }
-
-                          this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                      } else {
-                          this.showNotif('info', 'Данные актуальны.', 'center');
-                      }
+                if (!done) {
+                    this.$q.loading.show();
+                }
+                this.getCodesPrices()
+                  .then(() => {
                       callFunction(done);
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
                   })
                   .catch(() => {
+                      this.$q.loading.hide();
                       callFunction(done);
                   });
+            },
+            viewEditDialog(elem, event) {
+                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
+                    this.dialogViewCodeData = true;
+                    this.codeName = elem.row.code;
+                    this.codeData = elem.row.data;
+                }
             },
         },
     };

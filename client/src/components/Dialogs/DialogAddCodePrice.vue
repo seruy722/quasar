@@ -7,7 +7,7 @@
   >
     <Card style="min-width: 320px;width: 100%;max-width: 800px;">
       <CardSection class="row justify-between bg-grey q-mb-sm">
-        <span class="text-h6">Добавление категории клиенту</span>
+        <span class="text-h6">{{ title }}</span>
         <div>
           <IconBtn
             dense
@@ -139,6 +139,9 @@
         computed: {
             categories() {
                 return this.$store.getters['category/getCategories'];
+            },
+            title() {
+                return _.isEmpty(this.entryData) ? 'Добавление' : 'Редактирование';
             },
         },
         watch: {

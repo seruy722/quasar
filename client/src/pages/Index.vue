@@ -2,7 +2,7 @@
   <q-page>
     <q-bar>
       <div class="text-weight-bold">
-        Cargo 007
+        Cargo 007 - v{{ $q.version }}
       </div>
       <q-space />
       <q-btn
