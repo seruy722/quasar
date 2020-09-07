@@ -57,6 +57,13 @@
           tooltip="Обновить цены"
           @iconBtnClick="updatePricesInFax(currentFaxItem.id)"
         />
+        <IconBtn
+          v-show="faxTableReactiveProperties.selected.length"
+          color="negative"
+          icon="delete"
+          :tooltip="$t('delete')"
+          @iconBtnClick="destroyEntry(faxTableReactiveProperties.selected)"
+        />
       </template>
 
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -885,6 +892,43 @@
                     id: this.currentFaxItem.id,
                     ids,
                 }, `Одесса ${this.currentFaxItem.name}.xlsx`);
+            },
+            destroyEntry(data) {
+                if (!_.isEmpty(data)) {
+                    const ids = [];
+                    _.forEach(data, ({ arr }) => {
+                        ids.push(..._.map(arr, 'id'));
+                    });
+                    this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
+                        {
+                            label: 'Отмена',
+                            color: 'white',
+                            handler: () => {
+                                this.faxTableReactiveProperties.selected = [];
+                            },
+                        },
+                        {
+                            label: 'Удалить',
+                            color: 'white',
+                            handler: () => {
+                                this.$q.loading.show();
+                                this.$axios.post(getUrl('destroyStorehouseData'), { ids })
+                                  .then(({ data: { status } }) => {
+                                      devlog.log('status', status);
+                                      this.$store.dispatch('faxes/deleteEntryFromFaxData', ids);
+                                      // this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
+                                      this.faxTableReactiveProperties.selected = [];
+                                      this.$q.loading.hide();
+                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
+                                  })
+                                  .catch(() => {
+                                      this.$q.loading.hide();
+                                      devlog.error('Ошибка запроса - destroyEntry');
+                                  });
+                            },
+                        },
+                    ]);
+                }
             },
         },
     };
