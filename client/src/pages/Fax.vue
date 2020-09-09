@@ -699,8 +699,12 @@
             destroyEntry(data) {
                 if (!_.isEmpty(data)) {
                     const ids = [];
-                    _.forEach(data, ({ arr }) => {
-                        ids.push(..._.map(arr, 'id'));
+                    _.forEach(data, (item) => {
+                        if (item.arr) {
+                            ids.push(..._.map(item.arr, 'id'));
+                        } else {
+                            ids.push(item.id);
+                        }
                     });
                     this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
                         {
@@ -714,15 +718,18 @@
                             label: 'Удалить',
                             color: 'white',
                             handler: () => {
+                                this.$q.loading.show();
                                 this.$axios.post(getUrl('destroyStorehouseData'), { ids })
                                   .then(({ data: { status } }) => {
                                       devlog.log('status', status);
                                       this.$store.dispatch('faxes/deleteEntryFromFaxData', ids);
                                       // this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
                                       this.faxTableReactiveProperties.selected = [];
+                                      this.$q.loading.hide();
                                       this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
                                   })
                                   .catch(() => {
+                                      this.$q.loading.hide();
                                       devlog.error('Ошибка запроса - destroyEntry');
                                   });
                             },

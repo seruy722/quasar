@@ -896,8 +896,12 @@
             destroyEntry(data) {
                 if (!_.isEmpty(data)) {
                     const ids = [];
-                    _.forEach(data, ({ arr }) => {
-                        ids.push(..._.map(arr, 'id'));
+                    _.forEach(data, (item) => {
+                        if (item.arr) {
+                            ids.push(..._.map(item.arr, 'id'));
+                        } else {
+                            ids.push(item.id);
+                        }
                     });
                     this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
                         {

@@ -266,6 +266,9 @@ class FaxController extends Controller
             if (!$isCodePlace) {
                 $elem->fax_id = $fax->id;
                 StorehouseData::create($elem->toArray());
+            } else {
+                $elem->fax_id = 0;
+                $elem->save();
             }
         });
         $transporter = Transporter::find($firstElem['transporter_id']);
