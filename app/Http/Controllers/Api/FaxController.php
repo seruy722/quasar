@@ -196,7 +196,7 @@ class FaxController extends Controller
                     unset($arr['created_at']);
                 }
                 $arr['sum'] = round($item->for_kg * $item->kg + $item->place * $item->for_place) * -1;
-                $arr['created_at'] = date('Y-m-d H:i:s',strtotime($date));
+                $arr['created_at'] = date('Y-m-d H:i:s', strtotime($date));
 
                 Cargo::create($arr);
                 $this->storeFaxHistory($item['id'], ['in_cargo' => $value], 'update', (new StorehouseData)->getTable());
@@ -262,8 +262,11 @@ class FaxController extends Controller
 
         $faxData = StorehouseData::whereIn('fax_id', $faxIds)->get();
         $faxData->each(function ($elem) use ($fax) {
-            $elem->fax_id = $fax->id;
-            StorehouseData::create($elem->toArray());
+            $isCodePlace = StorehouseData::where('code_place', $elem->code_place)->where('fax_id', $fax->id)->first();
+            if (!$isCodePlace) {
+                $elem->fax_id = $fax->id;
+                StorehouseData::create($elem->toArray());
+            }
         });
         $transporter = Transporter::find($firstElem['transporter_id']);
         $fax->name = 'JOIN_Деберц ' . $transporter->name . ' ' . $faxData->sum('place') . 'м_' . $faxData->sum('kg') . 'кг';

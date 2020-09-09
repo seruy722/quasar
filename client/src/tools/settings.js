@@ -32,6 +32,11 @@ const settings = {
       value: 4,
       color: 'accent',
     },
+    {
+      label: 'На складе',
+      value: 5,
+      color: 'accent',
+    },
   ],
   sex: [
     {
