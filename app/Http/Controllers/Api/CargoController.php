@@ -453,4 +453,9 @@ class CargoController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\GeneralDataByClientsExport($request->model), 'transfers.xlsx');
     }
 
+    public function exportReportOdessaData(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\ExportReportOdessaData($request->date), 'transfers.xlsx');
+    }
+
 }

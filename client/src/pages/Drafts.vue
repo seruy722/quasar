@@ -96,6 +96,18 @@
       <q-btn label="GET" @click="exportCustomersWhoLeft" />
     </div>
 
+    <div style="border: 1px solid blue;">
+      Оборот товара Одесса
+      <div class="q-pa-md">
+        <q-date
+          v-model="date"
+          default-view="Months"
+          mask="MM-YYYY"
+        />
+      </div>
+      <q-btn label="GET" @click="exportReportOdessaData(date)" />
+    </div>
+
     <div>
       Загрузка факсов
       <input type="file" multiple @change="upFaxDataFiles">
@@ -124,6 +136,7 @@
         mixins: [showNotif],
         data() {
             return {
+                date: null,
                 columns: [
                     {
                         name: 'code',
@@ -341,6 +354,38 @@
                           window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
                       }
                   });
+            },
+            exportReportOdessaData(date) {
+                if (date) {
+                    this.$axios({
+                        url: getUrl('exportReportOdessaData'),
+                        method: 'POST',
+                        responseType: 'blob', // important
+                        data: {
+                            date,
+                        },
+                        // headers: {
+                        //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        // },
+                    })
+                      .then((response) => {
+                          devlog.log('RES_BLOB', response);
+                          if (!window.navigator.msSaveOrOpenBlob) {
+                              // BLOB NAVIGATOR
+                              const url = window.URL.createObjectURL(new Blob([response.data]));
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.setAttribute('download', 'brands.xlsx');
+                              document.body.appendChild(link);
+                              link.click();
+                          } else {
+                              // BLOB FOR EXPLORER 11
+                              window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
+                          }
+                      });
+                } else {
+                    this.showNotif('warning', 'Выберите дату!', 'center');
+                }
             },
         },
     };
