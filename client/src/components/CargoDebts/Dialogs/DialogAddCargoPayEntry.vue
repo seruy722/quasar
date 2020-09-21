@@ -51,6 +51,7 @@
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
               :label="item.label"
+              :autofocus="item.autofocus"
               :type="item.type"
               :mask="item.mask"
               :dense="$q.screen.xs || $q.screen.sm"
@@ -202,6 +203,7 @@
                         require: true,
                         requireError: 'Поле обьзательное для заполнения.',
                         changeValue: false,
+                        autofocus: true,
                         default: 0,
                         value: 0,
                     },

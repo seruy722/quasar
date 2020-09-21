@@ -201,6 +201,7 @@
                 v-model.number="props.row.for_kg"
                 type="number"
                 dense
+                autofocus
               />
               <q-checkbox
                 v-model="props.row.replacePrice"

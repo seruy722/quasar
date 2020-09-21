@@ -210,6 +210,7 @@
                         type: 'number',
                         label: 'Сумма',
                         changeValue: false,
+                        autofocus: true,
                         default: 0,
                         value: 0,
                     },
