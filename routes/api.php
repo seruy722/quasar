@@ -146,6 +146,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/export-fax-admin-data', 'Api\FaxDataController@exportAdmin');
     Route::post('/export-fax-admin-data-odessa-kharkov', 'Api\FaxDataController@exportFaxDataOdessaKharkov')->name('export fax admin data odessa kharkov')->middleware(['role_or_permission:admin|fax|export fax admin data odessa kharkov']);
     Route::post('/export-fax-admin-data-odessa', 'Api\FaxDataController@exportFaxDataOdessa')->name('export fax admin data odessa')->middleware(['role_or_permission:admin|fax|export fax admin data odessa']);
+    Route::post('/fax-data-history', 'Api\FaxDataController@getFaxDataHistory')->name('fax data history')->middleware(['role_or_permission:admin|fax|fax data history']);
 
     // CATEGORIES
     Route::get('/categories', 'Api\CategoryController@index');

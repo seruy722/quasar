@@ -102,7 +102,7 @@ const settings = {
     create: 'add',
     update: 'update',
     destroy: 'delete',
-    move: 'move_to_inbox',
+    move: 'sync_alt',
   },
   statusTask: [
     {

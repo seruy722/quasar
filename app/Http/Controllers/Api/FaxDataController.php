@@ -8,6 +8,7 @@ use App\Code;
 use App\CodesPrices;
 use App\Customer;
 use App\FaxData;
+use App\History;
 use App\Shop;
 use App\StorehouseData;
 use App\Thingslist;
@@ -356,5 +357,11 @@ class FaxDataController extends Controller
             }
         }
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxExportForAdmin\FaxSheetsExport($request->id, array_unique($ids)), 'storehouseData.xlsx');
+    }
+
+    public function getFaxDataHistory(Request $request)
+    {
+        $entries = History::where('entry_id', 0)->where('table', (new FaxData())->getTable())->orWhere('history_data', 'like', '%' . '"moveToFaxId": ' . $request->faxId . '%')->orWhere('history_data', 'like', '%' . '"moveFromFaxId": ' . $request->faxId . '%')->orderBy('id', 'desc')->get();
+        return response(['historyData' => $entries]);
     }
 }

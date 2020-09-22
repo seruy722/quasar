@@ -131,6 +131,7 @@ const urls = {
   exportFaxDataOdessaKharkov: `${prefix}/export-fax-admin-data-odessa-kharkov`,
   exportFaxDataOdessa: `${prefix}/export-fax-admin-data-odessa`,
   closeUsersAccess: `${prefix}/close-users-access`,
+  getFaxDataHistory: `${prefix}/fax-data-history`,
   exportReportOdessaData: `${prefix}/export-report-odessa-data`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {

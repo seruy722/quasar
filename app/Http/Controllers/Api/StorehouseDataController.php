@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Category;
 use App\CodesPrices;
+use App\Fax;
+use App\FaxData;
 use App\Shop;
 use App\StorehouseData;
 use App\Thingslist;
@@ -70,10 +72,12 @@ class StorehouseDataController extends Controller
             'storehouse_data.updated_at',
             'codes.code as code_client_name',
             'categories.name as category_name',
-            'delivery_methods.name as delivery_method_name'
+            'delivery_methods.name as delivery_method_name',
+            'faxes.name as fax_name'
         )
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
+            ->leftJoin('faxes', 'faxes.id', '=', 'storehouse_data.fax_id')
             ->leftJoin('delivery_methods', 'delivery_methods.id', '=', 'storehouse_data.delivery_method_id')
             ->where('storehouse_data.storehouse_id', $id)
             ->where('storehouse_data.destroyed', false)
@@ -361,15 +365,16 @@ class StorehouseDataController extends Controller
         $this->validate($request, [
             'ids' => 'required|array',
         ]);
-        foreach ($request->ids as $id) {
-            $entry = StorehouseData::find($id);
+        $arrayData = $this->storehouseDataList(1)->whereIn('storehouse_data.id', $request->ids)->get();
+        foreach ($arrayData as $entry) {
             if ($entry) {
                 $entry->destroyed = true;
                 $entry->save();
-                $this->storehouseDataHistory($id, $entry->toArray(), 'destroy', (new StorehouseData)->getTable());
+                $this->storehouseDataHistory($entry->id, $entry->toArray(), 'destroy', (new StorehouseData)->getTable());
                 $entry->delete();
             }
         }
+        $this->storehouseDataHistory(0, $arrayData->toArray(), 'destroy', (new FaxData())->getTable());
         return response(['status' => true]);
     }
 
@@ -512,12 +517,16 @@ class StorehouseDataController extends Controller
     public function moveFromStorehouseToFax(Request $request)
     {
         $faxId = $request->faxId;
-        $d2 = StorehouseData::whereIn('id', $request->ids)->get();
-        $d2->each(function ($item) use ($faxId) {
+        $data = $this->storehouseDataList(1)->whereIn('storehouse_data.id', $request->ids)->get();
+        $moveFromFaxId = $data->first()->fax_id;
+        $data->each(function ($item) use ($faxId) {
             $item->fax_id = $faxId;
             $item->save();
             $this->storehouseDataHistory($item['id'], ['fax_id' => $faxId], 'update', (new StorehouseData)->getTable());
         });
+        $arrayData = $data->toArray();
+        $arrayData['moveData'] = ['moveToFax' => Fax::find($faxId)->name, 'moveFromFax' => Fax::find($moveFromFaxId)->name];
+        $this->storehouseDataHistory(0, $arrayData, 'move', (new FaxData())->getTable());
         return response(['status' => true]);
     }
 }

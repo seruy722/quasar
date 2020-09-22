@@ -64,6 +64,12 @@
           :tooltip="$t('delete')"
           @iconBtnClick="destroyEntry(faxTableReactiveProperties.selected)"
         />
+        <IconBtn
+          dense
+          icon="history"
+          tooltip="История"
+          @iconBtnClick="getFaxTransfersDataHistory(currentFaxItem)"
+        />
       </template>
 
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -444,6 +450,30 @@
         </CardSection>
       </Card>
     </Dialog>
+    <Dialog
+      :dialog="dialogHistory"
+      :persistent="true"
+      :maximized="true"
+    >
+      <q-card style="max-width: 600px;">
+        <q-bar>
+          <q-space />
+          <IconBtn
+            flat
+            dense
+            icon="close"
+            tooltip="Закрыть"
+            @iconBtnClick="dialogHistory = false"
+          />
+        </q-bar>
+
+        <q-card-section class="q-pt-none">
+          <FaxTransferDataHistory
+            :history-data="historyData"
+          ></FaxTransferDataHistory>
+        </q-card-section>
+      </q-card>
+    </Dialog>
   </q-page>
 </template>
 
@@ -470,24 +500,25 @@
     export default {
         name: 'Fax',
         components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            // Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            // Badge: () => import('src/components/Elements/Badge.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            DialogFaxData: () => import('src/components/Dialogs/DialogFaxData.vue'),
-            StorehouseDataHistory: () => import('src/components/History/StorehouseDataHistory.vue'),
-            Card: () => import('src/components/Elements/Card/Card.vue'),
-            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            CountCategories: () => import('src/components/CountCategories.vue'),
-            PopupEdit: () => import('src/components/PopupEdit.vue'),
-            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-            // Search: () => import('src/components/Search.vue'),
+            Table: () => import('components/Elements/Table/Table.vue'),
+            // Icon: () => import('components/Buttons/Icons/Icon.vue'),
+            IconBtn: () => import('components/Buttons/IconBtn.vue'),
+            List: () => import('components/Elements/List/List.vue'),
+            ItemSection: () => import('components/Elements/List/ItemSection.vue'),
+            ItemLabel: () => import('components/Elements/List/ItemLabel.vue'),
+            ListItem: () => import('components/Elements/List/ListItem.vue'),
+            // Badge: () => import('components/Elements/Badge.vue'),
+            BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
+            DialogFaxData: () => import('components/Dialogs/DialogFaxData.vue'),
+            StorehouseDataHistory: () => import('components/History/StorehouseDataHistory.vue'),
+            Card: () => import('components/Elements/Card/Card.vue'),
+            CardSection: () => import('components/Elements/Card/CardSection.vue'),
+            Dialog: () => import('components/Dialogs/Dialog.vue'),
+            CountCategories: () => import('components/CountCategories.vue'),
+            PopupEdit: () => import('components/PopupEdit.vue'),
+            SearchSelect: () => import('components/Elements/SearchSelect.vue'),
+            FaxTransferDataHistory: () => import('components/History/FaxTransferDataHistory.vue'),
+            // Search: () => import('components/Search.vue'),
         },
         filters: {
             optionsFilter(id, categories) {
@@ -501,6 +532,8 @@
         mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
         data() {
             return {
+                dialogHistory: false,
+                historyData: [],
                 isTransfer: false,
                 addToSaveArray: [],
                 search: null,
@@ -933,6 +966,17 @@
                         },
                     ]);
                 }
+            },
+            getFaxTransfersDataHistory(fax) {
+                this.$q.loading.show();
+                this.$axios.post(getUrl('getFaxDataHistory'), { faxId: fax.id })
+                  .then(({ data: { historyData } }) => {
+                      this.$q.loading.hide();
+                      if (!_.isEmpty(historyData)) {
+                          this.dialogHistory = true;
+                          this.historyData = historyData;
+                      }
+                  });
             },
         },
     };
