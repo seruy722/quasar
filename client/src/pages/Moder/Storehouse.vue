@@ -426,12 +426,14 @@
                             label: 'Удалить',
                             color: 'white',
                             handler: () => {
+                                this.$q.loading.show();
                                 this.$axios.post(getUrl('destroyStorehouseData'), { ids })
                                   .then(({ data: { status } }) => {
                                       devlog.log('status', status);
                                       this.$store.dispatch('storehouse/destroyStorehouseData', ids);
                                       // this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
                                       this.storehouseTableReactiveProperties.selected = [];
+                                      this.$q.loading.hide();
                                       this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
                                   })
                                   .catch(() => {

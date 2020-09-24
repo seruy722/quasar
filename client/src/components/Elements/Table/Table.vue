@@ -130,13 +130,23 @@
                 searchOptionsFields: [],
             };
         },
-        watch: {
-            search(val) {
-                if (!val) {
-                    this.$emit('update:searchData', []);
-                }
-            },
-        },
+        // computed: {
+        //     search: {
+        //         get: function get() {
+        //             return this.$store.getters['settings/getSearch'];
+        //         },
+        //         set: function set(val) {
+        //             this.$store.dispatch('settings/setSearch', val);
+        //         },
+        //     },
+        // },
+        // watch: {
+        //     search(val) {
+        //         if (!val) {
+        //             this.$emit('update:searchData', []);
+        //         }
+        //     },
+        // },
         created() {
             // const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
             // el.setAttribute('style', `max-height: ${document.documentElement.clientHeight - 100}px`);
@@ -167,7 +177,7 @@
                     .indexOf(lowerTerms) !== -1),
                 );
                 devlog.log('resultSerarch', result);
-                this.$emit('update:searchData', result);
+                // this.$emit('update:searchData', result);
                 return result;
             },
             customSort(rows, sortBy, descending) {

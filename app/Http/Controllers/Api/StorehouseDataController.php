@@ -6,8 +6,10 @@ use App\Category;
 use App\CodesPrices;
 use App\Fax;
 use App\FaxData;
+use App\HistoryModels\StorehouseDataHistory;
 use App\Shop;
 use App\StorehouseData;
+use App\StorehouseHistory;
 use App\Thingslist;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -192,6 +194,15 @@ class StorehouseDataController extends Controller
 
         $storehouse = StorehouseData::create($saveData);
         \App\CodePlace::create(['code_place' => $saveData['code_place']]);
+        $saveDataForStorehouseDataHistory = [
+            'code_place' => $saveData['code_place'],
+            'storehouse_entry_id' => $storehouse->id,
+            'code_client_id' => $saveData['code_client_id'],
+            'kg' => $saveData['kg'],
+            'category_id' => $saveData['category_id'],
+            'place' => 1,
+        ];
+        StorehouseHistory::create($saveDataForStorehouseDataHistory);
         $this->storehouseDataHistory($storehouse->id, $saveData, 'create', (new StorehouseData)->getTable());
 
         $arrData = $this->storehouseDataList(1);
@@ -279,6 +290,7 @@ class StorehouseDataController extends Controller
         }
 
         StorehouseData::where('id', $request->id)->update($data);
+        StorehouseHistory::where('storehouse_entry_id', $request->id)->update($data);
         $this->storehouseDataHistory($request->id, $data, 'update', (new StorehouseData)->getTable());
 
         $arrData = $this->storehouseDataList(1);
@@ -374,6 +386,7 @@ class StorehouseDataController extends Controller
                 $entry->delete();
             }
         }
+        StorehouseHistory::whereIn('storehouse_entry_id', $request->ids)->delete();
         $this->storehouseDataHistory(0, $arrayData->toArray(), 'destroy', (new FaxData())->getTable());
         return response(['status' => true]);
     }

@@ -155,4 +155,5 @@ export default {
       },
     },
   ],
+  search: null,
 };

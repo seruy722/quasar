@@ -1,1 +1,2 @@
-export const getMenu = ((state) => state.menu);
+export const getMenu = ({ menu }) => menu;
+export const getSearch = ({ search }) => search;
