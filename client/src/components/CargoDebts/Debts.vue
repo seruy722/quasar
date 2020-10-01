@@ -14,31 +14,31 @@
         />
         <UpdateBtn
           v-show="currentCodeClientId"
-          @updateBtnClick="refresh"
+          @update-btn-click="refresh"
         />
         <ExportBtn
-          @exportBtnClick="exportFaxData(debtsTableReactiveProperties.selected)"
+          @export-btn-click="exportFaxData(debtsTableReactiveProperties.selected)"
         />
         <IconBtn
           v-show="debtsTableReactiveProperties.selected.length"
           color="negative"
           icon="delete"
           :tooltip="$t('delete')"
-          @iconBtnClick="destroyDebtEntry(debtsTableReactiveProperties.selected)"
+          @icon-btn-click="destroyDebtEntry(debtsTableReactiveProperties.selected)"
         />
 
         <IconBtn
           v-show="debtsTableReactiveProperties.selected.length === 1"
           icon="attach_money"
           tooltip="Оплатить"
-          @iconBtnClick="pay(debtsTableReactiveProperties.selected[0])"
+          @icon-btn-click="pay(debtsTableReactiveProperties.selected[0])"
         />
         <IconBtn
           v-show="currentCodeClientId"
           icon="payments"
           color="orange"
           tooltip="Оплатить все"
-          @iconBtnClick="paymentsAll(currentCodeClientId)"
+          @icon-btn-click="paymentsAll(currentCodeClientId)"
         />
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -121,7 +121,7 @@
               <!--                    label="История"-->
               <!--                    color="info"-->
               <!--                    style="max-width: 100px;margin: 0 auto;"-->
-              <!--                    @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"-->
+              <!--                    @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"-->
               <!--                  />-->
               <!--                </q-item-section>-->
               <!--              </q-item>-->

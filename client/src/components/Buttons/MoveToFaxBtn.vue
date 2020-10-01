@@ -4,7 +4,7 @@
     round
     color="info"
     icon="move_to_inbox"
-    @click="$emit('moveToFaxClick')"
+    @click="$emit('move-to-fax-click')"
   >
     <q-tooltip anchor="bottom middle" self="top middle" :offset="[10, 10]">
       Переместить

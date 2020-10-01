@@ -133,6 +133,9 @@ const urls = {
   closeUsersAccess: `${prefix}/close-users-access`,
   getFaxDataHistory: `${prefix}/fax-data-history`,
   exportReportOdessaData: `${prefix}/export-report-odessa-data`,
+  setDeliveredFaxData: `${prefix}/set-delivered-fax-data`,
+  getNotDeliveredCargo: `${prefix}/get-not-delivered-cargo`,
+  setDeliveredCargo: `${prefix}/set-delivered-cargo`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,

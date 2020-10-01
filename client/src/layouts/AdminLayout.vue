@@ -10,7 +10,7 @@
           icon="menu"
           tooltip="Меню"
           color="white"
-          @iconBtnClick="drawer = !drawer"
+          @icon-btn-click="drawer = !drawer"
         />
         <q-toolbar-title>{{ pageTitle }}</q-toolbar-title>
       </q-toolbar>

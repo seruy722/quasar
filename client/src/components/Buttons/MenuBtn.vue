@@ -5,7 +5,7 @@
     color="info"
     icon="more_vert"
     data-vue-component-name="MenuBtn"
-    @click="$emit('menuBtnClick')"
+    @click="$emit('menu-btn-click')"
   >
     <slot></slot>
     <q-tooltip anchor="bottom middle" self="top middle" :offset="[10, 10]">

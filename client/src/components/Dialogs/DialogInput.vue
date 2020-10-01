@@ -22,14 +22,14 @@
           label="Отмена"
           color="negative"
           :dense="$q.screen.xs || $q.screen.sm"
-          @clickBaseBtn="show = false"
+          @click-base-btn="show = false"
         />
 
         <BaseBtn
           label="OK"
           color="positive"
           :dense="$q.screen.xs || $q.screen.sm"
-          @clickBaseBtn="save(key)"
+          @click-base-btn="save(key)"
         />
       </q-card-actions>
     </q-card>

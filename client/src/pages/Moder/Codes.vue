@@ -14,14 +14,14 @@
             color="primary"
             icon="sync"
             tooltip="Обновить"
-            @iconBtnClick="refresh"
+            @icon-btn-click="refresh"
           />
           <!--          <IconBtn-->
           <!--            color="positive"-->
           <!--            tooltip="Excel"-->
           <!--            icon="explicit"-->
           <!--            class="q-ml-sm"-->
-          <!--            @iconBtnClick="exportTransfers"-->
+          <!--            @icon-btn-click="exportTransfers"-->
           <!--          />-->
           <Menu :items="['Код', 'Клиента']" />
           <IconBtn
@@ -29,7 +29,7 @@
             tooltip="Excel"
             icon="explicit"
             class="q-ml-sm"
-            @iconBtnClick="exportCustomers"
+            @icon-btn-click="exportCustomers"
           />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -64,13 +64,13 @@
                     <!--                      dense-->
                     <!--                      icon="add_circle"-->
                     <!--                      tooltip="Добавить клиента"-->
-                    <!--                      @iconBtnClick="openClientAddDialog(props)"-->
+                    <!--                      @icon-btn-click="openClientAddDialog(props)"-->
                     <!--                    />-->
                     <IconBtn
                       dense
                       icon="history"
                       tooltip="История"
-                      @iconBtnClick="getCodeHistory(props.row.id, props.cols)"
+                      @icon-btn-click="getCodeHistory(props.row.id, props.cols)"
                     />
                   </q-item-label>
                 </q-item-section>
@@ -111,7 +111,7 @@
                         dense
                         icon="add_box"
                         tooltip="Добавить клиента"
-                        @iconBtnClick="openClientAddDialog(props)"
+                        @icon-btn-click="openClientAddDialog(props)"
                       />
                     </div>
                   </q-item-section>
@@ -139,14 +139,14 @@
                         dense
                         icon="history"
                         tooltip="История"
-                        @iconBtnClick="getClientHistory(item.id, localProps.cols)"
+                        @icon-btn-click="getClientHistory(item.id, localProps.cols)"
                       />
                       <IconBtn
                         dense
                         icon="delete"
                         tooltip="Удалить"
                         color="negative"
-                        @iconBtnClick="destroyCustomer(item)"
+                        @icon-btn-click="destroyCustomer(item)"
                       />
                     </q-item-label>
                   </q-item-section>
@@ -220,13 +220,13 @@
                 icon="add_box"
                 color="teal"
                 tooltip="Добавить клиента"
-                @iconBtnClick="openClientAddDialog(localProps)"
+                @icon-btn-click="openClientAddDialog(localProps)"
               />
               <IconBtn
                 dense
                 icon="history"
                 tooltip="История"
-                @iconBtnClick="getCodeHistory(localProps.row.id, localProps.cols)"
+                @icon-btn-click="getCodeHistory(localProps.row.id, localProps.cols)"
               />
 
               <IconBtn
@@ -234,7 +234,7 @@
                 icon="clear"
                 color="negative"
                 tooltip="Закрыть"
-                @iconBtnClick="cancel"
+                @icon-btn-click="cancel"
               />
             </div>
           </q-card-section>
@@ -315,14 +315,14 @@
                       dense
                       icon="history"
                       tooltip="История"
-                      @iconBtnClick="getClientHistory(item.id, localProps.cols)"
+                      @icon-btn-click="getClientHistory(item.id, localProps.cols)"
                     />
                     <IconBtn
                       dense
                       icon="delete"
                       tooltip="Удалить"
                       color="negative"
-                      @iconBtnClick="destroyCustomer(item)"
+                      @icon-btn-click="destroyCustomer(item)"
                     />
                   </q-item-label>
                 </q-item-section>
@@ -349,7 +349,7 @@
               dense
               icon="close"
               tooltip="Закрыть"
-              @iconBtnClick="dialogHistory = false"
+              @icon-btn-click="dialogHistory = false"
             />
           </q-bar>
 

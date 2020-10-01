@@ -7,7 +7,7 @@
     :label-set="labelSet"
     :label-cancel="labelCancel"
     dense
-    @save="$emit('addToSave')"
+    @save="$emit('add-to-save')"
     @show="$emit('show')"
     @hide="$emit('update:edit', false)"
   >

@@ -21,7 +21,7 @@
     :input-style="{fontWeight: 'bold'}"
     data-vue-component="BaseInput"
     @input="inputEvent"
-    @keyup="$emit('onKeyUp', $event)"
+    @keyup="$emit('on-key-up', $event)"
   >
     <template v-slot:append>
       <slot name="append"></slot>

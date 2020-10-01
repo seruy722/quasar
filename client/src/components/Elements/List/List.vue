@@ -5,7 +5,7 @@
         :padding="padding"
         :separator="separator"
         data-vue-component-name="List"
-        @click.stop="$emit('clickList')"
+        @click.stop="$emit('click-list')"
     >
         <slot></slot>
     </q-list>

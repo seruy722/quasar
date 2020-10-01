@@ -29,7 +29,7 @@
             :value.sync="item.for_kg"
             type="number"
             :title="item.name"
-            @addToSave="addToSaveArray(item)"
+            @add-to-save="addToSaveArray(item)"
           />
         </ItemSection>
         <ItemSection v-if="item.sum !== undefined">
@@ -67,7 +67,7 @@
       v-show="arrayToSave.length"
       label="Сохранить"
       color="positive"
-      @clickBaseBtn="saveCategoriesPrice(arrayToSave)"
+      @click-base-btn="saveCategoriesPrice(arrayToSave)"
     />
   </div>
 </template>

@@ -5,7 +5,7 @@
     color="primary"
     icon="sync"
     data-vue-component-name="UpdateBtn"
-    @click="$emit('updateBtnClick')"
+    @click="$emit('update-btn-click')"
   >
     <q-tooltip anchor="bottom middle" self="top middle" :offset="[10, 10]">
       Обновить

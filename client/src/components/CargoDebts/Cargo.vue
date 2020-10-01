@@ -14,31 +14,31 @@
         />
         <UpdateBtn
           v-show="currentCodeClientId"
-          @updateBtnClick="refresh"
+          @update-btn-click="refresh"
         />
         <ExportBtn
-          @exportBtnClick="exportFaxData(cargoTableReactiveProperties.selected)"
+          @export-btn-click="exportFaxData(cargoTableReactiveProperties.selected)"
         />
         <IconBtn
           v-show="cargoTableReactiveProperties.selected.length"
           color="negative"
           icon="delete"
           :tooltip="$t('delete')"
-          @iconBtnClick="destroyEntry(cargoTableReactiveProperties.selected)"
+          @icon-btn-click="destroyEntry(cargoTableReactiveProperties.selected)"
         />
 
         <IconBtn
           v-show="cargoTableReactiveProperties.selected.length === 1"
           icon="attach_money"
           tooltip="Оплатить"
-          @iconBtnClick="pay(cargoTableReactiveProperties.selected[0])"
+          @icon-btn-click="pay(cargoTableReactiveProperties.selected[0])"
         />
         <IconBtn
           v-show="currentCodeClientId"
           icon="payments"
           color="orange"
           tooltip="Оплатить все"
-          @iconBtnClick="paymentsAll(currentCodeClientId)"
+          @icon-btn-click="paymentsAll(currentCodeClientId)"
         />
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -69,7 +69,8 @@
 
               <q-item-section>
                 <q-item-label :lines="2">
-                  {{ props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name || ''}` : props.row.type ?
+                  {{ props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name || ''}` : props.row.type
+                  ?
                   props.row.sum : props.row.notation
                   }}
                 </q-item-label>
@@ -146,7 +147,7 @@
               <!--                    label="История"-->
               <!--                    color="info"-->
               <!--                    style="max-width: 100px;margin: 0 auto;"-->
-              <!--                    @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"-->
+              <!--                    @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"-->
               <!--                  />-->
               <!--                </q-item-section>-->
               <!--              </q-item>-->
@@ -286,6 +287,15 @@
             :props="props"
           >
             {{ props.row.shop }}
+          </q-td>
+
+          <q-td
+            key="in_cargo"
+            :props="props"
+          >
+            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{ props.row.in_cargo ? 'Да':
+              props.row.type ? null : 'Нет' }}
+            </q-badge>
           </q-td>
 
           <q-td
@@ -486,6 +496,13 @@
                             sortable: true,
                         },
                         {
+                            name: 'in_cargo',
+                            label: 'Доставлен',
+                            field: 'in_cargo',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'things',
                             label: this.$t('things'),
                             field: 'things',
@@ -511,7 +528,7 @@
                 },
                 cargoTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'place', 'kg', 'for_kg', 'for_place', 'notation', 'category_name', 'fax_name', 'sale', 'get_pay_user_name'],
+                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'in_cargo', 'place', 'kg', 'for_kg', 'for_place', 'notation', 'category_name', 'fax_name', 'sale', 'get_pay_user_name'],
                     title: '',
                 },
                 showDialogAddCargoPaymentEntry: false,

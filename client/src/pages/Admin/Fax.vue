@@ -14,7 +14,7 @@
           color="positive"
           icon="save"
           tooltip="Сохранить"
-          @iconBtnClick="saveDataInCombineTable(addToSaveArray)"
+          @icon-btn-click="saveDataInCombineTable(addToSaveArray)"
         />
 
         <q-checkbox
@@ -27,48 +27,56 @@
           color="positive"
           icon="explicit"
           tooltip="excel"
-          @iconBtnClick="exportFaxData"
+          @icon-btn-click="exportFaxData"
         />
 
         <IconBtn
           color="positive"
           icon="directions_bus"
           tooltip="Одесса-Харьков"
-          @iconBtnClick="exportFaxDataOdessaKharkov"
+          @icon-btn-click="exportFaxDataOdessaKharkov"
         />
 
         <IconBtn
           color="positive"
           icon="directions_railway"
           tooltip="Одесса"
-          @iconBtnClick="exportFaxDataOdessa"
+          @icon-btn-click="exportFaxDataOdessa"
         />
 
         <IconBtn
           v-show="!combineTableData"
           icon="sync_alt"
           tooltip="Трансфер данных"
-          @iconBtnClick="openDialogTransferFromStorehouse"
+          @icon-btn-click="openDialogTransferFromStorehouse"
         />
 
         <IconBtn
           icon="data_usage"
           color="orange"
           tooltip="Обновить цены"
-          @iconBtnClick="updatePricesInFax(currentFaxItem.id)"
+          @icon-btn-click="updatePricesInFax(currentFaxItem.id)"
         />
         <IconBtn
           v-show="faxTableReactiveProperties.selected.length"
           color="negative"
           icon="delete"
           :tooltip="$t('delete')"
-          @iconBtnClick="destroyEntry(faxTableReactiveProperties.selected)"
+          @icon-btn-click="destroyEntry(faxTableReactiveProperties.selected)"
         />
         <IconBtn
           dense
           icon="history"
           tooltip="История"
-          @iconBtnClick="getFaxTransfersDataHistory(currentFaxItem)"
+          @icon-btn-click="getFaxTransfersDataHistory(currentFaxItem)"
+        />
+        <IconBtn
+          v-show="faxTableReactiveProperties.selected.length"
+          dense
+          icon="vertical_align_center"
+          color="accent"
+          tooltip="Доставлено"
+          @icon-btn-click="dialogSelectDeliveredPlace = true"
         />
       </template>
 
@@ -86,66 +94,66 @@
             expand-icon-class="text-white"
           >
             <template v-slot:header>
-              <ItemSection avatar>
+              <q-item-section avatar>
                 <q-checkbox
                   v-model="props.selected"
                   dense
                 />
-              </ItemSection>
+              </q-item-section>
 
-              <ItemSection>
-                <ItemLabel :lines="2">
+              <q-item-section>
+                <q-item-label :lines="2">
                   {{ props.row.code_client_name }}
-                </ItemLabel>
-              </ItemSection>
+                </q-item-label>
+              </q-item-section>
             </template>
 
-            <List
+            <q-list
               separator
               dense
             >
-              <ListItem
+              <q-item
                 v-for="col in props.cols.filter(col => col.name !== 'desc')"
                 :key="col.name"
-                @clickList="viewEditDialog(props)"
+                @click="viewEditDialog(props)"
               >
-                <ItemSection>
-                  <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
-                </ItemSection>
-                <ItemSection side>
-                  <ItemLabel
+                <q-item-section>
+                  <q-item-label>{{ `${col.label}:` }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label
                     v-if="col.field === 'things'"
                     :lines="10"
                   >
                     {{ col.value | thingsFilter }}
-                  </ItemLabel>
-                  <ItemLabel
+                  </q-item-label>
+                  <q-item-label
                     v-else-if="col.field === 'kg'"
                   >
                     {{ col.value | numberFormatFilter }}
-                  </ItemLabel>
-                  <ItemLabel
+                  </q-item-label>
+                  <q-item-label
                     v-else-if="col.field === 'notation'"
                     :lines="4"
                   >
                     {{ col.value }}
-                  </ItemLabel>
-                  <ItemLabel v-else>
+                  </q-item-label>
+                  <q-item-label v-else>
                     {{ col.value }}
-                  </ItemLabel>
-                </ItemSection>
-              </ListItem>
-              <ListItem>
-                <ItemSection>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
                   <BaseBtn
                     label="История"
                     color="info"
                     style="max-width: 100px;margin: 0 auto;"
-                    @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"
+                    @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"
                   />
-                </ItemSection>
-              </ListItem>
-            </List>
+                </q-item-section>
+              </q-item>
+            </q-list>
           </q-expansion-item>
         </div>
       </template>
@@ -180,7 +188,7 @@
               :value.sync="props.row.code_client_id"
               type="number"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'code_client_id')"
+              @add-to-save="addToAddSaveArray(props.row, 'code_client_id')"
             >
               <SearchSelect
                 v-model="props.row.code_client_id"
@@ -216,7 +224,7 @@
               :value.sync="props.row.for_kg"
               type="number"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'for_kg')"
+              @add-to-save="addToAddSaveArray(props.row, 'for_kg')"
             >
               <q-input
                 v-model.number="props.row.for_kg"
@@ -243,7 +251,7 @@
               :value.sync="props.row.for_place"
               type="number"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'for_place')"
+              @add-to-save="addToAddSaveArray(props.row, 'for_place')"
             />
           </q-td>
 
@@ -258,7 +266,7 @@
               :value.sync="props.row.category_id"
               type="number"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'category_id')"
+              @add-to-save="addToAddSaveArray(props.row, 'category_id')"
             >
               <SearchSelect
                 v-model="props.row.category_id"
@@ -267,6 +275,14 @@
                 :options="categories"
               />
             </PopupEdit>
+          </q-td>
+
+          <q-td
+            key="in_cargo"
+            :props="props"
+          >
+            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{ props.row.in_cargo ? 'Да': 'Нет' }}
+            </q-badge>
           </q-td>
 
           <q-td
@@ -287,7 +303,7 @@
               :value.sync="props.row.delivery_method_id"
               type="number"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'delivery_method_id')"
+              @add-to-save="addToAddSaveArray(props.row, 'delivery_method_id')"
             >
               <SearchSelect
                 v-model="props.row.delivery_method_id"
@@ -308,7 +324,7 @@
               v-if="combineTableData"
               :value.sync="props.row.department"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'department')"
+              @add-to-save="addToAddSaveArray(props.row, 'department')"
             />
           </q-td>
 
@@ -343,7 +359,7 @@
       :persistent="true"
       :maximized="true"
     >
-      <Card style="max-width: 600px;">
+      <q-card style="max-width: 600px;">
         <q-bar>
           <q-space />
           <IconBtn
@@ -351,21 +367,21 @@
             dense
             icon="close"
             tooltip="Закрыть"
-            @iconBtnClick="dialogHistory = false"
+            @icon-btn-click="dialogHistory = false"
           />
         </q-bar>
 
-        <CardSection class="q-pt-none">
+        <q-card-section class="q-pt-none">
           <StorehouseDataHistory :storehouse-history-data="storehouseHistoryData" />
-        </CardSection>
-      </Card>
+        </q-card-section>
+      </q-card>
     </Dialog>
     <Dialog
       :dialog="dialogTransferFromStorehouse"
       :persistent="true"
       :maximized="true"
     >
-      <Card>
+      <q-card>
         <q-bar>
           <q-space />
           <IconBtn
@@ -375,17 +391,17 @@
             icon="save"
             tooltip="Сохранить"
             color="positive"
-            @iconBtnClick="saveTransfersData(faxSideData, storehouseSideData)"
+            @icon-btn-click="saveTransfersData(faxSideData, storehouseSideData)"
           />
           <IconBtn
             flat
             dense
             icon="close"
             tooltip="Закрыть"
-            @iconBtnClick="closeDialogTransferFromStorehouse"
+            @icon-btn-click="closeDialogTransferFromStorehouse"
           />
         </q-bar>
-        <CardSection>
+        <q-card-section>
           <q-splitter
             v-model="splitterModel"
           >
@@ -447,8 +463,8 @@
               </div>
             </template>
           </q-splitter>
-        </CardSection>
-      </Card>
+        </q-card-section>
+      </q-card>
     </Dialog>
     <Dialog
       :dialog="dialogHistory"
@@ -463,7 +479,7 @@
             dense
             icon="close"
             tooltip="Закрыть"
-            @iconBtnClick="dialogHistory = false"
+            @icon-btn-click="dialogHistory = false"
           />
         </q-bar>
 
@@ -474,6 +490,37 @@
         </q-card-section>
       </q-card>
     </Dialog>
+    <q-dialog v-model="dialogSelectDeliveredPlace" persistent transition-show="scale" transition-hide="scale">
+      <q-card style="width: 300px">
+        <q-card-section>
+          <div class="text-h6 text-teal">
+            Доставлено
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <BaseSelect
+            v-model="deliveredPlace"
+            outlined
+            :options="[{label: 'Да', value: 1,}, {label: 'Нет', value: 0,}]"
+          />
+        </q-card-section>
+
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn
+            v-close-popup
+            label="Отмена"
+            color="negative"
+          />
+          <q-btn
+            v-close-popup
+            color="positive"
+            label="OK"
+            @click="setDeliveredPlace(faxTableReactiveProperties.selected, deliveredPlace)"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -492,7 +539,7 @@
         getDeliveryMethodsList,
         // getStorehouseTableData,
         getFaxes,
-        // setFormatedDate,
+        setFormatedDate,
         // prepareHistoryData,
     } from 'src/utils/FrequentlyCalledFunctions';
     import StorehouseDataMixin from 'src/mixins/StorehouseData';
@@ -503,20 +550,15 @@
             Table: () => import('components/Elements/Table/Table.vue'),
             // Icon: () => import('components/Buttons/Icons/Icon.vue'),
             IconBtn: () => import('components/Buttons/IconBtn.vue'),
-            List: () => import('components/Elements/List/List.vue'),
-            ItemSection: () => import('components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('components/Elements/List/ListItem.vue'),
             // Badge: () => import('components/Elements/Badge.vue'),
             BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
             DialogFaxData: () => import('components/Dialogs/DialogFaxData.vue'),
             StorehouseDataHistory: () => import('components/History/StorehouseDataHistory.vue'),
-            Card: () => import('components/Elements/Card/Card.vue'),
-            CardSection: () => import('components/Elements/Card/CardSection.vue'),
             Dialog: () => import('components/Dialogs/Dialog.vue'),
             CountCategories: () => import('components/CountCategories.vue'),
             PopupEdit: () => import('components/PopupEdit.vue'),
             SearchSelect: () => import('components/Elements/SearchSelect.vue'),
+            BaseSelect: () => import('components/Elements/BaseSelect.vue'),
             FaxTransferDataHistory: () => import('components/History/FaxTransferDataHistory.vue'),
             // Search: () => import('components/Search.vue'),
         },
@@ -532,6 +574,8 @@
         mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
         data() {
             return {
+                deliveredPlace: 1,
+                dialogSelectDeliveredPlace: false,
                 dialogHistory: false,
                 historyData: [],
                 isTransfer: false,
@@ -600,6 +644,13 @@
                             sortable: true,
                         },
                         {
+                            name: 'in_cargo',
+                            label: 'Доставлен',
+                            field: 'in_cargo',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'shop',
                             label: this.$t('shop'),
                             field: 'shop',
@@ -638,11 +689,11 @@
                 },
                 faxTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['code_client_name', 'place', 'kg', 'category_name', 'delivery_method_name', 'department'],
+                    visibleColumns: ['code_client_name', 'place', 'kg', 'category_name', 'in_cargo', 'delivery_method_name', 'department'],
                     title: '',
                 },
-                visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'category_name', 'delivery_method_name', 'department'],
-                fullVisibleColumns: ['code_place', 'code_client_name', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop', 'delivery_method_name', 'department'],
+                visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'in_cargo', 'category_name', 'delivery_method_name', 'department'],
+                fullVisibleColumns: ['code_place', 'code_client_name', 'in_cargo', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop', 'delivery_method_name', 'department'],
             };
         },
         computed: {
@@ -976,6 +1027,37 @@
                           this.dialogHistory = true;
                           this.historyData = historyData;
                       }
+                  });
+            },
+            setDeliveredPlace(data, flag) {
+                this.$q.loading.show();
+                const ids = [];
+                _.forEach(data, (item) => {
+                    if (item.arr) {
+                        ids.push(..._.map(item.arr, 'id'));
+                    } else {
+                        ids.push(item.id);
+                    }
+                });
+                devlog.log('ids', ids);
+                this.$axios.post(getUrl('setDeliveredFaxData'), {
+                    ids,
+                    flag,
+                })
+                  .then(({ data: { storehouseData } }) => {
+                      const formatedData = setFormatedDate(storehouseData, ['created_at']);
+                      _.forEach(formatedData, (item) => {
+                          this.$store.dispatch('storehouse/updateStorehouseData', item);
+                          this.$store.dispatch('faxes/updateFaxData', item);
+                      });
+                      this.faxTableReactiveProperties.selected = [];
+                      this.$q.loading.hide();
+                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
+                  })
+                  .catch(() => {
+                      this.faxTableReactiveProperties.selected = [];
+                      this.$q.loading.hide();
+                      this.showNotif('error', 'Произошла ошибка при обновлении данных.', 'center');
                   });
             },
         },

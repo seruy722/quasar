@@ -7,6 +7,7 @@ use App\City;
 use App\Code;
 use App\Customer;
 use App\Debt;
+use App\Fax;
 use App\PaymentArrear;
 use App\Transfer;
 use Illuminate\Http\Request;
@@ -456,6 +457,23 @@ class CargoController extends Controller
     public function exportReportOdessaData(Request $request)
     {
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\ExportReportOdessaData($request->date), 'transfers.xlsx');
+    }
+
+    public function getNotDeliveredCargo()
+    {
+        $faxes = Fax::where('status', '>', 2)->where('uploaded_to_cargo', true)->get('id');
+        $faxesIds = $faxes->map(function ($item) {
+            return $item->id;
+        });
+        $data = $this->query()->whereIn('cargos.fax_id', $faxesIds)->where('cargos.in_cargo', false)->get();
+        return response(['cargo' => $data]);
+    }
+
+    public function setDeliveredCargo(Request $request)
+    {
+        Cargo::whereIn('id', $request->ids)->update(['in_cargo' => $request->flag]);
+        $data = $this->query()->whereIn('cargos.id', $request->ids)->get();
+        return response(['cargo' => $data]);
     }
 
 }

@@ -7,6 +7,16 @@
       :table-data="list"
       :table-reactive-properties="cargoTableReactiveProperties"
     >
+      <template v-slot:top-buttons>
+        <IconBtn
+          v-show="cargoTableReactiveProperties.selected.length"
+          dense
+          icon="vertical_align_center"
+          color="accent"
+          tooltip="Доставлено"
+          @icon-btn-click="dialogSelectDeliveredPlace = true"
+        />
+      </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
       <template v-slot:inner-item="{props}">
         <div
@@ -225,14 +235,49 @@
         </q-tr>
       </template>
     </Table>
+    <q-dialog v-model="dialogSelectDeliveredPlace" persistent transition-show="scale" transition-hide="scale">
+      <q-card style="width: 300px">
+        <q-card-section>
+          <div class="text-h6 text-teal">
+            Доставлено
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <BaseSelect
+            v-model="deliveredPlace"
+            outlined
+            :options="[{label: 'Да', value: 1,}, {label: 'Нет', value: 0,}]"
+          />
+        </q-card-section>
+
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn
+            v-close-popup
+            label="Отмена"
+            color="negative"
+          />
+          <q-btn
+            v-close-popup
+            color="positive"
+            label="OK"
+            @click="setDeliveredPlace(cargoTableReactiveProperties.selected, deliveredPlace)"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
+    import { getUrl } from 'src/tools/url';
+
     export default {
         name: 'Cargo',
         components: {
             Table: () => import('src/components/Elements/Table/Table.vue'),
+            BaseSelect: () => import('components/Elements/BaseSelect.vue'),
+            IconBtn: () => import('components/Buttons/IconBtn.vue'),
         },
         props: {
             list: {
@@ -242,6 +287,8 @@
         },
         data() {
             return {
+                deliveredPlace: 1,
+                dialogSelectDeliveredPlace: false,
                 cargoTableProperties: {
                     columns: [
                         {
@@ -350,6 +397,33 @@
                     title: '',
                 },
             };
+        },
+        methods: {
+            setDeliveredPlace(data, flag) {
+                this.$q.loading.show();
+                const ids = [];
+                _.forEach(data, (item) => {
+                    if (item.arr) {
+                        ids.push(..._.map(item.arr, 'id'));
+                    } else {
+                        ids.push(item.id);
+                    }
+                });
+                devlog.log('ids', ids);
+                this.$axios.post(getUrl('setDeliveredCargo'), {
+                    ids,
+                    flag,
+                })
+                  .then(({ data: { cargo } }) => {
+                      _.set(this, 'list', cargo);
+                      this.cargoTableReactiveProperties.selected = [];
+                      this.$q.loading.hide();
+                  })
+                  .catch(() => {
+                      this.cargoTableReactiveProperties.selected = [];
+                      this.$q.loading.hide();
+                  });
+            },
         },
     };
 </script>

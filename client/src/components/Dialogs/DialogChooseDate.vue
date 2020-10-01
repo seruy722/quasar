@@ -14,7 +14,7 @@
               dense
               icon="clear"
               tooltip="Закрыть"
-              @iconBtnClick="close"
+              @icon-btn-click="close"
             />
           </div>
         </q-card-section>
@@ -32,14 +32,14 @@
             label="Отмена"
             color="negative"
             :dense="$q.screen.xs || $q.screen.sm"
-            @clickBaseBtn="close"
+            @click-base-btn="close"
           />
 
           <BaseBtn
             label="OK"
             color="positive"
             :dense="$q.screen.xs || $q.screen.sm"
-            @clickBaseBtn="setDate(localDate)"
+            @click-base-btn="setDate(localDate)"
           />
         </q-card-actions>
       </q-card>

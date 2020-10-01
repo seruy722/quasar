@@ -11,10 +11,10 @@
       <template v-slot:top-buttons>
         <UpdateBtn
           v-show="currentCodeClientId"
-          @updateBtnClick="refresh"
+          @update-btn-click="refresh"
         />
         <ExportBtn
-          @exportBtnClick="exportFaxData(cargoTableReactiveProperties.selected)"
+          @export-btn-click="exportFaxData(cargoTableReactiveProperties.selected)"
         />
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -118,7 +118,7 @@
               <!--                    label="История"-->
               <!--                    color="info"-->
               <!--                    style="max-width: 100px;margin: 0 auto;"-->
-              <!--                    @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"-->
+              <!--                    @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"-->
               <!--                  />-->
               <!--                </q-item-section>-->
               <!--              </q-item>-->

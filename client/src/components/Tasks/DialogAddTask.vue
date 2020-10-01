@@ -15,13 +15,13 @@
 <!--            icon="delete"-->
 <!--            color="negative"-->
 <!--            tooltip="Удалить"-->
-<!--            @iconBtnClick="destroyCustomer(entryData)"-->
+<!--            @icon-btn-click="destroyCustomer(entryData)"-->
 <!--          />-->
           <IconBtn
             dense
             icon="clear"
             tooltip="Закрыть"
-            @iconBtnClick="close(tasksData)"
+            @icon-btn-click="close(tasksData)"
           />
         </div>
       </q-card-section>
@@ -63,14 +63,14 @@
           label="Отмена"
           color="negative"
           :dense="$q.screen.xs || $q.screen.sm"
-          @clickBaseBtn="close(tasksData)"
+          @click-base-btn="close(tasksData)"
         />
 
         <BaseBtn
           label="Сохранить"
           color="positive"
           :dense="$q.screen.xs || $q.screen.sm"
-          @clickBaseBtn="checkErrors(tasksData, saveData)"
+          @click-base-btn="checkErrors(tasksData, saveData)"
         />
       </q-card-actions>
     </q-card>
@@ -259,7 +259,7 @@
                 this.show = false;
                 setDefaultData(data);
                 setChangeValue(data);
-                this.entryData.selected = false;
+                _.set(this.entryData, 'selected', false);
                 this.$emit('update:entryData', {});
             },
         },

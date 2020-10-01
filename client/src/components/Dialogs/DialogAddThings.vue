@@ -13,7 +13,7 @@
             dense
             icon="clear"
             tooltip="Закрыть"
-            @iconBtnClick="close(thing)"
+            @icon-btn-click="close(thing)"
           />
         </div>
       </CardSection>
@@ -52,7 +52,7 @@
               :label="$t('add')"
               color="positive"
               icon="save"
-              @clickOutlineBtn="checkErrors(thing, add)"
+              @click-outline-btn="checkErrors(thing, add)"
             />
           </div>
         </div>
@@ -83,7 +83,7 @@
                 icon="delete"
                 :dense="$q.screen.xs || $q.screen.sm"
                 :tooltip="$t('delete')"
-                @iconBtnClick="remove(index)"
+                @icon-btn-click="remove(index)"
               />
             </ItemSection>
           </ListItem>
@@ -95,7 +95,7 @@
             :label="$t('clear')"
             color="negative"
             icon="clear"
-            @clickOutlineBtn="clear(thing)"
+            @click-outline-btn="clear(thing)"
           />
         </div>
 
@@ -104,7 +104,7 @@
             :label="$t('save')"
             color="positive"
             icon="save"
-            @clickOutlineBtn="save(thing)"
+            @click-outline-btn="save(thing)"
           />
         </div>
       </CardActions>

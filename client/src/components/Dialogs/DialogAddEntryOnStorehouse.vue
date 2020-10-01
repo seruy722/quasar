@@ -14,7 +14,7 @@
             dense
             icon="history"
             tooltip="История"
-            @iconBtnClick="entryData.historyFunc(entryData.row.id, entryData.cols)"
+            @icon-btn-click="entryData.historyFunc(entryData.row.id, entryData.cols)"
           />
           <Menu :items="['Код', 'Клиента', 'Категорию']" />
 
@@ -22,7 +22,7 @@
             dense
             icon="clear"
             tooltip="Закрыть"
-            @iconBtnClick="close(storehouseData)"
+            @icon-btn-click="close(storehouseData)"
           />
         </div>
       </CardSection>
@@ -98,7 +98,7 @@
           :dense="$q.screen.xs || $q.screen.sm"
           tooltip="Редактировать"
           class="q-ml-md"
-          @iconBtnClick="showThingsDialog = true"
+          @icon-btn-click="showThingsDialog = true"
         />
         <IconBtn
           v-else-if="!withoutThings"
@@ -106,7 +106,7 @@
           :dense="$q.screen.xs || $q.screen.sm"
           tooltip="Добавить"
           class="q-ml-md"
-          @iconBtnClick="showThingsDialog = true"
+          @icon-btn-click="showThingsDialog = true"
         />
         <div v-show="!withoutThings">
           <List
@@ -152,7 +152,7 @@
           color="positive"
           icon="save"
           :size="size"
-          @clickBaseBtn="checkErrors(storehouseData, saveData)"
+          @click-base-btn="checkErrors(storehouseData, saveData)"
         />
 
         <BaseBtn
@@ -160,7 +160,7 @@
           color="negative"
           icon="clear"
           :size="size"
-          @clickBaseBtn="clear(storehouseData)"
+          @click-base-btn="clear(storehouseData)"
         />
 
         <BaseBtn
@@ -168,7 +168,7 @@
           color="negative"
           icon="cancel"
           :size="size"
-          @clickBaseBtn="close(storehouseData)"
+          @click-base-btn="close(storehouseData)"
         />
       </CardActions>
     </Card>
@@ -482,7 +482,7 @@
                 this.clear(data);
                 this.show = false;
                 if (!_.isEmpty(this.entryData)) {
-                    this.entryData.selected = false;
+                    _.set(this.entryData, 'selected', false);
                     this.$emit('update:entryData', {});
                 }
             },

@@ -13,7 +13,7 @@
             dense
             icon="clear"
             tooltip="Закрыть"
-            @iconBtnClick="close"
+            @icon-btn-click="close"
           />
         </div>
       </CardSection>
@@ -25,7 +25,7 @@
           :field="categoryData.name.field"
           :autofocus="categoryData.name.autofocus"
           :errors="errorsData"
-          @onKeyUp="keyUp"
+          @on-key-up="keyUp"
         />
       </CardSection>
 
@@ -36,14 +36,14 @@
           label="Сохранить"
           color="positive"
           :dense="$q.screen.xs || $q.screen.sm"
-          @clickOutlineBtn="checkErrors(categoryData, saveData)"
+          @click-outline-btn="checkErrors(categoryData, saveData)"
         />
 
         <OutlineBtn
           label="Закрыть"
           color="negative"
           :dense="$q.screen.xs || $q.screen.sm"
-          @clickOutlineBtn="close"
+          @click-outline-btn="close"
         />
       </CardActions>
     </Card>

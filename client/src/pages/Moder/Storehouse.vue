@@ -17,7 +17,7 @@
           <Menu />
 
           <UpdateBtn
-            @updateBtnClick="refresh"
+            @update-btn-click="refresh"
           />
 
           <IconBtn
@@ -25,7 +25,7 @@
             color="negative"
             icon="delete"
             :tooltip="$t('delete')"
-            @iconBtnClick="destroyEntry(storehouseTableReactiveProperties.selected)"
+            @icon-btn-click="destroyEntry(storehouseTableReactiveProperties.selected)"
           />
 
 <!--          <IconBtn-->
@@ -33,19 +33,19 @@
 <!--            color="info"-->
 <!--            icon="move_to_inbox"-->
 <!--            tooltip="Переместить"-->
-<!--            @iconBtnClick="moveToFax"-->
+<!--            @icon-btn-click="moveToFax"-->
 <!--          />-->
 
           <MoveToFaxBtn
             v-show="storehouseTableReactiveProperties.selected.length"
-            @moveToFaxClick="moveToFax"
+            @move-to-fax-click="moveToFax"
           />
 
           <IconBtn
             color="positive"
             icon="explicit"
             :tooltip="$t('excel')"
-            @iconBtnClick="exportStorehouseData"
+            @icon-btn-click="exportStorehouseData"
           />
         </template>
 
@@ -122,7 +122,7 @@
                       label="История"
                       color="info"
                       style="max-width: 100px;margin: 0 auto;"
-                      @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"
+                      @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"
                     />
                   </q-item-section>
                 </q-item>
@@ -230,7 +230,7 @@
               dense
               icon="close"
               tooltip="Закрыть"
-              @iconBtnClick="dialogHistory = false"
+              @icon-btn-click="dialogHistory = false"
             />
           </q-bar>
 

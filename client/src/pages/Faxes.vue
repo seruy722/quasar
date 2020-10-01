@@ -16,18 +16,18 @@
             icon="delete"
             :tooltip="$t('delete')"
             class="q-ml-md"
-            @iconBtnClick="deleteFaxItems(faxesTableReactiveProperties.selected)"
+            @icon-btn-click="deleteFaxItems(faxesTableReactiveProperties.selected)"
           />
 
           <UpdateBtn
-            @updateBtnClick="refresh"
+            @update-btn-click="refresh"
           />
           <!--          <IconBtn-->
           <!--            v-show="faxesTableReactiveProperties.selected.length > 1"-->
           <!--            color="orange"-->
           <!--            icon="gamepad"-->
           <!--            tooltip="Обьеденить"-->
-          <!--            @iconBtnClick="combineFaxes(faxesTableReactiveProperties.selected)"-->
+          <!--            @icon-btn-click="combineFaxes(faxesTableReactiveProperties.selected)"-->
           <!--          />-->
 
           <!--        <IconBtn-->
@@ -35,7 +35,7 @@
           <!--          icon="swap_vert"-->
           <!--          tooltip=""-->
           <!--          class="q-ml-md"-->
-          <!--          @iconBtnClick="deleteFaxItems"-->
+          <!--          @icon-btn-click="deleteFaxItems"-->
           <!--        />-->
           <Menu :items="['Факс', 'Перевожчика']" />
         </template>
@@ -70,7 +70,7 @@
               <List
                 separator
                 dense
-                @clickList="viewEditDialog(props)"
+                @click-list="viewEditDialog(props)"
               >
                 <q-item
                   v-for="col in props.cols.filter(col => col.name !== 'desc')"
@@ -104,13 +104,13 @@
                         label="История"
                         color="info"
                         style="max-width: 100px;"
-                        @clickBaseBtn="getFaxesHistory(props.row.id, props.cols)"
+                        @click-base-btn="getFaxesHistory(props.row.id, props.cols)"
                       />
                       <BaseBtn
                         label="Перейти"
                         color="info"
                         style="max-width: 100px;"
-                        @clickBaseBtn="goToFaxData(props.row)"
+                        @click-base-btn="goToFaxData(props.row)"
                       />
                     </div>
                   </q-item-section>
@@ -277,7 +277,7 @@
             dense
             icon="close"
             tooltip="Закрыть"
-            @iconBtnClick="dialogHistory = false"
+            @icon-btn-click="dialogHistory = false"
           />
         </q-bar>
 

@@ -5,7 +5,7 @@
     color="positive"
     icon="explicit"
     data-vue-component-name="ExportBtn"
-    @click="$emit('exportBtnClick')"
+    @click="$emit('export-btn-click')"
   >
     <q-tooltip anchor="bottom middle" self="top middle" :offset="[10, 10]">
       Excel

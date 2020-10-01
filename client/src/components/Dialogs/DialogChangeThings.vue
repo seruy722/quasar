@@ -14,21 +14,21 @@
             <IconBtn
               dense
               icon="add_box"
-              @iconBtnClick="add"
+              @icon-btn-click="add"
             />
 
             <IconBtn
               dense
               color="info"
               icon="clear_all"
-              @iconBtnClick="clear"
+              @icon-btn-click="clear"
             />
 
             <IconBtn
               dense
               color="negative"
               icon="clear"
-              @iconBtnClick="cancel(thingsData)"
+              @icon-btn-click="cancel(thingsData)"
             />
           </div>
         </CardSection>
@@ -71,7 +71,7 @@
                   icon="delete"
                   :dense="$q.screen.xs || $q.screen.sm"
                   :tooltip="$t('delete')"
-                  @iconBtnClick="deleteLocalThing(index)"
+                  @icon-btn-click="deleteLocalThing(index)"
                 />
               </ItemSection>
             </ListItem>
@@ -83,11 +83,11 @@
           <BaseBtn
             label="Cancel"
             color="negative"
-            @clickBaseBtn="cancel(thingsData)"
+            @click-base-btn="cancel(thingsData)"
           />
           <BaseBtn
             label="Save"
-            @clickBaseBtn="save(localThings, thingsData)"
+            @click-base-btn="save(localThings, thingsData)"
           />
         </CardActions>
       </Card>
@@ -187,7 +187,7 @@
                         });
                         data.things = JSON.stringify(values);
                     }
-                    this.$emit('addToSave');
+                    this.$emit('add-to-save');
                 }
                 this.closeDialog(data);
             },

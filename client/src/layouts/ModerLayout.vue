@@ -9,7 +9,7 @@
           color="white"
           icon="menu"
           tooltip="Меню"
-          @iconBtnClick="drawer = !drawer"
+          @icon-btn-click="drawer = !drawer"
         />
         <q-toolbar-title>{{ $t(pageTitle) }}</q-toolbar-title>
       </q-toolbar>

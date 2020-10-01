@@ -3,7 +3,7 @@
         data-vue-component-name="Icon"
         :size="size"
         :name="name"
-        @click.stop="$emit('iconClick')"
+        @click.stop="$emit('icon-click')"
     >
         <q-tooltip>{{ $t(tooltip) }}</q-tooltip>
     </q-icon>

@@ -4,7 +4,7 @@
     :color="color"
     :name="name"
     :size="size"
-    @click="$emit('clickIcon', $event)"
+    @click="$emit('click-icon', $event)"
   >
     <slot></slot>
   </q-icon>

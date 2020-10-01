@@ -18,7 +18,7 @@
                   dense
                   icon="history"
                   tooltip="История"
-                  @iconBtnClick="entryData.historyFunc(entryData.row.id, entryData.cols)"
+                  @icon-btn-click="entryData.historyFunc(entryData.row.id, entryData.cols)"
                 />
               </q-item-label>
             </q-item-section>
@@ -33,7 +33,7 @@
                   dense
                   icon="clear"
                   tooltip="Закрыть"
-                  @iconBtnClick="close(storehouseData)"
+                  @icon-btn-click="close(storehouseData)"
                 />
               </q-item-label>
             </q-item-section>
@@ -125,7 +125,7 @@
           color="positive"
           icon="save"
           :size="size"
-          @clickBaseBtn="checkErrors(storehouseData, saveData)"
+          @click-base-btn="checkErrors(storehouseData, saveData)"
         />
 
         <BaseBtn
@@ -133,7 +133,7 @@
           color="negative"
           icon="clear"
           :size="size"
-          @clickBaseBtn="clear(storehouseData)"
+          @click-base-btn="clear(storehouseData)"
         />
 
         <BaseBtn
@@ -141,7 +141,7 @@
           color="negative"
           icon="cancel"
           :size="size"
-          @clickBaseBtn="close(storehouseData)"
+          @click-base-btn="close(storehouseData)"
         />
       </q-card-actions>
     </q-card>
@@ -310,6 +310,21 @@
                         default: '',
                         value: '',
                     },
+                    in_cargo: {
+                        name: 'in_cargo',
+                        type: 'select',
+                        label: 'Доставлен',
+                        changeValue: false,
+                        options: [{
+                            label: 'Да',
+                            value: 1,
+                        }, {
+                            label: 'Нет',
+                            value: 0,
+                        }],
+                        default: 1,
+                        value: 1,
+                    },
                 },
             };
         },
@@ -453,7 +468,7 @@
                 this.clear(data);
                 this.show = false;
                 if (!_.isEmpty(this.entryData)) {
-                    this.entryData.selected = false;
+                    _.set(this.entryData, 'selected', false);
                     this.$emit('update:entryData', {});
                 }
             },

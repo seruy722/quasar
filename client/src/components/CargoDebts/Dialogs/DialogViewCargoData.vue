@@ -14,7 +14,7 @@
             dense
             icon="clear"
             tooltip="Закрыть"
-            @iconBtnClick="close"
+            @icon-btn-click="close"
           />
         </div>
       </q-card-section>
@@ -32,14 +32,14 @@
               <!--                  color="positive"-->
               <!--                  icon="save"-->
               <!--                  tooltip="Сохранить"-->
-              <!--                  @iconBtnClick="saveDataInCombineTable(addToSaveArray)"-->
+              <!--                  @icon-btn-click="saveDataInCombineTable(addToSaveArray)"-->
               <!--                />-->
 
               <!--                <IconBtn-->
               <!--                  color="positive"-->
               <!--                  icon="explicit"-->
               <!--                  tooltip="excel"-->
-              <!--                  @iconBtnClick="exportFaxData"-->
+              <!--                  @icon-btn-click="exportFaxData"-->
               <!--                />-->
 
               <!--                <IconBtn-->
@@ -47,14 +47,14 @@
               <!--                  color="negative"-->
               <!--                  icon="delete"-->
               <!--                  :tooltip="$t('delete')"-->
-              <!--                  @iconBtnClick="destroyEntry(faxTableReactiveProperties.selected)"-->
+              <!--                  @icon-btn-click="destroyEntry(faxTableReactiveProperties.selected)"-->
               <!--                />-->
 
               <!--        <IconBtn-->
               <!--          icon="data_usage"-->
               <!--          color="orange"-->
               <!--          tooltip="Обновить цены"-->
-              <!--          @iconBtnClick="updatePricesInFax(currentFaxItem.id)"-->
+              <!--          @icon-btn-click="updatePricesInFax(currentFaxItem.id)"-->
               <!--        />-->
             </template>
 
@@ -121,7 +121,7 @@
                           label="История"
                           color="info"
                           style="max-width: 100px;margin: 0 auto;"
-                          @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"
+                          @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"
                         />
                       </q-item-section>
                     </q-item>

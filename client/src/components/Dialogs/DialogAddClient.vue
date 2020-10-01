@@ -15,13 +15,13 @@
             icon="delete"
             color="negative"
             tooltip="Удалить"
-            @iconBtnClick="destroyCustomer(entryData)"
+            @icon-btn-click="destroyCustomer(entryData)"
           />
           <IconBtn
             dense
             icon="clear"
             tooltip="Закрыть"
-            @iconBtnClick="close(customerData)"
+            @icon-btn-click="close(customerData)"
           />
         </div>
       </CardSection>
@@ -75,14 +75,14 @@
           label="Отмена"
           color="negative"
           :dense="$q.screen.xs || $q.screen.sm"
-          @clickBaseBtn="close(customerData)"
+          @click-base-btn="close(customerData)"
         />
 
         <BaseBtn
           label="Сохранить"
           color="positive"
           :dense="$q.screen.xs || $q.screen.sm"
-          @clickBaseBtn="checkErrors(customerData, saveData)"
+          @click-base-btn="checkErrors(customerData, saveData)"
         />
       </CardActions>
     </Card>

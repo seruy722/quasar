@@ -89,12 +89,12 @@
             label="Отмена"
             dense
             color="negative"
-            @clickOutlineBtn="choosePeriodDialog = false"
+            @click-outline-btn="choosePeriodDialog = false"
           />
           <OutlineBtn
             dense
             color="positive"
-            @clickOutlineBtn="setPeriod(period)"
+            @click-outline-btn="setPeriod(period)"
           />
         </q-card-actions>
       </q-card>

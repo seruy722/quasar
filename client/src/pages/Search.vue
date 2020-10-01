@@ -178,6 +178,15 @@
                           <q-item-label v-else-if="col.field === 'created_at'" caption>{{ col.value | formatToDotDate
                             }}
                           </q-item-label>
+                          <q-item-label v-else-if="col.field === 'in_cargo'" caption>
+                            <q-badge :color="col.value ? 'positive' : 'negative'">{{ col.value ? 'Да': 'Нет' }}
+                            </q-badge>
+                          </q-item-label>
+                          <q-item-label v-else-if="col.field === 'fax_status'" caption>
+                            <q-badge>
+                              {{ col.value | statusFilter }}
+                            </q-badge>
+                          </q-item-label>
                           <q-item-label v-else caption>{{ col.value }}</q-item-label>
                         </q-item-section>
                       </q-item>
@@ -253,6 +262,14 @@
                     {{ props.row.notation }}
                   </q-td>
                   <q-td
+                    key="in_cargo"
+                    :props="props"
+                  >
+                    <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{ props.row.in_cargo ? 'Да':
+                      props.row.type ? null : 'Нет' }}
+                    </q-badge>
+                  </q-td>
+                  <q-td
                     key="created_at"
                     :props="props"
                   >
@@ -267,7 +284,7 @@
                 </q-tr>
               </template>
             </BaseTable>
-<!--            <CountDataForSearch :list="faxesTableData.data" title="По факсам"/>-->
+            <!--            <CountDataForSearch :list="faxesTableData.data" title="По факсам"/>-->
           </q-tab-panel>
           <q-tab-panel name="basket">
             <BaseTable
@@ -634,6 +651,13 @@
                             sortable: true,
                         },
                         {
+                            name: 'in_cargo',
+                            label: 'Доставлен',
+                            field: 'in_cargo',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'created_at',
                             label: 'Дата',
                             field: 'created_at',
@@ -648,7 +672,7 @@
                             sortable: true,
                         },
                     ],
-                    visibleColumns: ['code_place', 'code_client_name', 'place', 'fax_name', 'kg', 'category_name', 'shop', 'notation', 'things', 'created_at', 'fax_status'],
+                    visibleColumns: ['code_place', 'code_client_name', 'place', 'fax_name', 'in_cargo', 'kg', 'category_name', 'shop', 'notation', 'things', 'created_at', 'fax_status'],
                 },
             };
         },

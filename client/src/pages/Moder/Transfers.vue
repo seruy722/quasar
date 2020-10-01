@@ -12,21 +12,21 @@
       >
         <template v-slot:top-buttons>
           <UpdateBtn
-            @updateBtnClick="refresh"
+            @update-btn-click="refresh"
           />
           <IconBtn
             color="positive"
             tooltip="Excel"
             icon="explicit"
             class="q-ml-sm"
-            @iconBtnClick="exportTransfers"
+            @icon-btn-click="exportTransfers"
           />
           <IconBtn
             color="orange"
             tooltip="Статистика"
             icon="trending_up"
             class="q-ml-sm"
-            @iconBtnClick="dialogStatistics = true"
+            @icon-btn-click="dialogStatistics = true"
           />
           <IconBtn
             v-show="transferTableReactiveProperties.selected.length"
@@ -34,7 +34,7 @@
             tooltip="Добавить в долги"
             icon="move_to_inbox"
             class="q-ml-sm"
-            @iconBtnClick="addToDebtsTable(transferTableReactiveProperties.selected)"
+            @icon-btn-click="addToDebtsTable(transferTableReactiveProperties.selected)"
           />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -130,7 +130,7 @@
                       label="История"
                       color="info"
                       style="max-width: 100px;margin: 0 auto;"
-                      @clickBaseBtn="getTransfersHistory(props.row.id, props.cols)"
+                      @click-base-btn="getTransfersHistory(props.row.id, props.cols)"
                     />
                   </q-item-section>
                 </q-item>
@@ -241,11 +241,11 @@
       <Fab color="accent">
         <FabAction
           color="positive"
-          @fabActionClick="viewEditDialog"
+          @fab-action-click="viewEditDialog"
         />
         <FabAction
           icon="person"
-          @fabActionClick="showCodeDialog = true"
+          @fab-action-click="showCodeDialog = true"
         />
         <PageScroller :offset="[4, 100]">
           <FabAction icon="keyboard_arrow_up" />
@@ -265,14 +265,14 @@
               dense
               icon="history"
               tooltip="История"
-              @iconBtnClick="getTransfersHistory(localProps.row.id, localProps.cols)"
+              @icon-btn-click="getTransfersHistory(localProps.row.id, localProps.cols)"
             />
 
             <IconBtn
               dense
               icon="clear"
               tooltip="Закрыть"
-              @iconBtnClick="cancel(transferData)"
+              @icon-btn-click="cancel(transferData)"
             />
           </div>
         </q-card-section>
@@ -356,12 +356,12 @@
           <BaseBtn
             label="Отмена"
             color="negative"
-            @clickBaseBtn="cancel(transferData)"
+            @click-base-btn="cancel(transferData)"
           />
           <BaseBtn
             label="Сохранить"
             color="positive"
-            @clickBaseBtn="checkErrors(transferData, updateData)"
+            @click-base-btn="checkErrors(transferData, updateData)"
           />
         </q-card-actions>
       </q-card>
@@ -382,7 +382,7 @@
             dense
             icon="close"
             tooltip="Закрыть"
-            @iconBtnClick="dialogHistory = false"
+            @icon-btn-click="dialogHistory = false"
           />
         </q-bar>
 
@@ -406,7 +406,7 @@
             dense
             icon="close"
             tooltip="Закрыть"
-            @iconBtnClick="dialogStatistics = false"
+            @icon-btn-click="dialogStatistics = false"
           />
         </q-bar>
 

@@ -15,7 +15,7 @@
             icon="delete"
             color="negative"
             tooltip="Удалить роль"
-            @iconBtnClick="deleteRoleFromUser(item, role)"
+            @icon-btn-click="deleteRoleFromUser(item, role)"
           />
           <div v-for="(permission, ind) in role.permissions" :key="ind" class="q-ml-lg">
             ROLE_PERMISIION: {{ permission.name }}
@@ -25,7 +25,7 @@
               icon="delete"
               color="negative"
               tooltip="Удалить разрешение"
-              @iconBtnClick="deletePermissionFromRoleOrUser(role, permission, 'role')"
+              @icon-btn-click="deletePermissionFromRoleOrUser(role, permission, 'role')"
             />
           </div>
         </div>
@@ -37,7 +37,7 @@
             icon="delete"
             color="negative"
             tooltip="Удалить разрешение"
-            @iconBtnClick="deletePermissionFromRoleOrUser(item, permission, 'user')"
+            @icon-btn-click="deletePermissionFromRoleOrUser(item, permission, 'user')"
           />
         </div>
       </div>
@@ -74,7 +74,7 @@
                   dense
                   icon="add_circle"
                   tooltip="Добавить"
-                  @iconBtnClick="viewDialogAddRole"
+                  @icon-btn-click="viewDialogAddRole"
                 />
               </q-item-label>
             </q-item-section>
@@ -100,7 +100,7 @@
                     icon="edit"
                     color="teal"
                     tooltip="Редактировать"
-                    @iconBtnClick="viewDialogAddRole(item.name)"
+                    @icon-btn-click="viewDialogAddRole(item.name)"
                   />
                   <IconBtn
                     flat
@@ -108,7 +108,7 @@
                     icon="delete"
                     color="negative"
                     tooltip="Удалить"
-                    @iconBtnClick="deleteRole(item)"
+                    @icon-btn-click="deleteRole(item)"
                   />
                 </div>
               </ItemSection>
@@ -141,7 +141,7 @@
                   dense
                   icon="add_circle"
                   tooltip="Добавить"
-                  @iconBtnClick="viewDialogAddPermission"
+                  @icon-btn-click="viewDialogAddPermission"
                 />
               </q-item-label>
             </q-item-section>
@@ -168,7 +168,7 @@
                     icon="edit"
                     color="teal"
                     tooltip="Редактировать"
-                    @iconBtnClick="viewDialogAddPermission(item.name)"
+                    @icon-btn-click="viewDialogAddPermission(item.name)"
                   />
                   <IconBtn
                     flat
@@ -176,7 +176,7 @@
                     icon="delete"
                     color="negative"
                     tooltip="Удалить"
-                    @iconBtnClick="deletePermission(item)"
+                    @icon-btn-click="deletePermission(item)"
                   />
                 </div>
               </ItemSection>

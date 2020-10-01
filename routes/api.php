@@ -116,6 +116,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::get('/cargo-payments-all/{id}', 'Api\CargoController@cargoPaymentsAllForClient')->name('cargo payments all')->middleware(['role_or_permission:admin|cargo payments all']);
     Route::get('/debts-payments-all/{id}', 'Api\CargoController@debtsPaymentsAllForClient')->name('debts payments all')->middleware(['role_or_permission:admin|debts payments all']);
     Route::post('/export-report-odessa-data', 'Api\CargoController@exportReportOdessaData')->name('export report odessa data')->middleware(['role_or_permission:admin|export report odessa data']);
+    Route::get('/get-not-delivered-cargo', 'Api\CargoController@getNotDeliveredCargo')->middleware(['role_or_permission:admin|cargo|not-delivered-cargo']);
+    Route::post('/set-delivered-cargo', 'Api\CargoController@setDeliveredCargo')->middleware(['role_or_permission:admin|cargo|set-delivered-cargo']);
 
     // DEBTS_TABLE
     Route::post('/upload-debts-table', 'CommonController@storeDebtsTable');
@@ -147,6 +149,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/export-fax-admin-data-odessa-kharkov', 'Api\FaxDataController@exportFaxDataOdessaKharkov')->name('export fax admin data odessa kharkov')->middleware(['role_or_permission:admin|fax|export fax admin data odessa kharkov']);
     Route::post('/export-fax-admin-data-odessa', 'Api\FaxDataController@exportFaxDataOdessa')->name('export fax admin data odessa')->middleware(['role_or_permission:admin|fax|export fax admin data odessa']);
     Route::post('/fax-data-history', 'Api\FaxDataController@getFaxDataHistory')->name('fax data history')->middleware(['role_or_permission:admin|fax|fax data history']);
+    Route::post('/set-delivered-fax-data', 'Api\FaxDataController@setDeliveredFaxData')->name('set delivered fax data')->middleware(['role_or_permission:admin|fax|set delivered fax data']);
 
     // CATEGORIES
     Route::get('/categories', 'Api\CategoryController@index');

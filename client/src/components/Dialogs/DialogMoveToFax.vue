@@ -13,7 +13,7 @@
             dense
             icon="clear"
             tooltip="Закрыть"
-            @iconBtnClick="close"
+            @icon-btn-click="close"
           />
         </div>
       </q-card-section>
@@ -37,14 +37,14 @@
           color="negative"
           :dense="$q.screen.xs || $q.screen.sm"
           class="q-mr-md"
-          @clickBaseBtn="close"
+          @click-base-btn="close"
         />
 
         <BaseBtn
           label="Сохранить"
           color="positive"
           :dense="$q.screen.xs || $q.screen.sm"
-          @clickBaseBtn="checkErrors(faxData, saveData)"
+          @click-base-btn="checkErrors(faxData, saveData)"
         />
       </q-card-section>
     </q-card>

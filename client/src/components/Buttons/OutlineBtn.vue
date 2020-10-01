@@ -6,7 +6,7 @@
         :size="size"
         :dense="dense"
         data-vue-component-name="OutlineBtn"
-        @click="$emit('clickOutlineBtn')"
+        @click="$emit('click-outline-btn')"
     />
 </template>
 

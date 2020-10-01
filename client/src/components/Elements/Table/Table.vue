@@ -60,7 +60,7 @@
         <IconBtn
           :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
           :tooltip="$t(props.inFullscreen ? 'hide' : 'reveal')"
-          @iconBtnClick="props.toggleFullscreen"
+          @icon-btn-click="props.toggleFullscreen"
         />
         <slot name="top-buttons"></slot>
       </template>

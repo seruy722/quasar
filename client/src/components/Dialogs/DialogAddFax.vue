@@ -14,13 +14,13 @@
             dense
             icon="history"
             tooltip="История"
-            @iconBtnClick="entryData.historyFunc(entryData.row.id, entryData.cols)"
+            @icon-btn-click="entryData.historyFunc(entryData.row.id, entryData.cols)"
           />
           <IconBtn
             dense
             icon="clear"
             tooltip="Закрыть"
-            @iconBtnClick="close(faxData)"
+            @icon-btn-click="close(faxData)"
           />
         </div>
       </CardSection>
@@ -117,13 +117,13 @@
         <OutlineBtn
           label="Закрыть"
           color="negative"
-          @clickOutlineBtn="close(faxData)"
+          @click-outline-btn="close(faxData)"
         />
 
         <OutlineBtn
           label="Сохранить"
           color="positive"
-          @clickOutlineBtn="checkErrors(faxData, saveFax)"
+          @click-outline-btn="checkErrors(faxData, saveFax)"
         />
 
       </CardActions>
@@ -407,7 +407,7 @@
             close(data) {
                 this.show = false;
                 setDefaultData(data);
-                this.entryData.selected = false;
+                _.set(this.entryData, 'selected', false);
             },
         },
     };

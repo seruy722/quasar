@@ -4,7 +4,7 @@
     :icon="icon"
     :direction="direction"
     data-vue-component-name="Fab"
-    @click="$emit('fabClick')"
+    @click="$emit('fab-click')"
   >
     <slot></slot>
   </q-fab>

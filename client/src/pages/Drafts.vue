@@ -18,7 +18,7 @@
         <q-card-actions align="right">
           <OutlineBtn
             :btnData="btnData"
-            @clickOutlineBtn="dialogUploadCargoData.value = false"
+            @click-outline-btn="dialogUploadCargoData.value = false"
           />
         </q-card-actions>
       </Dialog>
@@ -37,7 +37,7 @@
           <q-card-actions align="right">
             <OutlineBtn
               :btnData="btnData"
-              @clickOutlineBtn="dialogUploadDebtsData.value = false"
+              @click-outline-btn="dialogUploadDebtsData.value = false"
             />
           </q-card-actions>
         </template>
@@ -57,7 +57,7 @@
           <q-card-actions align="right">
             <OutlineBtn
               :btnData="btnData"
-              @clickOutlineBtn="dialogUploadSkladData.value = false"
+              @click-outline-btn="dialogUploadSkladData.value = false"
             />
           </q-card-actions>
         </template>

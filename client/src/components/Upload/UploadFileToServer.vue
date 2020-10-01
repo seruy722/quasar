@@ -68,7 +68,7 @@
                         <q-item-section center side>
                             <IconBtn
                                 :iconBtnData="iconBtnData"
-                                @iconBtnClick="scope.removeFile(file)"
+                                @icon-btn-click="scope.removeFile(file)"
                             />
                         </q-item-section>
                     </q-item>
@@ -125,7 +125,7 @@
                   .then(({ data }) => {
                       devlog.log(data);
                       // this.$refs.uploader.removeQueuedFiles(file);
-                      this.uploadData.faxID = 0;
+                      _.set(this.uploadData, 'faxID', 0);
                       // this.$refs.uploader.canUpload = false;
                       devlog.log('PI', this.$refs.uploader);
                   })
@@ -135,11 +135,10 @@
                   });
             },
             added() {
-                this.uploadData.canUpload = true;
+                _.set(this.uploadData, 'canUpload', true);
             },
             removed() {
-                this.uploadData.canUpload = false;
-                devlog.log('REMOVED');
+                _.set(this.uploadData, 'canUpload', false);
             },
         },
     };

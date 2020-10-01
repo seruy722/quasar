@@ -204,6 +204,7 @@ export const combineStoreHouseData = ((data) => {
             kg: _.sumBy(arr2, 'kg'),
             place: _.sumBy(arr2, 'place'),
             arr: arr2,
+            in_cargo: _.every(arr2, { in_cargo: 1 }),
           }));
         });
       });
@@ -252,6 +253,7 @@ export const combineCargoData = ((data) => {
             place: _.sumBy(arr2, 'place'),
             sum: _.sumBy(arr2, 'sum'),
             arr: arr2,
+            in_cargo: _.every(arr2, { in_cargo: 1 }),
           }, { id: uid() }));
         });
       });

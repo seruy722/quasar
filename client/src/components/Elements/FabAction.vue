@@ -3,7 +3,7 @@
     :color="color"
     :icon="icon"
     data-vue-component-name="FabAction"
-    @click="$emit('fabActionClick')"
+    @click="$emit('fab-action-click')"
   />
 </template>
 

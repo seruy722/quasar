@@ -16,7 +16,7 @@
     "build:android": "quasar build -m android"
   },
   "dependencies": {
-    "@quasar/extras": "^1.9.5",
+    "@quasar/extras": "^1.9.7",
     "axios": "^0.20.0",
     "date-fns": "^2.16.1",
     "lodash": "^4.17.20",
@@ -28,9 +28,9 @@
     "@quasar/app": "2.1.0",
     "@vue/eslint-config-airbnb": "^5.1.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.9.0",
+    "eslint": "^7.10.0",
     "eslint-loader": "^4.0.2",
-    "eslint-plugin-vue": "^6.2.2",
+    "eslint-plugin-vue": "^7.0.0",
     "quasar-app-extension-ide-helper": "^1.0.0"
   },
   "engines": {

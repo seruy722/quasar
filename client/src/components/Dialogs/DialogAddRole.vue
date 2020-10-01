@@ -14,7 +14,7 @@
               dense
               icon="clear"
               tooltip="Закрыть"
-              @iconBtnClick="close(roleData)"
+              @icon-btn-click="close(roleData)"
             />
           </div>
         </CardSection>
@@ -48,14 +48,14 @@
             label="Отмена"
             color="negative"
             :dense="$q.screen.xs || $q.screen.sm"
-            @clickBaseBtn="close(roleData)"
+            @click-base-btn="close(roleData)"
           />
 
           <BaseBtn
             label="Сохранить"
             color="positive"
             :dense="$q.screen.xs || $q.screen.sm"
-            @clickBaseBtn="checkErrors(roleData, saveData)"
+            @click-base-btn="checkErrors(roleData, saveData)"
           />
         </CardActions>
       </Card>

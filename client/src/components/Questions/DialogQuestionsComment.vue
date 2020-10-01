@@ -80,13 +80,13 @@
           :label="$t('close')"
           color="negative"
           icon="cancel"
-          @clickBaseBtn="close"
+          @click-base-btn="close"
         />
         <BaseBtn
           :label="$t('save')"
           color="positive"
           icon="save"
-          @clickBaseBtn="save(files)"
+          @click-base-btn="save(files)"
         />
       </q-card-actions>
     </q-card>

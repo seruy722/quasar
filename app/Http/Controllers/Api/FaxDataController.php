@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Cargo;
 use App\CategoriesPrice;
 use App\Category;
 use App\Code;
 use App\CodesPrices;
 use App\Customer;
+use App\Fax;
 use App\FaxData;
 use App\History;
 use App\Shop;
@@ -17,6 +19,7 @@ use App\Imports\ImportData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
+use function foo\func;
 
 class FaxDataController extends Controller
 {
@@ -145,6 +148,7 @@ class FaxDataController extends Controller
             'storehouse_data.for_kg',
             'storehouse_data.for_place',
             'storehouse_data.fax_id',
+            'storehouse_data.in_cargo',
             'storehouse_data.shop',
             'storehouse_data.things',
             'storehouse_data.notation',
@@ -363,5 +367,12 @@ class FaxDataController extends Controller
     {
         $entries = History::where('entry_id', 0)->where('table', (new FaxData())->getTable())->orWhere('history_data', 'like', '%' . '"moveToFaxId": ' . $request->faxId . '%')->orWhere('history_data', 'like', '%' . '"moveFromFaxId": ' . $request->faxId . '%')->orderBy('id', 'desc')->get();
         return response(['historyData' => $entries]);
+    }
+
+    public function setDeliveredFaxData(Request $request)
+    {
+        StorehouseData::whereIn('storehouse_data.id', $request->ids)->update(['in_cargo' => $request->flag]);
+        $data = $this->getFaxDataQuery()->whereIn('storehouse_data.id', $request->ids)->get();
+        return response(['storehouseData' => $data]);
     }
 }

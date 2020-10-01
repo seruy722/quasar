@@ -6,7 +6,7 @@
       color="positive"
       tooltip="Excel"
       icon="explicit"
-      @exportBtnClick="show = true"
+      @export-btn-click="show = true"
     />
 
     <Dialog
@@ -22,7 +22,7 @@
             icon="clear"
             tooltip="Закрыть"
             color="negative"
-            @iconBtnClick="show = false"
+            @icon-btn-click="show = false"
           />
         </q-card-section>
         <q-card-section>
@@ -109,12 +109,12 @@
                   label="Отмена"
                   dense
                   color="negative"
-                  @clickOutlineBtn="setDate(null)"
+                  @click-outline-btn="setDate(null)"
                 />
                 <OutlineBtn
                   dense
                   color="positive"
-                  @clickOutlineBtn="setDate(true)"
+                  @click-outline-btn="setDate(true)"
                 />
               </q-card-actions>
             </q-card>
@@ -126,7 +126,7 @@
             label="Выгрузить"
             color="positive"
             icon="save"
-            @clickBaseBtn="exportFaxData(selectData,type, period)"
+            @click-base-btn="exportFaxData(selectData,type, period)"
           />
         </q-card-actions>
       </q-card>

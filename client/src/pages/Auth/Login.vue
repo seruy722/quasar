@@ -22,7 +22,7 @@
           :dense="$q.screen.xs || $q.screen.sm"
           :autofocus="true"
           :errors="errorsData"
-          @onKeyUp="keyUp"
+          @on-key-up="keyUp"
         />
 
         <BaseInput
@@ -33,7 +33,7 @@
           :label="this.$t('password')"
           :dense="$q.screen.xs || $q.screen.sm"
           :errors="errorsData"
-          @onKeyUp="keyUp"
+          @on-key-up="keyUp"
         />
       </q-card-section>
 
@@ -42,7 +42,7 @@
       <q-card-actions align="left">
         <OutlineBtn
           :label="this.$t('enter')"
-          @clickOutlineBtn="checkErrors(loginData, login)"
+          @click-outline-btn="checkErrors(loginData, login)"
         />
       </q-card-actions>
     </q-card>
@@ -159,6 +159,7 @@
         },
         methods: {
             async login() {
+                devlog.log('LOgin');
                 this.errorsData.errors = {};
                 this.$q.loading.show();
                 await this.$axios.post(getUrl('login'), {

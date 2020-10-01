@@ -1,7 +1,7 @@
 <template>
   <q-card
     data-vue-component-name="Card"
-    @click="$emit('clickCard')"
+    @click="$emit('click-card')"
   >
     <slot></slot>
   </q-card>

@@ -14,7 +14,7 @@
           color="positive"
           icon="save"
           tooltip="Сохранить"
-          @iconBtnClick="saveDataInCombineTable(addToSaveArray)"
+          @icon-btn-click="saveDataInCombineTable(addToSaveArray)"
         />
 
         <q-checkbox
@@ -27,33 +27,33 @@
           color="positive"
           icon="explicit"
           tooltip="excel"
-          @iconBtnClick="exportFaxData"
+          @icon-btn-click="exportFaxData"
         />
 
         <IconBtn
           v-show="!combineTableData && currentFaxItem.status !== 3"
           icon="sync_alt"
           tooltip="Трансфер данных"
-          @iconBtnClick="openDialogTransferFromStorehouse"
+          @icon-btn-click="openDialogTransferFromStorehouse"
         />
 
         <MoveToFaxBtn
           v-show="faxTableReactiveProperties.selected.length && faxUploadStatus === 0"
-          @moveToFaxClick="moveToFax"
+          @move-to-fax-click="moveToFax"
         />
         <IconBtn
           v-show="faxTableReactiveProperties.selected.length"
           color="negative"
           icon="delete"
           :tooltip="$t('delete')"
-          @iconBtnClick="destroyEntry(faxTableReactiveProperties.selected)"
+          @icon-btn-click="destroyEntry(faxTableReactiveProperties.selected)"
         />
 
         <!--        <IconBtn-->
         <!--          icon="data_usage"-->
         <!--          color="orange"-->
         <!--          tooltip="Обновить цены"-->
-        <!--          @iconBtnClick="updatePricesInFax(currentFaxItem.id)"-->
+        <!--          @icon-btn-click="updatePricesInFax(currentFaxItem.id)"-->
         <!--        />-->
       </template>
 
@@ -83,6 +83,25 @@
                   {{ props.row.code_client_name }}
                 </ItemLabel>
               </ItemSection>
+
+              <ItemSection>
+                <ItemLabel>
+                  {{ props.row.place }}
+                </ItemLabel>
+              </ItemSection>
+
+              <ItemSection>
+                <ItemLabel>
+                  {{ props.row.kg }}
+                </ItemLabel>
+              </ItemSection>
+
+              <ItemSection v-show="!combineTableData">
+                <ItemLabel>
+                  <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{ props.row.in_cargo ? 'Да': 'Нет' }}
+                  </q-badge>
+                </ItemLabel>
+              </ItemSection>
             </template>
 
             <List
@@ -92,7 +111,7 @@
               <ListItem
                 v-for="col in props.cols.filter(col => col.name !== 'desc')"
                 :key="col.name"
-                @clickList="viewEditDialog(props)"
+                @click-list="viewEditDialog(props)"
               >
                 <ItemSection>
                   <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
@@ -120,7 +139,7 @@
                     label="История"
                     color="info"
                     style="max-width: 100px;margin: 0 auto;"
-                    @clickBaseBtn="getStorehouseDataHistory(props.row.id, props.cols)"
+                    @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"
                   />
                 </ItemSection>
               </ListItem>
@@ -159,7 +178,7 @@
               :value.sync="props.row.code_client_id"
               type="number"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'code_client_id')"
+              @add-to-save="addToAddSaveArray(props.row, 'code_client_id')"
             >
               <SearchSelect
                 v-model="props.row.code_client_id"
@@ -195,7 +214,7 @@
               :value.sync="props.row.for_kg"
               type="number"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'for_kg')"
+              @add-to-save="addToAddSaveArray(props.row, 'for_kg')"
             >
               <q-input
                 v-model.number="props.row.for_kg"
@@ -222,7 +241,7 @@
               :value.sync="props.row.for_place"
               type="number"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'for_place')"
+              @add-to-save="addToAddSaveArray(props.row, 'for_place')"
             />
           </q-td>
 
@@ -237,7 +256,7 @@
               :value.sync="props.row.category_id"
               type="number"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'category_id')"
+              @add-to-save="addToAddSaveArray(props.row, 'category_id')"
             >
               <SearchSelect
                 v-model="props.row.category_id"
@@ -246,6 +265,14 @@
                 :options="categories"
               />
             </PopupEdit>
+          </q-td>
+
+          <q-td
+            key="in_cargo"
+            :props="props"
+          >
+            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{ props.row.in_cargo ? 'Да': 'Нет' }}
+            </q-badge>
           </q-td>
 
           <q-td
@@ -266,7 +293,7 @@
               :value.sync="props.row.delivery_method_id"
               type="number"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'delivery_method_id')"
+              @add-to-save="addToAddSaveArray(props.row, 'delivery_method_id')"
             >
               <SearchSelect
                 v-model="props.row.delivery_method_id"
@@ -287,7 +314,7 @@
               v-if="combineTableData"
               :value.sync="props.row.department"
               :title="props.row.code_client_name"
-              @addToSave="addToAddSaveArray(props.row, 'department')"
+              @add-to-save="addToAddSaveArray(props.row, 'department')"
             />
           </q-td>
 
@@ -330,7 +357,7 @@
             dense
             icon="close"
             tooltip="Закрыть"
-            @iconBtnClick="dialogHistory = false"
+            @icon-btn-click="dialogHistory = false"
           />
         </q-bar>
 
@@ -354,14 +381,14 @@
             icon="save"
             tooltip="Сохранить"
             color="positive"
-            @iconBtnClick="saveTransfersData(faxSideData, storehouseSideData)"
+            @icon-btn-click="saveTransfersData(faxSideData, storehouseSideData)"
           />
           <IconBtn
             flat
             dense
             icon="close"
             tooltip="Закрыть"
-            @iconBtnClick="closeDialogTransferFromStorehouse"
+            @icon-btn-click="closeDialogTransferFromStorehouse"
           />
         </q-bar>
         <CardSection>
@@ -529,7 +556,7 @@
                     columns: [
                         {
                             name: 'code_place',
-                            label: 'Клиент',
+                            label: 'Код',
                             align: 'center',
                             field: 'code_place',
                             sortable: true,
@@ -577,6 +604,13 @@
                             sortable: true,
                         },
                         {
+                            name: 'in_cargo',
+                            label: 'Доставлен',
+                            field: 'in_cargo',
+                            align: 'center',
+                            sortable: true,
+                        },
+                        {
                             name: 'shop',
                             label: this.$t('shop'),
                             field: 'shop',
@@ -615,11 +649,11 @@
                 },
                 faxTableReactiveProperties: {
                     selected: [],
-                    visibleColumns: ['code_client_name', 'place', 'kg', 'category_name', 'delivery_method_name', 'department'],
+                    visibleColumns: ['code_client_name', 'place', 'kg', 'in_cargo', 'category_name', 'delivery_method_name', 'department'],
                     title: '',
                 },
-                visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'category_name', 'delivery_method_name', 'department'],
-                fullVisibleColumns: ['code_place', 'code_client_name', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop', 'delivery_method_name', 'department'],
+                visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'category_name', 'in_cargo', 'delivery_method_name', 'department'],
+                fullVisibleColumns: ['code_place', 'code_client_name', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop', 'in_cargo', 'delivery_method_name', 'department'],
             };
         },
         computed: {

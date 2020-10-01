@@ -7,7 +7,7 @@
             rounded
             :color="roundBtnData.color || 'primary'"
             :label="roundBtnData.label"
-            @click.stop="$emit('roundBtnClick')"
+            @click.stop="$emit('round-btn-click')"
         />
     </div>
 </template>

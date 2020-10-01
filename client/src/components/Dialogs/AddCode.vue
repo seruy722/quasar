@@ -22,7 +22,7 @@
                                 ref="codeInput"
                                 :inputData.sync="inputCode"
                                 :errors="errorsData"
-                                @onKeyUp="keyUp"
+                                @on-key-up="keyUp"
                             />
                         </q-step>
 
@@ -57,12 +57,12 @@
                                 <BaseBtn
                                     v-if="step === 1"
                                     label="next"
-                                    @clickBaseBtn="checkCodeExist"
+                                    @click-base-btn="checkCodeExist"
                                 />
                                 <BaseBtn
                                     v-else
                                     label="back"
-                                    @clickBaseBtn="$refs.stepper.previous()"
+                                    @click-base-btn="$refs.stepper.previous()"
                                 />
 
                                 <AddCustomers v-if="step > 1" :customersData.sync="customersData" />
@@ -77,7 +77,7 @@
                     <OutlineBtn
                         v-show="step > 1"
                         :btnData="btnData"
-                        @clickOutlineBtn="saveCodeOnServer"
+                        @click-outline-btn="saveCodeOnServer"
                     />
                 </q-card-actions>
             </template>

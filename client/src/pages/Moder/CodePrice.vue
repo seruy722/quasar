@@ -15,10 +15,10 @@
             color="teal"
             icon="add_box"
             tooltip="Добавить"
-            @iconBtnClick="addCodeWithCategory"
+            @icon-btn-click="addCodeWithCategory"
           />
           <UpdateBtn
-            @updateBtnClick="refresh"
+            @update-btn-click="refresh"
           />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -104,7 +104,7 @@
                         dense
                         icon="history"
                         tooltip="История"
-                        @iconBtnClick="getCodePriceHistory(elem.id)"
+                        @icon-btn-click="getCodePriceHistory(elem.id)"
                       />
                       <IconBtn
                         flat
@@ -112,7 +112,7 @@
                         icon="edit"
                         color="teal"
                         tooltip="Редактировать"
-                        @iconBtnClick="openDialogAddCodePriceForUpdate(elem)"
+                        @icon-btn-click="openDialogAddCodePriceForUpdate(elem)"
                       />
                       <IconBtn
                         flat
@@ -120,7 +120,7 @@
                         icon="delete"
                         color="negative"
                         tooltip="Удалить"
-                        @iconBtnClick="deleteCodePrice(elem)"
+                        @icon-btn-click="deleteCodePrice(elem)"
                       />
                     </div>
                   </q-item-section>
@@ -185,7 +185,7 @@
               dense
               icon="close"
               tooltip="Закрыть"
-              @iconBtnClick="dialogHistory = false"
+              @icon-btn-click="dialogHistory = false"
             />
           </q-bar>
 
@@ -269,7 +269,7 @@
                     dense
                     icon="history"
                     tooltip="История"
-                    @iconBtnClick="getCodePriceHistory(elem.id)"
+                    @icon-btn-click="getCodePriceHistory(elem.id)"
                   />
                   <IconBtn
                     flat
@@ -277,7 +277,7 @@
                     icon="edit"
                     color="teal"
                     tooltip="Редактировать"
-                    @iconBtnClick="openDialogAddCodePriceForUpdate(elem)"
+                    @icon-btn-click="openDialogAddCodePriceForUpdate(elem)"
                   />
                   <IconBtn
                     flat
@@ -285,7 +285,7 @@
                     icon="delete"
                     color="negative"
                     tooltip="Удалить"
-                    @iconBtnClick="deleteCodePrice(elem)"
+                    @icon-btn-click="deleteCodePrice(elem)"
                   />
                 </div>
               </q-item-section>

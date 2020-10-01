@@ -3,7 +3,7 @@
     :clickable="clickable"
     :dense="dense"
     data-vue-component-name="ListItem"
-    @click="$emit('listItemClick')"
+    @click="$emit('list-item-click')"
   >
     <slot></slot>
   </q-item>

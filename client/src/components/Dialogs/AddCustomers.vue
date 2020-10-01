@@ -19,7 +19,7 @@
                         />
                         <BaseInput
                             v-else
-                            :input-data.sync="input"
+                            :input-data="input"
                             :errors="errorsData"
                         />
                     </div>
@@ -30,7 +30,7 @@
                 <q-card-actions align="center">
                     <OutlineBtn
                         :btnData="btnData"
-                        @clickOutlineBtn="checkValidCustomerData"
+                        @click-outline-btn="checkValidCustomerData"
                     />
                 </q-card-actions>
             </template>
@@ -199,6 +199,7 @@
                   .then(({ data }) => {
                       if (data.status) {
                           this.dialogAddClientData.value = false;
+                          // eslint-disable-next-line vue/no-mutating-props
                           this.customersData.customerList.push(inputsData);
                           this.clearData();
                       }
