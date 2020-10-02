@@ -116,7 +116,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::get('/cargo-payments-all/{id}', 'Api\CargoController@cargoPaymentsAllForClient')->name('cargo payments all')->middleware(['role_or_permission:admin|cargo payments all']);
     Route::get('/debts-payments-all/{id}', 'Api\CargoController@debtsPaymentsAllForClient')->name('debts payments all')->middleware(['role_or_permission:admin|debts payments all']);
     Route::post('/export-report-odessa-data', 'Api\CargoController@exportReportOdessaData')->name('export report odessa data')->middleware(['role_or_permission:admin|export report odessa data']);
-    Route::get('/get-not-delivered-cargo', 'Api\CargoController@getNotDeliveredCargo')->middleware(['role_or_permission:admin|cargo|not-delivered-cargo']);
+    Route::get('/get-not-delivered-cargo', 'Api\CargoController@getNotDeliveredCargo');
     Route::post('/set-delivered-cargo', 'Api\CargoController@setDeliveredCargo')->middleware(['role_or_permission:admin|cargo|set-delivered-cargo']);
 
     // DEBTS_TABLE

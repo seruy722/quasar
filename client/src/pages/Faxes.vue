@@ -38,6 +38,13 @@
           <!--          @icon-btn-click="deleteFaxItems"-->
           <!--        />-->
           <Menu :items="['Факс', 'Перевожчика']" />
+          <IconBtn
+            dense
+            icon="flight_land"
+            color="accent"
+            tooltip="Не доставленные места"
+            @icon-btn-click="showDialogNotDeliveredCargo = true"
+          />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
         <template v-slot:inner-item="{props}">
@@ -286,6 +293,7 @@
         </q-card-section>
       </q-card>
     </Dialog>
+    <DialogNotDeliveredCargo :show.sync="showDialogNotDeliveredCargo"/>
   </q-page>
 </template>
 
@@ -310,6 +318,7 @@
             PullRefresh: () => import('src/components/PullRefresh.vue'),
             UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
             // ListNumbered: () => import('components/ListNumbered.vue'),
+            DialogNotDeliveredCargo: () => import('components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue'),
         },
         filters: {
             statusFilter(value) {
@@ -320,6 +329,7 @@
         mixins: [showNotif],
         data() {
             return {
+                showDialogNotDeliveredCargo: false,
                 dialogHistory: false,
                 showFaxDialog: false,
                 faxHistoryData: {

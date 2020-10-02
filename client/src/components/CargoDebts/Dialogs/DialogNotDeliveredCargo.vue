@@ -1,9 +1,12 @@
 <template>
-  <div class="q-pa-md q-gutter-sm" data-vue-component-name="DialogNotDeliveredCargo">
+  <div
+    class="q-pa-md q-gutter-sm"
+    data-vue-component-name="DialogNotDeliveredCargo"
+  >
     <q-dialog
       v-model="dialog"
       persistent
-      :maximized="maximizedToggle"
+      maximized
       transition-show="slide-up"
       transition-hide="slide-down"
     >
@@ -18,13 +21,17 @@
             color="negative"
           >
             <q-tooltip content-class="bg-white text-primary">Закрыть</q-tooltip>
-            </q-btn>
+          </q-btn>
         </q-bar>
 
         <q-card-section>
           <div class="text-h6">
             Не доставленные места
-            <q-btn label="Получить" color="primary" @click="getNotDeliveredCargo" />
+            <q-btn
+              label="Показать"
+              color="primary"
+              @click="getNotDeliveredCargo"
+            />
           </div>
         </q-card-section>
 
@@ -56,7 +63,6 @@
         },
         data() {
             return {
-                maximizedToggle: true,
                 cargo: [],
             };
         },
