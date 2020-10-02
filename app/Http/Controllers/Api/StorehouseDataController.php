@@ -542,4 +542,32 @@ class StorehouseDataController extends Controller
         $this->storehouseDataHistory(0, $arrayData, 'move', (new FaxData())->getTable());
         return response(['status' => true]);
     }
+
+    public function storehouseHistoryDataList()
+    {
+        $queryData = StorehouseHistory::select(
+            'storehouse_histories.id',
+            'storehouse_histories.code_place',
+            'storehouse_histories.code_client_id',
+            'storehouse_histories.place',
+            'storehouse_histories.kg',
+            'storehouse_histories.category_id',
+            'storehouse_histories.created_at',
+            'storehouse_histories.updated_at',
+            'codes.code as code_client_name',
+            'categories.name as category_name'
+        )
+            ->leftJoin('codes', 'codes.id', '=', 'storehouse_histories.code_client_id')
+            ->leftJoin('categories', 'categories.id', '=', 'storehouse_histories.category_id')
+            ->orderBy('storehouse_histories.id', 'desc');
+        return $queryData;
+    }
+
+    public function getStorehousePeriodData(Request $request)
+    {
+        $data = $this->storehouseHistoryDataList()
+            ->whereDate('storehouse_histories.created_at', '>=', $request->from)
+            ->whereDate('storehouse_histories.created_at', '<=', $request->to)->get();
+        return response(['cargo' => $data]);
+    }
 }

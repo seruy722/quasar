@@ -83,6 +83,9 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/update-fax-combine-data', 'Api\StorehouseDataController@updateFaxCombineData')->name('update fax combine data')->middleware(['role_or_permission:admin|fax|update fax combine data']);
     Route::post('/move-from-storehouse-to-fax', 'Api\StorehouseDataController@moveFromStorehouseToFax')->name('move entries from storehouse to fax')->middleware(['role_or_permission:admin|storehouse|move entries from storehouse to fax']);
 
+    // STOREHOUSE_HISTORIES
+    Route::post('/get-storehouse-period-data', 'Api\StorehouseDataController@getStorehousePeriodData');
+
     // CLIENTS
     Route::post('/valid-customer-data', 'Api\CustomersController@checkValidCustomerData');
     Route::post('/store-customers', 'Api\CustomersController@storeCustomers');

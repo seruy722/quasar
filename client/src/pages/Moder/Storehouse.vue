@@ -28,14 +28,6 @@
             @icon-btn-click="destroyEntry(storehouseTableReactiveProperties.selected)"
           />
 
-<!--          <IconBtn-->
-<!--            v-show="storehouseTableReactiveProperties.selected.length"-->
-<!--            color="info"-->
-<!--            icon="move_to_inbox"-->
-<!--            tooltip="Переместить"-->
-<!--            @icon-btn-click="moveToFax"-->
-<!--          />-->
-
           <MoveToFaxBtn
             v-show="storehouseTableReactiveProperties.selected.length"
             @move-to-fax-click="moveToFax"
@@ -46,6 +38,12 @@
             icon="explicit"
             :tooltip="$t('excel')"
             @icon-btn-click="exportStorehouseData"
+          />
+          <IconBtn
+            color="primary"
+            icon="info"
+            tooltip="Инфо по складу"
+            @icon-btn-click="dialogStorehouseInfo = true"
           />
         </template>
 
@@ -244,6 +242,31 @@
       :show.sync="showMoveToFaxDialog"
       :values.sync="storehouseTableReactiveProperties.selected"
     />
+    <Dialog
+      :dialog="dialogStorehouseInfo"
+      :persistent="true"
+      :maximized="true"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <q-card style="max-width: 600px;">
+        <q-bar>
+          <q-space />
+          <IconBtn
+            flat
+            dense
+            icon="close"
+            tooltip="Закрыть"
+            color="negative"
+            @icon-btn-click="dialogStorehouseInfo = false"
+          />
+        </q-bar>
+
+        <q-card-section class="q-pt-none">
+          <StorehouseInfo />
+        </q-card-section>
+      </q-card>
+    </Dialog>
   </q-page>
 </template>
 
@@ -251,40 +274,36 @@
     import { getUrl } from 'src/tools/url';
     import showNotif from 'src/mixins/showNotif';
     import ExportDataMixin from 'src/mixins/ExportData';
-    // import { sortCollection } from 'src/utils/sort';
-    // import { isoDate, toDate, formatToMysql } from 'src/utils/formatDate';
     import { callFunction } from 'src/utils/index';
     import {
         getClientCodes,
         getCategories,
         getShopsList,
-        // setFormatedDate,
         getStorehouseTableData,
     } from 'src/utils/FrequentlyCalledFunctions';
-    // import { max } from 'date-fns';
     import StorehouseDataMixin from 'src/mixins/StorehouseData';
 
     export default {
         name: 'Storehouse',
         components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            DialogAddEntryOnStorehouse: () => import('src/components/Dialogs/DialogAddEntryOnStorehouse.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            Menu: () => import('src/components/Menu.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            // CheckBox: () => import('src/components/Elements/CheckBox.vue'),
-            // Badge: () => import('src/components/Elements/Badge.vue'),
-            StorehouseDataHistory: () => import('src/components/History/StorehouseDataHistory.vue'),
-            PullRefresh: () => import('src/components/PullRefresh.vue'),
-            CountCategories: () => import('src/components/CountCategories.vue'),
-            DialogMoveToFax: () => import('src/components/Dialogs/DialogMoveToFax.vue'),
-            MoveToFaxBtn: () => import('src/components/Buttons/MoveToFaxBtn.vue'),
-            UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
+            Table: () => import('components/Elements/Table/Table.vue'),
+            Dialog: () => import('components/Dialogs/Dialog.vue'),
+            DialogAddEntryOnStorehouse: () => import('components/Dialogs/DialogAddEntryOnStorehouse.vue'),
+            IconBtn: () => import('components/Buttons/IconBtn.vue'),
+            Menu: () => import('components/Menu.vue'),
+            BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
+            StorehouseDataHistory: () => import('components/History/StorehouseDataHistory.vue'),
+            PullRefresh: () => import('components/PullRefresh.vue'),
+            CountCategories: () => import('components/CountCategories.vue'),
+            DialogMoveToFax: () => import('components/Dialogs/DialogMoveToFax.vue'),
+            MoveToFaxBtn: () => import('components/Buttons/MoveToFaxBtn.vue'),
+            UpdateBtn: () => import('components/Buttons/UpdateBtn.vue'),
+            StorehouseInfo: () => import('components/Storehouse/StorehouseInfo.vue'),
         },
         mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
         data() {
             return {
+                dialogStorehouseInfo: false,
                 showMoveToFaxDialog: false,
                 localStorehouseEditData: {},
                 showAddEntryOnStorehouseDialog: false,
@@ -373,11 +392,6 @@
                 return this.$store.getters['storehouse/getStorehouseCategoriesData'];
             },
         },
-        // watch: {
-        //     storehouseData(val) {
-        //         this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(val));
-        //     },
-        // },
         mounted() {
             this.$q.loading.show();
             Promise.all([getStorehouseTableData(this.$store)])

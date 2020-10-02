@@ -140,6 +140,34 @@ export const setCargoCategoriesData = (data) => {
     },
   };
 };
+
+export const setStorehouseCategoriesData = (data) => {
+  const categoriesNames = _.uniq(_.map(data, 'category_name'));
+  const arr = [];
+
+  _.forEach(categoriesNames, (name) => {
+    const categoryArr = _.filter(data, { category_name: name });
+    const obj = {
+      name,
+      place: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ place }) => place),
+      kg: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ kg }) => kg),
+    };
+    if (name) {
+      arr.push(obj);
+    }
+  });
+
+  arr.sort((a, b) => b.place - a.place);
+  const dt = _.filter(data, { type: 0 });
+  return {
+    categoriesList: arr,
+    footer: {
+      name: null,
+      place: countSumCollection(dt, ({ place }) => place),
+      kg: countSumCollection(dt, ({ kg }) => kg),
+    },
+  };
+};
 // export const setDataForSearch = (data) => {
 //   const faxesNames = _.uniq(_.map(data, 'fax_name'));
 //   const arr = [];
