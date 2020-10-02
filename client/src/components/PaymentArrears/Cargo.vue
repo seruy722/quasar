@@ -66,7 +66,6 @@
               <q-item
                 v-for="col in props.cols.filter(col => col.name !== 'desc')"
                 :key="col.name"
-                @click="viewEditDialog(props)"
               >
                 <q-item-section>
                   <q-item-label>{{ `${col.label}:` }}</q-item-label>
@@ -414,8 +413,7 @@
                     ids,
                     flag,
                 })
-                  .then(({ data: { cargo } }) => {
-                      _.set(this, 'list', cargo);
+                  .then(() => {
                       this.cargoTableReactiveProperties.selected = [];
                       this.$q.loading.hide();
                   })
