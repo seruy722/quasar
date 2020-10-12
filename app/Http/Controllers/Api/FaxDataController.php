@@ -371,7 +371,13 @@ class FaxDataController extends Controller
 
     public function setDeliveredFaxData(Request $request)
     {
-        StorehouseData::whereIn('storehouse_data.id', $request->ids)->update(['in_cargo' => $request->flag]);
+        $ddd = StorehouseData::whereIn('storehouse_data.id', $request->ids)->get();
+        $codePlaces = $ddd->map(function ($item) use ($request) {
+            $item->in_cargo = $request->flag;
+            $item->save();
+            return $item->code_place;
+        });
+        Cargo::whereIn('code_place', $codePlaces)->update(['in_cargo' => $request->flag]);
         $data = $this->getFaxDataQuery()->whereIn('storehouse_data.id', $request->ids)->get();
         return response(['storehouseData' => $data]);
     }

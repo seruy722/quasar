@@ -9,6 +9,7 @@ node_modules
 /src-cordova/plugins
 /src-cordova/www
 /src-cordova/res
+new 4.txt
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

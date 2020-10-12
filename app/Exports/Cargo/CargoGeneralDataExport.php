@@ -66,7 +66,7 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
             $res = $data->get();
         }
 
-        if ($this->data['type'] === 0 || $this->data['type'] === -1) {
+        if ($this->enterData['type'] === 0 || $this->enterData['type'] === -1) {
             $codes = $res->map(function ($item) {
                 return $item->code_client_id;
             });
@@ -84,13 +84,13 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
                     array_push($codeRes, $item);
                 }
             }
-            usort($codeRes, function ($a, $b) {
-                if ($a['code_client_name'] == $b['code_client_name']) {
-                    return 0;
-                }
-
-                return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
-            });
+//            usort($codeRes, function ($a, $b) {
+//                if ($a['code_client_name'] == $b['code_client_name']) {
+//                    return 0;
+//                }
+//
+//                return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
+//            });
             $this->data = $codeRes;
             return $this->data;
         }
