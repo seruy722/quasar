@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Cargo;
+use App\Category;
 use App\City;
 use App\Code;
 use App\Customer;
@@ -152,6 +153,12 @@ class CargoController extends Controller
         }
         if (array_key_exists('sum', $data) && $data['sum'] > 0) {
             $data['sum'] = $data['sum'] * -1;
+        }
+        if (array_key_exists('category_id', $data)) {
+            $category = Category::find($data['category_id']);
+            if ($category) {
+                $data['brand'] = true;
+            }
         }
         $entry = Cargo::create($data);
         if (array_key_exists('for_kg', $data) || array_key_exists('for_place', $data) || array_key_exists('kg', $data) || array_key_exists('place', $data)) {

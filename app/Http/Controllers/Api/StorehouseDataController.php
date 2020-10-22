@@ -290,7 +290,14 @@ class StorehouseDataController extends Controller
         }
 
         StorehouseData::where('id', $request->id)->update($data);
-        StorehouseHistory::where('storehouse_entry_id', $request->id)->update($data);
+        $storehouseHistoryData = [];
+        $storehouseHistoryUpdateKeys = ['code_place', 'code_client_id', 'place', 'kg', 'category_id'];
+        foreach ($storehouseHistoryUpdateKeys as $item) {
+            if (array_key_exists($item, $data)) {
+                $storehouseHistoryData[$item] = $data[$item];
+            }
+        }
+        StorehouseHistory::where('storehouse_entry_id', $request->id)->update($storehouseHistoryData);
         $this->storehouseDataHistory($request->id, $data, 'update', (new StorehouseData)->getTable());
 
         $arrData = $this->storehouseDataList(1);

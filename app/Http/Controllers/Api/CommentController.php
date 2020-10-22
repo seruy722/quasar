@@ -65,7 +65,7 @@ class CommentController extends Controller
 
     public function getDocumentsComment()
     {
-        return response(['documents' => $this->query()->where('task_id', 0)->get()]);
+        return response(['documents' => $this->query()->where('task_id', 0)->orderBy('id', 'desc')->get()]);
     }
 
     public function removeCommentFile(Request $request)

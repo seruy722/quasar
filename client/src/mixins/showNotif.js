@@ -11,7 +11,7 @@ export default {
             textColor: 'white',
             icon: 'thumb_up',
             message,
-            position: position || 'bottom',
+            position: position || 'top-right',
             multiLine: true,
             actions: actions || [
               {
@@ -30,7 +30,7 @@ export default {
             textColor: 'white',
             icon: 'warning',
             message,
-            position: position || 'bottom',
+            position: position || 'top-right',
             multiLine: true,
             actions: actions || [
               {
@@ -49,7 +49,7 @@ export default {
             textColor: 'white',
             icon: 'info',
             message,
-            position: position || 'bottom',
+            position: position || 'top-right',
             multiLine: true,
             actions: actions || [
               {
@@ -68,7 +68,7 @@ export default {
             textColor: 'white',
             icon: 'error',
             message,
-            position: position || 'bottom',
+            position: position || 'top-right',
             multiLine: true,
             actions: actions || [
               {

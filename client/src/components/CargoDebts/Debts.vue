@@ -374,7 +374,7 @@
             destroyDebtEntry(data) {
                 const ids = _.map(data, 'id');
                 if (!_.isEmpty(ids)) {
-                    this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
+                    this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', [
                         {
                             label: 'Отмена',
                             color: 'white',
@@ -393,7 +393,7 @@
                                       this.$store.dispatch('cargoDebts/deleteDebtEntry', ids);
                                       this.debtsTableReactiveProperties.selected = [];
                                       this.$q.loading.hide();
-                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
+                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.');
                                   })
                                   .catch(() => {
                                       this.$q.loading.hide();
@@ -413,7 +413,7 @@
             },
             async paymentsAll(id) {
                 if (id) {
-                    this.showNotif('warning', 'Перевести все данные клиента в статус оплаты?', 'center', [
+                    this.showNotif('warning', 'Перевести все данные клиента в статус оплаты?', [
                         {
                             label: 'Отмена',
                             color: 'white',
@@ -430,7 +430,7 @@
                                   .then(({ data: { debts } }) => {
                                       this.$store.dispatch('cargoDebts/updateDebtEntry', debts);
                                       this.$q.loading.hide();
-                                      this.showNotif('success', 'Данные по карго все переведены в статус оплаты.', 'center');
+                                      this.showNotif('success', 'Данные по карго все переведены в статус оплаты.');
                                   })
                                   .catch(() => {
                                       this.$q.loading.hide();

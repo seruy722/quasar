@@ -24,3 +24,9 @@ export const callFunction = ((func, args) => {
     func(args);
   }
 });
+
+export const createSpecialLink = ((href, special) => {
+  const link = document.createElement('a');
+  link.href = `${special}:${href}`;
+  return link;
+});
