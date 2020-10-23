@@ -270,6 +270,9 @@
                 }
                 return size;
             },
+          settingsDate() {
+            return this.$store.getters['settings/getDateForSaveData'];
+          },
         },
         watch: {
             entryData(val) {
@@ -308,6 +311,10 @@
             },
             show(val) {
                 this.$emit('update:showDialog', val);
+              if (val && this.settingsDate) {
+                this.storehouseData.created_at.value = this.settingsDate;
+                this.storehouseData.created_at.changeValue = true;
+              }
             },
         },
         methods: {

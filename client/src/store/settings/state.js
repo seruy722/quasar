@@ -1,4 +1,5 @@
 export default {
+  dateForSaveData: null,
   locale: '',
   menu: [
     {

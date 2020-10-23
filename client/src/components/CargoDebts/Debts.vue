@@ -106,8 +106,10 @@
                     {{ col.value | numberFormatFilter }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'paid'">
-                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
-                      props.row.type ? null : 'Нет' }}
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{
+                        props.row.paid ? 'Да' :
+                          props.row.type ? null : 'Нет'
+                      }}
                     </q-badge>
                   </q-item-label>
                   <q-item-label v-else>
@@ -184,8 +186,10 @@
             key="paid"
             :props="props"
           >
-            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
-              props.row.type ? null : 'Нет' }}
+            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{
+                props.row.paid ? 'Да' :
+                  props.row.type ? null : 'Нет'
+              }}
             </q-badge>
           </q-td>
 
@@ -226,220 +230,221 @@
 </template>
 
 <script>
-    import ExportDataMixin from 'src/mixins/ExportData';
-    import showNotif from 'src/mixins/showNotif';
+import ExportDataMixin from 'src/mixins/ExportData';
+import showNotif from 'src/mixins/showNotif';
 
-    export default {
-        name: 'Debts',
-        components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            GeneralClientDebtsData: () => import('src/components/CargoDebts/GeneralClientDebtsData.vue'),
-            UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-            ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-            DialogAddDebtPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue'),
-            DialogAddDebEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue'),
-            DialogAddDebtPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPayEntry.vue'),
-            MenuDebt: () => import('src/components/CargoDebts/MenuDebt.vue'),
-        },
-        mixins: [ExportDataMixin, showNotif],
-        props: {
-            refresh: {
-                type: Function,
-                default: () => {
-                },
-            },
-        },
-        data() {
-            return {
-                debtsTableProperties: {
-                    columns: [
-                        {
-                            name: 'created_at',
-                            label: 'Дата',
-                            align: 'center',
-                            field: 'created_at',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_client_name',
-                            label: 'Клиент',
-                            align: 'center',
-                            field: 'code_client_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'type',
-                            label: 'Тип',
-                            align: 'center',
-                            field: 'type',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sum',
-                            label: 'Сумма',
-                            field: 'sum',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'commission',
-                            label: 'Комиссия',
-                            field: 'commission',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'paid',
-                            label: 'Оплачен',
-                            field: 'paid',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'get_pay_user_name',
-                            label: 'Пользователь',
-                            field: 'get_pay_user_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
+export default {
+  name: 'Debts',
+  components: {
+    Table: () => import('src/components/Elements/Table/Table.vue'),
+    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    GeneralClientDebtsData: () => import('src/components/CargoDebts/GeneralClientDebtsData.vue'),
+    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
+    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
+    DialogAddDebtPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue'),
+    DialogAddDebEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue'),
+    DialogAddDebtPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPayEntry.vue'),
+    MenuDebt: () => import('src/components/CargoDebts/MenuDebt.vue'),
+  },
+  mixins: [ExportDataMixin, showNotif],
+  props: {
+    refresh: {
+      type: Function,
+      default: () => {
+      },
+    },
+  },
+  data() {
+    return {
+      debtsTableProperties: {
+        columns: [
+          {
+            name: 'created_at',
+            label: 'Дата',
+            align: 'center',
+            field: 'created_at',
+            sortable: true,
+          },
+          {
+            name: 'code_client_name',
+            label: 'Клиент',
+            align: 'center',
+            field: 'code_client_name',
+            sortable: true,
+          },
+          {
+            name: 'type',
+            label: 'Тип',
+            align: 'center',
+            field: 'type',
+            sortable: true,
+          },
+          {
+            name: 'sum',
+            label: 'Сумма',
+            field: 'sum',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'commission',
+            label: 'Комиссия',
+            field: 'commission',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'paid',
+            label: 'Оплачен',
+            field: 'paid',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'get_pay_user_name',
+            label: 'Пользователь',
+            field: 'get_pay_user_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'notation',
+            label: this.$t('notation'),
+            field: 'notation',
+            align: 'center',
+            sortable: true,
+          },
 
-                    ],
-                },
-                debtsTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission', 'get_pay_user_name'],
-                    title: '',
-                },
-                showDialogAddDebtPaymentEntry: false,
-                dialogAddDebtPaymentEntryData: {},
-                showDialogAddDebtEntry: false,
-                dialogAddDebtEntryData: {},
-                dialogAddDebtPayEntryData: {},
-                showDialogAddDebtPayEntry: false,
-            };
-        },
-        computed: {
-            debts() {
-                return this.$store.getters['cargoDebts/getDebts'];
-            },
-            currentCodeClientId() {
-                return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
-            },
-            titleTable() {
-                return `Сумма: ${_.sumBy(this.debts, 'sum')}, %: ${_.sumBy(this.debts, 'commission')}`;
-            },
-        },
-        methods: {
-            viewDebtEditDialog(data, event) {
-                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
-                    devlog.log('data', data, event);
-                    if (data.row.type) {
-                        devlog.log('EMPTY');
-                        this.dialogAddDebtPaymentEntryData = data;
-                        this.showDialogAddDebtPaymentEntry = true;
-                    } else {
-                        this.dialogAddDebtEntryData = data;
-                        this.showDialogAddDebtEntry = true;
-                    }
-                }
-            },
-            async exportFaxData(selected) {
-                let data = selected;
-                if (_.isEmpty(data)) {
-                    data = this.debts;
-                } else {
-                    const searchData = this.$store.getters['cargoDebts/getDebtsForSearch'];
-                    const newArr = [];
-                    _.forEach(data, ({ id }) => {
-                        newArr.push(_.find(searchData, { id }));
-                    });
-                    data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
-                }
-                if (!_.isEmpty(data)) {
-                    const { getUrl } = await import('src/tools/url');
-                    this.exportDataToExcel(getUrl('exportDebtsData'), {
-                        data,
-                    }, 'Debts.xlsx');
-                }
-            },
-            destroyDebtEntry(data) {
-                const ids = _.map(data, 'id');
-                if (!_.isEmpty(ids)) {
-                    this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', [
-                        {
-                            label: 'Отмена',
-                            color: 'white',
-                            handler: () => {
-                                this.debtsTableReactiveProperties.selected = [];
-                            },
-                        },
-                        {
-                            label: 'Удалить',
-                            color: 'white',
-                            handler: async () => {
-                                const { getUrl } = await import('src/tools/url');
-                                this.$q.loading.show();
-                                this.$axios.post(getUrl('deleteDebtEntry'), { ids })
-                                  .then(() => {
-                                      this.$store.dispatch('cargoDebts/deleteDebtEntry', ids);
-                                      this.debtsTableReactiveProperties.selected = [];
-                                      this.$q.loading.hide();
-                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.');
-                                  })
-                                  .catch(() => {
-                                      this.$q.loading.hide();
-                                      devlog.error('Ошибка запроса - deleteDebtEntry');
-                                  });
-                            },
-                        },
-                    ]);
-                }
-            },
-            pay(data) {
-                if (!data.type && !data.paid) {
-                    this.dialogAddDebtPayEntryData = data;
-                    this.showDialogAddDebtPayEntry = true;
-                }
-                this.debtsTableReactiveProperties.selected = [];
-            },
-            async paymentsAll(id) {
-                if (id) {
-                    this.showNotif('warning', 'Перевести все данные клиента в статус оплаты?', [
-                        {
-                            label: 'Отмена',
-                            color: 'white',
-                            handler: () => {
-                            },
-                        },
-                        {
-                            label: 'OK',
-                            color: 'white',
-                            handler: async () => {
-                                const { getUrl } = await import('src/tools/url');
-                                this.$q.loading.show();
-                                this.$axios.get(`${getUrl('debtsPaymentsAll')}/${id}`)
-                                  .then(({ data: { debts } }) => {
-                                      this.$store.dispatch('cargoDebts/updateDebtEntry', debts);
-                                      this.$q.loading.hide();
-                                      this.showNotif('success', 'Данные по карго все переведены в статус оплаты.');
-                                  })
-                                  .catch(() => {
-                                      this.$q.loading.hide();
-                                  });
-                            },
-                        },
-                    ]);
-                }
-            },
-        },
+        ],
+      },
+      debtsTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission', 'get_pay_user_name'],
+        title: '',
+      },
+      showDialogAddDebtPaymentEntry: false,
+      dialogAddDebtPaymentEntryData: {},
+      showDialogAddDebtEntry: false,
+      dialogAddDebtEntryData: {},
+      dialogAddDebtPayEntryData: {},
+      showDialogAddDebtPayEntry: false,
     };
+  },
+  computed: {
+    debts() {
+      return this.$store.getters['cargoDebts/getDebts'];
+    },
+    currentCodeClientId() {
+      return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
+    },
+    titleTable() {
+      return `Сумма: ${_.sumBy(this.debts, 'sum')}, %: ${_.sumBy(this.debts, 'commission')}`;
+    },
+  },
+  methods: {
+    viewDebtEditDialog(data, event) {
+      if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
+        devlog.log('data', data, event);
+        if (data.row.type) {
+          devlog.log('EMPTY');
+          this.dialogAddDebtPaymentEntryData = data;
+          this.showDialogAddDebtPaymentEntry = true;
+        } else {
+          this.dialogAddDebtEntryData = data;
+          this.showDialogAddDebtEntry = true;
+        }
+      }
+    },
+    async exportFaxData(selected) {
+      let data = selected;
+      if (_.isEmpty(data)) {
+        data = this.debts;
+      } else {
+        const searchData = this.$store.getters['cargoDebts/getDebtsForSearch'];
+        const newArr = [];
+        _.forEach(data, ({ id }) => {
+          newArr.push(_.find(searchData, { id }));
+        });
+        data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
+      }
+      if (!_.isEmpty(data)) {
+        const clientName = `${_.get(_.first(data), 'code_client_name')} код долги`;
+        const { getUrl } = await import('src/tools/url');
+        this.exportDataToExcel(getUrl('exportDebtsData'), {
+          data,
+        }, `${clientName}.xlsx`);
+      }
+    },
+    destroyDebtEntry(data) {
+      const ids = _.map(data, 'id');
+      if (!_.isEmpty(ids)) {
+        this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
+          {
+            label: 'Отмена',
+            color: 'white',
+            handler: () => {
+              this.debtsTableReactiveProperties.selected = [];
+            },
+          },
+          {
+            label: 'Удалить',
+            color: 'white',
+            handler: async () => {
+              const { getUrl } = await import('src/tools/url');
+              this.$q.loading.show();
+              this.$axios.post(getUrl('deleteDebtEntry'), { ids })
+                .then(() => {
+                  this.$store.dispatch('cargoDebts/deleteDebtEntry', ids);
+                  this.debtsTableReactiveProperties.selected = [];
+                  this.$q.loading.hide();
+                  this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', false);
+                })
+                .catch(() => {
+                  this.$q.loading.hide();
+                  devlog.error('Ошибка запроса - deleteDebtEntry');
+                });
+            },
+          },
+        ]);
+      }
+    },
+    pay(data) {
+      if (!data.type && !data.paid) {
+        this.dialogAddDebtPayEntryData = data;
+        this.showDialogAddDebtPayEntry = true;
+      }
+      this.debtsTableReactiveProperties.selected = [];
+    },
+    async paymentsAll(id) {
+      if (id) {
+        this.showNotif('warning', 'Перевести все данные клиента в статус оплаты?', 'center', [
+          {
+            label: 'Отмена',
+            color: 'white',
+            handler: () => {
+            },
+          },
+          {
+            label: 'OK',
+            color: 'white',
+            handler: async () => {
+              const { getUrl } = await import('src/tools/url');
+              this.$q.loading.show();
+              this.$axios.get(`${getUrl('debtsPaymentsAll')}/${id}`)
+                .then(({ data: { debts } }) => {
+                  this.$store.dispatch('cargoDebts/updateDebtEntry', debts);
+                  this.$q.loading.hide();
+                  this.showNotif('success', 'Данные по карго все переведены в статус оплаты.', false);
+                })
+                .catch(() => {
+                  this.$q.loading.hide();
+                });
+            },
+          },
+        ]);
+      }
+    },
+  },
+};
 </script>

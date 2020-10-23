@@ -14,7 +14,7 @@
           :options="clientCodes"
           style="max-width: 320px;"
         />
-        <CargoDebtsSearch />
+        <CargoDebtsSearch :settings.sync="settings" />
       </div>
       <div class="q-gutter-y-md">
         <q-card>
@@ -185,14 +185,20 @@
               name="cargo"
               style="padding: 0;"
             >
-              <Cargo :refresh="refresh" />
+              <Cargo
+                :refresh="refresh"
+                :settings="settings"
+              />
             </q-tab-panel>
 
             <q-tab-panel
               name="debts"
               style="padding: 0;"
             >
-              <Debts :refresh="refresh" />
+              <Debts
+                :refresh="refresh"
+                :settings="settings"
+              />
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
@@ -202,92 +208,93 @@
 </template>
 
 <script>
-    import showNotif from 'src/mixins/showNotif';
+import showNotif from 'src/mixins/showNotif';
 
-    export default {
-        name: 'CargoDebts',
-        components: {
-            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-            PullRefresh: () => import('src/components/PullRefresh.vue'),
-            Cargo: () => import('src/components/CargoDebts/Cargo.vue'),
-            Debts: () => import('src/components/CargoDebts/Debts.vue'),
-            CargoDebtsSearch: () => import('src/components/CargoDebts/CargoDebtsSearch.vue'),
-            ExportMenuGeneralCargo: () => import('src/components/CargoDebts/ExportMenuGeneralCargo.vue'),
-        },
-        mixins: [showNotif],
-        data() {
-            return {
-                tab: 'general',
-            };
-        },
-        computed: {
-            clientCodes() {
-                return this.$store.getters['codes/getCodes'];
-            },
-            cargo() {
-                return this.$store.getters['cargoDebts/getCargo'];
-            },
-            debts() {
-                return this.$store.getters['cargoDebts/getDebts'];
-            },
-            generalCargoData() {
-                return _.get(this.$store.getters['cargoDebts/getGeneralData'], 'cargo') || {
-                    kg: 0,
-                    sale: 0,
-                    place: 0,
-                    sum: 0,
-                    visible: true,
-                };
-            },
-            generalDebtsData() {
-                return _.get(this.$store.getters['cargoDebts/getGeneralData'], 'debts') || {
-                    sum: 0,
-                    commission: 0,
-                    visible: true,
-                };
-            },
-            currentCodeClientId: {
-                get: function get() {
-                    return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
-                },
-                set: function set(val) {
-                    this.$store.dispatch('cargoDebts/setCurrentCodeClientId', val);
-                },
-            },
-        },
-        watch: {
-            currentCodeClientId(id) {
-                if (id) {
-                    this.getClientData(id);
-                }
-            },
-        },
-        async created() {
-            const { getClientCodes } = await import('src/utils/FrequentlyCalledFunctions');
-            getClientCodes(this.$store);
-            this.$store.dispatch('cargoDebts/getGeneralData');
-        },
-        methods: {
-            getClientData(clientId) {
-                this.$store.dispatch('cargoDebts/getCargoDebts', clientId);
-            },
-            async refresh(done) {
-                if (!done) {
-                    this.$q.loading.show();
-                }
-                const { callFunction } = await import('src/utils/index');
-                this.$store.dispatch('cargoDebts/getGeneralData');
-                this.$store.dispatch('cargoDebts/getCargoDebts', this.currentCodeClientId)
-                  .then(() => {
-                      callFunction(done);
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      callFunction(done);
-                  });
-            },
-        },
+export default {
+  name: 'CargoDebts',
+  components: {
+    SearchSelect: () => import('components/Elements/SearchSelect.vue'),
+    PullRefresh: () => import('components/PullRefresh.vue'),
+    Cargo: () => import('components/CargoDebts/Cargo.vue'),
+    Debts: () => import('components/CargoDebts/Debts.vue'),
+    CargoDebtsSearch: () => import('components/CargoDebts/CargoDebtsSearch.vue'),
+    ExportMenuGeneralCargo: () => import('components/CargoDebts/ExportMenuGeneralCargo.vue'),
+  },
+  mixins: [showNotif],
+  data() {
+    return {
+      tab: 'general',
+      settings: {},
     };
+  },
+  computed: {
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+    cargo() {
+      return this.$store.getters['cargoDebts/getCargo'];
+    },
+    debts() {
+      return this.$store.getters['cargoDebts/getDebts'];
+    },
+    generalCargoData() {
+      return _.get(this.$store.getters['cargoDebts/getGeneralData'], 'cargo') || {
+        kg: 0,
+        sale: 0,
+        place: 0,
+        sum: 0,
+        visible: true,
+      };
+    },
+    generalDebtsData() {
+      return _.get(this.$store.getters['cargoDebts/getGeneralData'], 'debts') || {
+        sum: 0,
+        commission: 0,
+        visible: true,
+      };
+    },
+    currentCodeClientId: {
+      get: function get() {
+        return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
+      },
+      set: function set(val) {
+        this.$store.dispatch('cargoDebts/setCurrentCodeClientId', val);
+      },
+    },
+  },
+  watch: {
+    currentCodeClientId(id) {
+      if (id) {
+        this.getClientData(id);
+      }
+    },
+  },
+  async created() {
+    const { getClientCodes } = await import('src/utils/FrequentlyCalledFunctions');
+    getClientCodes(this.$store);
+    this.$store.dispatch('cargoDebts/getGeneralData');
+  },
+  methods: {
+    getClientData(clientId) {
+      this.$store.dispatch('cargoDebts/getCargoDebts', clientId);
+    },
+    async refresh(done) {
+      if (!done) {
+        this.$q.loading.show();
+      }
+      const { callFunction } = await import('src/utils/index');
+      this.$store.dispatch('cargoDebts/getGeneralData');
+      this.$store.dispatch('cargoDebts/getCargoDebts', this.currentCodeClientId)
+        .then(() => {
+          callFunction(done);
+          this.$q.loading.hide();
+          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          callFunction(done);
+        });
+    },
+  },
+};
 </script>

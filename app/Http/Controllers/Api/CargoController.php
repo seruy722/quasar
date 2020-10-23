@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Cargo;
 use App\Category;
 use App\City;
-use App\Code;
 use App\Customer;
 use App\Debt;
 use App\Fax;
@@ -377,6 +376,9 @@ class CargoController extends Controller
             $newData['type'] = $data['type'];
             $newData['notation'] = 'списалы';
             $newData['commission'] = ($debt->commission + $data['commission']) * -1;
+            if ($data['created_at']) {
+                $newData['created_at'] = $data['created_at'];
+            }
             $newEntry = Debt::create($newData);
         }
         if ($debt->transfer_id > 0) {

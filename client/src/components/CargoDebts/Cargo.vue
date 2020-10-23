@@ -363,18 +363,17 @@ import showNotif from 'src/mixins/showNotif';
 export default {
   name: 'Cargo',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    CountCargoCategories: () => import('src/components/CargoDebts/CountCargoCategories.vue'),
-    GeneralClientCargoData: () => import('src/components/CargoDebts/GeneralClientCargoData.vue'),
-    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-    // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    DialogViewCargoData: () => import('src/components/CargoDebts/Dialogs/DialogViewCargoData.vue'),
-    MenuCargo: () => import('src/components/CargoDebts/MenuCargo.vue'),
-    DialogAddCargoPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPaymentEntry.vue'),
-    DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
-    DialogAddCargoPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPayEntry.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
+    Table: () => import('components/Elements/Table/Table.vue'),
+    CountCargoCategories: () => import('components/CargoDebts/CountCargoCategories.vue'),
+    GeneralClientCargoData: () => import('components/CargoDebts/GeneralClientCargoData.vue'),
+    UpdateBtn: () => import('components/Buttons/UpdateBtn.vue'),
+    DialogViewCargoData: () => import('components/CargoDebts/Dialogs/DialogViewCargoData.vue'),
+    MenuCargo: () => import('components/CargoDebts/MenuCargo.vue'),
+    DialogAddCargoPaymentEntry: () => import('components/CargoDebts/Dialogs/DialogAddCargoPaymentEntry.vue'),
+    DialogAddCargoDebtEntry: () => import('components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
+    DialogAddCargoPayEntry: () => import('components/CargoDebts/Dialogs/DialogAddCargoPayEntry.vue'),
+    IconBtn: () => import('components/Buttons/IconBtn.vue'),
+    ExportBtn: () => import('components/Buttons/ExportBtn.vue'),
   },
   mixins: [ExportDataMixin, showNotif],
   props: {
@@ -578,7 +577,7 @@ export default {
     destroyEntry(data) {
       const ids = this.getIds(data);
       if (!_.isEmpty(ids)) {
-        this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', [
+        this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
           {
             label: 'Отмена',
             color: 'white',
@@ -597,7 +596,7 @@ export default {
                   this.$store.dispatch('cargoDebts/deleteCargoEntry', ids);
                   this.cargoTableReactiveProperties.selected = [];
                   this.$q.loading.hide();
-                  this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.');
+                  this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', false);
                 })
                 .catch(() => {
                   this.$q.loading.hide();
@@ -627,7 +626,7 @@ export default {
       //     data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
       // }
       if (!_.isEmpty(data)) {
-        const clientName = `${_.get(_.first(data), 'code_client_name')} код`;
+        const clientName = `${_.get(_.first(data), 'code_client_name')} код карго`;
         const { getUrl } = await import('src/tools/url');
         this.exportDataToExcel(getUrl('exportCargoData'), {
           data,
@@ -654,7 +653,7 @@ export default {
     },
     async paymentsAll(id) {
       if (id) {
-        this.showNotif('warning', 'Перевести все данные клиента в статус оплаты?', [
+        this.showNotif('warning', 'Перевести все данные клиента в статус оплаты?', 'center', [
           {
             label: 'Отмена',
             color: 'white',
@@ -671,7 +670,7 @@ export default {
                 .then(({ data: { cargo } }) => {
                   this.$store.dispatch('cargoDebts/updateCargoEntry', cargo);
                   this.$q.loading.hide();
-                  this.showNotif('success', 'Данные по карго все переведены в статус оплаты.');
+                  this.showNotif('success', 'Данные по карго все переведены в статус оплаты.', false);
                 })
                 .catch(() => {
                   this.$q.loading.hide();

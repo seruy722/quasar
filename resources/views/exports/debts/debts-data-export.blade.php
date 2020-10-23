@@ -20,7 +20,7 @@
             <td style="border: 1px solid black;text-align: center;">{{ round($elem['sum']) }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ round($elem['commission']) }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem['get_pay_user_name'] }}</td>
-            <td style="border: 1px solid black;text-align: center;">{{ $elem['paid'] ? 'Да' : $elem['type'] ? null : 'Нет' }}</td>
+            <td style="border: 1px solid black;text-align: center;">{{ $elem['paid'] ? 'Да' : null }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem['notation'] }}</td>
         </tr>
     @endforeach

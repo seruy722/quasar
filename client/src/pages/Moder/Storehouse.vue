@@ -448,7 +448,7 @@
                                       // this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
                                       this.storehouseTableReactiveProperties.selected = [];
                                       this.$q.loading.hide();
-                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
+                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', false);
                                   })
                                   .catch(() => {
                                       devlog.error('Ошибка запроса - destroyStorehouseData');
@@ -473,7 +473,7 @@
                   .then(() => {
                       callFunction(done);
                       this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
+                      this.showNotif('success', 'Данные успешно обновлены.', false);
                   })
                   .catch(() => {
                       this.$q.loading.hide();

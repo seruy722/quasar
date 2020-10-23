@@ -149,248 +149,255 @@
 </template>
 
 <script>
-    import CheckErrorsMixin from 'src/mixins/CheckErrors';
-    import showNotif from 'src/mixins/showNotif';
-    import {
-        getClientCodes,
-        // getCategories,
-        // getShopsList,
-        // setFormatedDate,
-        // setChangeValue,
-    } from 'src/utils/FrequentlyCalledFunctions';
+import CheckErrorsMixin from 'src/mixins/CheckErrors';
+import showNotif from 'src/mixins/showNotif';
+import {
+  getClientCodes,
+  // getCategories,
+  // getShopsList,
+  // setFormatedDate,
+  // setChangeValue,
+} from 'src/utils/FrequentlyCalledFunctions';
 
-    export default {
-        name: 'DialogAddDebtPaymentEntry',
-        components: {
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-            SelectChips: () => import('src/components/Elements/SelectChips.vue'),
-            Menu: () => import('src/components/Menu.vue'),
-            Date: () => import('src/components/Date.vue'),
+export default {
+  name: 'DialogAddDebtPaymentEntry',
+  components: {
+    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
+    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
+    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    Separator: () => import('src/components/Separator.vue'),
+    SelectChips: () => import('src/components/Elements/SelectChips.vue'),
+    Menu: () => import('src/components/Menu.vue'),
+    Date: () => import('src/components/Date.vue'),
+  },
+  mixins: [CheckErrorsMixin, showNotif],
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    entryData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    return {
+      show: false,
+      storehouseData: {
+        created_at: {
+          name: 'created_at',
+          type: 'date',
+          label: 'Дата',
+          require: true,
+          requireError: 'Поле обьзательное для заполнения.',
+          changeValue: false,
+          default: new Date().toISOString()
+            .slice(0, 10)
+            .split('-')
+            .reverse()
+            .join('-'),
+          value: new Date().toISOString()
+            .slice(0, 10)
+            .split('-')
+            .reverse()
+            .join('-'),
         },
-        mixins: [CheckErrorsMixin, showNotif],
-        props: {
-            showDialog: {
-                type: Boolean,
-                default: false,
-            },
-            entryData: {
-                type: Object,
-                default: () => ({}),
-            },
+        code_client_id: {
+          name: 'code_client_id',
+          type: 'select',
+          label: this.$t('client'),
+          options: [],
+          require: true,
+          requireError: 'Выберите значение.',
+          changeValue: false,
+          funcLoadData: getClientCodes,
+          default: null,
+          value: null,
         },
-        data() {
-            return {
-                show: false,
-                storehouseData: {
-                    created_at: {
-                        name: 'created_at',
-                        type: 'date',
-                        label: 'Дата',
-                        require: true,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        changeValue: false,
-                        default: new Date().toISOString()
-                          .slice(0, 10)
-                          .split('-')
-                          .reverse()
-                          .join('-'),
-                        value: new Date().toISOString()
-                          .slice(0, 10)
-                          .split('-')
-                          .reverse()
-                          .join('-'),
-                    },
-                    code_client_id: {
-                        name: 'code_client_id',
-                        type: 'select',
-                        label: this.$t('client'),
-                        options: [],
-                        require: true,
-                        requireError: 'Выберите значение.',
-                        changeValue: false,
-                        funcLoadData: getClientCodes,
-                        default: null,
-                        value: null,
-                    },
-                    sum: {
-                        name: 'sum',
-                        type: 'number',
-                        label: 'Сумма',
-                        changeValue: false,
-                        autofocus: true,
-                        default: 0,
-                        value: 0,
-                    },
-                    commission: {
-                        name: 'commission',
-                        type: 'number',
-                        label: 'Комиссия',
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
-                    notation: {
-                        name: 'notation',
-                        type: 'text',
-                        label: this.$t('notation'),
-                        changeValue: false,
-                        default: '',
-                        value: '',
-                    },
-                    get_pay_user_id: {
-                        name: 'get_pay_user_id',
-                        type: 'select',
-                        label: 'Пользователь',
-                        options: [],
-                        changeValue: false,
-                        funcLoadData: getClientCodes,
-                        default: 0,
-                        value: 0,
-                    },
-                },
-            };
+        sum: {
+          name: 'sum',
+          type: 'number',
+          label: 'Сумма',
+          changeValue: false,
+          autofocus: true,
+          default: 0,
+          value: 0,
         },
-        computed: {
-            usersList() {
-                return this.$store.getters['auth/getUsersList'];
-            },
-            clientCodes() {
-                return this.$store.getters['codes/getCodes'];
-            },
-            size() {
-                const {
-                    sm,
-                    xs,
-                    md,
-                    lg,
-                } = this.$q.screen;
-
-                let size = '';
-                if (sm) {
-                    size = 'sm';
-                } else if (xs) {
-                    size = 'xs';
-                } else if (md) {
-                    size = 'md';
-                } else if (lg) {
-                    size = 'lg';
-                }
-                return size;
-            },
-            currentClientCodeId() {
-                return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
-            },
+        commission: {
+          name: 'commission',
+          type: 'number',
+          label: 'Комиссия',
+          changeValue: false,
+          default: 0,
+          value: 0,
         },
-        watch: {
-            entryData(val) {
-                if (!_.isEmpty(val)) {
-                    devlog.log('vALIN_ADD', val);
-                    _.forEach(this.storehouseData, (item, index) => {
-                        const prop = _.get(this.entryData, `row[${index}]`);
-                        if (index === 'created_at') {
-                            _.set(item, 'value', prop.slice(0, 10));
-                        } else if (prop) {
-                            _.set(item, 'value', prop);
-                        }
-                    });
-                }
-            },
-            clientCodes: {
-                handler: function set(val) {
-                    this.storehouseData.code_client_id.options = val;
-                },
-                immediate: true,
-            },
-            usersList: {
-                handler: function set(val) {
-                    this.storehouseData.get_pay_user_id.options = val;
-                },
-                immediate: true,
-            },
-            showDialog(val) {
-                if (val && _.isEmpty(this.entryData)) {
-                    this.storehouseData.code_client_id.value = this.currentClientCodeId;
-                    this.storehouseData.code_client_id.changeValue = true;
-                }
-                if (_.isEmpty(this.usersList)) {
-                    this.$store.dispatch('auth/fetchUsersList');
-                }
-                this.show = val;
-            },
-            show(val) {
-                this.$emit('update:showDialog', val);
-            },
+        notation: {
+          name: 'notation',
+          type: 'text',
+          label: this.$t('notation'),
+          changeValue: false,
+          default: '',
+          value: '',
         },
-        methods: {
-            async saveData() {
-                devlog.log('saveData');
-                const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
-                    if (changeValue) {
-                        result[index] = value;
-                    }
-                    return result;
-                }, {});
-                if (_.has(sendData, 'created_at')) {
-                    const { reverseDate, addTime } = await import('src/utils/formatDate');
-                    sendData.created_at = addTime(reverseDate(sendData.created_at))
-                      .toISOString();
-                }
-                const { getUrl } = await import('src/tools/url');
-                const { setChangeValue } = await import('src/utils/FrequentlyCalledFunctions');
-                if (!this.entryData.row) {
-                    // CREATE
-                    this.$q.loading.show();
-                    this.$axios.post(getUrl('createDebtPaymentEntry'), sendData)
-                      .then(({ data: { answer } }) => {
-                          this.$store.dispatch('cargoDebts/addDebtEntry', answer);
-                          this.$q.loading.hide();
-                          this.showNotif('success', 'Запись успешно добавлена.', 'center');
-                          this.close(this.storehouseData);
-                      })
-                      .catch((errors) => {
-                          this.errorsData.errors = _.get(errors, 'response.data.errors');
-                          this.$q.loading.hide();
-                      });
-                } else if (!_.isEmpty(sendData)) {
-                    // UPDATE
-                    sendData.id = _.get(this.entryData, 'row.id');
-                    this.$q.loading.show();
-                    this.$axios.post(getUrl('updateDebtPaymentEntry'), sendData)
-                      .then(({ data: { answer } }) => {
-                          devlog.log('DTA_UPDATE', answer);
-                          this.$store.dispatch('cargoDebts/updateDebtEntry', answer);
-                          setChangeValue(this.storehouseData);
-                          this.$q.loading.hide();
-                          this.showNotif('success', 'Запись успешно обновлена.', 'center');
-                          this.close(this.storehouseData);
-                      })
-                      .catch((errors) => {
-                          this.errorsData.errors = _.get(errors, 'response.data.errors');
-                          this.$q.loading.hide();
-                      });
-                } else {
-                    this.close(this.storehouseData);
-                }
-                devlog.log('DATA_TO_SAVE', sendData);
-            },
-            clear(data) {
-                _.forEach(data, (item) => {
-                    item.value = item.default;
-                });
-            },
-            close(data) {
-                this.clear(data);
-                this.show = false;
-                if (!_.isEmpty(this.entryData)) {
-                    _.set(this.entryData, 'selected', false);
-                    this.$emit('update:entryData', {});
-                }
-            },
+        get_pay_user_id: {
+          name: 'get_pay_user_id',
+          type: 'select',
+          label: 'Пользователь',
+          options: [],
+          changeValue: false,
+          funcLoadData: getClientCodes,
+          default: 0,
+          value: 0,
         },
+      },
     };
+  },
+  computed: {
+    usersList() {
+      return this.$store.getters['auth/getUsersList'];
+    },
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+    size() {
+      const {
+        sm,
+        xs,
+        md,
+        lg,
+      } = this.$q.screen;
+
+      let size = '';
+      if (sm) {
+        size = 'sm';
+      } else if (xs) {
+        size = 'xs';
+      } else if (md) {
+        size = 'md';
+      } else if (lg) {
+        size = 'lg';
+      }
+      return size;
+    },
+    currentClientCodeId() {
+      return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
+    },
+    settingsDate() {
+      return this.$store.getters['settings/getDateForSaveData'];
+    },
+  },
+  watch: {
+    entryData(val) {
+      if (!_.isEmpty(val)) {
+        devlog.log('vALIN_ADD', val);
+        _.forEach(this.storehouseData, (item, index) => {
+          const prop = _.get(this.entryData, `row[${index}]`);
+          if (index === 'created_at') {
+            _.set(item, 'value', prop.slice(0, 10));
+          } else if (prop) {
+            _.set(item, 'value', prop);
+          }
+        });
+      }
+    },
+    clientCodes: {
+      handler: function set(val) {
+        this.storehouseData.code_client_id.options = val;
+      },
+      immediate: true,
+    },
+    usersList: {
+      handler: function set(val) {
+        this.storehouseData.get_pay_user_id.options = val;
+      },
+      immediate: true,
+    },
+    showDialog(val) {
+      if (val && _.isEmpty(this.entryData)) {
+        this.storehouseData.code_client_id.value = this.currentClientCodeId;
+        this.storehouseData.code_client_id.changeValue = true;
+      }
+      if (_.isEmpty(this.usersList)) {
+        this.$store.dispatch('auth/fetchUsersList');
+      }
+      this.show = val;
+    },
+    show(val) {
+      this.$emit('update:showDialog', val);
+      if (val && this.settingsDate) {
+        this.storehouseData.created_at.value = this.settingsDate;
+        this.storehouseData.created_at.changeValue = true;
+      }
+    },
+  },
+  methods: {
+    async saveData() {
+      devlog.log('saveData');
+      const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
+        if (changeValue) {
+          result[index] = value;
+        }
+        return result;
+      }, {});
+      if (_.has(sendData, 'created_at')) {
+        const { reverseDate, addTime } = await import('src/utils/formatDate');
+        sendData.created_at = addTime(reverseDate(sendData.created_at))
+          .toISOString();
+      }
+      const { getUrl } = await import('src/tools/url');
+      const { setChangeValue } = await import('src/utils/FrequentlyCalledFunctions');
+      if (!this.entryData.row) {
+        // CREATE
+        this.$q.loading.show();
+        this.$axios.post(getUrl('createDebtPaymentEntry'), sendData)
+          .then(({ data: { answer } }) => {
+            this.$store.dispatch('cargoDebts/addDebtEntry', answer);
+            this.$q.loading.hide();
+            this.showNotif('success', 'Запись успешно добавлена.', 'center');
+            this.close(this.storehouseData);
+          })
+          .catch((errors) => {
+            this.errorsData.errors = _.get(errors, 'response.data.errors');
+            this.$q.loading.hide();
+          });
+      } else if (!_.isEmpty(sendData)) {
+        // UPDATE
+        sendData.id = _.get(this.entryData, 'row.id');
+        this.$q.loading.show();
+        this.$axios.post(getUrl('updateDebtPaymentEntry'), sendData)
+          .then(({ data: { answer } }) => {
+            devlog.log('DTA_UPDATE', answer);
+            this.$store.dispatch('cargoDebts/updateDebtEntry', answer);
+            setChangeValue(this.storehouseData);
+            this.$q.loading.hide();
+            this.showNotif('success', 'Запись успешно обновлена.', 'center');
+            this.close(this.storehouseData);
+          })
+          .catch((errors) => {
+            this.errorsData.errors = _.get(errors, 'response.data.errors');
+            this.$q.loading.hide();
+          });
+      } else {
+        this.close(this.storehouseData);
+      }
+      devlog.log('DATA_TO_SAVE', sendData);
+    },
+    clear(data) {
+      _.forEach(data, (item) => {
+        item.value = item.default;
+      });
+    },
+    close(data) {
+      this.clear(data);
+      this.show = false;
+      if (!_.isEmpty(this.entryData)) {
+        _.set(this.entryData, 'selected', false);
+        this.$emit('update:entryData', {});
+      }
+    },
+  },
+};
 </script>

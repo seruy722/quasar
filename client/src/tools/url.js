@@ -137,6 +137,7 @@ const urls = {
   getNotDeliveredCargo: `${prefix}/get-not-delivered-cargo`,
   setDeliveredCargo: `${prefix}/set-delivered-cargo`,
   getStorehousePeriodData: `${prefix}/get-storehouse-period-data`,
+  allCargo: `${prefix}/all-cargo`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,
