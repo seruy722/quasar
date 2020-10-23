@@ -89,7 +89,7 @@
       transition-show="flip-up"
       transition-hide="flip-down"
     >
-      <q-card style="width: 200px;max-width: 600px;">
+      <q-card style="width: 350px;max-width: 600px;">
         <q-card-section class="row items-center q-pb-none">
           <div style="font-size: 20px;">
             Выбор даты
@@ -100,22 +100,35 @@
             flat
             round
             dense
-            color="negative"
+            color="primary"
             @click="showDialogChooseDate = false"
           />
           <q-separator />
         </q-card-section>
         <q-card-section>
-          <q-item>
-            <q-item-section>
-              {{ dialogChooseDateData }}
-            </q-item-section>
-            <q-item-section avatar>
-              <Date
-                :value.sync="dialogChooseDateData"
-              />
-            </q-item-section>
-          </q-item>
+          <q-list
+            bordered
+            separator
+          >
+            <q-item>
+              <q-item-section avatar>
+                <Date
+                  :value.sync="dialogChooseDateData"
+                />
+              </q-item-section>
+              <q-item-section>
+                {{ dialogChooseDateData || 'Пусто' }}
+              </q-item-section>
+              <q-item-section avatar>
+                <q-icon
+                  name="clear"
+                  color="negative"
+                  class="cursor-pointer"
+                  @click="dialogChooseDateData = null"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-card-section>
       </q-card>
     </Dialog>
