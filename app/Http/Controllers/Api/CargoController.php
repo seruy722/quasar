@@ -376,8 +376,8 @@ class CargoController extends Controller
             $newData['type'] = $data['type'];
             $newData['notation'] = 'списалы';
             $newData['commission'] = ($debt->commission + $data['commission']) * -1;
-            if ($data['created_at']) {
-                $newData['created_at'] = $data['created_at'];
+            if (array_key_exists('created_at', $data)) {
+                $newData['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
             }
             $newEntry = Debt::create($newData);
         }

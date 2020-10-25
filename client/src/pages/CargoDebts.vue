@@ -116,7 +116,7 @@
                   <q-card-actions align="right">
                     <ExportMenuGeneralCargo
                       title="Выгрузка по карго"
-                      url-name="exportGeneralCargoData"
+                      url-name="exportG"
                       url-name-clients="exportGeneralDataByClients"
                       model="cargo"
                     />
@@ -213,12 +213,12 @@ import showNotif from 'src/mixins/showNotif';
 export default {
   name: 'CargoDebts',
   components: {
-    SearchSelect: () => import('components/Elements/SearchSelect.vue'),
-    PullRefresh: () => import('components/PullRefresh.vue'),
-    Cargo: () => import('components/CargoDebts/Cargo.vue'),
-    Debts: () => import('components/CargoDebts/Debts.vue'),
-    CargoDebtsSearch: () => import('components/CargoDebts/CargoDebtsSearch.vue'),
-    ExportMenuGeneralCargo: () => import('components/CargoDebts/ExportMenuGeneralCargo.vue'),
+    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    PullRefresh: () => import('src/components/PullRefresh.vue'),
+    Cargo: () => import('src/components/CargoDebts/Cargo.vue'),
+    Debts: () => import('src/components/CargoDebts/Debts.vue'),
+    CargoDebtsSearch: () => import('src/components/CargoDebts/CargoDebtsSearch.vue'),
+    ExportMenuGeneralCargo: () => import('src/components/CargoDebts/ExportMenuGeneralCargo.vue'),
   },
   mixins: [showNotif],
   data() {

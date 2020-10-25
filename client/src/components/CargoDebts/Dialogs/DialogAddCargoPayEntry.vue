@@ -340,7 +340,7 @@ export default {
           });
           devlog.log('ANSWER', answer);
           this.$q.loading.hide();
-          this.showNotif('success', 'Запись успешно добавлена.', 'center');
+          this.showNotif('success', 'Запись успешно добавлена.', false);
           this.close(this.storehouseData);
         })
         .catch((errors) => {

@@ -340,7 +340,7 @@
                           this.$store.dispatch('cargoDebts/updateOrAddDebtEntry', item);
                       });
                       this.$q.loading.hide();
-                      this.showNotif('success', 'Запись успешно добавлена.', 'center');
+                      this.showNotif('success', 'Запись успешно добавлена.', false);
                       this.close(this.storehouseData);
                   })
                   .catch((errors) => {

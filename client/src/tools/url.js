@@ -102,7 +102,7 @@ const urls = {
   updateDebtEntry: `${prefix}/update-debt-entry`,
   exportCargoData: `${prefix}/export-cargo-data`,
   exportDebtsData: `${prefix}/export-debts-data`,
-  exportGeneralCargoData: `${prefix}/export-general-cargo-data`,
+  exportG: `${prefix}/export-cargo`,
   exportGeneralDebtsData: `${prefix}/export-general-debts-data`,
   exportGeneralDataByClients: `${prefix}/export-general-data-by-clients`,
   cargoPayEntry: `${prefix}/cargo-pay-entry`,

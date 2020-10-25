@@ -150,15 +150,11 @@
 
 <script>
     import CheckErrorsMixin from 'src/mixins/CheckErrors';
-    // import { getUrl } from 'src/tools/url';
     import showNotif from 'src/mixins/showNotif';
     import {
         getClientCodes,
         getCategories,
         getFaxes,
-        // getShopsList,
-        // setFormatedDate,
-        // setChangeValue,
     } from 'src/utils/FrequentlyCalledFunctions';
 
     export default {
@@ -426,7 +422,7 @@
                       .then(({ data: { answer } }) => {
                           this.$store.dispatch('cargoDebts/addCargoEntry', answer);
                           this.$q.loading.hide();
-                          this.showNotif('success', 'Запись успешно добавлена.', 'center');
+                          this.showNotif('success', 'Запись успешно добавлена.', false);
                           this.close(this.storehouseData);
                       })
                       .catch((errors) => {
@@ -447,7 +443,7 @@
                           this.$store.dispatch('cargoDebts/updateCargoEntry', answer);
                           setChangeValue(this.storehouseData);
                           this.$q.loading.hide();
-                          this.showNotif('success', 'Запись успешно обновлена.', 'center');
+                          this.showNotif('success', 'Запись успешно обновлена.', false);
                           this.close(this.storehouseData);
                       })
                       .catch((errors) => {

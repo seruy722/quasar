@@ -350,7 +350,7 @@ export default {
           .then(({ data: { answer } }) => {
             this.$store.dispatch('cargoDebts/addCargoEntry', answer);
             this.$q.loading.hide();
-            this.showNotif('success', 'Запись успешно добавлена.', 'center');
+            this.showNotif('success', 'Запись успешно добавлена.', false);
             this.close(this.storehouseData);
           })
           .catch((errors) => {
@@ -367,7 +367,7 @@ export default {
             this.$store.dispatch('cargoDebts/updateCargoEntry', answer);
             setChangeValue(this.storehouseData);
             this.$q.loading.hide();
-            this.showNotif('success', 'Запись успешно обновлена.', 'center');
+            this.showNotif('success', 'Запись успешно обновлена.', false);
             this.close(this.storehouseData);
           })
           .catch((errors) => {
