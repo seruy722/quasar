@@ -113,10 +113,6 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
         $this->data = $res->map(function ($item) {
             return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'place' => $item->place, 'kg' => $item->kg, 'for_kg' => $item->for_kg, 'for_place' => $item->for_place, 'sum' => $item->sum, 'sale' => $item->sale, 'paid' => $item->paid ? 'Да' : 'Нет', 'category_name' => $item->category_name, 'fax_name' => $item->fax_name, 'notation' => $item->notation];
         })->all();
-//        $this->data = $res2->all();
-//        $res2 = $res->map(function ($item) {
-//            return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'place' => $item->place, 'kg' => $item->kg, 'for_kg' => $item->for_kg, 'for_place' => $item->for_place, 'sum' => $item->sum, 'sale' => $item->sale, 'paid' => $item->paid ? 'Да' : 'Нет', 'category_name' => $item->category_name, 'fax_name' => $item->fax_name, 'notation' => $item->notation];
-//        });
         return $this->data;
     }
 
@@ -140,12 +136,12 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $header = 'A1:M1';
-//                $cellRange = 'A1:M' . (count($this->data) + 1);
-//
-//                $event->sheet->getDelegate()->getStyle($header)->getFont()->setBold(500);
-//                $event->sheet->getDelegate()->getStyle($cellRange)->getAlignment()->applyFromArray(array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
-//                $event->sheet->getDelegate()->getStyle($cellRange)->getBorders()->getAllBorders()->applyFromArray(array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN));
-//                $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(10);
+                $cellRange = 'A1:M' . (count($this->data) + 1);
+
+                $event->sheet->getDelegate()->getStyle($header)->getFont()->setBold(500);
+                $event->sheet->getDelegate()->getStyle($cellRange)->getAlignment()->applyFromArray(array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
+                $event->sheet->getDelegate()->getStyle($cellRange)->getBorders()->getAllBorders()->applyFromArray(array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN));
+                $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(10);
             }
         ];
     }
