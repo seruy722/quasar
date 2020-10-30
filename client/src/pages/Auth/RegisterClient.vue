@@ -99,6 +99,11 @@ export default {
     };
   },
   methods: {
+    goToLogin() {
+      setTimeout(() => {
+        this.$router.push({ name: 'login' });
+      }, 3000);
+    },
     onSubmit() {
       this.$axios.post(getUrl('registerClientCode'), { phone: parseInt(this.phone.replace(/[^\d]/g, ''), 10) })
         .then(({ data: { codeStatus, message } }) => {
@@ -109,9 +114,7 @@ export default {
             this.showNotif('warning', message, 'center');
           } else if (codeStatus === 1) {
             this.showNotif('info', message, 'center');
-            setTimeout(() => {
-              this.$router.push({ name: 'login' });
-            }, 3000);
+            this.goToLogin();
           }
         })
         .catch(() => {
@@ -128,9 +131,7 @@ export default {
         .then(({ data: { register } }) => {
           if (register) {
             this.showNotif('success', 'Регистрация пройшла успешно', 'center');
-            setTimeout(() => {
-              this.$router.push({ name: 'login' });
-            }, 3000);
+            this.goToLogin();
           } else {
             this.showNotif('warning', 'Номера телефона нет в базе', 'center');
           }
