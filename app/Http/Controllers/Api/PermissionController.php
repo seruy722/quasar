@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use function foo\func;
 
 class PermissionController extends Controller
 {

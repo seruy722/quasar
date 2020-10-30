@@ -31,7 +31,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
         }
 
         $obj = new Access();
-        return $obj->setAccessData();
+        return $obj->setAccessData(auth()->user());
     });
 
     // PERMISSION AND ROLES
@@ -281,11 +281,15 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 //        return $request->areas;
 //    });
 });
+Route::group(['middleware' => 'throttle:500,5'], function () {
+    Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');
+    Route::post('register-client-register', 'Api\AuthController@registerClient')->name('register client');
+});
 
-
-Route::group(['middleware' => [\App\Http\Middleware\Localization::class]], function () {
+Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'middleware' => 'throttle:10,10']], function () {
     Route::post('/login', 'Api\AuthController@login');
 //    Route::post('/register', 'Api\AuthController@register');
+
 
 //    Route::post('/password/email', 'Api\ForgotPasswordController@sendResetLinkEmail');
 //    Route::post('/password/reset', 'Api\ResetPasswordController@reset');

@@ -7,7 +7,7 @@ export default {
       field: 'index',
       icon: 'house',
       access: {
-        roles: ['admin', 'moderator', 'assistant'],
+        roles: ['admin', 'moderator', 'assistant', 'client'],
         permissions: [],
       },
     },

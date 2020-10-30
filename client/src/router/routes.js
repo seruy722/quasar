@@ -13,6 +13,14 @@ const routes = [
         },
         component: () => import('pages/Auth/Login.vue'),
       },
+      {
+        path: '/register-client',
+        name: 'register-client',
+        meta: {
+          title: 'Регистрация клиента',
+        },
+        component: () => import('pages/Auth/RegisterClient.vue'),
+      },
     ],
   },
   {
@@ -28,7 +36,7 @@ const routes = [
             auth,
           ],
           accessData: {
-            roles: ['admin', 'moderator', 'assistant'],
+            roles: ['admin', 'moderator', 'assistant', 'client'],
             permissions: [],
           },
         },

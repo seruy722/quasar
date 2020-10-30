@@ -5,9 +5,8 @@ namespace App\Traits;
 
 trait UserSetAccessData
 {
-    public function setAccessData()
+    public function setAccessData($user)
     {
-        $user = auth()->user();
         $user->getPermissionsViaRoles();
         $rolesWithPermissions = $user->roles->map(function ($role) {
             return $role->permissions->map(function ($permission) {
