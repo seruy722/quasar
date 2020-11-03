@@ -23,103 +23,103 @@
     @input="inputEvent"
     @keyup="$emit('on-key-up', $event)"
   >
-    <template v-slot:append>
+    <template #append>
       <slot name="append"></slot>
     </template>
 
-    <template v-slot:prepend>
+    <template #prepend>
       <slot name="prepend"></slot>
     </template>
   </q-input>
 </template>
 
 <script>
-    import ViewErrorsMixin from 'src/mixins/ViewErrors';
+import ViewErrorsMixin from 'src/mixins/ViewErrors';
 
-    export default {
-        name: 'BaseInput',
-        mixins: [ViewErrorsMixin],
-        props: {
-            value: {
-                type: [String, Number],
-                default: '',
-            },
-            type: {
-                type: String,
-                default: 'text',
-            },
-            color: {
-                type: String,
-                default: 'primary',
-            },
-            field: {
-                type: String,
-                default: '',
-            },
-            mask: {
-                type: String,
-                default: '',
-            },
-            label: {
-                type: String,
-                default: '',
-            },
-            dense: {
-                type: Boolean,
-                default: false,
-            },
-            unmaskedValue: {
-                type: Boolean,
-                default: false,
-            },
-            dark: {
-                type: Boolean,
-                default: false,
-            },
-            readonly: {
-                type: Boolean,
-                default: false,
-            },
-            disable: {
-                type: Boolean,
-                default: false,
-            },
-            filled: {
-                type: Boolean,
-                default: false,
-            },
-            autofocus: {
-                type: Boolean,
-                default: false,
-            },
-            noErrorIcon: {
-                type: Boolean,
-                default: true,
-            },
-            changeValue: {
-                type: Boolean,
-                default: false,
-            },
-            errors: {
-                type: Object,
-                default: () => ({}),
-            },
-        },
-        watch: {
-            value(val) {
-                if (val) {
-                    this.changeErrors();
-                }
-            },
-        },
-        methods: {
-            inputEvent($event) {
-                this.$emit('input', $event);
-                this.changeErrors();
-                if (!this.changeValue) {
-                    this.$emit('update:changeValue', true);
-                }
-            },
-        },
-    };
+export default {
+  name: 'BaseInput',
+  mixins: [ViewErrorsMixin],
+  props: {
+    value: {
+      type: [String, Number],
+      default: '',
+    },
+    type: {
+      type: String,
+      default: 'text',
+    },
+    color: {
+      type: String,
+      default: 'primary',
+    },
+    field: {
+      type: String,
+      default: '',
+    },
+    mask: {
+      type: String,
+      default: '',
+    },
+    label: {
+      type: String,
+      default: '',
+    },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
+    unmaskedValue: {
+      type: Boolean,
+      default: false,
+    },
+    dark: {
+      type: Boolean,
+      default: false,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+    disable: {
+      type: Boolean,
+      default: false,
+    },
+    filled: {
+      type: Boolean,
+      default: false,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
+    noErrorIcon: {
+      type: Boolean,
+      default: true,
+    },
+    changeValue: {
+      type: Boolean,
+      default: false,
+    },
+    errors: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  watch: {
+    value(val) {
+      if (val) {
+        this.changeErrors();
+      }
+    },
+  },
+  methods: {
+    inputEvent($event) {
+      this.$emit('input', $event);
+      this.changeErrors();
+      if (!this.changeValue) {
+        this.$emit('update:changeValue', true);
+      }
+    },
+  },
+};
 </script>

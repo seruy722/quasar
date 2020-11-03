@@ -14,7 +14,7 @@
     map-options
     @input="inputEvent"
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <slot name="prepend"></slot>
     </template>
   </q-select>

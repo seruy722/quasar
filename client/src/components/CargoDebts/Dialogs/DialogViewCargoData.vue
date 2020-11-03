@@ -26,7 +26,7 @@
             :table-data="values"
             :table-reactive-properties="faxTableReactiveProperties"
           >
-            <template v-slot:top-buttons>
+            <template #top-buttons>
               <!--                <IconBtn-->
               <!--                  v-show="addToSaveArray.length"-->
               <!--                  color="positive"-->
@@ -59,7 +59,7 @@
             </template>
 
             <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-            <template v-slot:inner-item="{props}">
+            <template #inner-item="{props}">
               <div
                 class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
                 :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -71,7 +71,7 @@
                   style="border-radius: 30px;border: 1px solid #26A69A;"
                   expand-icon-class="text-white"
                 >
-                  <template v-slot:header>
+                  <template #header>
                     <q-item-section avatar>
                       <q-checkbox
                         v-model="props.selected"
@@ -130,7 +130,7 @@
               </div>
             </template>
 
-            <template v-slot:inner-body="{props}">
+            <template #inner-body="{props}">
               <q-tr
                 :props="props"
                 class="cursor-pointer"

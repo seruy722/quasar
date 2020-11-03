@@ -5,7 +5,6 @@ namespace App;
 use App\Notifications\PasswordResetNotification;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -19,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'code_id'
+        'name', 'email', 'password', 'phone', 'code_id', 'type'
     ];
 
     /**
@@ -28,7 +27,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'code_id', 'phone', 'email_verified_at'
+        'password', 'remember_token', 'code_id', 'phone', 'email_verified_at', 'type'
     ];
 
     /**

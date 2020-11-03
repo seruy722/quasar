@@ -82,6 +82,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/set-transfers-storehouse-fax', 'Api\StorehouseDataController@setTransfersStorehouseFax')->name('set transfers storehouse fax and reverse')->middleware(['role_or_permission:admin|storehouse|set transfers storehouse fax and reverse']);
     Route::post('/update-fax-combine-data', 'Api\StorehouseDataController@updateFaxCombineData')->name('update fax combine data')->middleware(['role_or_permission:admin|fax|update fax combine data']);
     Route::post('/move-from-storehouse-to-fax', 'Api\StorehouseDataController@moveFromStorehouseToFax')->name('move entries from storehouse to fax')->middleware(['role_or_permission:admin|storehouse|move entries from storehouse to fax']);
+    Route::get('/get-client-storehouse-data', 'Api\StorehouseDataController@getClientStorehouseData')->name('get client storehouse data')->middleware(['role_or_permission:admin|client']);
 
     // STOREHOUSE_HISTORIES
     Route::post('/get-storehouse-period-data', 'Api\StorehouseDataController@getStorehousePeriodData');
@@ -97,7 +98,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     // CARGO_TABLE
     Route::post('/upload-cargo-table', 'CommonController@storeCargoTable');
     Route::post('/client-data', 'CommonController@getData');
-    Route::get('/get-all-cargo-data/{id}', 'Api\CargoController@index')->name('view cargo data')->middleware(['role_or_permission:admin|view cargo data|cargo|assistant']);
+    Route::get('/get-all-cargo-data/{id}', 'Api\CargoController@index')->name('view cargo data')->middleware(['role_or_permission:admin|view cargo data|cargo|assistant|client']);
     Route::post('/update-cargo-payment-entry', 'Api\CargoController@updateCargoPaymentEntry')->name('update cargo payment entry')->middleware(['role_or_permission:admin|update cargo payment entry']);
     Route::post('/update-cargo-debt-entry', 'Api\CargoController@updateCargoDebtEntry')->name('update cargo debt entry')->middleware(['role_or_permission:admin|update cargo debt entry']);
     Route::post('/create-cargo-payment-entry', 'Api\CargoController@createCargoPaymentEntry')->name('create cargo payment entry')->middleware(['role_or_permission:admin|create cargo payment entry']);
@@ -109,7 +110,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/delete-debt-entry', 'Api\CargoController@deleteDebtEntry')->name('delete debt entry')->middleware(['role_or_permission:admin|delete debt entry']);
     Route::post('/create-debt-entry', 'Api\CargoController@createDebtEntry')->name('create debt entry')->middleware(['role_or_permission:admin|create debt entry']);
     Route::post('/update-debt-entry', 'Api\CargoController@updateDebtEntry')->name('update debt entry')->middleware(['role_or_permission:admin|update debt entry']);
-    Route::post('/export-cargo-data', 'Api\CargoController@exportCargoData')->name('export cargo data')->middleware(['role_or_permission:admin|export cargo data']);
+    Route::post('/export-cargo-data', 'Api\CargoController@exportCargoData')->name('export cargo data')->middleware(['role_or_permission:admin|client|export cargo data']);
     Route::post('/export-debts-data', 'Api\CargoController@exportDebtsData')->name('export debts data')->middleware(['role_or_permission:admin|export debts data']);
     Route::post('/export-general-cargo-data', 'Api\CargoController@exportGeneralCargoData')->name('export general cargo data')->middleware(['role_or_permission:admin|export general cargo data']);
     Route::post('/export-cargo', 'Api\CargoController@exportGeneralCargoData')->name('export cargo')->middleware(['role_or_permission:admin|export cargo']);

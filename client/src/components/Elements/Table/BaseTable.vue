@@ -11,17 +11,17 @@
     dense
     data-vue-component-name="BaseTable"
   >
-    <template v-slot:top>
+    <template #top>
       <div class="col-2 q-mr-md text-bold">{{ title }}</div>
       <q-space />
       <Search v-model="search" />
     </template>
 
-    <template v-slot:item="props">
+    <template #item="props">
       <slot name="inner-item" :props="props"></slot>
     </template>
 
-    <template v-slot:body="props">
+    <template #body="props">
       <slot name="inner-body" :props="props"></slot>
     </template>
 

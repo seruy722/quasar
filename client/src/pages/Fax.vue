@@ -8,7 +8,7 @@
       :table-reactive-properties="faxTableReactiveProperties"
       :title="currentFaxItem.name"
     >
-      <template v-slot:top-buttons>
+      <template #top-buttons>
         <IconBtn
           v-show="addToSaveArray.length"
           color="positive"
@@ -58,7 +58,7 @@
       </template>
 
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-      <template v-slot:inner-item="{props}">
+      <template #inner-item="{props}">
         <div
           class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
           :style="props.selected ? 'transform: scale(0.95);' : ''"

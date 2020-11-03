@@ -9,7 +9,7 @@
         :table-reactive-properties="faxesTableReactiveProperties"
         title="Факсы"
       >
-        <template v-slot:top-buttons>
+        <template #top-buttons>
           <IconBtn
             v-show="faxesTableReactiveProperties.selected.length"
             color="negative"
@@ -47,7 +47,7 @@
           />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-        <template v-slot:inner-item="{props}">
+        <template #inner-item="{props}">
           <div
             class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
             :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -59,7 +59,7 @@
               :style="`border-radius: 30px;border: 1px solid ${props.row.uploaded_to_cargo ? 'green' : 'red'};`"
               expand-icon-class="text-white"
             >
-              <template v-slot:header>
+              <template #header>
                 <q-item-section avatar>
                   <q-checkbox
                     v-model="props.selected"
@@ -126,7 +126,7 @@
             </q-expansion-item>
           </div>
         </template>
-        <template v-slot:inner-body="{props}">
+        <template #inner-body="{props}">
           <q-tr
             :props="props"
             :class="[props.row.uploaded_to_cargo ? 'table__tr_green_bg' : 'table__tr_red_bg']"
@@ -237,7 +237,7 @@
         expand-separator
         class="shadow-1 overflow-hidden"
       >
-        <template v-slot:header>
+        <template #header>
           <q-item-section>
             <q-item-label>{{ status }}</q-item-label>
           </q-item-section>
@@ -307,18 +307,17 @@
     export default {
         name: 'Faxes',
         components: {
-            Table: () => import('components/Elements/Table/Table.vue'),
-            List: () => import('components/Elements/List/List.vue'),
-            BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-            DialogAddFax: () => import('components/Dialogs/DialogAddFax.vue'),
-            IconBtn: () => import('components/Buttons/IconBtn.vue'),
-            Menu: () => import('components/Menu.vue'),
-            FaxesHistory: () => import('components/History/FaxesHistory.vue'),
-            Dialog: () => import('components/Dialogs/Dialog.vue'),
+            Table: () => import('src/components/Elements/Table/Table.vue'),
+            List: () => import('src/components/Elements/List/List.vue'),
+            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+            DialogAddFax: () => import('src/components/Dialogs/DialogAddFax.vue'),
+            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+            Menu: () => import('src/components/Menu.vue'),
+            FaxesHistory: () => import('src/components/History/FaxesHistory.vue'),
+            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
             UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-            // ListNumbered: () => import('components/ListNumbered.vue'),
-            DialogNotDeliveredCargo: () => import('components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue'),
+            DialogNotDeliveredCargo: () => import('src/components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue'),
         },
         filters: {
             statusFilter(value) {

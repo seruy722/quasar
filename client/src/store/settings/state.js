@@ -21,6 +21,15 @@ export default {
       },
     },
     {
+      title: 'Карго Долги',
+      field: 'client-cargo-debts',
+      icon: 'assignment',
+      access: {
+        roles: ['admin', 'client'],
+        permissions: [],
+      },
+    },
+    {
       title: 'Задолженность',
       field: 'payment-arrears',
       icon: 'local_atm',

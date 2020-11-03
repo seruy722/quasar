@@ -8,7 +8,7 @@
       :table-reactive-properties="faxTableReactiveProperties"
       :title="currentFaxItem.name"
     >
-      <template v-slot:top-buttons>
+      <template #top-buttons>
         <IconBtn
           v-show="addToSaveArray.length"
           color="positive"
@@ -81,7 +81,7 @@
       </template>
 
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-      <template v-slot:inner-item="{props}">
+      <template #inner-item="{props}">
         <div
           class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
           :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -93,7 +93,7 @@
             style="border-radius: 30px;border: 1px solid #26A69A;"
             expand-icon-class="text-white"
           >
-            <template v-slot:header>
+            <template #header>
               <q-item-section avatar>
                 <q-checkbox
                   v-model="props.selected"
@@ -158,7 +158,7 @@
         </div>
       </template>
 
-      <template v-slot:inner-body="{props}">
+      <template #inner-body="{props}">
         <q-tr
           :props="props"
           :class="{table__tr_bold_text: props.row.brand, 'cursor-pointer': !combineTableData}"
@@ -405,7 +405,7 @@
           <q-splitter
             v-model="splitterModel"
           >
-            <template v-slot:before>
+            <template #before>
               <div class="q-pa-md">
                 <div class="text-h6 q-mb-md"> Факс</div>
                 <!--                <Search v-model="search" />-->
@@ -417,7 +417,7 @@
                     @left="onLeft(item)"
                     @action="onAction"
                   >
-                    <template v-slot:left>
+                    <template #left>
                       <div>На склад</div>
                     </template>
 
@@ -432,11 +432,11 @@
               </div>
             </template>
 
-            <template v-slot:separator>
+            <template #separator>
               <q-avatar color="primary" text-color="white" size="40px" icon="drag_indicator" />
             </template>
 
-            <template v-slot:after>
+            <template #after>
               <div class="q-pa-md">
                 <div class="text-h6 q-mb-md"> Склад</div>
                 <!--                <Search v-model="searchStorehouseData" />-->
@@ -448,7 +448,7 @@
                     @right="onRight(item)"
                     @action="onAction"
                   >
-                    <template v-slot:right>
+                    <template #right>
                       <div>В факс</div>
                     </template>
 

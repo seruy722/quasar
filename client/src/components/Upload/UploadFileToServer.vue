@@ -11,7 +11,7 @@
             @added="added"
             @removed="removed"
         >
-            <template v-slot:header="scope">
+            <template #header="scope">
                 <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
                     <q-btn v-if="scope.queuedFiles.length > 0" icon="clear_all" @click="scope.removeQueuedFiles" round
                            dense flat>
@@ -43,7 +43,7 @@
                 </div>
             </template>
 
-            <template v-slot:list="scope">
+            <template #list="scope">
                 <q-list separator class="bg-separator">
 
                     <q-item v-for="file in scope.files" :key="file.name">

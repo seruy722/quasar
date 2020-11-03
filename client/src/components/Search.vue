@@ -11,7 +11,7 @@
         @focus="focusInput"
         @blur="blurInput"
     >
-        <template v-slot:append>
+        <template #append>
             <q-icon
                 name="search"
                 :color="iconColor"

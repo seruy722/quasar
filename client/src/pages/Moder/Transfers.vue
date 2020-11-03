@@ -10,7 +10,7 @@
         :table-reactive-properties="transferTableReactiveProperties"
         title="Переводы"
       >
-        <template v-slot:top-buttons>
+        <template #top-buttons>
           <UpdateBtn
             @update-btn-click="refresh"
           />
@@ -38,7 +38,7 @@
           />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-        <template v-slot:inner-item="{props}">
+        <template #inner-item="{props}">
           <div
             class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
             :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -51,7 +51,7 @@
               :header-class="`bg-${statusColor(props.row.status_label)} text-white`"
               expand-icon-class="text-white"
             >
-              <template v-slot:header>
+              <template #header>
                 <q-item-section>
                   <q-item-label :lines="2">
                     {{ props.row.client_name }}
@@ -139,7 +139,7 @@
           </div>
         </template>
 
-        <template v-slot:inner-body="{props}">
+        <template #inner-body="{props}">
           <q-tr
             :props="props"
             class="text-bold cursor-pointer"
@@ -341,7 +341,7 @@
               :change-value.sync="item.changeValue"
               dense
             >
-              <template v-slot:append>
+              <template #append>
                 <Date
                   :value.sync="item.value"
                   :change-value.sync="item.changeValue"

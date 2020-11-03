@@ -24,7 +24,7 @@
     >
       <template
         v-if="!tableProperties.hideTop"
-        v-slot:top="props"
+        #top="props"
       >
         <div class="col-4 q-mr-md text-bold">{{ title }}</div>
 
@@ -65,15 +65,15 @@
         <slot name="top-buttons"></slot>
       </template>
 
-      <template v-slot:body="props">
+      <template #body="props">
         <slot name="inner-body" :props="props"></slot>
       </template>
 
-      <template v-slot:item="props">
+      <template #item="props">
         <slot name="inner-item" :props="props"></slot>
       </template>
 
-      <template v-slot:bottom-row>
+      <template #bottom-row>
         <q-tr>
           <q-td colspan="100%">
             <slot name="inner-bottom-row"></slot>

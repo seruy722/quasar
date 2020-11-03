@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\CodesPrices;
 use App\Debt;
 use App\Transfer;
 use Illuminate\Http\Request;
@@ -157,8 +158,15 @@ class TransferController extends Controller
                 $data['sum'] = $data['sum'] * -1;
                 $data['code_client_id'] = $data['client_id'];
                 $data['transfer_id'] = $data['id'];
-                $data['commission'] = round(($data['sum'] / 100) * 1);
                 $data['created_at'] = date("Y-m-d H:i:s", strtotime($date));
+
+                $codeCommission = CodesPrices::where('code_id', $data['client_id'])->first();
+                if ($codeCommission && $codeCommission->commission) {
+                    $data['commission'] = round(($data['sum'] / 100) * $codeCommission->commission);
+                } else {
+                    $data['commission'] = round(($data['sum'] / 100) * 1);
+                }
+
                 Debt::create($data);
             }
         });

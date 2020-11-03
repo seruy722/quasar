@@ -10,7 +10,7 @@
         :title="$route.meta.title"
         grid
       >
-        <template v-slot:top-buttons>
+        <template #top-buttons>
           <MenuBtn :list="menuList">
             <q-menu
               transition-show="scale"
@@ -80,7 +80,7 @@
           </MenuBtn>
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-        <template v-slot:inner-item="{props}">
+        <template #inner-item="{props}">
           <div
             class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
             :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -92,7 +92,7 @@
               :style="`border-radius: 30px;border: 1px solid ${props.row.status_id === 0 ? 'red' : props.row.status_id === 1 ? 'grey' : 'lightgreen'};`"
               expand-icon-class="text-white"
             >
-              <template v-slot:header>
+              <template #header>
                 <q-item-section avatar>
                   <q-checkbox
                     v-model="props.selected"
@@ -180,7 +180,7 @@
                 :sent="userId !== comment.author_id"
                 bg-color="lightgrey"
               >
-                <template v-slot:avatar>
+                <template #avatar>
                   <q-avatar
                     color="primary"
                     text-color="white"

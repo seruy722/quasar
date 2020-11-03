@@ -10,7 +10,7 @@
       dense
       mask="##-##-####"
     >
-      <template v-slot:append>
+      <template #append>
         <q-icon
           name="event"
           class="cursor-pointer"

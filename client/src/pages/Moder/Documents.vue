@@ -10,7 +10,7 @@
         title="Документы"
         grid
       >
-        <template v-slot:top-buttons>
+        <template #top-buttons>
           <MenuBtn :list="menuList">
             <q-menu
               transition-show="scale"
@@ -74,7 +74,7 @@
           </MenuBtn>
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-        <template v-slot:inner-item="{props}">
+        <template #inner-item="{props}">
           <div
             class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
             :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -86,7 +86,7 @@
               :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
               expand-icon-class="text-white"
             >
-              <template v-slot:header>
+              <template #header>
                 <q-item-section>
                   <q-item-label>
                     {{ props.row.formatDate }}
@@ -178,11 +178,11 @@
     export default {
         name: 'Documents',
         components: {
-            Table: () => import('components/Elements/Table/Table.vue'),
-            MenuBtn: () => import('components/Buttons/MenuBtn.vue'),
-            PullRefresh: () => import('components/PullRefresh.vue'),
-            DialogAddDocuments: () => import('components/Documents/DialogAddDocuments.vue'),
-            DialogShowImageGallery: () => import('components/Tasks/DialogShowImageGallery.vue'),
+            Table: () => import('src/components/Elements/Table/Table.vue'),
+            MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
+            PullRefresh: () => import('src/components/PullRefresh.vue'),
+            DialogAddDocuments: () => import('src/components/Documents/DialogAddDocuments.vue'),
+            DialogShowImageGallery: () => import('src/components/Tasks/DialogShowImageGallery.vue'),
         },
         mixins: [showNotif, CheckErrorsMixin, filesMixin],
         data() {

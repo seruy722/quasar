@@ -96,7 +96,7 @@
               :dense="$q.screen.xs || $q.screen.sm"
               :errors="errorsData"
             >
-              <template v-slot:append>
+              <template #append>
                 <Date
                   :value.sync="item.value"
                   :change-value.sync="item.changeValue"

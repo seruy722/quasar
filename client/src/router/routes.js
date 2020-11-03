@@ -378,6 +378,21 @@ const routes = [
         },
         component: () => import('pages/Moder/Documents.vue'),
       },
+      {
+        path: 'client-cargo-debts',
+        name: 'client-cargo-debts',
+        meta: {
+          title: 'Карго и долги',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin', 'client'],
+            permissions: [],
+          },
+        },
+        component: () => import('pages/Client/CargoDebtsClient.vue'),
+      },
     ],
   },
 ];

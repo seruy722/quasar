@@ -3,7 +3,7 @@
         data-vue-component-name="AddCode"
     >
         <Dialog :dialog.sync="dialogAddClientData">
-            <template v-slot:body>
+            <template #body>
                 <q-card-section>
                     <q-stepper
                         v-model="step"
@@ -52,7 +52,7 @@
                             </q-list>
                         </q-step>
 
-                        <template v-slot:navigation>
+                        <template #navigation>
                             <q-stepper-navigation class="row justify-between align-center">
                                 <BaseBtn
                                     v-if="step === 1"

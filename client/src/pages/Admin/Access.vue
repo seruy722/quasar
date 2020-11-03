@@ -52,7 +52,7 @@
           label="Роли"
           header-class="text-primary"
         >
-          <template v-slot:header>
+          <template #header>
             <q-item-section avatar>
               <q-icon name="accessibility_new" />
             </q-item-section>
@@ -119,7 +119,7 @@
         <q-separator />
 
         <q-expansion-item icon="lock" label="Разрешения" header-class="text-teal">
-          <template v-slot:header>
+          <template #header>
             <q-item-section avatar>
               <q-icon name="lock" />
             </q-item-section>

@@ -85,6 +85,7 @@ class AuthController extends Controller
                 $data['email'] = $request->phone;
                 $data['phone'] = $request->phone;
                 $data['code_id'] = $code->id;
+                $data['type'] = 'client';
             }
             $user = User::create($data);
             $user->givePermissionTo('exit app');

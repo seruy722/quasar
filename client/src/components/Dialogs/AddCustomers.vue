@@ -4,7 +4,7 @@
         class="row items-center justify-center"
     >
         <Dialog :dialog.sync="dialogAddClientData">
-            <template v-slot:body>
+            <template #body>
                 <q-card-section>
                     <div
                         v-for="(input, index) in inputs"

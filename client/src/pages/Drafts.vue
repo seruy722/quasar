@@ -27,7 +27,7 @@
     <div>
       <div>Загрузка долгов на сервер</div>
       <Dialog :dialog.sync="dialogUploadDebtsData">
-        <template v-slot:body>
+        <template #body>
           <q-card-section>
             <UploadFileToServer :uploadData="uploadDebtsData" />
           </q-card-section>
@@ -47,7 +47,7 @@
     <div>
       <div>Загрузка склада на сервер</div>
       <Dialog :dialog.sync="dialogUploadSkladData">
-        <template v-slot:body>
+        <template #body>
           <q-card-section>
             <UploadFileToServer :uploadData="uploadSkladData" />
           </q-card-section>

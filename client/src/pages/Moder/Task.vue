@@ -10,20 +10,26 @@
         title="Задача"
         grid
       >
-        <template v-slot:top-buttons>
+        <template #top-buttons>
           <MenuBtn>
             <q-menu
               transition-show="scale"
               transition-hide="scale"
             >
-              <q-list separator style="min-width: 100px">
+              <q-list
+                separator
+                style="min-width: 100px"
+              >
                 <q-item
                   v-close-popup
                   clickable
                   @click="showDialogAddTaskComment = true"
                 >
                   <q-item-section avatar>
-                    <q-icon name="add" color="positive" />
+                    <q-icon
+                      name="add"
+                      color="positive"
+                    />
                   </q-item-section>
                   <q-item-section>Добавить</q-item-section>
                 </q-item>
@@ -34,7 +40,10 @@
                   @click="editTaskComment(cargoTableReactiveProperties.selected[0])"
                 >
                   <q-item-section avatar>
-                    <q-icon name="edit" color="teal" />
+                    <q-icon
+                      name="edit"
+                      color="teal"
+                    />
                   </q-item-section>
                   <q-item-section>Редактировать</q-item-section>
                 </q-item>
@@ -45,7 +54,10 @@
                   @click="addFileToComment(cargoTableReactiveProperties.selected[0])"
                 >
                   <q-item-section avatar>
-                    <q-icon name="attach_file" color="teal" />
+                    <q-icon
+                      name="attach_file"
+                      color="teal"
+                    />
                   </q-item-section>
                   <q-item-section>Добавить файл</q-item-section>
                 </q-item>
@@ -55,7 +67,10 @@
                   @click="refresh"
                 >
                   <q-item-section avatar>
-                    <q-icon name="sync" color="primary" />
+                    <q-icon
+                      name="sync"
+                      color="primary"
+                    />
                   </q-item-section>
                   <q-item-section>Обновить</q-item-section>
                 </q-item>
@@ -66,7 +81,10 @@
                   @click="destroyComment(cargoTableReactiveProperties.selected)"
                 >
                   <q-item-section avatar>
-                    <q-icon name="delete" color="negative" />
+                    <q-icon
+                      name="delete"
+                      color="negative"
+                    />
                   </q-item-section>
                   <q-item-section>Удалить</q-item-section>
                 </q-item>
@@ -75,7 +93,7 @@
           </MenuBtn>
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-        <template v-slot:inner-item="{props}">
+        <template #inner-item="{props}">
           <div
             class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
             :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -87,7 +105,7 @@
               :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
               expand-icon-class="text-white"
             >
-              <template v-slot:header>
+              <template #header>
                 <q-item-section avatar>
                   <q-checkbox
                     v-model="props.selected"
@@ -96,7 +114,7 @@
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>
-                    {{ props.row.formatDate.slice(0,10) }}
+                    {{ props.row.formatDate.slice(0, 10) }}
                   </q-item-label>
                 </q-item-section>
                 <q-item-section>
@@ -192,188 +210,187 @@
 </template>
 
 <script>
-    import showNotif from 'src/mixins/showNotif';
-    import filesMixin from 'src/mixins/files';
+import showNotif from 'src/mixins/showNotif';
+import filesMixin from 'src/mixins/files';
 
-    export default {
-        name: 'Task',
-        components: {
-            PullRefresh: () => import('components/PullRefresh.vue'),
-            DialogShowImageGallery: () => import('components/Tasks/DialogShowImageGallery.vue'),
-            MenuBtn: () => import('components/Buttons/MenuBtn.vue'),
-            Table: () => import('components/Elements/Table/Table.vue'),
-            DialogAddTaskComment: () => import('components/Tasks/DialogAddTaskComment.vue'),
-            // IFrameDocs: () => import('components/IFrameDocs.vue'),
-        },
-        mixins: [showNotif, filesMixin],
-        data() {
-            return {
-                cargoTableProperties: {
-                    columns: [
-                        {
-                            name: 'author_name',
-                            label: 'Автор',
-                            align: 'center',
-                            field: 'author_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'title',
-                            label: 'Описание',
-                            align: 'center',
-                            field: 'title',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_client_name',
-                            label: 'Клиент',
-                            align: 'center',
-                            field: 'code_client_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'formatDate',
-                            label: 'Дата',
-                            field: 'formatDate',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                cargoTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['author_name', 'title', 'code_client_name', 'formatDate'],
-                    title: '',
-                },
-                showDialogImageGallery: false,
-                showDialogAddTaskComment: false,
-                filesGallery: [],
-                slide: 1,
-                text: '',
-                files: [],
-                extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
-                addFileToCom: false,
-                commentId: 0,
-                entryData: {},
-            };
-        },
-        computed: {
-            userId() {
-                return _.get(this.$store.getters['auth/getUser'], 'id');
-            },
-            comments() {
-                return this.$store.getters['tasks/getTaskComments'];
-            },
-            taskId() {
-                return this.$store.getters['tasks/getTaskId'];
-            },
-        },
-        created() {
-            devlog.log(this.taskId !== this.$route.params.id);
-            if (_.isEmpty(this.comments) || this.taskId !== this.$route.params.id) {
-                this.$store.dispatch('tasks/fetchTaskComments', this.$route.params.id);
-            }
-        },
-        methods: {
-            viewImageGallery(files, slide) {
-                const file = files[slide - 1];
-                if (_.includes(this.extensions, file.ext)) {
-                    this.downloadFromIndex(slide, files);
-                } else {
-                    this.filesGallery = _.filter(files, ({ ext }) => !_.includes(this.extensions, ext));
-                    const indexFile = _.findIndex(this.filesGallery, { id: file.id });
-                    this.slide = indexFile + 1;
-                    this.showDialogImageGallery = true;
-                }
-            },
-            async refresh(done) {
-                if (!done) {
-                    this.$q.loading.show();
-                }
-                const { callFunction } = await import('src/utils/index');
-                await this.$store.dispatch('tasks/fetchTaskComments', this.$route.params.id)
-                  .then(() => {
-                      callFunction(done);
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      callFunction(done);
-                  });
-            },
-            async remove(fileId, commentId, filePath) {
-                this.showNotif('warning', 'Удалить файл?', 'center', [
-                    {
-                        label: 'Отмена',
-                        color: 'white',
-                        handler: () => {
-                        },
-                    },
-                    {
-                        label: 'Удалить',
-                        color: 'white',
-                        handler: async () => {
-                            this.$q.loading.show();
-                            const { getUrl } = await import('src/tools/url');
-                            devlog.log(fileId, commentId);
-                            this.$axios.post(getUrl('removeCommentFile'), {
-                                fileId,
-                                commentId,
-                                filePath,
-                            })
-                              .then(({ data: { comment } }) => {
-                                  this.$q.loading.hide();
-                                  this.$store.dispatch('tasks/updateTaskComment', comment);
-                              })
-                              .catch(() => {
-                                  this.$q.loading.hide();
-                              });
-                        },
-                    },
-                ]);
-            },
-            async destroyComment(selected) {
-                const ids = _.map(selected, 'id');
-                devlog.log(ids);
-                devlog.log(selected);
-                this.$q.loading.show();
-                const { getUrl } = await import('src/tools/url');
-                this.$axios.post(getUrl('deleteComments'), { ids })
-                  .then(() => {
-                      this.$store.dispatch('tasks/deleteTaskComments', ids);
-                      this.$q.loading.hide();
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      devlog.error('deleteComments');
-                  });
-            },
-            addFileToComment(selected) {
-                const { id: commentId } = selected;
-                this.commentId = commentId;
-                devlog.log(commentId);
-                this.addFileToCom = true;
-                this.showDialogAddTaskComment = true;
-            },
-            editTaskComment(data) {
-                const { id: commentId } = data;
-                this.commentId = commentId;
-                this.showDialogAddTaskComment = true;
-                this.entryData = data;
-            },
-        },
+export default {
+  name: 'Task',
+  components: {
+    PullRefresh: () => import('src/components/PullRefresh.vue'),
+    DialogShowImageGallery: () => import('src/components/Tasks/DialogShowImageGallery.vue'),
+    MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
+    Table: () => import('src/components/Elements/Table/Table.vue'),
+    DialogAddTaskComment: () => import('src/components/Tasks/DialogAddTaskComment.vue'),
+  },
+  mixins: [showNotif, filesMixin],
+  data() {
+    return {
+      cargoTableProperties: {
+        columns: [
+          {
+            name: 'author_name',
+            label: 'Автор',
+            align: 'center',
+            field: 'author_name',
+            sortable: true,
+          },
+          {
+            name: 'title',
+            label: 'Описание',
+            align: 'center',
+            field: 'title',
+            sortable: true,
+          },
+          {
+            name: 'code_client_name',
+            label: 'Клиент',
+            align: 'center',
+            field: 'code_client_name',
+            sortable: true,
+          },
+          {
+            name: 'formatDate',
+            label: 'Дата',
+            field: 'formatDate',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      cargoTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['author_name', 'title', 'code_client_name', 'formatDate'],
+        title: '',
+      },
+      showDialogImageGallery: false,
+      showDialogAddTaskComment: false,
+      filesGallery: [],
+      slide: 1,
+      text: '',
+      files: [],
+      extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
+      addFileToCom: false,
+      commentId: 0,
+      entryData: {},
     };
+  },
+  computed: {
+    userId() {
+      return _.get(this.$store.getters['auth/getUser'], 'id');
+    },
+    comments() {
+      return this.$store.getters['tasks/getTaskComments'];
+    },
+    taskId() {
+      return this.$store.getters['tasks/getTaskId'];
+    },
+  },
+  created() {
+    devlog.log(this.taskId !== this.$route.params.id);
+    if (_.isEmpty(this.comments) || this.taskId !== this.$route.params.id) {
+      this.$store.dispatch('tasks/fetchTaskComments', this.$route.params.id);
+    }
+  },
+  methods: {
+    viewImageGallery(files, slide) {
+      const file = files[slide - 1];
+      if (_.includes(this.extensions, file.ext)) {
+        this.downloadFromIndex(slide, files);
+      } else {
+        this.filesGallery = _.filter(files, ({ ext }) => !_.includes(this.extensions, ext));
+        const indexFile = _.findIndex(this.filesGallery, { id: file.id });
+        this.slide = indexFile + 1;
+        this.showDialogImageGallery = true;
+      }
+    },
+    async refresh(done) {
+      if (!done) {
+        this.$q.loading.show();
+      }
+      const { callFunction } = await import('src/utils/index');
+      await this.$store.dispatch('tasks/fetchTaskComments', this.$route.params.id)
+        .then(() => {
+          callFunction(done);
+          this.$q.loading.hide();
+          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          callFunction(done);
+        });
+    },
+    async remove(fileId, commentId, filePath) {
+      this.showNotif('warning', 'Удалить файл?', 'center', [
+        {
+          label: 'Отмена',
+          color: 'white',
+          handler: () => {
+          },
+        },
+        {
+          label: 'Удалить',
+          color: 'white',
+          handler: async () => {
+            this.$q.loading.show();
+            const { getUrl } = await import('src/tools/url');
+            devlog.log(fileId, commentId);
+            this.$axios.post(getUrl('removeCommentFile'), {
+              fileId,
+              commentId,
+              filePath,
+            })
+              .then(({ data: { comment } }) => {
+                this.$q.loading.hide();
+                this.$store.dispatch('tasks/updateTaskComment', comment);
+              })
+              .catch(() => {
+                this.$q.loading.hide();
+              });
+          },
+        },
+      ]);
+    },
+    async destroyComment(selected) {
+      const ids = _.map(selected, 'id');
+      devlog.log(ids);
+      devlog.log(selected);
+      this.$q.loading.show();
+      const { getUrl } = await import('src/tools/url');
+      this.$axios.post(getUrl('deleteComments'), { ids })
+        .then(() => {
+          this.$store.dispatch('tasks/deleteTaskComments', ids);
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          devlog.error('deleteComments');
+        });
+    },
+    addFileToComment(selected) {
+      const { id: commentId } = selected;
+      this.commentId = commentId;
+      devlog.log(commentId);
+      this.addFileToCom = true;
+      this.showDialogAddTaskComment = true;
+    },
+    editTaskComment(data) {
+      const { id: commentId } = data;
+      this.commentId = commentId;
+      this.showDialogAddTaskComment = true;
+      this.entryData = data;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .example-item {
-    width: 150px;
-    overflow: hidden;
-  }
+.example-item {
+  width: 150px;
+  overflow: hidden;
+}
 
-  .q-avatar {
-    margin: 0 5px;
-  }
+.q-avatar {
+  margin: 0 5px;
+}
 
 </style>

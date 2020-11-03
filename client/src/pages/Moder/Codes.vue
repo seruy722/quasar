@@ -9,7 +9,7 @@
         :table-reactive-properties="customerTableReactiveProperties"
         title="Клиенты"
       >
-        <template v-slot:top-buttons>
+        <template #top-buttons>
           <IconBtn
             color="primary"
             icon="sync"
@@ -166,7 +166,7 @@
           </div>
         </template>
 
-        <template v-slot:inner-body="{props}">
+        <template #inner-body="{props}">
           <q-tr
             :props="props"
             class="text-bold cursor-pointer"

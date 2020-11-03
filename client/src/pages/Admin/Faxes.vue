@@ -9,7 +9,7 @@
         :table-reactive-properties="faxesTableReactiveProperties"
         title="Факсы"
       >
-        <template v-slot:top-buttons>
+        <template #top-buttons>
           <IconBtn
             v-show="faxesTableReactiveProperties.selected.length"
             color="negative"
@@ -47,7 +47,7 @@
           <Menu :items="['Факс', 'Перевожчика']" />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-        <template v-slot:inner-item="{props}">
+        <template #inner-item="{props}">
           <div
             class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
             :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -59,7 +59,7 @@
               :style="`border-radius: 30px;border: 1px solid ${props.row.uploaded_to_cargo ? 'green' : 'red'};`"
               expand-icon-class="text-white"
             >
-              <template v-slot:header>
+              <template #header>
                 <q-item-section avatar>
                   <q-checkbox
                     dense
@@ -126,7 +126,7 @@
             </q-expansion-item>
           </div>
         </template>
-        <template v-slot:inner-body="{props}">
+        <template #inner-body="{props}">
           <q-tr
             :props="props"
             :class="[props.row.uploaded_to_cargo ? 'table__tr_green_bg' : 'table__tr_red_bg']"
@@ -237,7 +237,7 @@
         expand-separator
         class="shadow-1 overflow-hidden"
       >
-        <template v-slot:header>
+        <template #header>
           <q-item-section>
             <q-item-label>{{ status }}</q-item-label>
           </q-item-section>

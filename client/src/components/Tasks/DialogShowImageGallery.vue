@@ -18,7 +18,7 @@
             :img-src="`${fileUrl()}${file.path}`"
             style="background-size: contain;background-repeat: no-repeat;"
           />
-          <template v-slot:control>
+          <template #control>
             <q-carousel-control
               position="bottom-right"
               :offset="[3, 3]"

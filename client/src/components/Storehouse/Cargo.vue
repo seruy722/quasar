@@ -8,7 +8,7 @@
       :table-reactive-properties="cargoTableReactiveProperties"
     >
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-      <template v-slot:inner-item="{props}">
+      <template #inner-item="{props}">
         <div
           class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
           :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -20,7 +20,7 @@
             :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
             expand-icon-class="text-white"
           >
-            <template v-slot:header>
+            <template #header>
               <q-item-section>
                 <q-item-label>
                   {{ props.row.created_at | formatToDashDate }}
@@ -73,7 +73,7 @@
         </div>
       </template>
 
-      <template v-slot:inner-body="{props}">
+      <template #inner-body="{props}">
         <q-tr
           :props="props"
           :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"

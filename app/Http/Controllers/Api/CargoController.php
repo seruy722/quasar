@@ -82,6 +82,9 @@ class CargoController extends Controller
 
             return response(['cargo' => [], 'debts' => [], 'acc' => $customersCodes]);
         }
+        if ($id == 'null') {
+            $id = auth()->user()->code_id;
+        }
         $cargo = $this->query()
             ->where('code_client_id', $id)
             ->get();

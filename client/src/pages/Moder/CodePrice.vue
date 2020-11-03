@@ -10,7 +10,7 @@
         :table-reactive-properties="transferTableReactiveProperties"
         title="Цены"
       >
-        <template v-slot:top-buttons>
+        <template #top-buttons>
           <IconBtn
             color="teal"
             icon="add_box"
@@ -22,7 +22,7 @@
           />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-        <template v-slot:inner-item="{props}">
+        <template #inner-item="{props}">
           <div
             class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
             :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -33,7 +33,7 @@
               style="border-radius: 30px;border: 1px solid;"
               expand-icon-class="text-white"
             >
-              <template v-slot:header>
+              <template #header>
                 <q-item-section>
                   <q-item-label :lines="2">
                     {{ props.row.code }}
@@ -57,18 +57,18 @@
                   <q-item-section>
                     <q-item-label>Категория</q-item-label>
                   </q-item-section>
-
                   <q-item-section>
                     <q-item-label>За кг</q-item-label>
                   </q-item-section>
-
                   <q-item-section>
                     <q-item-label>За место</q-item-label>
                   </q-item-section>
                   <q-item-section>
+                    <q-item-label>Комиссия</q-item-label>
+                  </q-item-section>
+                  <q-item-section>
                     <q-item-label>Обновлено</q-item-label>
                   </q-item-section>
-
                   <q-item-section side>
                     Управление
                   </q-item-section>
@@ -91,6 +91,10 @@
 
                   <q-item-section>
                     <q-item-label>{{ elem.for_place }}</q-item-label>
+                  </q-item-section>
+
+                  <q-item-section>
+                    <q-item-label>{{ elem.commission }}</q-item-label>
                   </q-item-section>
 
                   <q-item-section>
@@ -130,7 +134,7 @@
           </div>
         </template>
 
-        <template v-slot:inner-body="{props}">
+        <template #inner-body="{props}">
           <q-tr
             :props="props"
             class="text-bold cursor-pointer"
@@ -222,13 +226,14 @@
               <q-item-section>
                 <q-item-label>Категория</q-item-label>
               </q-item-section>
-
               <q-item-section>
                 <q-item-label>За кг</q-item-label>
               </q-item-section>
-
               <q-item-section>
                 <q-item-label>За место</q-item-label>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Комиссия</q-item-label>
               </q-item-section>
               <q-item-section>
                 <q-item-label>Обновлено</q-item-label>
@@ -256,6 +261,10 @@
 
               <q-item-section>
                 <q-item-label>{{ elem.for_place }}</q-item-label>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>{{ elem.commission }}</q-item-label>
               </q-item-section>
 
               <q-item-section>
@@ -317,8 +326,6 @@
             DialogAddCodePrice: () => import('src/components/Dialogs/DialogAddCodePrice.vue'),
             CodePriceHistory: () => import('src/components/History/CodePriceHistory.vue'),
             Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            // Search: () => import('src/components/Search.vue'),
-            // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
             DialogAddNewCodePrice: () => import('src/components/Dialogs/DialogAddNewCodePrice.vue'),
             PullRefresh: () => import('src/components/PullRefresh.vue'),
         },

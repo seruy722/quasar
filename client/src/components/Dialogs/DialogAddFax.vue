@@ -76,7 +76,7 @@
           :change-value.sync="faxData.departure_date.changeValue"
           dense
         >
-          <template v-slot:append>
+          <template #append>
             <Date
               :value.sync="faxData.departure_date.value"
               :change-value.sync="faxData.departure_date.changeValue"
@@ -93,7 +93,7 @@
           :change-value.sync="faxData.arrival_date.changeValue"
           dense
         >
-          <template v-slot:append>
+          <template #append>
             <Date
               :value.sync="faxData.arrival_date.value"
               :change-value.sync="faxData.arrival_date.changeValue"

@@ -16,10 +16,10 @@
     @filter="filterFn"
     @input="inputEvent"
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <q-icon :name="icon" />
     </template>
-    <template v-slot:no-option>
+    <template #no-option>
       <q-item>
         <q-item-section class="text-grey">
           Нет результатов
