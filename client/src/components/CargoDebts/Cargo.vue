@@ -649,7 +649,7 @@ export default {
         this.dialogAddCargoPayEntryData = data;
         this.showDialogAddCargoPayEntry = true;
       }
-      this.cargoTableReactiveProperties.selectted = [];
+      this.cargoTableReactiveProperties.selected = [];
     },
     async paymentsAll(id) {
       if (id) {

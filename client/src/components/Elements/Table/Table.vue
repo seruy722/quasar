@@ -30,21 +30,6 @@
 
         <q-space />
 
-        <!--        <q-select-->
-        <!--          v-model="tableReactiveProperties.visibleColumns"-->
-        <!--          multiple-->
-        <!--          borderless-->
-        <!--          dense-->
-        <!--          options-dense-->
-        <!--          :display-value="$t('columns')"-->
-        <!--          emit-value-->
-        <!--          map-options-->
-        <!--          :options="tableProperties.columns"-->
-        <!--          option-value="name"-->
-        <!--          style="min-width: 150px"-->
-        <!--        />-->
-        <!--        <q-space />-->
-
         <Search v-model="search" />
 
         <BaseSelect

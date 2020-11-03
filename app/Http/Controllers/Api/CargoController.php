@@ -399,8 +399,8 @@ class CargoController extends Controller
     {
         Cargo::where('type', false)->where('code_client_id', $id)->update(['paid' => true]);
         $data = $this->query()
-            ->where('type', false)
-            ->where('code_client_id', $id)
+            ->where('cargos.type', false)
+            ->where('cargos.code_client_id', $id)
             ->get();
         return response(['cargo' => $data]);
     }
@@ -420,8 +420,8 @@ class CargoController extends Controller
         }
 
         $data = $this->queryDebt()
-            ->where('type', false)
-            ->where('code_client_id', $id)
+            ->where('debts.type', false)
+            ->where('debts.code_client_id', $id)
             ->get();
         return response(['debts' => $data]);
     }
