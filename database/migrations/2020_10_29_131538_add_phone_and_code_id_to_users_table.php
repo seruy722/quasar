@@ -14,8 +14,8 @@ class AddPhoneAndCodeIdToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('phone', 20);
-            $table->unsignedInteger('code_id');
+            $table->string('phone', 20)->nullable();
+            $table->unsignedInteger('code_id')->default(0);
         });
     }
 
