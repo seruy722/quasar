@@ -69,7 +69,7 @@
         <td></td>
         <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ $collection[0]->sum('place') }}</td>
         <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{ $collection[0]->sum('kg') }}</td>
-        <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{ $collection[0]->sum('cube') }}</td>
+        <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{ round($collection[0]->sum('cube'),2) }}</td>
     </tr>
     <tr></tr>
     <tr></tr>
@@ -80,14 +80,14 @@
             <td style="border: 1px solid black;text-align: center;">{{ $category->name }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $category->place }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $category->kg }}</td>
-            <td style="border: 1px solid black;text-align: center;">{{ $category->cube }}</td>
+            <td style="border: 1px solid black;text-align: center;">{{ round($category->cube, 2) }}</td>
         </tr>
     @endforeach
     <tr>
         <td style="border: 1px solid black;text-align: center;font-weight: bold;"></td>
         <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ $collection[1]->sum('place') }}</td>
-        <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ $collection[1]->sum('kg') }}</td>
-        <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ $collection[1]->sum('cube') }}</td>
+        <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ round($collection[1]->sum('kg'),2) }}</td>
+        <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ round($collection[1]->sum('cube'),2) }}</td>
     </tr>
 
     </tbody>
