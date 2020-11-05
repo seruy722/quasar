@@ -174,6 +174,13 @@
             </q-td>
 
             <q-td
+              key="cube"
+              :props="props"
+            >
+              {{ props.row.cube }}
+            </q-td>
+
+            <q-td
               key="category_name"
               :props="props"
             >
@@ -271,215 +278,222 @@
 </template>
 
 <script>
-    import { getUrl } from 'src/tools/url';
-    import showNotif from 'src/mixins/showNotif';
-    import ExportDataMixin from 'src/mixins/ExportData';
-    import { callFunction } from 'src/utils/index';
-    import {
-        getClientCodes,
-        getCategories,
-        getShopsList,
-        getStorehouseTableData,
-    } from 'src/utils/FrequentlyCalledFunctions';
-    import StorehouseDataMixin from 'src/mixins/StorehouseData';
+import { getUrl } from 'src/tools/url';
+import showNotif from 'src/mixins/showNotif';
+import ExportDataMixin from 'src/mixins/ExportData';
+import { callFunction } from 'src/utils/index';
+import {
+  getClientCodes,
+  getCategories,
+  getShopsList,
+  getStorehouseTableData,
+} from 'src/utils/FrequentlyCalledFunctions';
+import StorehouseDataMixin from 'src/mixins/StorehouseData';
 
-    export default {
-        name: 'Storehouse',
-        components: {
-            Table: () => import('components/Elements/Table/Table.vue'),
-            Dialog: () => import('components/Dialogs/Dialog.vue'),
-            DialogAddEntryOnStorehouse: () => import('components/Dialogs/DialogAddEntryOnStorehouse.vue'),
-            IconBtn: () => import('components/Buttons/IconBtn.vue'),
-            Menu: () => import('components/Menu.vue'),
-            BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-            StorehouseDataHistory: () => import('components/History/StorehouseDataHistory.vue'),
-            PullRefresh: () => import('components/PullRefresh.vue'),
-            CountCategories: () => import('components/CountCategories.vue'),
-            DialogMoveToFax: () => import('components/Dialogs/DialogMoveToFax.vue'),
-            MoveToFaxBtn: () => import('components/Buttons/MoveToFaxBtn.vue'),
-            UpdateBtn: () => import('components/Buttons/UpdateBtn.vue'),
-            StorehouseInfo: () => import('components/Storehouse/StorehouseInfo.vue'),
-        },
-        mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
-        data() {
-            return {
-                dialogStorehouseInfo: false,
-                showMoveToFaxDialog: false,
-                localStorehouseEditData: {},
-                showAddEntryOnStorehouseDialog: false,
-                storehouseTableProperties: {
-                    title: this.$t('storehouse'),
-                    viewBody: true,
-                    viewTop: true,
-                    hideBottom: false,
-                    columns: [
-                        {
-                            name: 'code_place',
-                            label: this.$t('code'),
-                            align: 'center',
-                            field: 'code_place',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_client_name',
-                            label: this.$t('client'),
-                            field: 'code_client_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'place',
-                            label: this.$t('place'),
-                            field: 'place',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'kg',
-                            label: this.$t('kg'),
-                            field: 'kg',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'category_name',
-                            label: this.$t('category'),
-                            field: 'category_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'shop',
-                            label: this.$t('shop'),
-                            field: 'shop',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'created_at',
-                            label: 'Добавлено',
-                            field: 'created_at',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'things',
-                            label: this.$t('things'),
-                            field: 'things',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                storehouseTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['code_client_name', 'place', 'kg', 'category_name', 'code_place', 'notation', 'shop', 'things', 'created_at'],
-                },
-            };
-        },
-        computed: {
-            storehouseData() {
-                return this.$store.getters['storehouse/getStorehouseData'];
-            },
-            storehouseCategoriesData() {
-                return this.$store.getters['storehouse/getStorehouseCategoriesData'];
-            },
-        },
-        mounted() {
-            this.$q.loading.show();
-            Promise.all([getStorehouseTableData(this.$store)])
-              .then(() => {
-                  this.$q.loading.hide();
-              });
-        },
-        methods: {
-            moveToFax() {
-                this.showMoveToFaxDialog = true;
-            },
-            viewUpdateDialog(val, event) {
-                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
-                    this.localStorehouseEditData = val;
-                    this.localStorehouseEditData.historyFunc = this.getStorehouseDataHistory;
-                    this.storehouseTableReactiveProperties.selected = [];
-
-                    setTimeout(() => {
-                        val.selected = !val.selected;
-                    }, 100);
-
-                    this.$q.loading.show();
-                    Promise.all([getClientCodes(this.$store), getShopsList(this.$store), getCategories(this.$store)])
-                      .then(() => {
-                          this.showAddEntryOnStorehouseDialog = true;
-                          this.$q.loading.hide();
-                      })
-                      .catch(() => {
-                          this.$q.loading.hide();
-                          devlog.warn('Ошибка при получении данных. Edit storehouseData');
-                      });
-                }
-            },
-            destroyEntry(data) {
-                if (!_.isEmpty(data)) {
-                    const ids = _.map(data, 'id');
-                    this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
-                        {
-                            label: 'Отмена',
-                            color: 'white',
-                            handler: () => {
-                                this.storehouseTableReactiveProperties.selected = [];
-                            },
-                        },
-                        {
-                            label: 'Удалить',
-                            color: 'white',
-                            handler: () => {
-                                this.$q.loading.show();
-                                this.$axios.post(getUrl('destroyStorehouseData'), { ids })
-                                  .then(({ data: { status } }) => {
-                                      devlog.log('status', status);
-                                      this.$store.dispatch('storehouse/destroyStorehouseData', ids);
-                                      // this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
-                                      this.storehouseTableReactiveProperties.selected = [];
-                                      this.$q.loading.hide();
-                                      this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', false);
-                                  })
-                                  .catch(() => {
-                                      devlog.error('Ошибка запроса - destroyStorehouseData');
-                                  });
-                            },
-                        },
-                    ]);
-                }
-            },
-            exportStorehouseData() {
-                if (!_.isEmpty(this.storehouseData)) {
-                    this.exportDataToExcel(getUrl('exportStorehouseData'), {
-                        ids: _.map(this.storehouseTableReactiveProperties.selected, 'id'),
-                    }, 'На складе.xlsx');
-                }
-            },
-            async refresh(done) {
-                if (!done) {
-                    this.$q.loading.show();
-                }
-                this.$store.dispatch('storehouse/fetchStorehouseTableData')
-                  .then(() => {
-                      callFunction(done);
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', false);
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      callFunction(done);
-                  });
-            },
-        },
+export default {
+  name: 'Storehouse',
+  components: {
+    Table: () => import('components/Elements/Table/Table.vue'),
+    Dialog: () => import('components/Dialogs/Dialog.vue'),
+    DialogAddEntryOnStorehouse: () => import('components/Dialogs/DialogAddEntryOnStorehouse.vue'),
+    IconBtn: () => import('components/Buttons/IconBtn.vue'),
+    Menu: () => import('components/Menu.vue'),
+    BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
+    StorehouseDataHistory: () => import('components/History/StorehouseDataHistory.vue'),
+    PullRefresh: () => import('components/PullRefresh.vue'),
+    CountCategories: () => import('components/CountCategories.vue'),
+    DialogMoveToFax: () => import('components/Dialogs/DialogMoveToFax.vue'),
+    MoveToFaxBtn: () => import('components/Buttons/MoveToFaxBtn.vue'),
+    UpdateBtn: () => import('components/Buttons/UpdateBtn.vue'),
+    StorehouseInfo: () => import('components/Storehouse/StorehouseInfo.vue'),
+  },
+  mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
+  data() {
+    return {
+      dialogStorehouseInfo: false,
+      showMoveToFaxDialog: false,
+      localStorehouseEditData: {},
+      showAddEntryOnStorehouseDialog: false,
+      storehouseTableProperties: {
+        title: this.$t('storehouse'),
+        viewBody: true,
+        viewTop: true,
+        hideBottom: false,
+        columns: [
+          {
+            name: 'code_place',
+            label: this.$t('code'),
+            align: 'center',
+            field: 'code_place',
+            sortable: true,
+          },
+          {
+            name: 'code_client_name',
+            label: this.$t('client'),
+            field: 'code_client_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'place',
+            label: this.$t('place'),
+            field: 'place',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'kg',
+            label: this.$t('kg'),
+            field: 'kg',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'cube',
+            label: 'Куб',
+            field: 'cube',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'category_name',
+            label: this.$t('category'),
+            field: 'category_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'shop',
+            label: this.$t('shop'),
+            field: 'shop',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'created_at',
+            label: 'Добавлено',
+            field: 'created_at',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'notation',
+            label: this.$t('notation'),
+            field: 'notation',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'things',
+            label: this.$t('things'),
+            field: 'things',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      storehouseTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['code_client_name', 'place', 'kg', 'category_name', 'code_place', 'notation', 'shop', 'things', 'created_at', 'cube'],
+      },
     };
+  },
+  computed: {
+    storehouseData() {
+      return this.$store.getters['storehouse/getStorehouseData'];
+    },
+    storehouseCategoriesData() {
+      return this.$store.getters['storehouse/getStorehouseCategoriesData'];
+    },
+  },
+  mounted() {
+    this.$q.loading.show();
+    Promise.all([getStorehouseTableData(this.$store)])
+      .then(() => {
+        this.$q.loading.hide();
+      });
+  },
+  methods: {
+    moveToFax() {
+      this.showMoveToFaxDialog = true;
+    },
+    viewUpdateDialog(val, event) {
+      if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
+        this.localStorehouseEditData = val;
+        this.localStorehouseEditData.historyFunc = this.getStorehouseDataHistory;
+        this.storehouseTableReactiveProperties.selected = [];
+
+        setTimeout(() => {
+          val.selected = !val.selected;
+        }, 100);
+
+        this.$q.loading.show();
+        Promise.all([getClientCodes(this.$store), getShopsList(this.$store), getCategories(this.$store)])
+          .then(() => {
+            this.showAddEntryOnStorehouseDialog = true;
+            this.$q.loading.hide();
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            devlog.warn('Ошибка при получении данных. Edit storehouseData');
+          });
+      }
+    },
+    destroyEntry(data) {
+      if (!_.isEmpty(data)) {
+        const ids = _.map(data, 'id');
+        this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
+          {
+            label: 'Отмена',
+            color: 'white',
+            handler: () => {
+              this.storehouseTableReactiveProperties.selected = [];
+            },
+          },
+          {
+            label: 'Удалить',
+            color: 'white',
+            handler: () => {
+              this.$q.loading.show();
+              this.$axios.post(getUrl('destroyStorehouseData'), { ids })
+                .then(({ data: { status } }) => {
+                  devlog.log('status', status);
+                  this.$store.dispatch('storehouse/destroyStorehouseData', ids);
+                  // this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
+                  this.storehouseTableReactiveProperties.selected = [];
+                  this.$q.loading.hide();
+                  this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', false);
+                })
+                .catch(() => {
+                  devlog.error('Ошибка запроса - destroyStorehouseData');
+                });
+            },
+          },
+        ]);
+      }
+    },
+    exportStorehouseData() {
+      if (!_.isEmpty(this.storehouseData)) {
+        this.exportDataToExcel(getUrl('exportStorehouseData'), {
+          ids: _.map(this.storehouseTableReactiveProperties.selected, 'id'),
+        }, 'На складе.xlsx');
+      }
+    },
+    async refresh(done) {
+      if (!done) {
+        this.$q.loading.show();
+      }
+      this.$store.dispatch('storehouse/fetchStorehouseTableData')
+        .then(() => {
+          callFunction(done);
+          this.$q.loading.hide();
+          this.showNotif('success', 'Данные успешно обновлены.', false);
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          callFunction(done);
+        });
+    },
+  },
+};
 </script>

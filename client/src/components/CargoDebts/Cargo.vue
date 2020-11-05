@@ -40,6 +40,13 @@
           tooltip="Оплатить все"
           @icon-btn-click="paymentsAll(currentCodeClientId)"
         />
+        <IconBtn
+          v-show="currentCodeClientId"
+          icon="payment"
+          color="brown"
+          tooltip="Рассчитать клиента"
+          @icon-btn-click="calculateClient(cargoTableReactiveProperties.selected, cargo)"
+        />
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
       <template #inner-item="{props}">
@@ -353,6 +360,28 @@
       :entry-data.sync="dialogAddCargoDebtEntryData"
       :show-dialog.sync="showDialogAddCargoDebtEntry"
     />
+    <Dialog
+      :dialog="dialogCalculateClient"
+      :persistent="true"
+      :maximized="true"
+    >
+      <q-card style="max-width: 600px;">
+        <q-bar>
+          <q-space />
+          <IconBtn
+            flat
+            dense
+            icon="close"
+            tooltip="Закрыть"
+            @icon-btn-click="dialogCalculateClient = false"
+          />
+        </q-bar>
+
+        <q-card-section class="q-pt-none">
+          <CalculateClient :calculate-data="calculateData" />
+        </q-card-section>
+      </q-card>
+    </Dialog>
   </div>
 </template>
 
@@ -363,17 +392,19 @@ import showNotif from 'src/mixins/showNotif';
 export default {
   name: 'Cargo',
   components: {
-    Table: () => import('components/Elements/Table/Table.vue'),
-    CountCargoCategories: () => import('components/CargoDebts/CountCargoCategories.vue'),
-    GeneralClientCargoData: () => import('components/CargoDebts/GeneralClientCargoData.vue'),
-    UpdateBtn: () => import('components/Buttons/UpdateBtn.vue'),
-    DialogViewCargoData: () => import('components/CargoDebts/Dialogs/DialogViewCargoData.vue'),
-    MenuCargo: () => import('components/CargoDebts/MenuCargo.vue'),
-    DialogAddCargoPaymentEntry: () => import('components/CargoDebts/Dialogs/DialogAddCargoPaymentEntry.vue'),
-    DialogAddCargoDebtEntry: () => import('components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
-    DialogAddCargoPayEntry: () => import('components/CargoDebts/Dialogs/DialogAddCargoPayEntry.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
-    ExportBtn: () => import('components/Buttons/ExportBtn.vue'),
+    Table: () => import('src/components/Elements/Table/Table.vue'),
+    CountCargoCategories: () => import('src/components/CargoDebts/CountCargoCategories.vue'),
+    GeneralClientCargoData: () => import('src/components/CargoDebts/GeneralClientCargoData.vue'),
+    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
+    DialogViewCargoData: () => import('src/components/CargoDebts/Dialogs/DialogViewCargoData.vue'),
+    MenuCargo: () => import('src/components/CargoDebts/MenuCargo.vue'),
+    DialogAddCargoPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPaymentEntry.vue'),
+    DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
+    DialogAddCargoPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPayEntry.vue'),
+    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
+    CalculateClient: () => import('src/components/CargoDebts/CalculateClient.vue'),
+    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
   },
   mixins: [ExportDataMixin, showNotif],
   props: {
@@ -385,6 +416,8 @@ export default {
   },
   data() {
     return {
+      calculateData: [],
+      dialogCalculateClient: false,
       entryData: [],
       showDialogViewCargoData: false,
       cargoTableProperties: {
@@ -678,6 +711,19 @@ export default {
             },
           },
         ]);
+      }
+    },
+    calculateClient(selected, data) {
+      if (_.isEmpty(selected) && _.isEmpty(data)) {
+        this.showNotif('warning', 'В таблице нет записей', 'center');
+      } else if (!_.isEmpty(selected)) {
+        devlog.log(selected);
+        this.calculateData = _.cloneDeep(selected);
+      } else if (!_.isEmpty(data)) {
+        devlog.log(data);
+        this.calculateData = _.cloneDeep(data);
+      } else {
+        this.dialogCalculateClient = this.calculateData.length;
       }
     },
   },

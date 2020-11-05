@@ -176,316 +176,303 @@
 </template>
 
 <script>
-    import CheckErrorsMixin from 'src/mixins/CheckErrors';
-    import { getUrl } from 'src/tools/url';
-    import showNotif from 'src/mixins/showNotif';
-    import {
-        getClientCodes,
-        getCategories,
-        getShopsList,
-        setFormatedDate,
-        setChangeValue,
-    } from 'src/utils/FrequentlyCalledFunctions';
+import CheckErrorsMixin from 'src/mixins/CheckErrors';
+import { getUrl } from 'src/tools/url';
+import showNotif from 'src/mixins/showNotif';
+import {
+  getClientCodes,
+  getCategories,
+  getShopsList,
+  setFormatedDate,
+  setChangeValue,
+} from 'src/utils/FrequentlyCalledFunctions';
 
-    export default {
-        name: 'DialogAddEntryOnStorehouse',
-        components: {
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            DialogAddThings: () => import('src/components/Dialogs/DialogAddThings.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            Card: () => import('src/components/Elements/Card/Card.vue'),
-            CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-            SelectChips: () => import('src/components/Elements/SelectChips.vue'),
-            CheckBox: () => import('src/components/Elements/CheckBox.vue'),
-            // MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
-            Menu: () => import('src/components/Menu.vue'),
+export default {
+  name: 'DialogAddEntryOnStorehouse',
+  components: {
+    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
+    DialogAddThings: () => import('src/components/Dialogs/DialogAddThings.vue'),
+    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
+    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    List: () => import('src/components/Elements/List/List.vue'),
+    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
+    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
+    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
+    Card: () => import('src/components/Elements/Card/Card.vue'),
+    CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
+    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
+    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    Separator: () => import('src/components/Separator.vue'),
+    SelectChips: () => import('src/components/Elements/SelectChips.vue'),
+    CheckBox: () => import('src/components/Elements/CheckBox.vue'),
+    // MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
+    Menu: () => import('src/components/Menu.vue'),
+  },
+  mixins: [CheckErrorsMixin, showNotif],
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    entryData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    return {
+      show: false,
+      withoutThings: false,
+      showThingsDialog: false,
+      changeThings: false,
+      things: null,
+      storehouseData: {
+        code_place: {
+          name: 'code_place',
+          type: 'text',
+          label: this.$t('code'),
+          mask: '###/###/###',
+          rules: [
+            {
+              name: 'isLength',
+              error: 'Минимальное количество символов 11.',
+              options: {
+                min: 11,
+                max: 11,
+              },
+            },
+          ],
+          require: true,
+          requireError: 'Поле обьзательное для заполнения.',
+          autofocus: true,
+          readonly: false,
+          changeValue: false,
+          default: '',
+          value: '',
         },
-        mixins: [CheckErrorsMixin, showNotif],
-        props: {
-            showDialog: {
-                type: Boolean,
-                default: false,
-            },
-            entryData: {
-                type: Object,
-                default: () => ({}),
-            },
+        code_client_id: {
+          name: 'code_client_id',
+          type: 'select',
+          label: this.$t('client'),
+          options: [],
+          require: true,
+          requireError: 'Выберите значение.',
+          changeValue: false,
+          funcLoadData: getClientCodes,
+          default: null,
+          value: null,
         },
-        data() {
-            return {
-                show: false,
-                withoutThings: false,
-                showThingsDialog: false,
-                changeThings: false,
-                things: null,
-                storehouseData: {
-                    code_place: {
-                        name: 'code_place',
-                        type: 'text',
-                        label: this.$t('code'),
-                        mask: '###/###/###',
-                        rules: [
-                            {
-                                name: 'isLength',
-                                error: 'Минимальное количество символов 11.',
-                                options: {
-                                    min: 11,
-                                    max: 11,
-                                },
-                            },
-                        ],
-                        require: true,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        autofocus: true,
-                        readonly: false,
-                        changeValue: false,
-                        default: '',
-                        value: '',
-                    },
-                    code_client_id: {
-                        name: 'code_client_id',
-                        type: 'select',
-                        label: this.$t('client'),
-                        options: [],
-                        require: true,
-                        requireError: 'Выберите значение.',
-                        changeValue: false,
-                        funcLoadData: getClientCodes,
-                        default: null,
-                        value: null,
-                    },
-                    kg: {
-                        name: 'kg',
-                        type: 'number',
-                        label: this.$t('kg'),
-                        require: true,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
-                    // for_kg: {
-                    //     name: 'for_kg',
-                    //     type: 'number',
-                    //     label: 'За кг',
-                    //     require: false,
-                    //     requireError: 'Поле обьзательное для заполнения.',
-                    //     changeValue: false,
-                    //     default: 0,
-                    //     value: 0,
-                    // },
-                    // for_place: {
-                    //     name: 'for_place',
-                    //     type: 'number',
-                    //     label: 'За место',
-                    //     require: false,
-                    //     requireError: 'Поле обьзательное для заполнения.',
-                    //     changeValue: false,
-                    //     default: 0,
-                    //     value: 0,
-                    // },
-                    category_id: {
-                        name: 'category_id',
-                        type: 'select',
-                        label: this.$t('category'),
-                        options: [],
-                        require: true,
-                        requireError: 'Выберите значение.',
-                        changeValue: false,
-                        funcLoadData: getCategories,
-                        default: null,
-                        value: null,
-                    },
-                    shop: {
-                        name: 'shop',
-                        type: 'select-chips',
-                        label: this.$t('shop'),
-                        options: [],
-                        changeValue: false,
-                        funcLoadData: getShopsList,
-                        default: null,
-                        value: null,
-                    },
-                    notation: {
-                        name: 'notation',
-                        type: 'text',
-                        label: this.$t('notation'),
-                        changeValue: false,
-                        default: '',
-                        value: '',
-                    },
-                },
-            };
+        kg: {
+          name: 'kg',
+          type: 'number',
+          label: this.$t('kg'),
+          require: true,
+          requireError: 'Поле обьзательное для заполнения.',
+          changeValue: false,
+          default: 0,
+          value: 0,
         },
-        computed: {
-            thingsList() {
-                if (this.things) {
-                    return JSON.parse(this.things);
-                }
-                return this.things;
-            },
-            categories() {
-                return this.$store.getters['category/getCategories'];
-            },
-            clientCodes() {
-                return this.$store.getters['codes/getCodes'];
-            },
-            shopList() {
-                return this.$store.getters['shopsList/getShopsList'];
-            },
-            size() {
-                const {
-                    sm,
-                    xs,
-                    md,
-                    lg,
-                } = this.$q.screen;
-
-                let size = '';
-                if (sm) {
-                    size = 'sm';
-                } else if (xs) {
-                    size = 'xs';
-                } else if (md) {
-                    size = 'md';
-                } else if (lg) {
-                    size = 'lg';
-                }
-                return size;
-            },
+        cube: {
+          name: 'cube',
+          type: 'number',
+          label: 'Куб',
+          require: false,
+          requireError: 'Поле обьзательное для заполнения.',
+          changeValue: false,
+          default: 0,
+          value: 0,
         },
-        watch: {
-            entryData(val) {
-                if (!_.isEmpty(val)) {
-                    devlog.log('vALIN_ADD', val);
-                    _.forEach(this.storehouseData, (item, index) => {
-                        if (_.get(this.entryData, `row[${index}]`)) {
-                            _.set(item, 'value', _.get(this.entryData, `row[${index}]`));
-                        }
-                    });
-                    this.things = _.get(this.entryData, 'row.things');
-                    // this.storehouseData.code_place.readonly = true;
-                    // delete this.storehouseData.for_kg;
-                    // delete this.storehouseData.for_place;
-                }
-            },
-            categories: {
-                handler: function set(val) {
-                    this.storehouseData.category_id.options = val;
-                },
-                immediate: true,
-            },
-            clientCodes: {
-                handler: function set(val) {
-                    this.storehouseData.code_client_id.options = val;
-                },
-                immediate: true,
-            },
-            shopList: {
-                handler: function set(val) {
-                    devlog.log('shopList', val);
-                    this.storehouseData.shop.options = val;
-                },
-                immediate: true,
-            },
-            showDialog(val) {
-                this.show = val;
-            },
-            show(val) {
-                this.$emit('update:showDialog', val);
-            },
+        category_id: {
+          name: 'category_id',
+          type: 'select',
+          label: this.$t('category'),
+          options: [],
+          require: true,
+          requireError: 'Выберите значение.',
+          changeValue: false,
+          funcLoadData: getCategories,
+          default: null,
+          value: null,
         },
-        methods: {
-            saveData() {
-                devlog.log('saveData');
-                const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
-                    if (changeValue) {
-                        result[index] = value;
-                    }
-                    return result;
-                }, {});
-
-                if (this.changeThings) {
-                    sendData.things = this.things;
-                }
-                if (_.has(sendData, 'shop')) {
-                    sendData.shop = _.startCase(sendData.shop);
-                }
-                devlog.log('DATA_TO_SAVE', sendData);
-                if (this.withoutThings || this.changeThings || this.entryData.row) {
-                    if (!this.entryData.row) {
-                        this.$q.loading.show();
-                        this.$axios.post(getUrl('addStorehouseData'), sendData)
-                          .then(({ data: { storehouseData, shopNames, thingsList } }) => {
-                              this.$store.commit('shopsList/SET_SHOPS_LIST', shopNames);
-                              this.$store.commit('thingsList/SET_THINGS_LIST', thingsList);
-                              this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(storehouseData, ['created_at']));
-                              // this.setChangeValue(this.storehouseData);
-                              this.$q.loading.hide();
-                              this.showNotif('success', 'Запись успешно добавлена.', 'center');
-                          })
-                          .catch((errors) => {
-                              this.errorsData.errors = _.get(errors, 'response.data.errors');
-                              this.$q.loading.hide();
-                          });
-                    } else {
-                        devlog.log('UPDATE');
-                        if (!_.isEmpty(sendData)) {
-                            sendData.id = _.get(this.entryData, 'row.id');
-                            this.$q.loading.show();
-                            this.$axios.post(getUrl('updateStorehouseData'), sendData)
-                              .then(({ data: { storehouseData, shopNames, thingsList } }) => {
-                                  devlog.log('DTA_UPDATE', storehouseData);
-                                  this.$store.commit('shopsList/SET_SHOPS_LIST', shopNames);
-                                  this.$store.commit('thingsList/SET_THINGS_LIST', thingsList);
-                                  this.$store.dispatch('storehouse/updateStorehouseData', setFormatedDate(storehouseData, ['created_at']));
-                                  setChangeValue(this.storehouseData);
-                                  this.$q.loading.hide();
-                                  this.showNotif('success', 'Запись успешно обновлена.', 'center');
-                                  this.close(this.storehouseData);
-                              })
-                              .catch((errors) => {
-                                  this.errorsData.errors = _.get(errors, 'response.data.errors');
-                                  this.$q.loading.hide();
-                              });
-                        } else {
-                            this.close(this.storehouseData);
-                        }
-                    }
-                } else {
-                    this.showThingsDialog = true;
-                }
-            },
-            clear(data) {
-                _.forEach(data, (item) => {
-                    item.value = item.default;
-                });
-                this.changeThings = false;
-                this.withoutThings = false;
-                this.things = null;
-            },
-            remove(index) {
-                const things = JSON.parse(this.things);
-                things.splice(index, 1);
-                this.things = JSON.stringify(things);
-            },
-            close(data) {
-                this.clear(data);
-                this.show = false;
-                if (!_.isEmpty(this.entryData)) {
-                    _.set(this.entryData, 'selected', false);
-                    this.$emit('update:entryData', {});
-                }
-            },
+        shop: {
+          name: 'shop',
+          type: 'select-chips',
+          label: this.$t('shop'),
+          options: [],
+          changeValue: false,
+          funcLoadData: getShopsList,
+          default: null,
+          value: null,
         },
+        notation: {
+          name: 'notation',
+          type: 'text',
+          label: this.$t('notation'),
+          changeValue: false,
+          default: '',
+          value: '',
+        },
+      },
     };
+  },
+  computed: {
+    thingsList() {
+      if (this.things) {
+        return JSON.parse(this.things);
+      }
+      return this.things;
+    },
+    categories() {
+      return this.$store.getters['category/getCategories'];
+    },
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+    shopList() {
+      return this.$store.getters['shopsList/getShopsList'];
+    },
+    size() {
+      const {
+        sm,
+        xs,
+        md,
+        lg,
+      } = this.$q.screen;
+
+      let size = '';
+      if (sm) {
+        size = 'sm';
+      } else if (xs) {
+        size = 'xs';
+      } else if (md) {
+        size = 'md';
+      } else if (lg) {
+        size = 'lg';
+      }
+      return size;
+    },
+  },
+  watch: {
+    entryData(val) {
+      if (!_.isEmpty(val)) {
+        devlog.log('vALIN_ADD', val);
+        _.forEach(this.storehouseData, (item, index) => {
+          if (_.get(this.entryData, `row[${index}]`)) {
+            _.set(item, 'value', _.get(this.entryData, `row[${index}]`));
+          }
+        });
+        this.things = _.get(this.entryData, 'row.things');
+      }
+    },
+    categories: {
+      handler: function set(val) {
+        this.storehouseData.category_id.options = val;
+      },
+      immediate: true,
+    },
+    clientCodes: {
+      handler: function set(val) {
+        this.storehouseData.code_client_id.options = val;
+      },
+      immediate: true,
+    },
+    shopList: {
+      handler: function set(val) {
+        devlog.log('shopList', val);
+        this.storehouseData.shop.options = val;
+      },
+      immediate: true,
+    },
+    showDialog(val) {
+      this.show = val;
+    },
+    show(val) {
+      this.$emit('update:showDialog', val);
+    },
+  },
+  methods: {
+    saveData() {
+      devlog.log('saveData');
+      const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
+        if (changeValue) {
+          result[index] = value;
+        }
+        return result;
+      }, {});
+
+      if (this.changeThings) {
+        sendData.things = this.things;
+      }
+      if (_.has(sendData, 'shop')) {
+        sendData.shop = _.startCase(sendData.shop);
+      }
+      devlog.log('DATA_TO_SAVE', sendData);
+      if (this.withoutThings || this.changeThings || this.entryData.row) {
+        if (!this.entryData.row) {
+          this.$q.loading.show();
+          this.$axios.post(getUrl('addStorehouseData'), sendData)
+            .then(({ data: { storehouseData, shopNames, thingsList } }) => {
+              this.$store.commit('shopsList/SET_SHOPS_LIST', shopNames);
+              this.$store.commit('thingsList/SET_THINGS_LIST', thingsList);
+              this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(storehouseData, ['created_at']));
+              // this.setChangeValue(this.storehouseData);
+              this.$q.loading.hide();
+              this.showNotif('success', 'Запись успешно добавлена.', 'center');
+            })
+            .catch((errors) => {
+              this.errorsData.errors = _.get(errors, 'response.data.errors');
+              this.$q.loading.hide();
+            });
+        } else {
+          devlog.log('UPDATE');
+          if (!_.isEmpty(sendData)) {
+            sendData.id = _.get(this.entryData, 'row.id');
+            this.$q.loading.show();
+            this.$axios.post(getUrl('updateStorehouseData'), sendData)
+              .then(({ data: { storehouseData, shopNames, thingsList } }) => {
+                devlog.log('DTA_UPDATE', storehouseData);
+                this.$store.commit('shopsList/SET_SHOPS_LIST', shopNames);
+                this.$store.commit('thingsList/SET_THINGS_LIST', thingsList);
+                this.$store.dispatch('storehouse/updateStorehouseData', setFormatedDate(storehouseData, ['created_at']));
+                setChangeValue(this.storehouseData);
+                this.$q.loading.hide();
+                this.showNotif('success', 'Запись успешно обновлена.', 'center');
+                this.close(this.storehouseData);
+              })
+              .catch((errors) => {
+                this.errorsData.errors = _.get(errors, 'response.data.errors');
+                this.$q.loading.hide();
+              });
+          } else {
+            this.close(this.storehouseData);
+          }
+        }
+      } else {
+        this.showThingsDialog = true;
+      }
+    },
+    clear(data) {
+      _.forEach(data, (item) => {
+        item.value = item.default;
+      });
+      this.changeThings = false;
+      this.withoutThings = false;
+      this.things = null;
+    },
+    remove(index) {
+      const things = JSON.parse(this.things);
+      things.splice(index, 1);
+      this.things = JSON.stringify(things);
+    },
+    close(data) {
+      this.clear(data);
+      this.show = false;
+      if (!_.isEmpty(this.entryData)) {
+        _.set(this.entryData, 'selected', false);
+        this.$emit('update:entryData', {});
+      }
+    },
+  },
+};
 </script>

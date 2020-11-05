@@ -60,6 +60,7 @@ class StorehouseDataController extends Controller
             'storehouse_data.code_client_id',
             'storehouse_data.place',
             'storehouse_data.kg',
+            'storehouse_data.cube',
             'storehouse_data.for_kg',
             'storehouse_data.for_place',
             'storehouse_data.fax_id',
@@ -114,6 +115,7 @@ class StorehouseDataController extends Controller
             'code_place' => 'required|max:12|unique:code_places',
             'code_client_id' => 'required|numeric',
             'kg' => 'required|numeric',
+            'cube' => 'required|numeric',
             'for_kg' => 'numeric',
             'for_place' => 'numeric',
             'shop' => 'nullable|max:100',
@@ -132,6 +134,7 @@ class StorehouseDataController extends Controller
             'code_place' => $data['code_place'],
             'code_client_id' => $data['code_client_id'],
             'kg' => $data['kg'],
+            'cube' => $data['cube'],
             'category_id' => $data['category_id'],
             'storehouse_id' => 1,
             'brand' => $category->name === 'Бренд',
@@ -199,6 +202,7 @@ class StorehouseDataController extends Controller
             'storehouse_entry_id' => $storehouse->id,
             'code_client_id' => $saveData['code_client_id'],
             'kg' => $saveData['kg'],
+            'cube' => $saveData['cube'],
             'category_id' => $saveData['category_id'],
             'place' => 1,
         ];
@@ -545,7 +549,12 @@ class StorehouseDataController extends Controller
             $this->storehouseDataHistory($item['id'], ['fax_id' => $faxId], 'update', (new StorehouseData)->getTable());
         });
         $arrayData = $data->toArray();
-        $arrayData['moveData'] = ['moveToFax' => Fax::find($faxId)->name, 'moveFromFax' => Fax::find($moveFromFaxId)->name];
+        $moveFromFax = Fax::find($moveFromFaxId);
+        $moveFromFaxName = 'пусто';
+        if ($moveFromFax) {
+            $moveFromFaxName = $moveFromFax->name;
+        }
+        $arrayData['moveData'] = ['moveToFax' => Fax::find($faxId)->name, 'moveFromFax' => $moveFromFaxName];
         $this->storehouseDataHistory(0, $arrayData, 'move', (new FaxData())->getTable());
         return response(['status' => true]);
     }

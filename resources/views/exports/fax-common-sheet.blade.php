@@ -5,6 +5,7 @@
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Деберц</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">М</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">В</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Куб</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кат</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Маг</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Прим</th>
@@ -23,6 +24,7 @@
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->code_client_name }}</td>
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->place }}</td>
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->kg }}</td>
+                <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->cube }}</td>
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->category_name }}</td>
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->shop }}</td>
                 <td style="font-weight:bold;border: 1px solid black;text-align: center;">{{ $elem->notation }}</td>
@@ -35,6 +37,7 @@
                 <td style="border: 1px solid black;text-align: center;">{{ $elem->code_client_name }}</td>
                 <td style="border: 1px solid black;text-align: center;">{{ $elem->place }}</td>
                 <td style="border: 1px solid black;text-align: center;">{{ $elem->kg }}</td>
+                <td style="border: 1px solid black;text-align: center;">{{ $elem->cube }}</td>
                 <td style="border: 1px solid black;text-align: center;">{{ $elem->category_name }}</td>
                 <td style="border: 1px solid black;text-align: center;">{{ $elem->shop }}</td>
                 <td style="border: 1px solid black;text-align: center;">{{ $elem->notation }}</td>
@@ -46,6 +49,7 @@
             @foreach($things as $thing)
                 @if (!$loop->first)
                     <tr>
+                        <td style="border: 1px solid black;text-align: center;"></td>
                         <td style="border: 1px solid black;text-align: center;"></td>
                         <td style="border: 1px solid black;text-align: center;"></td>
                         <td style="border: 1px solid black;text-align: center;"></td>
@@ -65,6 +69,7 @@
         <td></td>
         <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ $collection[0]->sum('place') }}</td>
         <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{ $collection[0]->sum('kg') }}</td>
+        <td style="border: 1px solid black;text-align: center;font-weight:bold;">{{ $collection[0]->sum('cube') }}</td>
     </tr>
     <tr></tr>
     <tr></tr>
@@ -75,12 +80,14 @@
             <td style="border: 1px solid black;text-align: center;">{{ $category->name }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $category->place }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $category->kg }}</td>
+            <td style="border: 1px solid black;text-align: center;">{{ $category->cube }}</td>
         </tr>
     @endforeach
     <tr>
         <td style="border: 1px solid black;text-align: center;font-weight: bold;"></td>
         <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ $collection[1]->sum('place') }}</td>
         <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ $collection[1]->sum('kg') }}</td>
+        <td style="border: 1px solid black;text-align: center;font-weight: bold;">{{ $collection[1]->sum('cube') }}</td>
     </tr>
 
     </tbody>

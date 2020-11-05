@@ -21,7 +21,7 @@ export default {
       },
     },
     {
-      title: 'Карго Долги',
+      title: 'Карго',
       field: 'client-cargo-debts',
       icon: 'assignment',
       access: {

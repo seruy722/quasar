@@ -256,6 +256,28 @@
           </q-td>
 
           <q-td
+            key="cube"
+            class="cursor-pointer"
+            :props="props"
+          >
+            {{ props.row.cube }}
+            <PopupEdit
+              v-if="combineTableData"
+              :value.sync="props.row.cube"
+              type="number"
+              :title="props.row.code_client_name"
+              @add-to-save="addToAddSaveArray(props.row, 'cube')"
+            >
+              <q-input
+                v-model.number="props.row.cube"
+                type="number"
+                autofocus
+                dense
+              />
+            </PopupEdit>
+          </q-td>
+
+          <q-td
             key="category_name"
             class="cursor-pointer"
             :props="props"
@@ -637,6 +659,13 @@ export default {
             sortable: true,
           },
           {
+            name: 'cube',
+            label: 'Куб',
+            field: 'cube',
+            align: 'center',
+            sortable: true,
+          },
+          {
             name: 'category_name',
             label: this.$t('category'),
             field: 'category_name',
@@ -693,7 +722,7 @@ export default {
         title: '',
       },
       visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'in_cargo', 'category_name', 'delivery_method_name', 'department'],
-      fullVisibleColumns: ['code_place', 'code_client_name', 'in_cargo', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop', 'delivery_method_name', 'department'],
+      fullVisibleColumns: ['code_place', 'code_client_name', 'in_cargo', 'for_kg', 'for_place', 'place', 'kg', 'category_name', 'things', 'notation', 'shop', 'delivery_method_name', 'department', 'cube'],
     };
   },
   computed: {

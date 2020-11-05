@@ -184,363 +184,373 @@
 </template>
 
 <script>
-    import CheckErrorsMixin from 'src/mixins/CheckErrors';
-    import { getUrl } from 'src/tools/url';
-    import showNotif from 'src/mixins/showNotif';
-    import {
-        getClientCodes,
-        getCategories,
-        getShopsList,
-        setFormatedDate,
-        setChangeValue,
-    } from 'src/utils/FrequentlyCalledFunctions';
+import CheckErrorsMixin from 'src/mixins/CheckErrors';
+import { getUrl } from 'src/tools/url';
+import showNotif from 'src/mixins/showNotif';
+import {
+  getClientCodes,
+  getCategories,
+  getShopsList,
+  setFormatedDate,
+  setChangeValue,
+} from 'src/utils/FrequentlyCalledFunctions';
 
-    export default {
-        name: 'DialogFaxData',
-        components: {
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            DialogAddThings: () => import('src/components/Dialogs/DialogAddThings.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            Card: () => import('src/components/Elements/Card/Card.vue'),
-            CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-            SelectChips: () => import('src/components/Elements/SelectChips.vue'),
-            CheckBox: () => import('src/components/Elements/CheckBox.vue'),
+export default {
+  name: 'DialogFaxData',
+  components: {
+    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
+    DialogAddThings: () => import('src/components/Dialogs/DialogAddThings.vue'),
+    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
+    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    List: () => import('src/components/Elements/List/List.vue'),
+    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
+    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
+    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
+    Card: () => import('src/components/Elements/Card/Card.vue'),
+    CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
+    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
+    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    Separator: () => import('src/components/Separator.vue'),
+    SelectChips: () => import('src/components/Elements/SelectChips.vue'),
+    CheckBox: () => import('src/components/Elements/CheckBox.vue'),
+  },
+  mixins: [CheckErrorsMixin, showNotif],
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    entryData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    return {
+      showReplacePrice: true,
+      show: false,
+      withoutThings: false,
+      showThingsDialog: false,
+      changeThings: false,
+      things: null,
+      storehouseData: {
+        code_place: {
+          name: 'code_place',
+          type: 'text',
+          label: this.$t('code'),
+          mask: '###/###/###',
+          rules: [
+            {
+              name: 'isLength',
+              error: 'Минимальное количество символов 11.',
+              options: {
+                min: 11,
+                max: 11,
+              },
+            },
+          ],
+          require: true,
+          requireError: 'Поле обьзательное для заполнения.',
+          autofocus: true,
+          disable: false,
+          changeValue: false,
+          default: '',
+          value: '',
         },
-        mixins: [CheckErrorsMixin, showNotif],
-        props: {
-            showDialog: {
-                type: Boolean,
-                default: false,
-            },
-            entryData: {
-                type: Object,
-                default: () => ({}),
-            },
+        code_client_id: {
+          name: 'code_client_id',
+          type: 'select',
+          label: this.$t('client'),
+          options: [],
+          require: true,
+          requireError: 'Выберите значение.',
+          changeValue: false,
+          funcLoadData: getClientCodes,
+          default: null,
+          value: null,
         },
-        data() {
-            return {
-                showReplacePrice: true,
-                show: false,
-                withoutThings: false,
-                showThingsDialog: false,
-                changeThings: false,
-                things: null,
-                storehouseData: {
-                    code_place: {
-                        name: 'code_place',
-                        type: 'text',
-                        label: this.$t('code'),
-                        mask: '###/###/###',
-                        rules: [
-                            {
-                                name: 'isLength',
-                                error: 'Минимальное количество символов 11.',
-                                options: {
-                                    min: 11,
-                                    max: 11,
-                                },
-                            },
-                        ],
-                        require: true,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        autofocus: true,
-                        disable: false,
-                        changeValue: false,
-                        default: '',
-                        value: '',
-                    },
-                    code_client_id: {
-                        name: 'code_client_id',
-                        type: 'select',
-                        label: this.$t('client'),
-                        options: [],
-                        require: true,
-                        requireError: 'Выберите значение.',
-                        changeValue: false,
-                        funcLoadData: getClientCodes,
-                        default: null,
-                        value: null,
-                    },
-                    kg: {
-                        name: 'kg',
-                        type: 'number',
-                        label: this.$t('kg'),
-                        require: true,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
-                    for_kg: {
-                        name: 'for_kg',
-                        type: 'number',
-                        label: this.$t('for_kg'),
-                        require: false,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
-                    for_place: {
-                        name: 'for_place',
-                        type: 'number',
-                        label: this.$t('for_place'),
-                        require: false,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
-                    category_id: {
-                        name: 'category_id',
-                        type: 'select',
-                        label: this.$t('category'),
-                        options: [],
-                        require: true,
-                        requireError: 'Выберите значение.',
-                        changeValue: false,
-                        funcLoadData: getCategories,
-                        default: null,
-                        value: null,
-                    },
-                    shop: {
-                        name: 'shop',
-                        type: 'select-chips',
-                        label: this.$t('shop'),
-                        options: [],
-                        changeValue: false,
-                        funcLoadData: getShopsList,
-                        default: null,
-                        value: null,
-                    },
-                    delivery_method_id: {
-                        name: 'delivery_method_id',
-                        type: 'select',
-                        label: 'Способ доставки',
-                        options: [],
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
-                    department: {
-                        name: 'department',
-                        type: 'text',
-                        label: 'Отделение',
-                        changeValue: false,
-                        default: null,
-                        value: null,
-                    },
-                    notation: {
-                        name: 'notation',
-                        type: 'text',
-                        label: this.$t('notation'),
-                        changeValue: false,
-                        default: '',
-                        value: '',
-                    },
-                    replacePrice: {
-                        name: 'replacePrice',
-                        type: 'checkbox',
-                        default: false,
-                        value: false,
-                    },
-                },
-            };
+        kg: {
+          name: 'kg',
+          type: 'number',
+          label: this.$t('kg'),
+          require: true,
+          requireError: 'Поле обьзательное для заполнения.',
+          changeValue: false,
+          default: 0,
+          value: 0,
         },
-        computed: {
-            thingsList() {
-                if (this.things) {
-                    return JSON.parse(this.things);
-                }
-                return this.things;
-            },
-            categories() {
-                return this.$store.getters['category/getCategories'];
-            },
-            clientCodes() {
-                return this.$store.getters['codes/getCodes'];
-            },
-            shopList() {
-                return this.$store.getters['shopsList/getShopsList'];
-            },
-            deliveryMethodsList() {
-                return this.$store.getters['deliveryMethods/getDeliveryMethodsList'];
-            },
-            size() {
-                const {
-                    sm,
-                    xs,
-                    md,
-                    lg,
-                } = this.$q.screen;
-
-                let size = '';
-                if (sm) {
-                    size = 'sm';
-                } else if (xs) {
-                    size = 'xs';
-                } else if (md) {
-                    size = 'md';
-                } else if (lg) {
-                    size = 'lg';
-                }
-                return size;
-            },
+        for_kg: {
+          name: 'for_kg',
+          type: 'number',
+          label: this.$t('for_kg'),
+          require: false,
+          requireError: 'Поле обьзательное для заполнения.',
+          changeValue: false,
+          default: 0,
+          value: 0,
         },
-        watch: {
-            entryData(val) {
-                if (!_.isEmpty(val)) {
-                    devlog.log('vALIN_ADD', val);
-                    _.forEach(this.storehouseData, (item, index) => {
-                        if (_.get(val, `row[${index}]`)) {
-                            _.set(item, 'value', _.get(val, `row[${index}]`));
-                        }
-                    });
-                    this.things = _.get(val, 'row.things');
-                    devlog.log('COMBINE', val);
-                    // this.storehouseData.code_place.disable = true;
-                    if (val.combineTableData) {
-                        this.storehouseData.kg.disable = true;
-                        this.storehouseData.shop.disable = true;
-                        this.storehouseData.notation.disable = true;
-                    } else {
-                        this.storehouseData.kg.disable = false;
-                        this.storehouseData.shop.disable = false;
-                        this.storehouseData.notation.disable = false;
-                    }
-                    if (!_.has(val, 'row.for_kg')) {
-                        delete this.storehouseData.for_kg;
-                        delete this.storehouseData.for_place;
-                        this.showReplacePrice = false;
-                    }
-                }
-            },
-            categories: {
-                handler: function set(val) {
-                    this.storehouseData.category_id.options = val;
-                },
-                immediate: true,
-            },
-            clientCodes: {
-                handler: function set(val) {
-                    this.storehouseData.code_client_id.options = val;
-                },
-                immediate: true,
-            },
-            shopList: {
-                handler: function set(val) {
-                    this.storehouseData.shop.options = val;
-                },
-                immediate: true,
-            },
-            deliveryMethodsList: {
-                handler: function set(val) {
-                    this.storehouseData.delivery_method_id.options = val;
-                },
-                immediate: true,
-            },
-            showDialog(val) {
-                this.show = val;
-            },
-            show(val) {
-                this.$emit('update:showDialog', val);
-            },
+        for_place: {
+          name: 'for_place',
+          type: 'number',
+          label: this.$t('for_place'),
+          require: false,
+          requireError: 'Поле обьзательное для заполнения.',
+          changeValue: false,
+          default: 0,
+          value: 0,
         },
-        methods: {
-            saveData() {
-                devlog.log('saveData');
-                const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
-                    if (changeValue) {
-                        result[index] = value;
-                    } else if (index === 'replacePrice' && value) {
-                        result[index] = value;
-                    }
-                    return result;
-                }, {});
-
-                if (this.changeThings) {
-                    sendData.things = this.things;
-                }
-                if (_.has(sendData, 'shop')) {
-                    sendData.shop = _.startCase(sendData.shop);
-                }
-                devlog.log('DATA_TO_SAVE', sendData);
-                if (this.withoutThings || this.changeThings || this.entryData.row) {
-                    if (!this.entryData.row) {
-                        this.$q.loading.show();
-                        this.$axios.post(getUrl('addStorehouseData'), sendData)
-                          .then(({ data: { storehouseData } }) => {
-                              this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(storehouseData, ['created_at']));
-                              // this.setChangeValue(this.storehouseData);
-                              this.$q.loading.hide();
-                              this.showNotif('success', 'Запись успешно добавлена.', 'center');
-                          })
-                          .catch((errors) => {
-                              this.errorsData.errors = _.get(errors, 'response.data.errors');
-                              this.$q.loading.hide();
-                          });
-                    } else {
-                        devlog.log('UPDATE');
-                        if (!_.isEmpty(sendData)) {
-                            sendData.id = _.get(this.entryData, 'row.id');
-                            this.$q.loading.show();
-                            this.$axios.post(getUrl('updateStorehouseData'), sendData)
-                              .then(({ data: { storehouseData } }) => {
-                                  devlog.log('DTA_UPDATE', storehouseData);
-                                  const formatedData = setFormatedDate(storehouseData, ['created_at']);
-                                  this.$store.dispatch('storehouse/updateStorehouseData', formatedData);
-                                  this.$store.dispatch('faxes/updateFaxData', formatedData)
-                                    .catch((e) => {
-                                        devlog.error('EROR', e);
-                                    });
-                                  setChangeValue(this.storehouseData);
-                                  this.$q.loading.hide();
-                                  this.showNotif('success', 'Запись успешно обновлена.', 'center');
-                                  this.close(this.storehouseData);
-                              })
-                              .catch((errors) => {
-                                  this.errorsData.errors = _.get(errors, 'response.data.errors');
-                                  this.$q.loading.hide();
-                              });
-                        } else {
-                            this.close(this.storehouseData);
-                        }
-                    }
-                } else {
-                    this.showThingsDialog = true;
-                }
-            },
-            clear(data) {
-                _.forEach(data, (item) => {
-                    item.value = item.default;
-                });
-                this.changeThings = false;
-                this.withoutThings = false;
-                this.things = null;
-            },
-            remove(index) {
-                const things = JSON.parse(this.things);
-                things.splice(index, 1);
-                this.things = JSON.stringify(things);
-            },
-            close(data) {
-                this.clear(data);
-                this.show = false;
-                if (!_.isEmpty(this.entryData)) {
-                    _.set(this.entryData, 'selected', false);
-                    _.set(this.entryData, 'selected', false);
-                    this.$emit('update:entryData', {});
-                }
-            },
+        cube: {
+          name: 'cube',
+          type: 'number',
+          label: 'Куб',
+          require: false,
+          requireError: 'Поле обьзательное для заполнения.',
+          changeValue: false,
+          default: 0,
+          value: 0,
         },
+        category_id: {
+          name: 'category_id',
+          type: 'select',
+          label: this.$t('category'),
+          options: [],
+          require: true,
+          requireError: 'Выберите значение.',
+          changeValue: false,
+          funcLoadData: getCategories,
+          default: null,
+          value: null,
+        },
+        shop: {
+          name: 'shop',
+          type: 'select-chips',
+          label: this.$t('shop'),
+          options: [],
+          changeValue: false,
+          funcLoadData: getShopsList,
+          default: null,
+          value: null,
+        },
+        delivery_method_id: {
+          name: 'delivery_method_id',
+          type: 'select',
+          label: 'Способ доставки',
+          options: [],
+          changeValue: false,
+          default: 0,
+          value: 0,
+        },
+        department: {
+          name: 'department',
+          type: 'text',
+          label: 'Отделение',
+          changeValue: false,
+          default: null,
+          value: null,
+        },
+        notation: {
+          name: 'notation',
+          type: 'text',
+          label: this.$t('notation'),
+          changeValue: false,
+          default: '',
+          value: '',
+        },
+        replacePrice: {
+          name: 'replacePrice',
+          type: 'checkbox',
+          default: false,
+          value: false,
+        },
+      },
     };
+  },
+  computed: {
+    thingsList() {
+      if (this.things) {
+        return JSON.parse(this.things);
+      }
+      return this.things;
+    },
+    categories() {
+      return this.$store.getters['category/getCategories'];
+    },
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+    shopList() {
+      return this.$store.getters['shopsList/getShopsList'];
+    },
+    deliveryMethodsList() {
+      return this.$store.getters['deliveryMethods/getDeliveryMethodsList'];
+    },
+    size() {
+      const {
+        sm,
+        xs,
+        md,
+        lg,
+      } = this.$q.screen;
+
+      let size = '';
+      if (sm) {
+        size = 'sm';
+      } else if (xs) {
+        size = 'xs';
+      } else if (md) {
+        size = 'md';
+      } else if (lg) {
+        size = 'lg';
+      }
+      return size;
+    },
+  },
+  watch: {
+    entryData(val) {
+      if (!_.isEmpty(val)) {
+        devlog.log('vALIN_ADD', val);
+        _.forEach(this.storehouseData, (item, index) => {
+          if (_.get(val, `row[${index}]`)) {
+            _.set(item, 'value', _.get(val, `row[${index}]`));
+          }
+        });
+        this.things = _.get(val, 'row.things');
+        devlog.log('COMBINE', val);
+        // this.storehouseData.code_place.disable = true;
+        if (val.combineTableData) {
+          this.storehouseData.kg.disable = true;
+          this.storehouseData.shop.disable = true;
+          this.storehouseData.notation.disable = true;
+        } else {
+          this.storehouseData.kg.disable = false;
+          this.storehouseData.shop.disable = false;
+          this.storehouseData.notation.disable = false;
+        }
+        if (!_.has(val, 'row.for_kg')) {
+          delete this.storehouseData.for_kg;
+          delete this.storehouseData.for_place;
+          this.showReplacePrice = false;
+        }
+      }
+    },
+    categories: {
+      handler: function set(val) {
+        this.storehouseData.category_id.options = val;
+      },
+      immediate: true,
+    },
+    clientCodes: {
+      handler: function set(val) {
+        this.storehouseData.code_client_id.options = val;
+      },
+      immediate: true,
+    },
+    shopList: {
+      handler: function set(val) {
+        this.storehouseData.shop.options = val;
+      },
+      immediate: true,
+    },
+    deliveryMethodsList: {
+      handler: function set(val) {
+        this.storehouseData.delivery_method_id.options = val;
+      },
+      immediate: true,
+    },
+    showDialog(val) {
+      this.show = val;
+    },
+    show(val) {
+      this.$emit('update:showDialog', val);
+    },
+  },
+  methods: {
+    saveData() {
+      devlog.log('saveData');
+      const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
+        if (changeValue) {
+          result[index] = value;
+        } else if (index === 'replacePrice' && value) {
+          result[index] = value;
+        }
+        return result;
+      }, {});
+
+      if (this.changeThings) {
+        sendData.things = this.things;
+      }
+      if (_.has(sendData, 'shop')) {
+        sendData.shop = _.startCase(sendData.shop);
+      }
+      devlog.log('DATA_TO_SAVE', sendData);
+      if (this.withoutThings || this.changeThings || this.entryData.row) {
+        if (!this.entryData.row) {
+          this.$q.loading.show();
+          this.$axios.post(getUrl('addStorehouseData'), sendData)
+            .then(({ data: { storehouseData } }) => {
+              this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(storehouseData, ['created_at']));
+              // this.setChangeValue(this.storehouseData);
+              this.$q.loading.hide();
+              this.showNotif('success', 'Запись успешно добавлена.', 'center');
+            })
+            .catch((errors) => {
+              this.errorsData.errors = _.get(errors, 'response.data.errors');
+              this.$q.loading.hide();
+            });
+        } else {
+          devlog.log('UPDATE');
+          if (!_.isEmpty(sendData)) {
+            sendData.id = _.get(this.entryData, 'row.id');
+            this.$q.loading.show();
+            this.$axios.post(getUrl('updateStorehouseData'), sendData)
+              .then(({ data: { storehouseData } }) => {
+                devlog.log('DTA_UPDATE', storehouseData);
+                const formatedData = setFormatedDate(storehouseData, ['created_at']);
+                this.$store.dispatch('storehouse/updateStorehouseData', formatedData);
+                this.$store.dispatch('faxes/updateFaxData', formatedData)
+                  .catch((e) => {
+                    devlog.error('EROR', e);
+                  });
+                setChangeValue(this.storehouseData);
+                this.$q.loading.hide();
+                this.showNotif('success', 'Запись успешно обновлена.', 'center');
+                this.close(this.storehouseData);
+              })
+              .catch((errors) => {
+                this.errorsData.errors = _.get(errors, 'response.data.errors');
+                this.$q.loading.hide();
+              });
+          } else {
+            this.close(this.storehouseData);
+          }
+        }
+      } else {
+        this.showThingsDialog = true;
+      }
+    },
+    clear(data) {
+      _.forEach(data, (item) => {
+        item.value = item.default;
+      });
+      this.changeThings = false;
+      this.withoutThings = false;
+      this.things = null;
+    },
+    remove(index) {
+      const things = JSON.parse(this.things);
+      things.splice(index, 1);
+      this.things = JSON.stringify(things);
+    },
+    close(data) {
+      this.clear(data);
+      this.show = false;
+      if (!_.isEmpty(this.entryData)) {
+        _.set(this.entryData, 'selected', false);
+        _.set(this.entryData, 'selected', false);
+        this.$emit('update:entryData', {});
+      }
+    },
+  },
+};
 </script>

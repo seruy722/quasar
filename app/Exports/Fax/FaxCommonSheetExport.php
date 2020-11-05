@@ -30,20 +30,22 @@ class FaxCommonSheetExport implements FromView, ShouldAutoSize, WithTitle
 
     private function getCollection()
     {
-        $this->categories = StorehouseData::select('categories.name')
+        $this->categories = StorehouseData::select('categories.name', 'storehouse_data.category_id')
             ->selectRaw('SUM(storehouse_data.place) as place')
             ->selectRaw('SUM(storehouse_data.kg) as kg')
+            ->selectRaw('SUM(storehouse_data.cube) as cube')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
-            ->orderBy('place', 'DESC')
+            ->orderBy('storehouse_data.place', 'DESC')
             ->where('storehouse_data.storehouse_id', 1)
             ->where('storehouse_data.destroyed', false)
-            ->groupBy('category_id');
+            ->groupBy('storehouse_data.category_id');
 
         $data = StorehouseData::select(
             'storehouse_data.code_place',
             'codes.code as code_client_name',
             'storehouse_data.place',
             'storehouse_data.kg',
+            'storehouse_data.cube',
             'categories.name as category_name',
             'storehouse_data.shop',
             'storehouse_data.notation',
