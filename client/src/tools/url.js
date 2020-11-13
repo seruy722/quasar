@@ -143,6 +143,7 @@ const urls = {
   registerClientCodeRegister: `${prefix}/register-client-register`,
   getClientData: `${prefix}/get-client-data`,
   getClientStorehouseData: `${prefix}/get-client-storehouse-data`,
+  exportClientsGeneralDataOdessa: `${prefix}/export-clients-general-data-odessa`,
   serverUrl: 'http://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,

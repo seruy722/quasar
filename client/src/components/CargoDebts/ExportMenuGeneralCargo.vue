@@ -69,6 +69,12 @@
               @click="exportGeneralDataByClients(model)"
             />
             <q-btn
+              label="сводка по клиентам одесса"
+              style="margin: 10px auto;"
+              color="orange"
+              @click="exportGeneralDataByClientsOdessa(model)"
+            />
+            <q-btn
               v-show="model === 'debts'"
               label="сводка по комиссии"
               style="margin: 10px auto;"
@@ -135,168 +141,174 @@
 </template>
 
 <script>
-    import { format } from 'date-fns';
-    import ExportDataMixin from 'src/mixins/ExportData';
+import { format } from 'date-fns';
+import ExportDataMixin from 'src/mixins/ExportData';
 
-    export default {
-        name: 'ExportMenuGeneralCargo',
-        components: {
-            ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-            DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
+export default {
+  name: 'ExportMenuGeneralCargo',
+  components: {
+    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
+    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
+    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
+    Separator: () => import('src/components/Separator.vue'),
+    DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
+  },
+  mixins: [ExportDataMixin],
+  props: {
+    title: {
+      type: String,
+      default: '',
+    },
+    urlName: {
+      type: String,
+      default: '',
+    },
+    model: {
+      type: String,
+      default: '',
+    },
+    urlNameClients: {
+      type: String,
+      default: '',
+    },
+  },
+  data() {
+    return {
+      show: false,
+      showDialogAddCargoPaymentEntry: false,
+      selectData: {
+        label: 'Все даты',
+        value: -1,
+      },
+      list: [
+        {
+          label: 'Все даты',
+          value: -1,
         },
-        mixins: [ExportDataMixin],
-        props: {
-            title: {
-                type: String,
-                default: '',
-            },
-            urlName: {
-                type: String,
-                default: '',
-            },
-            model: {
-                type: String,
-                default: '',
-            },
-            urlNameClients: {
-                type: String,
-                default: '',
-            },
+        {
+          label: 'Сегодня',
+          value: 1,
         },
-        data() {
-            return {
-                show: false,
-                showDialogAddCargoPaymentEntry: false,
-                selectData: {
-                    label: 'Все даты',
-                    value: -1,
-                },
-                list: [
-                    {
-                        label: 'Все даты',
-                        value: -1,
-                    },
-                    {
-                        label: 'Сегодня',
-                        value: 1,
-                    },
-                    {
-                        label: 'Выбрать период',
-                        value: 2,
-                    },
-                    {
-                        label: 'Выбрать день',
-                        value: 3,
-                    },
-                ],
-                viewPeriodDate: '',
-                choosePeriodDialog: false,
-                period: {
-                    to: null,
-                    from: null,
-                    day: null,
-                    today: null,
-                },
-                type: {
-                    label: 'Общее',
-                    value: -1,
-                },
-                typeOptions: [
-                    {
-                        label: 'Общее',
-                        value: -1,
-                    },
-                    {
-                        label: 'Оплата',
-                        value: 1,
-                    },
-                    {
-                        label: 'Долги',
-                        value: 0,
-                    },
-                ],
-            };
+        {
+          label: 'Выбрать период',
+          value: 2,
         },
-        methods: {
-            onClick(value) {
-                this[value] = true;
-            },
-            setDate(val) {
-                this.choosePeriodDialog = false;
-                if (!val && this.selectData.value === 2) {
-                    this.period.to = null;
-                    this.period.from = null;
-                } else if (val && this.selectData.value === 2) {
-                    const to = this.period.to ? format(new Date(this.period.to), 'dd-MM-yyyy') : '';
-                    const from = this.period.from ? format(new Date(this.period.from), 'dd-MM-yyyy') : '';
-                    this.viewPeriodDate = `С ${from} по ${to}`;
-                } else if (!val && this.selectData.value === 3) {
-                    this.period.day = null;
-                } else if (val && this.selectData.value === 3) {
-                    this.viewPeriodDate = format(new Date(this.period.day), 'dd-MM-yyyy');
-                }
-            },
-            setSelectData(val) {
-                this.selectData = val;
-                if (val.value === 1) {
-                    this.viewPeriodDate = format(new Date(), 'dd-MM-yyyy');
-                    this.period.today = format(new Date(), 'yyyy-MM-dd');
-                } else if (val.value === 2) {
-                    this.choosePeriodDialog = true;
-                } else if (val.value === 3) {
-                    this.choosePeriodDialog = true;
-                } else {
-                    this.selectData = val;
-                    this.viewPeriodDate = '';
-                }
-            },
-            async exportFaxData(select, type, period) {
-                const { getTimeZone } = await import('src/utils/formatDate');
-                const sendData = {
-                    type: type.value,
-                    day: null,
-                    period: {
-                        to: null,
-                        from: null,
-                    },
-                    timeZone: getTimeZone(),
-                };
-                const { addTime } = await import('src/utils/formatDate');
-                if (select.value === 1) {
-                    sendData.day = addTime(period.today)
-                      .toISOString();
-                } else if (select.value === 2) {
-                    sendData.period = period;
-                    if (period.to) {
-                        sendData.period.to = addTime(period.to)
-                          .toISOString();
-                    }
-                    if (period.from) {
-                        sendData.period.from = addTime(period.from)
-                          .toISOString();
-                    }
-                } else if (select.value === 3) {
-                    sendData.day = addTime(period.day)
-                      .toISOString();
-                }
-                devlog.log(sendData);
-                const { getUrl } = await import('src/tools/url');
-                this.exportDataToExcel(getUrl(this.urlName), {
-                    data: sendData,
-                }, `${this.model}.xlsx`);
-                this.show = false;
-            },
-            async exportGeneralDataByClients(model) {
-                const { getUrl } = await import('src/tools/url');
-                this.exportDataToExcel(getUrl(this.urlNameClients), {
-                    model,
-                }, `${model}.xlsx`);
-            },
+        {
+          label: 'Выбрать день',
+          value: 3,
         },
+      ],
+      viewPeriodDate: '',
+      choosePeriodDialog: false,
+      period: {
+        to: null,
+        from: null,
+        day: null,
+        today: null,
+      },
+      type: {
+        label: 'Общее',
+        value: -1,
+      },
+      typeOptions: [
+        {
+          label: 'Общее',
+          value: -1,
+        },
+        {
+          label: 'Оплата',
+          value: 1,
+        },
+        {
+          label: 'Долги',
+          value: 0,
+        },
+      ],
     };
+  },
+  methods: {
+    onClick(value) {
+      this[value] = true;
+    },
+    setDate(val) {
+      this.choosePeriodDialog = false;
+      if (!val && this.selectData.value === 2) {
+        this.period.to = null;
+        this.period.from = null;
+      } else if (val && this.selectData.value === 2) {
+        const to = this.period.to ? format(new Date(this.period.to), 'dd-MM-yyyy') : '';
+        const from = this.period.from ? format(new Date(this.period.from), 'dd-MM-yyyy') : '';
+        this.viewPeriodDate = `С ${from} по ${to}`;
+      } else if (!val && this.selectData.value === 3) {
+        this.period.day = null;
+      } else if (val && this.selectData.value === 3) {
+        this.viewPeriodDate = format(new Date(this.period.day), 'dd-MM-yyyy');
+      }
+    },
+    setSelectData(val) {
+      this.selectData = val;
+      if (val.value === 1) {
+        this.viewPeriodDate = format(new Date(), 'dd-MM-yyyy');
+        this.period.today = format(new Date(), 'yyyy-MM-dd');
+      } else if (val.value === 2) {
+        this.choosePeriodDialog = true;
+      } else if (val.value === 3) {
+        this.choosePeriodDialog = true;
+      } else {
+        this.selectData = val;
+        this.viewPeriodDate = '';
+      }
+    },
+    async exportFaxData(select, type, period) {
+      const { getTimeZone } = await import('src/utils/formatDate');
+      const sendData = {
+        type: type.value,
+        day: null,
+        period: {
+          to: null,
+          from: null,
+        },
+        timeZone: getTimeZone(),
+      };
+      const { addTime } = await import('src/utils/formatDate');
+      if (select.value === 1) {
+        sendData.day = addTime(period.today)
+          .toISOString();
+      } else if (select.value === 2) {
+        sendData.period = period;
+        if (period.to) {
+          sendData.period.to = addTime(period.to)
+            .toISOString();
+        }
+        if (period.from) {
+          sendData.period.from = addTime(period.from)
+            .toISOString();
+        }
+      } else if (select.value === 3) {
+        sendData.day = addTime(period.day)
+          .toISOString();
+      }
+      devlog.log(sendData);
+      const { getUrl } = await import('src/tools/url');
+      this.exportDataToExcel(getUrl(this.urlName), {
+        data: sendData,
+      }, `${this.model}.xlsx`);
+      this.show = false;
+    },
+    async exportGeneralDataByClients(model) {
+      const { getUrl } = await import('src/tools/url');
+      this.exportDataToExcel(getUrl(this.urlNameClients), {
+        model,
+      }, `${model}.xlsx`);
+    },
+    async exportGeneralDataByClientsOdessa(model) {
+      const { getUrl } = await import('src/tools/url');
+      this.exportDataToExcel(getUrl('exportClientsGeneralDataOdessa'), {
+        model,
+      }, `${model}.xlsx`);
+    },
+  },
+};
 </script>

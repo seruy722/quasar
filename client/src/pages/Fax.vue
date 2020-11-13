@@ -417,7 +417,7 @@
           <q-splitter
             v-model="splitterModel"
           >
-            <template v-slot:before>
+            <template #before>
               <div class="q-pa-md">
                 <div class="text-h6 q-mb-md"> Факс</div>
                 <!--                <Search v-model="search" />-->
@@ -436,7 +436,7 @@
                     @left="onLeft(item)"
                     @action="onAction"
                   >
-                    <template v-slot:left>
+                    <template #left>
                       <div>На склад</div>
                     </template>
 
@@ -453,11 +453,11 @@
               </div>
             </template>
 
-            <template v-slot:separator>
+            <template #separator>
               <q-avatar color="primary" text-color="white" size="40px" icon="drag_indicator" />
             </template>
 
-            <template v-slot:after>
+            <template #after>
               <div class="q-pa-md">
                 <div class="text-h6 q-mb-md"> Склад</div>
                 <!--                <Search v-model="searchStorehouseData" />-->
@@ -476,7 +476,7 @@
                     @right="onRight(item)"
                     @action="onAction"
                   >
-                    <template v-slot:right>
+                    <template #right>
                       <div>В факс</div>
                     </template>
 

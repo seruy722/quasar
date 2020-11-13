@@ -589,7 +589,7 @@ class StorehouseDataController extends Controller
 
     public function getClientStorehouseData()
     {
-        $data = $this->storehouseDataList(1)->where('storehouse_data.code_client_id', auth()->user()->code_id)->where('storehouse_data.fax_id', '>', 0)->get();
+        $data = $this->storehouseDataList(1)->where('storehouse_data.code_client_id', auth()->user()->code_id)->where('storehouse_data.fax_id', 0)->get();
         $faxesIds = $this->storehouseDataList(1)->pluck('fax_id')->unique()->toArray();
         $faxData = Fax::whereIn('id', $faxesIds)->where('status', '!=', 3)->pluck('status', 'id');
         $fIds = array_keys($faxData->all());
@@ -605,6 +605,6 @@ class StorehouseDataController extends Controller
             return $item;
         });
 
-        return response(['clientStorehouseData' => $data4, 'ff' => $faxData]);
+        return response(['clientStorehouseData' => $data4]);
     }
 }
