@@ -52,7 +52,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 
     // USERS
     Route::get('/users-list', function () {
-        return \App\User::select('id as value', 'name as label')->orderBy('name')->get();
+        return \App\User::select('id as value', 'name as label')->where('code_id', 0)->where('dismissed', false)->orderBy('name')->get();
     });
     // CODES
     Route::get('/codes', 'Api\CodesController@getCodesWithCustomers')->name('view codes list')->middleware(['role_or_permission:admin|codes|view codes list']);
