@@ -70,7 +70,7 @@
             style="border-radius: 30px;border: 1px solid #26A69A;"
             expand-icon-class="text-white"
           >
-            <template v-slot:header>
+            <template #header>
               <ItemSection avatar>
                 <q-checkbox
                   v-model="props.selected"
@@ -148,7 +148,7 @@
         </div>
       </template>
 
-      <template v-slot:inner-body="{props}">
+      <template #inner-body="{props}">
         <q-tr
           :props="props"
           :class="{table__tr_bold_text: props.row.brand, 'cursor-pointer': !combineTableData}"

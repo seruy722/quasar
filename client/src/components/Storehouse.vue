@@ -44,7 +44,9 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>
-                  {{ props.row.shop }}
+                  <q-badge>
+                    {{ props.row.status | statusFilter }}
+                  </q-badge>
                 </q-item-label>
               </q-item-section>
             </template>

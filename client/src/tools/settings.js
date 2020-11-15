@@ -23,6 +23,11 @@ const settings = {
       color: 'yellow_bg',
     },
     {
+      label: 'В Украине',
+      value: 6,
+      color: 'yellow_bg',
+    },
+    {
       label: 'Прибыл',
       value: 3,
       color: 'green',

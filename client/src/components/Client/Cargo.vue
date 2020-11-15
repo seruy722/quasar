@@ -114,6 +114,13 @@
                   >
                     {{ col.value }}
                   </q-item-label>
+                  <q-item-label
+                    v-else-if="col.field === 'in_cargo'"
+                  >
+                    <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
+                      {{ props.row.in_cargo ? 'Да' : 'Нет' }}
+                    </q-badge>
+                  </q-item-label>
                   <q-item-label v-else>
                     {{ col.value }}
                   </q-item-label>
@@ -173,21 +180,21 @@
             {{ props.row.type ? null : props.row.kg }}
           </q-td>
 
-          <q-td
-            key="for_kg"
-            class="text-bold cursor-pointer"
-            :props="props"
-          >
-            {{ props.row.type ? null : props.row.for_kg }}
-          </q-td>
+          <!--          <q-td-->
+          <!--            key="for_kg"-->
+          <!--            class="text-bold cursor-pointer"-->
+          <!--            :props="props"-->
+          <!--          >-->
+          <!--            {{ props.row.type ? null : props.row.for_kg }}-->
+          <!--          </q-td>-->
 
-          <q-td
-            key="for_place"
-            class="text-bold cursor-pointer"
-            :props="props"
-          >
-            {{ props.row.type ? null : props.row.for_place }}
-          </q-td>
+          <!--          <q-td-->
+          <!--            key="for_place"-->
+          <!--            class="text-bold cursor-pointer"-->
+          <!--            :props="props"-->
+          <!--          >-->
+          <!--            {{ props.row.type ? null : props.row.for_place }}-->
+          <!--          </q-td>-->
 
           <q-td
             key="sum"
@@ -219,19 +226,19 @@
             {{ props.row.category_name }}
           </q-td>
 
-          <q-td
-            key="notation"
-            :props="props"
-          >
-            {{ props.row.notation }}
-          </q-td>
+          <!--          <q-td-->
+          <!--            key="notation"-->
+          <!--            :props="props"-->
+          <!--          >-->
+          <!--            {{ props.row.notation }}-->
+          <!--          </q-td>-->
 
-          <q-td
-            key="shop"
-            :props="props"
-          >
-            {{ props.row.shop }}
-          </q-td>
+          <!--          <q-td-->
+          <!--            key="shop"-->
+          <!--            :props="props"-->
+          <!--          >-->
+          <!--            {{ props.row.shop }}-->
+          <!--          </q-td>-->
 
           <q-td
             key="in_cargo"
@@ -245,25 +252,32 @@
           </q-td>
 
           <q-td
+            key="shop"
+            :props="props"
+          >
+            {{ props.row.shop }}
+          </q-td>
+
+          <q-td
             key="things"
             :props="props"
           >
             {{ props.row.things | thingsFilter }}
           </q-td>
 
-          <q-td
-            key="delivery_method_name"
-            :props="props"
-          >
-            {{ props.row.delivery_method_name }}
-          </q-td>
+          <!--          <q-td-->
+          <!--            key="delivery_method_name"-->
+          <!--            :props="props"-->
+          <!--          >-->
+          <!--            {{ props.row.delivery_method_name }}-->
+          <!--          </q-td>-->
 
-          <q-td
-            key="department"
-            :props="props"
-          >
-            {{ props.row.department }}
-          </q-td>
+          <!--          <q-td-->
+          <!--            key="department"-->
+          <!--            :props="props"-->
+          <!--          >-->
+          <!--            {{ props.row.department }}-->
+          <!--          </q-td>-->
         </q-tr>
       </template>
     </Table>
@@ -332,20 +346,20 @@ export default {
             align: 'center',
             sortable: true,
           },
-          {
-            name: 'for_kg',
-            label: this.$t('forKg'),
-            field: 'for_kg',
-            align: 'center',
-            sortable: true,
-          },
-          {
-            name: 'for_place',
-            label: this.$t('forPlace'),
-            field: 'for_place',
-            align: 'center',
-            sortable: true,
-          },
+          // {
+          //   name: 'for_kg',
+          //   label: this.$t('forKg'),
+          //   field: 'for_kg',
+          //   align: 'center',
+          //   sortable: true,
+          // },
+          // {
+          //   name: 'for_place',
+          //   label: this.$t('forPlace'),
+          //   field: 'for_place',
+          //   align: 'center',
+          //   sortable: true,
+          // },
           {
             name: 'sum',
             label: 'Сумма',
@@ -374,24 +388,24 @@ export default {
             align: 'center',
             sortable: true,
           },
+          // {
+          //   name: 'notation',
+          //   label: this.$t('notation'),
+          //   field: 'notation',
+          //   align: 'center',
+          //   sortable: true,
+          // },
           {
-            name: 'notation',
-            label: this.$t('notation'),
-            field: 'notation',
+            name: 'in_cargo',
+            label: 'Доставлен',
+            field: 'in_cargo',
             align: 'center',
             sortable: true,
           },
           {
             name: 'shop',
-            label: this.$t('shop'),
+            label: 'Магазин',
             field: 'shop',
-            align: 'center',
-            sortable: true,
-          },
-          {
-            name: 'in_cargo',
-            label: 'Доставлен',
-            field: 'in_cargo',
             align: 'center',
             sortable: true,
           },
@@ -402,26 +416,25 @@ export default {
             align: 'center',
             sortable: true,
           },
-          {
-            name: 'delivery_method_name',
-            label: 'Способ доставки',
-            field: 'delivery_method_name',
-            align: 'center',
-            sortable: true,
-          },
-          {
-            name: 'department',
-            label: 'Отделение',
-            field: 'department',
-            align: 'center',
-            sortable: true,
-          },
-
+          // {
+          //   name: 'delivery_method_name',
+          //   label: 'Способ доставки',
+          //   field: 'delivery_method_name',
+          //   align: 'center',
+          //   sortable: true,
+          // },
+          // {
+          //   name: 'department',
+          //   label: 'Отделение',
+          //   field: 'department',
+          //   align: 'center',
+          //   sortable: true,
+          // },
         ],
       },
       cargoTableReactiveProperties: {
         selected: [],
-        visibleColumns: ['paid', 'created_at', 'type', 'sum', 'in_cargo', 'place', 'kg', 'for_kg', 'for_place', 'notation', 'category_name', 'sale'],
+        visibleColumns: ['paid', 'created_at', 'type', 'sum', 'in_cargo', 'place', 'kg', 'category_name', 'sale', 'things', 'shop'],
         title: '',
       },
     };

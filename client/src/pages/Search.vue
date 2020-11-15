@@ -85,7 +85,7 @@
                 </div>
               </template>
 
-              <template v-slot:inner-body="{props}">
+              <template #inner-body="{props}">
                 <q-tr :props="props">
                   <q-td
                     key="code_place"
@@ -161,7 +161,7 @@
               :entry-data="faxesTableData.data"
               :entry-columns="faxesTableData.columns"
             >
-              <template v-slot:inner-item="{props}">
+              <template #inner-item="{props}">
                 <div
                   class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
                   :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -195,7 +195,7 @@
                 </div>
               </template>
 
-              <template v-slot:inner-body="{props}">
+              <template #inner-body="{props}">
                 <q-tr :props="props">
                   <q-td
                     key="code_place"
@@ -292,7 +292,7 @@
               :entry-data="basketTableData.data"
               :entry-columns="basketTableData.columns"
             >
-              <template v-slot:inner-item="{props}">
+              <template #inner-item="{props}">
                 <div
                   class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
                   :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -317,7 +317,7 @@
                 </div>
               </template>
 
-              <template v-slot:inner-body="{props}">
+              <template #inner-body="{props}">
                 <q-tr :props="props">
                   <q-td
                     key="code_place"
@@ -406,7 +406,6 @@
             SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
             BaseTable: () => import('src/components/Elements/Table/BaseTable.vue'),
             CountCategories: () => import('src/components/CountCategories.vue'),
-            // CountDataForSearch: () => import('src/components/CountDataForSearch.vue'),
         },
         filters: {
             statusFilter(value) {
