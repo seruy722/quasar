@@ -1,8 +1,8 @@
 {
   "name": "client2",
   "version": "1.0.0",
-  "description": "A Quasar Framework app",
-  "productName": "App Cargo",
+  "description": "Private office",
+  "productName": "App Cargo 007",
   "author": "Den",
   "private": true,
   "scripts": {

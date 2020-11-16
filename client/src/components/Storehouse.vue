@@ -275,18 +275,18 @@ export default {
             align: 'center',
             sortable: true,
           },
-          {
-            name: 'created_at',
-            label: 'Добавлено',
-            field: 'created_at',
-            align: 'center',
-            sortable: true,
-          },
+          // {
+          //   name: 'created_at',
+          //   label: 'Добавлено',
+          //   field: 'created_at',
+          //   align: 'center',
+          //   sortable: true,
+          // },
         ],
       },
       storehouseTableReactiveProperties: {
         selected: [],
-        visibleColumns: ['place', 'kg', 'category_name', 'code_place', 'notation', 'shop', 'things', 'created_at', 'status'],
+        visibleColumns: ['place', 'kg', 'category_name', 'code_place', 'notation', 'shop', 'things', 'status'],
       },
     };
   },

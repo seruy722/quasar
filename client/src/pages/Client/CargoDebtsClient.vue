@@ -2,77 +2,77 @@
   <q-page
     data-vue-component-name="CargoDebtsClient"
   >
-      <div class="q-gutter-y-md">
-        <q-card>
-          <q-tabs
-            v-model="tab"
-            dense
-            class="text-grey"
-            active-color="primary"
-            indicator-color="primary"
-            align="justify"
+    <div class="q-gutter-y-md">
+      <q-card>
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-grey"
+          active-color="primary"
+          indicator-color="primary"
+          align="justify"
+        >
+          <q-tab
+            name="cargo"
+            label="Карго"
           >
-            <q-tab
-              name="cargo"
-              label="Карго"
-            >
-              <q-badge color="red">
-                {{ cargo.length }}
-              </q-badge>
-            </q-tab>
-            <q-tab
-              name="debts"
-              label="Долги"
-            >
-              <q-badge color="red">
-                {{ debts.length }}
-              </q-badge>
-            </q-tab>
-            <q-tab
-              name="storehouseData"
-              label="Склад"
-            >
-              <q-badge color="red">
-                {{ storehouseData.length }}
-              </q-badge>
-            </q-tab>
-          </q-tabs>
-
-          <q-separator />
-
-          <q-tab-panels
-            v-model="tab"
-            animated
-            swipeable
+            <q-badge color="red">
+              {{ cargo.length }}
+            </q-badge>
+          </q-tab>
+          <q-tab
+            name="debts"
+            label="Долги"
           >
-            <q-tab-panel
-              name="cargo"
-              style="padding: 0;"
-            >
-              <Cargo
-                :refresh="refresh"
-              />
-            </q-tab-panel>
-            <q-tab-panel
-              name="debts"
-              style="padding: 0;"
-            >
-              <Debts
-                :refresh="refresh"
-              />
-            </q-tab-panel>
-            <q-tab-panel
-              name="storehouseData"
-              style="padding: 0;"
-            >
-              <Storehouse
-                :storehouse-data="storehouseData"
-                :func="getStorehouseData"
-              />
-            </q-tab-panel>
-          </q-tab-panels>
-        </q-card>
-      </div>
+            <q-badge color="red">
+              {{ debts.length }}
+            </q-badge>
+          </q-tab>
+          <q-tab
+            name="storehouseData"
+            label="Склад"
+          >
+            <q-badge color="red">
+              {{ storehouseData.length }}
+            </q-badge>
+          </q-tab>
+        </q-tabs>
+
+        <q-separator />
+
+        <q-tab-panels
+          v-model="tab"
+          animated
+          swipeable
+        >
+          <q-tab-panel
+            name="cargo"
+            style="padding: 0;"
+          >
+            <Cargo
+              :refresh="refresh"
+            />
+          </q-tab-panel>
+          <q-tab-panel
+            name="debts"
+            style="padding: 0;"
+          >
+            <Debts
+              :refresh="refresh"
+            />
+          </q-tab-panel>
+          <q-tab-panel
+            name="storehouseData"
+            style="padding: 0;"
+          >
+            <Storehouse
+              :storehouse-data="storehouseData"
+              :func="getStorehouseData"
+            />
+          </q-tab-panel>
+        </q-tab-panels>
+      </q-card>
+    </div>
   </q-page>
 </template>
 
@@ -120,7 +120,7 @@ export default {
       const { getUrl } = await import('src/tools/url');
       return this.$axios.get(getUrl('getClientStorehouseData'))
         .then(({ data: { clientStorehouseData } }) => {
-          this.storehouseData = clientStorehouseData;
+          this.storehouseData = _.uniqBy(clientStorehouseData, 'code_place');
           this.$q.loading.hide();
         });
     },
