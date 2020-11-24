@@ -80,7 +80,7 @@ class CargoController extends Controller
                 return response(['cargo' => $cargo, 'debts' => $debt]);
             }
 
-            return response(['cargo' => [], 'debts' => [], 'acc' => $customersCodes]);
+            return response(['cargo' => [], 'debts' => []]);
         }
         if ($id == 'null') {
             $id = auth()->user()->code_id;

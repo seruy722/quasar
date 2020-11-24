@@ -75,7 +75,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/update-storehouse-data', 'Api\StorehouseDataController@update')->name('update entry on storehouse data')->middleware(['role_or_permission:admin|storehouse|update entry on storehouse data']);
     Route::get('/shop-names', 'Api\StorehouseDataController@getShopNames');
     Route::get('/thing-list', 'Api\StorehouseDataController@getThingsList');
-    Route::post('/export-storehouse-data', 'Api\StorehouseDataController@export')->name('export storehouse data')->middleware(['role_or_permission:admin|storehouse|export storehouse data']);
+    Route::post('/export-storehouse-data', 'Api\StorehouseDataController@export')->name('export storehouse data')->middleware(['role_or_permission:admin|storehouse|client|export storehouse data']);
     Route::post('/destroy-storehouse-data', 'Api\StorehouseDataController@destroy')->name('delete entry on storehouse data')->middleware(['role_or_permission:admin|storehouse|delete entry on storehouse data']);
     Route::get('/storehouse-data-history/{id}', 'Api\StorehouseDataController@getStorehouseDataHistory')->name('get history of entry in storehouse data')->middleware(['role_or_permission:admin|storehouse|get history of entry in storehouse data']);
     Route::post('/get-new-storehouseData', 'Api\StorehouseDataController@getNewStorehouseData')->name('get new storehouse data entries')->middleware(['role_or_permission:admin|storehouse|get new storehouse data entries']);

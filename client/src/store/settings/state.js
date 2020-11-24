@@ -25,7 +25,7 @@ export default {
       field: 'client-cargo-debts',
       icon: 'assignment',
       access: {
-        roles: ['admin', 'client'],
+        roles: ['admin'],
         permissions: [],
       },
     },

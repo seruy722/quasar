@@ -10,6 +10,13 @@
         <UpdateBtn
           @update-btn-click="refresh"
         />
+        <IconBtn
+          v-show="storehouseData.length"
+          color="positive"
+          icon="explicit"
+          tooltip="Excel"
+          @icon-btn-click="exportStorehouseData"
+        />
       </template>
 
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -191,6 +198,7 @@ export default {
     Table: () => import('src/components/Elements/Table/Table.vue'),
     CountCategories: () => import('src/components/CountCategories.vue'),
     UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
+    IconBtn: () => import('components/Buttons/IconBtn.vue'),
   },
   filters: {
     statusFilter(value) {
@@ -275,26 +283,28 @@ export default {
             align: 'center',
             sortable: true,
           },
-          // {
-          //   name: 'created_at',
-          //   label: 'Добавлено',
-          //   field: 'created_at',
-          //   align: 'center',
-          //   sortable: true,
-          // },
+          {
+            name: 'created_at',
+            label: 'Добавлено',
+            field: 'created_at',
+            align: 'center',
+            sortable: true,
+          },
         ],
       },
       storehouseTableReactiveProperties: {
         selected: [],
-        visibleColumns: ['place', 'kg', 'category_name', 'code_place', 'notation', 'shop', 'things', 'status'],
+        visibleColumns: ['place', 'kg', 'category_name', 'code_place', 'notation', 'shop', 'things', 'status', 'created_at'],
       },
     };
   },
   methods: {
     exportStorehouseData() {
-      if (!_.isEmpty(this.storehouseData)) {
+      const data = _.isEmpty(this.storehouseTableReactiveProperties.selected) ? this.storehouseData : this.storehouseTableReactiveProperties.selected;
+      devlog.log('DATA', data);
+      if (!_.isEmpty(data)) {
         this.exportDataToExcel(getUrl('exportStorehouseData'), {
-          ids: _.map(this.storehouseTableReactiveProperties.selected, 'id'),
+          ids: _.map(data, 'id'),
         }, 'На складе.xlsx');
       }
     },

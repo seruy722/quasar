@@ -49,10 +49,10 @@
           hint="123456"
           lazy-rules
           autofocus
-          mask="######"
+          mask="##-##-##"
           filled
           label="Код из смс"
-          :rules="[ val => val && val.length > 0 || 'Введите код', val => val && val.length === 6 || 'Код должен состоять из 6 цифр']"
+          :rules="[ val => val && val.length > 0 || 'Введите код', val => val && val.length === 8 || 'Код должен состоять из 6 цифр']"
         />
         <q-input
           v-model="password"
@@ -60,7 +60,7 @@
           lazy-rules
           filled
           label="Пароль"
-          :rules="[ val => val && val.length > 0 || 'Введите пароль']"
+          :rules="[ val => val && val.length > 0 || 'Введите пароль',val => val && val.length >= 6 || 'Пароль должен состоять из 6 символов']"
         />
         <q-input
           v-model="confirm"
@@ -68,7 +68,7 @@
           lazy-rules
           filled
           label="Повторите пароль"
-          :rules="[ val => val && val.length > 0 || 'Введите пароль']"
+          :rules="[ val => val && val.length > 0 || 'Повторите пароль', val => val && val.length >= 6 || 'Пароль должен состоять из 6 символов']"
         />
         <div>
           <q-btn
@@ -124,7 +124,7 @@ export default {
     onSubmitRegister() {
       this.$axios.post(getUrl('registerClientCodeRegister'), {
         phone: parseInt(this.phone.replace(/[^\d]/g, ''), 10),
-        code: this.code,
+        code: parseInt(this.code.replace(/[^\d]/g, ''), 10),
         password: this.password,
         password_confirmation: this.confirm,
       })
