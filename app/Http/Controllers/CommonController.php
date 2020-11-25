@@ -207,7 +207,7 @@ class CommonController extends Controller
             ->where('fax_id', '>', 0)
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_data.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_data.category_id')
-            ->leftJoin('faxes', 'faxes.id', '=', 'storehouse_data.fax_id');
+            ->join('faxes', 'faxes.id', '=', 'storehouse_data.fax_id');
         $destroyedEntries = [];
         if ($request->codeID) {
             $storehouseData = $storehouseData->where('code_client_id', $request->codeID)->orderBy('id', 'desc')->get();

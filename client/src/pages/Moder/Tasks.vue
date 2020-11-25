@@ -94,7 +94,7 @@
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>
-                    {{ props.row.created_at.slice(0,5) }}
+                    {{ props.row.created_at.slice(0, 5) }}
                   </q-item-label>
                 </q-item-section>
 
@@ -209,167 +209,174 @@
 </template>
 
 <script>
-    import showNotif from 'src/mixins/showNotif';
-    import CheckErrorsMixin from 'src/mixins/CheckErrors';
-    import getFromSettings from 'src/tools/settings';
+import showNotif from 'src/mixins/showNotif';
+import CheckErrorsMixin from 'src/mixins/CheckErrors';
+import getFromSettings from 'src/tools/settings';
 
-    export default {
-        name: 'Tasks',
-        components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
-            DialogAddTask: () => import('components/Tasks/DialogAddTask.vue'),
-            PullRefresh: () => import('src/components/PullRefresh.vue'),
-        },
-        mixins: [showNotif, CheckErrorsMixin],
-        data() {
-            return {
-                cargoTableProperties: {
-                    columns: [
-                        {
-                            name: 'created_at',
-                            label: 'Дата',
-                            align: 'center',
-                            field: 'created_at',
-                            sortable: true,
-                        },
-                        {
-                            name: 'author_name',
-                            label: 'Автор',
-                            align: 'center',
-                            field: 'author_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'description',
-                            label: 'Описание',
-                            align: 'center',
-                            field: 'description',
-                            sortable: true,
-                        },
-                        {
-                            name: 'section_name',
-                            label: 'Раздел',
-                            align: 'center',
-                            field: 'section_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'status_name',
-                            label: 'Статус',
-                            field: 'status_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'responsible_name',
-                            label: 'Ответственный',
-                            field: 'responsible_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                cargoTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['created_at', 'author_name', 'description', 'section_name', 'status_name', 'responsible_name'],
-                    title: '',
-                },
-                menuList: [],
-                showDialogAddTask: false,
-                entryData: {},
-            };
-        },
-        computed: {
-            tasks() {
-                const sections = getFromSettings('sectionTask');
-                const statusData = getFromSettings('statusTask');
-                return _.map(this.$store.getters['tasks/getTasks'], (item) => {
-                    const sectionName = _.get(_.find(sections, { value: item.section_id }), 'label');
-                    const status = _.find(statusData, { value: item.status_id });
-                    const userName = _.get(_.find(this.usersList, { value: item.responsible_id }), 'label');
-                    return _.assign({}, item, {
-                        section_name: sectionName,
-                        status_name: status.label,
-                        status_color: status.color,
-                        responsible_name: userName,
-                    });
-                });
-            },
-            usersList() {
-                return this.$store.getters['auth/getUsersList'];
-            },
-        },
-        created() {
-            if (_.isEmpty(this.usersList)) {
-                this.$store.dispatch('auth/fetchUsersList');
-            }
-            if (_.isEmpty(this.tasks)) {
-                this.$store.dispatch('tasks/fetchTasks');
-            }
-        },
-        methods: {
-            async refresh(done) {
-                if (!done) {
-                    this.$q.loading.show();
-                }
-                const { callFunction } = await import('src/utils/index');
-                await this.$store.dispatch('tasks/fetchTasks')
-                  .then(() => {
-                      callFunction(done);
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      callFunction(done);
-                  });
-            },
-            destroyEntry(data) {
-                const ids = _.map(data, 'id');
-                this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
-                    {
-                        label: 'Отмена',
-                        color: 'white',
-                        handler: () => {
-                            this.cargoTableReactiveProperties.selected = [];
-                        },
-                    },
-                    {
-                        label: 'Удалить',
-                        color: 'white',
-                        handler: async () => {
-                            const { getUrl } = await import('src/tools/url');
-                            this.$axios.post(getUrl('deleteTasks'), { ids })
-                              .then(() => {
-                                  this.cargoTableReactiveProperties.selected = [];
-                                  this.$store.dispatch('tasks/deleteTasks', ids);
-                                  this.$q.loading.hide();
-                                  this.showNotif('success', `${_.size(ids > 1) ? 'Записи успешно удалены' : 'Запись успешно удалена'}`, 'center');
-                              })
-                              .catch((error) => {
-                                  devlog.error('Ошибка', error);
-                                  this.$q.loading.hide();
-                              });
-                        },
-                    },
-                ]);
-            },
-            viewEditDialog(val, event) {
-                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
-                    this.entryData = val;
-                    this.cargoTableReactiveProperties.selected = [];
-                    devlog.log('VAL', val);
-                    setTimeout(() => {
-                        val.selected = !val.selected;
-                    }, 100);
-                    this.showDialogAddTask = true;
-                }
-            },
-            update() {
-                this.entryData = { row: _.first(this.cargoTableReactiveProperties.selected) };
-                this.showDialogAddTask = true;
-            },
-        },
+export default {
+  name: 'Tasks',
+  components: {
+    Table: () => import('src/components/Elements/Table/Table.vue'),
+    MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
+    DialogAddTask: () => import('components/Tasks/DialogAddTask.vue'),
+    PullRefresh: () => import('src/components/PullRefresh.vue'),
+  },
+  mixins: [showNotif, CheckErrorsMixin],
+  data() {
+    return {
+      cargoTableProperties: {
+        columns: [
+          {
+            name: 'created_at',
+            label: 'Дата',
+            align: 'center',
+            field: 'created_at',
+            sortable: true,
+          },
+          {
+            name: 'author_name',
+            label: 'Автор',
+            align: 'center',
+            field: 'author_name',
+            sortable: true,
+          },
+          {
+            name: 'description',
+            label: 'Описание',
+            align: 'center',
+            field: 'description',
+            sortable: true,
+          },
+          {
+            name: 'section_name',
+            label: 'Раздел',
+            align: 'center',
+            field: 'section_name',
+            sortable: true,
+          },
+          {
+            name: 'status_name',
+            label: 'Статус',
+            field: 'status_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'responsible_name',
+            label: 'Ответственный',
+            field: 'responsible_name',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      cargoTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['created_at', 'author_name', 'description', 'section_name', 'status_name', 'responsible_name'],
+        title: '',
+      },
+      menuList: [],
+      showDialogAddTask: false,
+      entryData: {},
     };
+  },
+  computed: {
+    tasks() {
+      const sections = getFromSettings('sectionTask');
+      const statusData = getFromSettings('statusTask');
+      return _.map(this.$store.getters['tasks/getTasks'], (item) => {
+        const sectionName = _.get(_.find(sections, { value: item.section_id }), 'label');
+        const status = _.find(statusData, { value: item.status_id });
+        const userName = _.get(_.find(this.usersList, { value: item.responsible_id }), 'label');
+        return _.assign({}, item, {
+          section_name: sectionName,
+          status_name: status.label,
+          status_color: status.color,
+          responsible_name: userName,
+        });
+      });
+    },
+    usersList() {
+      return this.$store.getters['auth/getUsersList'];
+    },
+  },
+  created() {
+    if (_.isEmpty(this.usersList)) {
+      this.$store.dispatch('auth/fetchUsersList');
+    }
+    if (_.isEmpty(this.tasks)) {
+      this.$q.loading.show();
+      this.$store.dispatch('tasks/fetchTasks')
+        .then(() => {
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+        });
+    }
+  },
+  methods: {
+    async refresh(done) {
+      if (!done) {
+        this.$q.loading.show();
+      }
+      const { callFunction } = await import('src/utils/index');
+      await this.$store.dispatch('tasks/fetchTasks')
+        .then(() => {
+          callFunction(done);
+          this.$q.loading.hide();
+          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          callFunction(done);
+        });
+    },
+    destroyEntry(data) {
+      const ids = _.map(data, 'id');
+      this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
+        {
+          label: 'Отмена',
+          color: 'white',
+          handler: () => {
+            this.cargoTableReactiveProperties.selected = [];
+          },
+        },
+        {
+          label: 'Удалить',
+          color: 'white',
+          handler: async () => {
+            const { getUrl } = await import('src/tools/url');
+            this.$axios.post(getUrl('deleteTasks'), { ids })
+              .then(() => {
+                this.cargoTableReactiveProperties.selected = [];
+                this.$store.dispatch('tasks/deleteTasks', ids);
+                this.$q.loading.hide();
+                this.showNotif('success', `${_.size(ids > 1) ? 'Записи успешно удалены' : 'Запись успешно удалена'}`, 'center');
+              })
+              .catch((error) => {
+                devlog.error('Ошибка', error);
+                this.$q.loading.hide();
+              });
+          },
+        },
+      ]);
+    },
+    viewEditDialog(val, event) {
+      if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
+        this.entryData = val;
+        this.cargoTableReactiveProperties.selected = [];
+        devlog.log('VAL', val);
+        setTimeout(() => {
+          val.selected = !val.selected;
+        }, 100);
+        this.showDialogAddTask = true;
+      }
+    },
+    update() {
+      this.entryData = { row: _.first(this.cargoTableReactiveProperties.selected) };
+      this.showDialogAddTask = true;
+    },
+  },
+};
 </script>

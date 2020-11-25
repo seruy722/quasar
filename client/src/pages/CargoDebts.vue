@@ -276,7 +276,15 @@ export default {
   },
   methods: {
     getClientData(clientId) {
-      this.$store.dispatch('cargoDebts/getCargoDebts', clientId);
+      this.$q.loading.show();
+      this.$store.dispatch('cargoDebts/getCargoDebts', clientId)
+        .then(() => {
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          this.showNotif('error', 'Произошла ошибка при получении данных', 'center');
+        });
     },
     async refresh(done) {
       if (!done) {

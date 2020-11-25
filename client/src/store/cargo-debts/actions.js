@@ -1,16 +1,19 @@
 import { getUrl } from 'src/tools/url';
 import { axiosInstance } from 'boot/axios';
 
-export const getCargoDebts = (({ commit }, clientId) => axiosInstance.get(`${getUrl('allCargoData')}/${clientId}`)
-  .then(({ data: { cargo, debts } }) => {
+export const getCargoDebts = (({ commit }, clientId) => {
+  const answer = axiosInstance.get(`${getUrl('allCargoData')}/${clientId}`);
+  answer.then(({ data: { cargo, debts } }) => {
     commit('SET_CARGO', cargo);
     commit('SET_CARGO_FO_SEARCH', cargo);
     commit('SET_DEBTS', debts);
     commit('SET_DEBTS_FO_SEARCH', debts);
   })
-  .catch(() => {
-    devlog.warn('Ошибка при запросе getCargoDebts');
-  }));
+    .catch(() => {
+      devlog.warn('Ошибка при запросе getCargoDebts');
+    });
+  return answer;
+});
 
 export const updateCargoEntry = (({ commit }, data) => {
   commit('UPDATE_CARGO_ENTRY', data);

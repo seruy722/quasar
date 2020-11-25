@@ -288,7 +288,14 @@ export default {
   created() {
     devlog.log(this.taskId !== this.$route.params.id);
     if (_.isEmpty(this.comments) || this.taskId !== this.$route.params.id) {
-      this.$store.dispatch('tasks/fetchTaskComments', this.$route.params.id);
+      this.$q.loading.show();
+      this.$store.dispatch('tasks/fetchTaskComments', this.$route.params.id)
+        .then(() => {
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+        });
     }
   },
   methods: {

@@ -251,7 +251,14 @@
                 this.$store.dispatch('auth/fetchUsersList');
             }
             if (_.isEmpty(this.documents)) {
-                this.$store.dispatch('documents/fetchDocuments');
+              this.$q.loading.show();
+                this.$store.dispatch('documents/fetchDocuments')
+                  .then(() => {
+                    this.$q.loading.hide();
+                  })
+                  .catch(() => {
+                    this.$q.loading.hide();
+                  });
             }
         },
         methods: {
