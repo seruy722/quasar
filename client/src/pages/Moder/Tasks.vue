@@ -307,10 +307,7 @@ export default {
     if (_.isEmpty(this.tasks)) {
       this.$q.loading.show();
       this.$store.dispatch('tasks/fetchTasks')
-        .then(() => {
-          this.$q.loading.hide();
-        })
-        .catch(() => {
+        .finally(() => {
           this.$q.loading.hide();
         });
     }

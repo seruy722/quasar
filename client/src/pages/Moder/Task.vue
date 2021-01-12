@@ -268,7 +268,7 @@ export default {
       slide: 1,
       text: '',
       files: [],
-      extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
+      extensions: ['xlsx', 'xls', 'txt', 'doc', 'docx', 'pdf'],
       addFileToCom: false,
       commentId: 0,
       entryData: {},
