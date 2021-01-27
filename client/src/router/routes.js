@@ -21,6 +21,14 @@ const routes = [
         },
         component: () => import('pages/Auth/RegisterClient.vue'),
       },
+      {
+        path: '/password-recovery',
+        name: 'password-recovery',
+        meta: {
+          title: 'Восстановление доступа',
+        },
+        component: () => import('pages/Auth/PasswordRecovery'),
+      },
     ],
   },
   {

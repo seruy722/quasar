@@ -60,7 +60,7 @@ class AuthController extends Controller
     {
         $yesPhoneInDB = \App\Customer::where('phone', $request->phone)->first();
         if ($yesPhoneInDB && User::where('code_id', $yesPhoneInDB->code_id)->first()) {
-            return response(['codeStatus' => 1, 'message' => 'Вы уже зарегестрированы. Выполните вход пожалуйста', 'df' => User::where('code_id', $yesPhoneInDB->code_id)->first()]);
+            return response(['codeStatus' => 1, 'message' => 'Вы уже зарегестрированы. Выполните вход пожалуйста']);
         } else if ($yesPhoneInDB) {
             $code = rand(111111, 999999);
             $this->sendSMSForRegister($yesPhoneInDB->phone, $code);
@@ -68,6 +68,38 @@ class AuthController extends Controller
             return response(['codeStatus' => 3]);
         }
         return response(['codeStatus' => 2, 'message' => 'Номера телефона нет в базе']);
+    }
+
+    public function getCodeForChangePassword(Request $request)
+    {
+        $yesPhoneInDB = \App\Customer::where('phone', $request->phone)->first();
+        if ($yesPhoneInDB && User::where('code_id', $yesPhoneInDB->code_id)->first()) {
+            $code = rand(111111, 999999);
+            $this->sendSMSForRegister($yesPhoneInDB->phone, $code);
+            Cache::put($yesPhoneInDB->phone, ['code' => $code, 'code_id' => $yesPhoneInDB->code_id], 300);
+            return response(['codeStatus' => 3]);
+        }
+        return response(['codeStatus' => 2, 'message' => 'Номера телефона нет в базе']);
+    }
+
+    public function changePassword(Request $request)
+    {
+        if (Cache::has($request->phone) && Cache::get($request->phone)['code'] == $request->code) {
+            $request->validate([
+                'password' => 'required|confirmed'
+            ]);
+            $data = [
+                'password' => bcrypt($request->password),
+            ];
+            $code = \App\Code::find(Cache::get($request->phone)['code_id']);
+            if ($code) {
+                User::where('phone', $request->phone)->update($data);
+                Cache::forget($request->phone);
+            }
+
+            return response(['пароль изменен' => true]);
+        }
+        return response(['error' => 'Неверный код подтверждения или срок действия кода истек']);
     }
 
     public function registerClient(Request $request)
@@ -90,6 +122,7 @@ class AuthController extends Controller
             $user = User::create($data);
             $user->givePermissionTo('exit app');
             $user->assignRole('client');
+            Cache::forget($request->phone);
 
             return response(['register' => true]);
         }
@@ -119,7 +152,7 @@ class AuthController extends Controller
         $newsOp->addAttribute('rate', $rate);
         $newsOp->addAttribute('desc', $description);
 
-/*        $myXML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";*/
+        /*        $myXML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";*/
 //        $myXML .= "<request>" . "\n";
 //        $myXML .= "<operation>SENDSMS</operation>" . "\n";
 //        $myXML .= '		<message start_time="' . $start_time . '" end_time="' . $end_time . '" lifetime="' . $lifetime . '" rate="' . $rate . '" desc="' . $description . '">' . "\n";

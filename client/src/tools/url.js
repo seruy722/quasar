@@ -140,6 +140,8 @@ const urls = {
   allCargo: `${prefix}/all-cargo`,
   registerClient: `${prefix}/register-client`,
   registerClientCode: `${prefix}/register-client-code`,
+  changePasswordCode: `${prefix}/change-password-code`,
+  changePassword: `${prefix}/change-password`,
   registerClientCodeRegister: `${prefix}/register-client-register`,
   getClientData: `${prefix}/get-client-data`,
   getClientStorehouseData: `${prefix}/get-client-storehouse-data`,

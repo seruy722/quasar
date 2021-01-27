@@ -292,6 +292,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 });
 Route::group(['middleware' => 'throttle:500,5'], function () {
     Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');
+    Route::post('change-password-code', 'Api\AuthController@getCodeForChangePassword')->name('code for password');
+    Route::post('change-password', 'Api\AuthController@changePassword')->name('change password');
     Route::post('register-client-register', 'Api\AuthController@registerClient')->name('register client');
 });
 

@@ -43,10 +43,17 @@
 
       <q-separator />
 
-      <q-card-actions align="left">
+      <q-card-actions align="between">
         <OutlineBtn
           :label="this.$t('enter')"
           @click-outline-btn="checkErrors(loginData, login)"
+        />
+
+        <q-btn
+          label="Забыли пароль?"
+          color="secondary"
+          flat
+          :to="{name: 'password-recovery'}"
         />
       </q-card-actions>
     </q-card>
