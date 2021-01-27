@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 class TransferController extends Controller
 {
     protected $rules = [
-        'client_id' => 'required|numeric',
+//        'client_id' => 'required|numeric',
         'receiver_name' => 'required|string|max:255',
         'receiver_phone' => 'required|string|max:100',
         'sum' => 'required|numeric',
@@ -171,5 +171,37 @@ class TransferController extends Controller
             }
         });
         return response()->json(null, 201);
+    }
+
+    public function indexClient()
+    {
+        return response(['transfers' => $this->query()->where('transfers.client_id', auth()->user()->id)->get()]);
+    }
+
+    public function storeClient(Request $request)
+    {
+        $transferArr = [
+            'client_id' => $request->user()->id,
+            'receiver_name' => $request->receiver_name,
+            'receiver_phone' => $request->receiver_phone,
+            'sum' => $request->sum,
+            'method' => $request['method'],
+            'status' => $request->status,
+            'issued_by' => null,
+            'user_id' => $request->user()->id,
+        ];
+
+        if ($request->issued_by) {
+            $transferArr['issued_by'] = date("Y-m-d H:i:s", strtotime($request->issued_by));
+        }
+        if ($request->notation) {
+            $transferArr['notation'] = $request->notation;
+        }
+
+        $this->validate($request, $this->rules);
+
+        $transfer = Transfer::create($this->stripData($transferArr));
+        $this->storeTransferHistory($transfer->id, $this->stripData($transferArr), 'create');
+        return response(['transfer' => $this->query()->where('transfers.id', $transfer->id)->get()]);
     }
 }

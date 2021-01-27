@@ -25,7 +25,16 @@ export default {
       field: 'client-cargo-debts',
       icon: 'assignment',
       access: {
-        roles: ['admin', 'client'],
+        roles: ['client'],
+        permissions: [],
+      },
+    },
+    {
+      title: 'Переводы',
+      field: 'client-transfers',
+      icon: 'import_export',
+      access: {
+        roles: ['client'],
         permissions: [],
       },
     },

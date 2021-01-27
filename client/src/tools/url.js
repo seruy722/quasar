@@ -144,7 +144,9 @@ const urls = {
   getClientData: `${prefix}/get-client-data`,
   getClientStorehouseData: `${prefix}/get-client-storehouse-data`,
   exportClientsGeneralDataOdessa: `${prefix}/export-clients-general-data-odessa`,
-  serverUrl: 'http://servercargo007.net.ua',
+  transfersClient: `${prefix}/transfers-client`,
+  storeTransfersClient: `${prefix}/store-transfers-client`,
+  serverUrl: 'https://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,
   },

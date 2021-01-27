@@ -393,6 +393,21 @@ const routes = [
         },
         component: () => import('pages/Client/CargoDebtsClient.vue'),
       },
+      {
+        path: 'client-transfers',
+        name: 'client-transfers',
+        meta: {
+          title: 'Переводы',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin', 'client'],
+            permissions: [],
+          },
+        },
+        component: () => import('pages/Client/TransfersClient.vue'),
+      },
     ],
   },
 ];

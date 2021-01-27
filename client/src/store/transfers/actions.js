@@ -11,6 +11,14 @@ export const fetchTransfers = (({ commit }) => axiosInstance.get(getUrl('transfe
     devlog.warn('Ошибка при запросе fetchTransfers');
   }));
 
+export const fetchTransfersClient = (({ commit }) => axiosInstance.get(getUrl('transfersClient'))
+  .then(({ data: { transfers } }) => {
+    commit('SET_TRANSFERS_CLIENT', setMethodLabel(setStatusLabel(setFormatedDate(transfers, ['created_at', 'issued_by']))));
+  })
+  .catch(() => {
+    devlog.warn('Ошибка при запросе fetchTransfers');
+  }));
+
 export const setTransfers = (({ commit }, data) => {
   commit('SET_TRANSFERS', data);
   // let size = 5;
@@ -36,6 +44,14 @@ export const addTransfer = (({ commit }, data) => {
   commit('ADD_TRANSFER', data);
 });
 
+export const addTransferClient = (({ commit }, data) => {
+  commit('ADD_TRANSFER_CLIENT', data);
+});
+
 export const updateTransfer = (({ commit }, data) => {
   commit('UPDATE_TRANSFER', data);
+});
+
+export const updateTransferClient = (({ commit }, data) => {
+  commit('UPDATE_TRANSFER_CLIENT', data);
 });

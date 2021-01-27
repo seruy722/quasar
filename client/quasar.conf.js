@@ -71,7 +71,7 @@ module.exports = function (ctx) {
       env: {
         API: ctx.dev
           ? 'http://sp.com.ua/'
-          : 'http://servercargo007.net.ua/',
+          : 'https://servercargo007.net.ua/',
       },
     },
 

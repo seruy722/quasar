@@ -4,7 +4,7 @@
     bordered
     dense
     style="max-width: 450px;margin: 20px auto;font-weight: bold;"
-    data-vue-component-name="CountTransfersData"
+    data-vue-component-name="CountTransfersDataClient"
   >
     <q-item>
       <q-item-section class="statistics_title">
@@ -148,26 +148,6 @@
         <q-item-label>{{ countTransfersStatisticsData.allSum | numberFormatFilter }}</q-item-label>
       </q-item-section>
     </q-item>
-
-    <q-item>
-      <q-item-section class="statistics_title">
-        По пользователям
-      </q-item-section>
-    </q-item>
-    <q-item
-      v-for="(user, id) in countTransfersStatisticsData.usersData"
-      :key="id"
-    >
-      <q-item-section>
-        <q-item-label>{{ user.name }}</q-item-label>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>{{ user.all | numberFormatFilter }}</q-item-label>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>{{ user.allSum | numberFormatFilter }}</q-item-label>
-      </q-item-section>
-    </q-item>
   </q-list>
 </template>
 
@@ -175,7 +155,7 @@
 import TransferMixin from 'src/mixins/Transfer';
 
 export default {
-  name: 'CountTransfersData',
+  name: 'CountTransfersDataClient',
   mixins: [TransferMixin],
   props: {
     enterData: {
@@ -190,7 +170,6 @@ export default {
   },
   methods: {
     countedData(data) {
-      const userObj = {};
       const obj = {
         all: data.length,
         allSum: 0,
@@ -204,24 +183,12 @@ export default {
         cancelSum: 0,
         returned: 0,
         returnedSum: 0,
-        usersData: [],
         returnedClient: 0,
         returnedSumClient: 0,
         pending: 0,
         pendingSum: 0,
       };
       _.forEach(data, (item) => {
-        const userData = userObj[item.user_name];
-        if (userData) {
-          userData.all += 1;
-          userData.allSum += item.sum;
-        } else {
-          userObj[item.user_name] = {
-            name: item.user_name,
-            all: 1,
-            allSum: item.sum,
-          };
-        }
         obj.allSum += item.sum;
         if (item.status === 1) {
           obj.question += 1;
@@ -246,11 +213,6 @@ export default {
           obj.pendingSum += item.sum;
         }
       });
-      const usersAr = _.values(userObj);
-      usersAr.sort((a, b) => b.allSum - a.allSum);
-      obj.usersData = usersAr;
-      devlog.log('usersAr', usersAr);
-      devlog.log('OBJ', obj);
       return obj;
     },
   },

@@ -88,6 +88,33 @@ const settings = {
       color: 'info',
       value: 5,
     },
+    {
+      label: 'Обработка',
+      color: 'info',
+      value: 6,
+    },
+    {
+      label: 'Отменен клиентом',
+      color: 'grey',
+      value: 7,
+    },
+  ],
+  transferStatusClient: [
+    {
+      label: 'Не выбрано',
+      color: '',
+      value: 0,
+    },
+    {
+      label: 'Обработка',
+      color: 'black',
+      value: 6,
+    },
+    {
+      label: 'Отменен клиентом',
+      color: 'grey',
+      value: 7,
+    },
   ],
   transferMethod: [
     {
