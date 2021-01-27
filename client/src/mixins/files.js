@@ -1,7 +1,7 @@
 export default {
   methods: {
     fileUrl() {
-      return process.env.DEV ? 'http://sp.com.ua/storage/' : 'http://servercargo007.net.ua/storage/app/public/';
+      return process.env.DEV ? 'http://sp.com.ua/storage/' : 'https://servercargo007.net.ua/storage/app/public/';
     },
     downloadFromIndex(index, files) {
       const file = files[index - 1];
