@@ -15,24 +15,23 @@ export default function auth({
                                next,
                                store,
                                to: { path, meta: { accessData } },
-                               router,
                              }) {
   let userAccess = _.get(store.getters['auth/getUser'], 'access');
-  devlog.log('LOGIN_CALL_accessData', accessData);
+  // devlog.log('LOGIN_CALL_accessData', accessData);
   store.dispatch('auth/setToPath', path);
   if (!store.getters['auth/isUserAuth']) {
-    devlog.log('LOGIN_CALL_getUserModel', _.get(router, 'app'));
-    devlog.log('LOGIN_CALL_getUserModel_2', router.currentRoute);
+    // devlog.log('LOGIN_CALL_getUserModel', _.get(router, 'app'));
+    // devlog.log('LOGIN_CALL_getUserModel_2', router.currentRoute);
     store.dispatch('auth/getUserModel')
       .then(() => {
         if (!userAccess) {
           userAccess = _.get(store.getters['auth/getUser'], 'access');
         }
-        devlog.log('ACCESS_1', access(userAccess, accessData));
-        devlog.log('ACCESS_1userAccess', userAccess);
-        devlog.log('ACCESS_1accessData', accessData);
+        // devlog.log('ACCESS_1', access(userAccess, accessData));
+        // devlog.log('ACCESS_1userAccess', userAccess);
+        // devlog.log('ACCESS_1accessData', accessData);
         if (accessData && !access(userAccess, accessData)) {
-          devlog.log('EROORRVVVVVV_NEXT1');
+          // devlog.log('EROORRVVVVVV_NEXT1');
           next({ name: 'login' });
         } else {
           next();
@@ -41,14 +40,14 @@ export default function auth({
         // return next();
       })
       .catch(() => {
-        devlog.log('LOGIN_CALL_catch');
+        // devlog.log('LOGIN_CALL_catch');
         next({ name: 'login' });
       });
   } else {
     const accessFunc = access(userAccess, accessData);
-    devlog.log('ACCESS_DATA', accessData);
-    devlog.log('ACCESS_2', access(userAccess, accessData));
-    devlog.log('ACCESS_PATH', path);
+    // devlog.log('ACCESS_DATA', accessData);
+    // devlog.log('ACCESS_2', access(userAccess, accessData));
+    // devlog.log('ACCESS_PATH', path);
     if (!accessFunc) {
       // Promise.all([accessFunc])
       //   .then(() => {
@@ -60,6 +59,6 @@ export default function auth({
       next();
     }
   }
-  devlog.log('NEXTROUTER', path);
+  // devlog.log('NEXTROUTER', path);
   // next();
 }

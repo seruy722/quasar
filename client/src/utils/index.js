@@ -9,7 +9,10 @@ export const numberUnformat = ((number) => _.chain(number)
 
 export const jsonDecodeThings = ((val) => {
   try {
-    return _.reduce(JSON.parse(val), (result, { label, value }) => {
+    return _.reduce(JSON.parse(val), (result, {
+      label,
+      value,
+    }) => {
       result[label] = value;
       return result;
     }, {});

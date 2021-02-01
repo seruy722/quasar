@@ -1,5 +1,5 @@
 export default function checkAccess(userAccess, menuAccess) {
-  devlog.log('userAccessMENU', menuAccess);
+  // devlog.log('userAccessMENU', menuAccess);
   let yesRoleForAccess = false;
   let yesPermissionForAccess = false;
   if (menuAccess && userAccess) {
@@ -8,7 +8,7 @@ export default function checkAccess(userAccess, menuAccess) {
     if (!_.isEmpty(accessRoles)) {
       _.forEach(accessRoles, (role) => {
         if (_.includes(roles, role)) {
-          devlog.error('includesRole', role);
+          // devlog.error('includesRole', role);
           yesRoleForAccess = true;
         }
       });
@@ -16,7 +16,7 @@ export default function checkAccess(userAccess, menuAccess) {
     if (!_.isEmpty(accessPermissions)) {
       _.forEach(accessPermissions, (permission) => {
         if (_.includes(permissions, permission)) {
-          devlog.error('includesPermission', permission);
+          // devlog.error('includesPermission', permission);
           yesPermissionForAccess = true;
         }
       });

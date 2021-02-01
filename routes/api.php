@@ -193,8 +193,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     });
     // TRANSFERS
     Route::get('/transfers', 'Api\TransferController@index')->name('view transfers list')->middleware(['role_or_permission:admin|transfers|view transfers list']);
-    Route::post('/update-transfers', 'Api\TransferController@update')->name('update transfers data')->middleware(['role_or_permission:admin|transfers|update transfers data']);
-    Route::post('/store-transfers', 'Api\TransferController@store')->name('store transfers data')->middleware(['role_or_permission:admin|transfers|store transfers data']);
+    Route::post('/update-transfers', 'Api\TransferController@update')->name('update transfers data')->middleware(['role_or_permission:admin|transfers|client|update transfers data']);
+    Route::post('/store-transfers', 'Api\TransferController@store')->name('store transfers data')->middleware(['role_or_permission:admin|transfers|client|store transfers data']);
     Route::post('/get-new-transfers', 'Api\TransferController@getNewTransfers')->name('get new transfers')->middleware(['role_or_permission:admin|transfers|get new transfers']);
     Route::post('/export-transfers', 'Api\TransferController@export')->name('export transfers')->middleware(['role_or_permission:admin|transfers|export transfers']);
     Route::post('/add-transfers-to-debts', 'Api\TransferController@addTransfersToDebts')->name('add transfers to debts')->middleware(['role_or_permission:admin|add transfers to debts']);
@@ -289,6 +289,11 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 //        }
 //        return $request->areas;
 //    });
+
+    // NOTIFICATIONS
+//    Route::post('add-device', 'Api\NotificationController@addDevice')->name('add device');
+    Route::post('update-player-id', 'Api\NotificationController@updatePlayerId')->name('update player id');
+//    Route::post('create-notification', 'Api\NotificationController@createNotification')->name('create notification');
 });
 Route::group(['middleware' => 'throttle:500,5'], function () {
     Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');

@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Code;
 use App\CodesPrices;
 use App\Debt;
 use App\Transfer;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Traits\PushNotifications;
 
 class TransferController extends Controller
 {
+    use PushNotifications;
+
     protected $rules = [
 //        'client_id' => 'required|numeric',
         'receiver_name' => 'required|string|max:255',
@@ -101,7 +106,19 @@ class TransferController extends Controller
 
         $transfer = Transfer::create($this->stripData($transferArr));
         $this->storeTransferHistory($transfer->id, $this->stripData($transferArr), 'create');
-//        event(new \App\Events\TransferCreate($transferData));
+        $players = User::where([['code_id', '=', 0], ['id', '<>', 11], ['player_id', '<>', null], ['player_id', '<>', auth()->user()->player_id]])->get();
+//        $players = User::where([['code_id', '=', 0], ['id', '<>', 11], ['player_id', '<>', null]])->get();
+        if ($players) {
+            $playersIds = $players->map(function ($item) {
+                return $item->player_id;
+            });
+            $customer = Code::where('id', $transferArr['client_id'])->first();
+            if ($customer) {
+                $notificationData = ['text' => 'Пользователь ' . auth()->user()->name . ' добавил перевод клиенту - ' . $customer->code . ' на сумму - ' . $request->sum, 'player_ids' => $playersIds, 'url' => 'https://cargo007.net/#/moder/transfers'];
+                $this->createNotification($notificationData);
+            }
+        }
+
         return response(['transfer' => $this->query()->where('transfers.id', $transfer->id)->get()]);
     }
 

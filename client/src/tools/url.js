@@ -148,6 +148,9 @@ const urls = {
   exportClientsGeneralDataOdessa: `${prefix}/export-clients-general-data-odessa`,
   transfersClient: `${prefix}/transfers-client`,
   storeTransfersClient: `${prefix}/store-transfers-client`,
+  // addDevice: `${prefix}/add-device`,
+  updatePlayerId: `${prefix}/update-player-id`,
+  createNotification: `${prefix}/create-notification`,
   serverUrl: 'https://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,
