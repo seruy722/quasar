@@ -91,8 +91,16 @@ class NotificationController extends Controller
 
     public function updatePlayerId(Request $request)
     {
-        if ($request->id !== auth()->user()->player_id) {
-            User::where('id', auth()->user()->id)->update(['player_id' => $request->id]);
+        $user = User::where('id', auth()->user()->id)->first();
+        if (!$user->player_id) {
+            $user->player_id = json_encode([$request->player_id]);
+            $user->save();
+        } else {
+            $playerIds = json_decode($user->player_id);
+            array_push($playerIds, $request->player_id);
+            $playerIds = array_unique($playerIds);
+            $user->player_id = json_encode($playerIds);
+            $user->save();
         }
         return response()->json(null, 201);
     }

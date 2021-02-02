@@ -106,12 +106,12 @@ class TransferController extends Controller
 
         $transfer = Transfer::create($this->stripData($transferArr));
         $this->storeTransferHistory($transfer->id, $this->stripData($transferArr), 'create');
-        $players = User::where([['code_id', '=', 0], ['id', '<>', 11], ['player_id', '<>', null], ['player_id', '<>', auth()->user()->player_id]])->get();
-//        $players = User::where([['code_id', '=', 0], ['id', '<>', 11], ['player_id', '<>', null]])->get();
+        $players = User::where([['code_id', '=', 0], ['id', '<>', 11], ['player_id', '<>', null], ['id', '<>', auth()->user()->id]])->get();
+        $notificationData = null;
         if ($players) {
             $playersIds = $players->map(function ($item) {
-                return $item->player_id;
-            });
+                return json_decode($item->player_id);
+            })->flatten();
             $customer = Code::where('id', $transferArr['client_id'])->first();
             if ($customer) {
                 $notificationData = ['text' => 'Пользователь ' . auth()->user()->name . ' добавил перевод клиенту - ' . $customer->code . ' на сумму - ' . $request->sum, 'player_ids' => $playersIds, 'url' => 'https://cargo007.net/#/moder/transfers'];

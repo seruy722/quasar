@@ -38,7 +38,7 @@ export default {
                 OneSignal.getUserId((userId) => {
                   console.log('OneSignal User ID:', userId);
                   this.$axios.post(getUrl('updatePlayerId'), {
-                    id: userId,
+                    player_id: userId,
                   });
                 });
               } else {
