@@ -6,16 +6,18 @@ use App\Category;
 use App\CodesPrices;
 use App\Fax;
 use App\FaxData;
-use App\HistoryModels\StorehouseDataHistory;
 use App\Shop;
 use App\StorehouseData;
 use App\StorehouseHistory;
 use App\Thingslist;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Traits\PushNotifications;
 
 class StorehouseDataController extends Controller
 {
+    use PushNotifications;
+
     protected $rules = [
         'code_place' => 'required|max:12|unique:code_places',
         'code_client_id' => 'required|numeric',

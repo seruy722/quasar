@@ -26,6 +26,17 @@ class TransferController extends Controller
         'notation' => 'nullable|string|max:255',
     ];
 
+    protected $transferStatus = [
+        0 => 'Не выбрано',
+        1 => 'Вопрос',
+        2 => 'Не выдан',
+        3 => 'Выдано',
+        4 => 'Отменен',
+        5 => 'Возврат',
+        6 => 'Обработка',
+        7 => 'Отменен клиентом',
+    ];
+
     public function stripData($value)
     {
         $func = function ($value) {
@@ -79,6 +90,40 @@ class TransferController extends Controller
 
         Transfer::where('id', $request->id)->update($data);
         $this->storeTransferHistory($request->id, $data, 'update');
+        // PUSH
+        $players = User::where([['code_id', '=', 0], ['id', '<>', 11], ['player_id', '<>', null], ['id', '<>', auth()->user()->id]])->get();
+        $notificationData = null;
+        if ($players) {
+            $playersIds = $players->map(function ($item) {
+                return json_decode($item->player_id);
+            })->flatten();
+            $transfer = Transfer::find($request->id);
+            $customer = Code::where('id', $transfer->client_id)->first();
+            if ($customer) {
+                $notificationText = null;
+                if ($request->sum && $request->status) {
+                    $notificationText = 'Пользователь ' . auth()->user()->name . ' изменил сумму перевода на - <' . $request->sum . '>' . ' статус - <' . $this->transferStatus[$request->status] . '> для ' . $customer->code;
+                } else if ($request->sum) {
+                    $notificationText = 'Пользователь ' . auth()->user()->name . ' изменил сумму перевода на - <' . $request->sum . '> для ' . $customer->code;
+                } else if ($request->status) {
+                    $notificationText = ' Пользователь ' . auth()->user()->name . ' изменил статус перевода на - <' . $this->transferStatus[$request->status] . '> для (' . $customer->code . ' - ' . $transfer->sum . ')';
+                }
+                $notificationData = ['text' => $notificationText, 'player_ids' => $playersIds, 'url' => 'https://cargo007.net/#/moder/transfers'];
+                $this->createNotification($notificationData);
+            }
+        } else if ((auth()->user()->player_id && auth()->user()->code_id)) {
+            $notificationText = null;
+            $transfer = Transfer::find($request->id);
+            if ($request->sum && $request->status) {
+                $notificationText = 'Изменены данные перевода для ' . $transfer->receiver_name . ' сумма - <' . $request->sum . '>' . ' статус - <' . $this->transferStatus[$request->status] . '>';
+            } else if ($request->sum) {
+                $notificationText = 'Изменена сумма перевода для ' . $transfer->receiver_name . ' на - <' . $request->sum . '>';
+            } else if ($request->status) {
+                $notificationText = 'Изменен статус перевода для ' . $transfer->receiver_name . ' - <' . $this->transferStatus[$request->status] . '> на сумму ' . $transfer->sum;
+            }
+            $notificationData = ['text' => $notificationText, 'player_ids' => json_decode(auth()->user()->player_id), 'url' => 'https://cargo007.net/#/moder/client-transfers'];
+            $this->createNotification($notificationData);
+        }
         return response(['transfer' => $this->query()->where('transfers.id', $request->id)->get()]);
     }
 
@@ -117,6 +162,9 @@ class TransferController extends Controller
                 $notificationData = ['text' => 'Пользователь ' . auth()->user()->name . ' добавил перевод клиенту - ' . $customer->code . ' на сумму - ' . $request->sum, 'player_ids' => $playersIds, 'url' => 'https://cargo007.net/#/moder/transfers'];
                 $this->createNotification($notificationData);
             }
+        } else if (auth()->user()->player_id && auth()->user()->code_id) {
+            $notificationData = ['text' => 'Добавлен перевод для <' . $request->receiver_name . '> на сумму - ' . $request->sum . ' статус - <' . $this->transferStatus[$request->status] . '>', 'player_ids' => json_decode(auth()->user()->player_id), 'url' => 'https://cargo007.net/#/moder/client-transfers'];
+            $this->createNotification($notificationData);
         }
 
         return response(['transfer' => $this->query()->where('transfers.id', $transfer->id)->get()]);
