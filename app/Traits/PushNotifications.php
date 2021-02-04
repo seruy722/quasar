@@ -2,6 +2,7 @@
 
 
 namespace App\Traits;
+use Illuminate\Support\Str;
 
 trait PushNotifications
 {
@@ -24,7 +25,8 @@ trait PushNotifications
             ),
             'contents' => $content,
             'headings' => $headings,
-            'url' => $data['url']
+            'url' => $data['url'],
+            'web_push_topic' => Str::random(10)
         );
 
         $fields = json_encode($fields);
