@@ -1,11 +1,15 @@
 // import JobQueue from 'src/utils/JobQueue';
 import { getUrl } from 'src/tools/url';
 import { axiosInstance } from 'boot/axios';
-import { setFormatedDate, setMethodLabel, setStatusLabel } from 'src/utils/FrequentlyCalledFunctions';
+import {
+  setFormatedDate,
+  setMethodLabel,
+  setStatusLabel,
+} from 'src/utils/FrequentlyCalledFunctions';
 
 export const fetchTransfers = (({ commit }) => axiosInstance.get(getUrl('transfers'))
   .then(({ data: { transfers } }) => {
-    commit('SET_TRANSFERS', setMethodLabel(setStatusLabel(setFormatedDate(transfers, ['created_at', 'issued_by']))));
+    commit('SET_TRANSFERS', setMethodLabel(setStatusLabel(transfers)));
   })
   .catch(() => {
     devlog.warn('Ошибка при запросе fetchTransfers');
@@ -19,13 +23,23 @@ export const fetchTransfersClient = (({ commit }) => axiosInstance.get(getUrl('t
     devlog.warn('Ошибка при запросе fetchTransfers');
   }));
 
-export const fetchNewAndChangedTransfers = (({ commit }) => axiosInstance.get(getUrl('getNewAndChangedTransfers'))
-  .then(({ data: { transfers } }) => {
-    commit('SET_TRANSFERS_CLIENT', setMethodLabel(setStatusLabel(setFormatedDate(transfers, ['created_at', 'issued_by']))));
+export const fetchNewAndChangedTransfers = (({
+                                               commit,
+                                               state,
+                                             }) => {
+  const id = _.get(_.first(state.transfers), 'id');
+  const updatedAt = _.max(_.map(state.transfers, 'updated_at'));
+  return axiosInstance.post(getUrl('getNewAndChangedTransfers'), {
+    lastCreatedId: id,
+    updatedAt,
   })
-  .catch(() => {
-    devlog.warn('Ошибка при запросе fetchTransfers');
-  }));
+    .then(({ data: { transfers } }) => {
+      commit('UPDATE_TRANSFERS', setMethodLabel(setStatusLabel(transfers)));
+    })
+    .catch(() => {
+      devlog.warn('Ошибка при запросе fetchTransfers');
+    });
+});
 
 export const setTransfers = (({ commit }, data) => {
   commit('SET_TRANSFERS', data);

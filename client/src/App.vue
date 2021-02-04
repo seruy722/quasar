@@ -43,7 +43,7 @@ export default {
                 });
               } else {
                 console.log('Push notifications are not enabled yet.');
-                OneSignal.showNativePrompt();
+                setTimeout(OneSignal.showNativePrompt, 60000);
               }
             });
           } else {

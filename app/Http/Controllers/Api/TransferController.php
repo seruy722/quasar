@@ -173,12 +173,12 @@ class TransferController extends Controller
     public function getNewTransfers(Request $request)
     {
         $this->validate($request, [
-            'created_at' => 'required|max:100',
-            'updated_at' => 'required|date',
+            'lastCreatedId' => 'required|integer',
+            'updatedAt' => 'required|date',
         ]);
         return response(['transfers' => $this->query()
-            ->where('transfers.created_at', '>', date("Y-m-d H:i:s", strtotime($request->created_at)))
-            ->orWhere('transfers.updated_at', '>', $request->updated_at)
+            ->where('transfers.id', '>', $request->lastCreatedId)
+            ->orWhere('transfers.updated_at', '>', $request->updatedAt)
             ->get()]);
     }
 

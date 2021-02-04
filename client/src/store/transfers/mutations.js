@@ -6,6 +6,17 @@ export const SET_TRANSFERS_CLIENT = ((state, data) => {
   state.transfersClient = data;
 });
 
+export const UPDATE_TRANSFERS = ((state, data) => {
+  _.forEach(data, (item) => {
+    const index = _.findIndex(state.transfers, { id: item.id });
+    if (index !== -1) {
+      state.transfers.splice(index, 1, item);
+    } else {
+      state.transfers.unshift(item);
+    }
+  });
+});
+
 export const ADD_TRANSFER = ((state, [elem]) => {
   state.transfers.unshift(elem);
 });

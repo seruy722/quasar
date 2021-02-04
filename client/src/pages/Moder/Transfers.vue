@@ -66,7 +66,7 @@
 
                 <q-item-section>
                   <q-item-label>
-                    {{ props.row.created_at.slice(0,5) }}
+                    {{ props.row.created_at.slice(0, 5) }}
                   </q-item-label>
                 </q-item-section>
 
@@ -423,547 +423,552 @@
 </template>
 
 <script>
-    import { getUrl } from 'src/tools/url';
-    import getFromSettings from 'src/tools/settings';
-    import {
-        formatToDotDate,
-        reverseDate,
-        addTime,
-    } from 'src/utils/formatDate';
-    import CheckErrorsMixin from 'src/mixins/CheckErrors';
-    import showNotif from 'src/mixins/showNotif';
-    import ExportDataMixin from 'src/mixins/ExportData';
-    import { callFunction } from 'src/utils/index';
-    import TransferMixin from 'src/mixins/Transfer';
-    import {
-        setMethodLabel,
-        setStatusLabel,
-        setFormatedDate,
-        prepareHistoryData,
-        setChangeValue,
-        setDefaultData,
-        getClientCodes,
-    } from 'src/utils/FrequentlyCalledFunctions';
-    import { formatISO } from 'date-fns';
+import { getUrl } from 'src/tools/url';
+import getFromSettings from 'src/tools/settings';
+import {
+  formatToDotDate,
+  reverseDate,
+  addTime,
+} from 'src/utils/formatDate';
+import CheckErrorsMixin from 'src/mixins/CheckErrors';
+import showNotif from 'src/mixins/showNotif';
+import ExportDataMixin from 'src/mixins/ExportData';
+import { callFunction } from 'src/utils/index';
+import TransferMixin from 'src/mixins/Transfer';
+import {
+  setMethodLabel,
+  setStatusLabel,
+  setFormatedDate,
+  prepareHistoryData,
+  setChangeValue,
+  setDefaultData,
+  getClientCodes,
+} from 'src/utils/FrequentlyCalledFunctions';
+import { formatISO } from 'date-fns';
 
-    export default {
-        name: 'Transfers',
-        components: {
-            Table: () => import('components/Elements/Table/Table.vue'),
-            Dialog: () => import('components/Dialogs/Dialog.vue'),
-            Date: () => import('components/Date.vue'),
-            BaseInput: () => import('components/Elements/BaseInput.vue'),
-            IconBtn: () => import('components/Buttons/IconBtn.vue'),
-            BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-            Separator: () => import('components/Separator.vue'),
-            SearchSelect: () => import('components/Elements/SearchSelect.vue'),
-            BaseSelect: () => import('components/Elements/BaseSelect.vue'),
-            DialogAddCode: () => import('components/Dialogs/DialogAddCode.vue'),
-            PageSticky: () => import('components/PageSticky.vue'),
-            Fab: () => import('components/Elements/Fab.vue'),
-            FabAction: () => import('components/Elements/FabAction.vue'),
-            PageScroller: () => import('components/PageScroller.vue'),
-            PullRefresh: () => import('components/PullRefresh.vue'),
-            TransferHistory: () => import('components/History/TransferHistory.vue'),
-            CountTransfersData: () => import('components/Transfers/CountTransfersData.vue'),
-            TransfersStatistics: () => import('components/Transfers/TransfersStatistics.vue'),
-            UpdateBtn: () => import('components/Buttons/UpdateBtn.vue'),
-            DialogChooseDate: () => import('components/Dialogs/DialogChooseDate.vue'),
+export default {
+  name: 'Transfers',
+  components: {
+    Table: () => import('components/Elements/Table/Table.vue'),
+    Dialog: () => import('components/Dialogs/Dialog.vue'),
+    Date: () => import('components/Date.vue'),
+    BaseInput: () => import('components/Elements/BaseInput.vue'),
+    IconBtn: () => import('components/Buttons/IconBtn.vue'),
+    BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
+    Separator: () => import('components/Separator.vue'),
+    SearchSelect: () => import('components/Elements/SearchSelect.vue'),
+    BaseSelect: () => import('components/Elements/BaseSelect.vue'),
+    DialogAddCode: () => import('components/Dialogs/DialogAddCode.vue'),
+    PageSticky: () => import('components/PageSticky.vue'),
+    Fab: () => import('components/Elements/Fab.vue'),
+    FabAction: () => import('components/Elements/FabAction.vue'),
+    PageScroller: () => import('components/PageScroller.vue'),
+    PullRefresh: () => import('components/PullRefresh.vue'),
+    TransferHistory: () => import('components/History/TransferHistory.vue'),
+    CountTransfersData: () => import('components/Transfers/CountTransfersData.vue'),
+    TransfersStatistics: () => import('components/Transfers/TransfersStatistics.vue'),
+    UpdateBtn: () => import('components/Buttons/UpdateBtn.vue'),
+    DialogChooseDate: () => import('components/Dialogs/DialogChooseDate.vue'),
+  },
+  mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
+  data() {
+    return {
+      dialogStatistics: false,
+      dialogHistory: false,
+      transferHistoryData: {
+        cols: {},
+        transferHistory: [],
+      },
+      localProps: {},
+      showCodeDialog: false,
+      dialog: false,
+      transferData: {
+        client_id: {
+          type: 'searchSelect',
+          label: 'Клиент',
+          field: 'client_id',
+          require: false,
+          requireError: 'Выберите клиента.',
+          options: [],
+          changeValue: false,
+          funcLoadData: getClientCodes,
+          default: null,
+          value: null,
         },
-        mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
-        data() {
-            return {
-                dialogStatistics: false,
-                dialogHistory: false,
-                transferHistoryData: {
-                    cols: {},
-                    transferHistory: [],
-                },
-                localProps: {},
-                showCodeDialog: false,
-                dialog: false,
-                transferData: {
-                    client_id: {
-                        type: 'searchSelect',
-                        label: 'Клиент',
-                        field: 'client_id',
-                        require: false,
-                        requireError: 'Выберите клиента.',
-                        options: [],
-                        changeValue: false,
-                        funcLoadData: getClientCodes,
-                        default: null,
-                        value: null,
-                    },
-                    receiver_name: {
-                        type: 'text',
-                        label: 'Получатель',
-                        field: 'receiver_name',
-                        rules: [
-                            {
-                                name: 'isLength',
-                                error: 'Минимальное количество символов 2.',
-                                options: {
-                                    min: 2,
-                                    max: 255,
-                                },
-                            },
-                        ],
-                        require: true,
-                        requireError: 'Поле обьязательное для заполнения.',
-                        changeValue: false,
-                        default: '',
-                        value: '',
-                    },
-                    receiver_phone: {
-                        type: 'text',
-                        label: 'Телефон получателя',
-                        field: 'receiver_phone',
-                        require: true,
-                        requireError: 'Поле обьязательное для заполнения.',
-                        rules: [
-                            {
-                                name: 'isLength',
-                                error: 'Минимальное количество символов 12.',
-                                options: {
-                                    min: 12,
-                                    max: 12,
-                                },
-                            },
-                        ],
-                        unmaskedValue: true,
-                        mask: '+## (###) ###-##-##',
-                        changeValue: false,
-                        default: '',
-                        value: '',
-                    },
-                    sum: {
-                        type: 'number',
-                        label: 'Сумма',
-                        field: 'sum',
-                        require: true,
-                        requireError: 'Поле обьязательное для заполнения.',
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
-                    method: {
-                        type: 'select',
-                        label: 'Метод',
-                        field: 'method',
-                        require: true,
-                        requireError: 'Поле обьязательное для заполнения.',
-                        options: getFromSettings('transferMethod'),
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
-                    status: {
-                        type: 'select',
-                        label: 'Статус',
-                        field: 'status',
-                        options: getFromSettings('transferStatus'),
-                        require: true,
-                        requireError: 'Поле обьязательное для заполнения.',
-                        changeValue: false,
-                        default: 2,
-                        value: 0,
-                    },
-                    issued_by: {
-                        type: 'date',
-                        field: 'issued_by',
-                        label: 'Выдано',
-                        mask: '##-##-####',
-                        require: true,
-                        requireError: 'Поле обьязательное для заполнения.',
-                        changeValue: false,
-                        default: null,
-                        value: formatToDotDate(new Date().toISOString()),
-                    },
-                    notation: {
-                        type: 'text',
-                        label: 'Примечания',
-                        field: 'notation',
-                        changeValue: false,
-                        default: '',
-                        value: '',
-                    },
-                },
-                transferTableProperties: {
-                    columns: [
-                        {
-                            name: 'client_name',
-                            label: 'Клиент',
-                            align: 'center',
-                            field: 'client_name',
-                            sortable: true,
-                            // sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-                        },
-                        {
-                            name: 'receiver_name',
-                            label: 'Получатель',
-                            field: 'receiver_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'receiver_phone',
-                            label: 'Телефон получателя',
-                            field: 'receiver_phone',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sum',
-                            label: this.$t('sum'),
-                            field: 'sum',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'paid',
-                            label: 'Оплачен',
-                            field: 'paid',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'method_label',
-                            label: 'Метод',
-                            field: 'method_label',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'status_label',
-                            label: 'Статус',
-                            field: 'status_label',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'user_name',
-                            label: 'Пользователь',
-                            field: 'user_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'created_at',
-                            label: 'Добавлено',
-                            field: 'created_at',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'issued_by',
-                            field: 'issued_by',
-                            label: 'Выдано',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                transferTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at', 'issued_by', 'paid'],
-                },
-                showDialogChooseDate: false,
-                dialogChooseDateData: null,
-                dialogChooseDataForSend: {},
-            };
+        receiver_name: {
+          type: 'text',
+          label: 'Получатель',
+          field: 'receiver_name',
+          rules: [
+            {
+              name: 'isLength',
+              error: 'Минимальное количество символов 2.',
+              options: {
+                min: 2,
+                max: 255,
+              },
+            },
+          ],
+          require: true,
+          requireError: 'Поле обьязательное для заполнения.',
+          changeValue: false,
+          default: '',
+          value: '',
         },
-        computed: {
-            allTransfers() {
-                return this.$store.getters['transfers/getTransfers'];
+        receiver_phone: {
+          type: 'text',
+          label: 'Телефон получателя',
+          field: 'receiver_phone',
+          require: true,
+          requireError: 'Поле обьязательное для заполнения.',
+          rules: [
+            {
+              name: 'isLength',
+              error: 'Минимальное количество символов 12.',
+              options: {
+                min: 12,
+                max: 12,
+              },
             },
-            dialogTitle() {
-                return _.get(this.localProps, 'row.client_name') || 'Новый перевод';
-            },
-            clientCodes() {
-                return this.$store.getters['codes/getCodes'];
-            },
-            countCheckedTransfers() {
-                return _.size(this.transferTableReactiveProperties.selected);
-            },
-            countSumCheckedTransfers() {
-                return _.sumBy(this.transferTableReactiveProperties.selected, 'sum');
-            },
+          ],
+          unmaskedValue: true,
+          mask: '+## (###) ###-##-##',
+          changeValue: false,
+          default: '',
+          value: '',
         },
-        watch: {
-            clientCodes: {
-                handler: function setCodes(val) {
-                    devlog.log('CLIENT_CODES');
-                    _.set(this.transferData, 'client_id.options', val);
-                },
-                immediate: true,
-            },
-            'transferData.status.value': {
-                handler: function status(val) {
-                    if (val > 2) {
-                        _.set(this.transferData, 'issued_by.require', true);
-                    } else {
-                        _.set(this.transferData, 'issued_by.require', false);
-                        _.set(this.transferData, 'issued_by.value', null);
-                    }
-                },
-                immediate: true,
-            },
-            dialogChooseDateData(val) {
-                if (val) {
-                    this.dialogChooseDataForSend.date = addTime(val)
-                      .toISOString();
-                    this.addToDebtsTableFinish(this.dialogChooseDataForSend);
-                }
-            },
+        sum: {
+          type: 'number',
+          label: 'Сумма',
+          field: 'sum',
+          require: true,
+          requireError: 'Поле обьязательное для заполнения.',
+          changeValue: false,
+          default: 0,
+          value: 0,
         },
-        mounted() {
-            this.getTransfers();
+        method: {
+          type: 'select',
+          label: 'Метод',
+          field: 'method',
+          require: true,
+          requireError: 'Поле обьязательное для заполнения.',
+          options: getFromSettings('transferMethod'),
+          changeValue: false,
+          default: 0,
+          value: 0,
         },
-        methods: {
-            updateData(data) {
-                const sendData = _.cloneDeep(data);
-                devlog.log('DATA_N0', sendData);
-                if (!sendData.client_id.value) {
-                    devlog.log('NEW_');
-                    this.showCodeDialog = true;
-                } else if (_.isEmpty(this.localProps)) {
-                    // ДОБАВЛЕНИЕ ЗАПИСИ
-                    this.$q.loading.show();
-                    const values = _.mapValues(sendData, 'value');
-                    values.receiver_name = _.startCase(_.toLower(values.receiver_name));
-                    if (_.trim(values.issued_by)) {
-                        const date = reverseDate(values.issued_by);
-                        values.issued_by = formatISO(addTime(date));
-                    }
-                    this.$axios.post(getUrl('storeTransfers'), values)
-                      .then(({ data: { transfer } }) => {
-                          devlog.log('DDFR', transfer);
-                          this.$store.dispatch('transfers/addTransfer', this.setAdditionalData([_.first(transfer)]));
-                          this.openCloseDialog(false);
-                          setChangeValue(this.transferData);
-                          this.$q.loading.hide();
-                          this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно добавлена.`, 'center');
-                      })
-                      .catch((errors) => {
-                          this.$q.loading.hide();
-                          this.errorsData.errors = _.get(errors, 'response.data.errors');
-                      });
-                } else if (_.has(this.localProps, 'row.id')) {
-                    // ОБНОВЛЕНИЕ ЗАПИСИ
-                    if (_.some(sendData, 'changeValue')) {
-                        this.$q.loading.show();
-                        devlog.log('sendData_', sendData);
-                        const dataToSend = _.reduce(sendData, (result, { value, changeValue }, index) => {
-                            if (changeValue && index === 'issued_by') {
-                                devlog.log('ISSUUE', value);
-                                if (value) {
-                                    const date = reverseDate(value);
-                                    result[index] = formatISO(addTime(date));
-                                } else {
-                                    result[index] = value;
-                                }
-                            } else if (changeValue && index === 'receiver_name' && value) {
-                                result[index] = _.startCase(_.toLower(value));
-                            } else if (changeValue) {
-                                result[index] = value;
-                            }
-                            return result;
-                        }, {});
-                        _.assign(dataToSend, { id: _.get(this.localProps, 'row.id') });
-                        devlog.log('dataToSend', dataToSend);
-                        this.$axios.post(getUrl('updateTransfers'), dataToSend)
-                          .then(({ data: { transfer } }) => {
-                              devlog.log('DDFR', transfer);
-                              this.$store.dispatch('transfers/updateTransfer', this.setAdditionalData([_.first(transfer)]));
-                              this.openCloseDialog(false);
-                              this.localProps.selected = false;
-                              this.$q.loading.hide();
-                              setChangeValue(this.transferData);
-                              this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно обновлена.`, 'center');
-                          })
-                          .catch((errors) => {
-                              this.$q.loading.hide();
-                              this.errorsData.errors = _.get(errors, 'response.data.errors');
-                          });
-                    } else {
-                        this.openCloseDialog(false);
-                    }
-                    devlog.log('item_DDD_FFF', data);
-                }
-            },
-            viewEditDialog(val, event) {
-                devlog.log('EVENT', event);
-                devlog.log('EVENT_get', _.get(event, 'target.classList'));
-                devlog.log('val', val);
-                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
-                    if (val) {
-                        this.localProps = val;
-                        this.transferTableReactiveProperties.selected = [];
-                        setTimeout(() => {
-                            val.selected = !val.selected;
-                        }, 100);
-                        devlog.log('SEL', val);
-                        this.$q.loading.show();
-                        Promise.all([getClientCodes(this.$store)])
-                          .then(() => {
-                              this.openCloseDialog(true);
-                              this.$q.loading.hide();
-                          });
-
-                        _.forEach(this.transferData, (item) => {
-                            if (_.has(val.row, item.field)) {
-                                if (_.get(val, `row[${item.field}]`)) {
-                                    _.set(item, 'value', _.get(val, `row[${item.field}]`));
-                                } else {
-                                    _.set(item, 'value', item.default);
-                                }
-                            }
-                        });
-                    } else {
-                        this.openCloseDialog(true);
-                        this.localProps = {};
-                        setDefaultData(this.transferData);
-                    }
-                }
-            },
-            async getTransfers() {
-                if (_.isEmpty(this.allTransfers)) {
-                    this.$q.loading.show();
-                    await this.$store.dispatch('transfers/fetchTransfers')
-                      .then(() => {
-                          this.$q.loading.hide();
-                      })
-                      .catch(() => {
-                          this.$q.loading.hide();
-                      });
-                }
-            },
-            setAdditionalData(data) {
-                return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
-            },
-            openCloseDialog(val) {
-                this.dialog = val;
-            },
-            cancel(data) {
-                this.openCloseDialog(false);
-                this.localProps.selected = false;
-                setChangeValue(data);
-            },
-            async refresh(done) {
-                if (!done) {
-                    this.$q.loading.show();
-                }
-                this.$store.dispatch('transfers/fetchTransfers')
-                  .then(() => {
-                      callFunction(done);
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      callFunction(done);
-                  });
-            },
-            exportTransfers() {
-                if (!_.isEmpty(this.allTransfers)) {
-                    this.exportDataToExcel(getUrl('exportTransfers'), {
-                        ids: _.map(this.transferTableReactiveProperties.selected, 'id'),
-                    }, 'Переводы.xlsx');
-                }
-            },
-            async getTransfersHistory(transferID, cols) {
-                this.$q.loading.show();
-                await this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`)
-                  .then(({ data: { transferHistory } }) => {
-                      if (!_.isEmpty(transferHistory)) {
-                          this.$q.loading.hide();
-                          this.dialogHistory = true;
-                          const historyData = prepareHistoryData(cols, transferHistory);
-                          historyData.historyData = this.setAdditionalData(historyData.historyData);
-                          this.transferHistoryData = historyData;
-                      } else {
-                          this.$q.loading.hide();
-                          this.showNotif('info', 'По этому переводу нет истории.', 'center');
-                      }
-                  })
-                  .catch(() => {
-                      devlog.error('Ошибка при получении данных истории.');
-                  });
-            },
-            addToDebtsTableFinish({ ids, date = null }) {
-                this.$q.loading.show();
-                this.$axios.post(getUrl('addTransfersToDebts'), {
-                    ids,
-                    date,
-                })
-                  .then(() => {
-                      this.transferTableReactiveProperties.selected = [];
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно добавлены в таблицу долгов', 'center');
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      this.showNotif('error', 'Произошла ошибка при добавлении данных', 'center');
-                      devlog.error('Ошибка запроса - addTransfersToDebts');
-                  });
-            },
-            addToDebtsTable(data) {
-                devlog.log('DATAAAA', data);
-                const ids = _.map(data, 'id');
-                this.showNotif('warning', _.size(ids) > 1 ? 'Добавить записи в талицу долгов?' : 'Добавить запись в талицу долгов?', 'center', [
-                    {
-                        label: 'Отмена',
-                        color: 'white',
-                        handler: () => {
-                            this.transferTableReactiveProperties.selected = [];
-                        },
-                    },
-                    {
-                        label: 'Добавить',
-                        color: 'white',
-                        handler: () => {
-                            this.showDialogChooseDate = true;
-                            this.dialogChooseDataForSend = {
-                                ids,
-                            };
-                        },
-                    },
-                ]);
-            },
+        status: {
+          type: 'select',
+          label: 'Статус',
+          field: 'status',
+          options: getFromSettings('transferStatus'),
+          require: true,
+          requireError: 'Поле обьязательное для заполнения.',
+          changeValue: false,
+          default: 2,
+          value: 0,
         },
+        issued_by: {
+          type: 'date',
+          field: 'issued_by',
+          label: 'Выдано',
+          mask: '##-##-####',
+          require: true,
+          requireError: 'Поле обьязательное для заполнения.',
+          changeValue: false,
+          default: null,
+          value: formatToDotDate(new Date().toISOString()),
+        },
+        notation: {
+          type: 'text',
+          label: 'Примечания',
+          field: 'notation',
+          changeValue: false,
+          default: '',
+          value: '',
+        },
+      },
+      transferTableProperties: {
+        columns: [
+          {
+            name: 'client_name',
+            label: 'Клиент',
+            align: 'center',
+            field: 'client_name',
+            sortable: true,
+            // sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+          },
+          {
+            name: 'receiver_name',
+            label: 'Получатель',
+            field: 'receiver_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'receiver_phone',
+            label: 'Телефон получателя',
+            field: 'receiver_phone',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'sum',
+            label: this.$t('sum'),
+            field: 'sum',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'paid',
+            label: 'Оплачен',
+            field: 'paid',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'method_label',
+            label: 'Метод',
+            field: 'method_label',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'status_label',
+            label: 'Статус',
+            field: 'status_label',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'user_name',
+            label: 'Пользователь',
+            field: 'user_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'created_at',
+            label: 'Добавлено',
+            field: 'created_at',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'issued_by',
+            field: 'issued_by',
+            label: 'Выдано',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'notation',
+            label: this.$t('notation'),
+            field: 'notation',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      transferTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at', 'issued_by', 'paid'],
+      },
+      showDialogChooseDate: false,
+      dialogChooseDateData: null,
+      dialogChooseDataForSend: {},
     };
+  },
+  computed: {
+    allTransfers() {
+      return this.$store.getters['transfers/getTransfers'];
+    },
+    dialogTitle() {
+      return _.get(this.localProps, 'row.client_name') || 'Новый перевод';
+    },
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+    countCheckedTransfers() {
+      return _.size(this.transferTableReactiveProperties.selected);
+    },
+    countSumCheckedTransfers() {
+      return _.sumBy(this.transferTableReactiveProperties.selected, 'sum');
+    },
+  },
+  watch: {
+    clientCodes: {
+      handler: function setCodes(val) {
+        devlog.log('CLIENT_CODES');
+        _.set(this.transferData, 'client_id.options', val);
+      },
+      immediate: true,
+    },
+    'transferData.status.value': {
+      handler: function status(val) {
+        if (val > 2) {
+          _.set(this.transferData, 'issued_by.require', true);
+        } else {
+          _.set(this.transferData, 'issued_by.require', false);
+          _.set(this.transferData, 'issued_by.value', null);
+        }
+      },
+      immediate: true,
+    },
+    dialogChooseDateData(val) {
+      if (val) {
+        this.dialogChooseDataForSend.date = addTime(val)
+          .toISOString();
+        this.addToDebtsTableFinish(this.dialogChooseDataForSend);
+      }
+    },
+  },
+  mounted() {
+    this.getTransfers();
+  },
+  methods: {
+    updateData(data) {
+      const sendData = _.cloneDeep(data);
+      devlog.log('DATA_N0', sendData);
+      if (!sendData.client_id.value) {
+        devlog.log('NEW_');
+        this.showCodeDialog = true;
+      } else if (_.isEmpty(this.localProps)) {
+        // ДОБАВЛЕНИЕ ЗАПИСИ
+        this.$q.loading.show();
+        const values = _.mapValues(sendData, 'value');
+        values.receiver_name = _.startCase(_.toLower(values.receiver_name));
+        if (_.trim(values.issued_by)) {
+          const date = reverseDate(values.issued_by);
+          values.issued_by = formatISO(addTime(date));
+        }
+        this.$axios.post(getUrl('storeTransfers'), values)
+          .then(({ data: { transfer } }) => {
+            devlog.log('DDFR', transfer);
+            this.$store.dispatch('transfers/addTransfer', this.setAdditionalData([_.first(transfer)]));
+            this.openCloseDialog(false);
+            setChangeValue(this.transferData);
+            this.$q.loading.hide();
+            this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно добавлена.`, 'center');
+          })
+          .catch((errors) => {
+            this.$q.loading.hide();
+            this.errorsData.errors = _.get(errors, 'response.data.errors');
+          });
+      } else if (_.has(this.localProps, 'row.id')) {
+        // ОБНОВЛЕНИЕ ЗАПИСИ
+        if (_.some(sendData, 'changeValue')) {
+          this.$q.loading.show();
+          devlog.log('sendData_', sendData);
+          const dataToSend = _.reduce(sendData, (result, {
+            value,
+            changeValue,
+          }, index) => {
+            if (changeValue && index === 'issued_by') {
+              devlog.log('ISSUUE', value);
+              if (value) {
+                const date = reverseDate(value);
+                result[index] = formatISO(addTime(date));
+              } else {
+                result[index] = value;
+              }
+            } else if (changeValue && index === 'receiver_name' && value) {
+              result[index] = _.startCase(_.toLower(value));
+            } else if (changeValue) {
+              result[index] = value;
+            }
+            return result;
+          }, {});
+          _.assign(dataToSend, { id: _.get(this.localProps, 'row.id') });
+          devlog.log('dataToSend', dataToSend);
+          this.$axios.post(getUrl('updateTransfers'), dataToSend)
+            .then(({ data: { transfer } }) => {
+              devlog.log('DDFR', transfer);
+              this.$store.dispatch('transfers/updateTransfer', this.setAdditionalData([_.first(transfer)]));
+              this.openCloseDialog(false);
+              this.localProps.selected = false;
+              this.$q.loading.hide();
+              setChangeValue(this.transferData);
+              this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно обновлена.`, 'center');
+            })
+            .catch((errors) => {
+              this.$q.loading.hide();
+              this.errorsData.errors = _.get(errors, 'response.data.errors');
+            });
+        } else {
+          this.openCloseDialog(false);
+        }
+        devlog.log('item_DDD_FFF', data);
+      }
+    },
+    viewEditDialog(val, event) {
+      devlog.log('EVENT', event);
+      devlog.log('EVENT_get', _.get(event, 'target.classList'));
+      devlog.log('val', val);
+      if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
+        if (val) {
+          this.localProps = val;
+          this.transferTableReactiveProperties.selected = [];
+          setTimeout(() => {
+            val.selected = !val.selected;
+          }, 100);
+          devlog.log('SEL', val);
+          this.$q.loading.show();
+          Promise.all([getClientCodes(this.$store)])
+            .then(() => {
+              this.openCloseDialog(true);
+              this.$q.loading.hide();
+            });
+
+          _.forEach(this.transferData, (item) => {
+            if (_.has(val.row, item.field)) {
+              if (_.get(val, `row[${item.field}]`)) {
+                _.set(item, 'value', _.get(val, `row[${item.field}]`));
+              } else {
+                _.set(item, 'value', item.default);
+              }
+            }
+          });
+        } else {
+          this.openCloseDialog(true);
+          this.localProps = {};
+          setDefaultData(this.transferData);
+        }
+      }
+    },
+    async getTransfers() {
+      if (_.isEmpty(this.allTransfers)) {
+        this.$q.loading.show();
+        await this.$store.dispatch('transfers/fetchTransfers')
+          .finally(() => {
+            this.$q.loading.hide();
+          });
+      } else {
+        this.$store.dispatch('transfers/fetchNewAndChangedTransfers');
+      }
+    },
+    setAdditionalData(data) {
+      return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
+    },
+    openCloseDialog(val) {
+      this.dialog = val;
+    },
+    cancel(data) {
+      this.openCloseDialog(false);
+      this.localProps.selected = false;
+      setChangeValue(data);
+    },
+    async refresh(done) {
+      if (!done) {
+        this.$q.loading.show();
+      }
+      this.$store.dispatch('transfers/fetchNewAndChangedTransfers')
+        .then(() => {
+          callFunction(done);
+          this.$q.loading.hide();
+          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          callFunction(done);
+        });
+    },
+    exportTransfers() {
+      if (!_.isEmpty(this.allTransfers)) {
+        this.exportDataToExcel(getUrl('exportTransfers'), {
+          ids: _.map(this.transferTableReactiveProperties.selected, 'id'),
+        }, 'Переводы.xlsx');
+      }
+    },
+    async getTransfersHistory(transferID, cols) {
+      this.$q.loading.show();
+      await this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`)
+        .then(({ data: { transferHistory } }) => {
+          if (!_.isEmpty(transferHistory)) {
+            this.$q.loading.hide();
+            this.dialogHistory = true;
+            const historyData = prepareHistoryData(cols, transferHistory);
+            historyData.historyData = this.setAdditionalData(historyData.historyData);
+            this.transferHistoryData = historyData;
+          } else {
+            this.$q.loading.hide();
+            this.showNotif('info', 'По этому переводу нет истории.', 'center');
+          }
+        })
+        .catch(() => {
+          devlog.error('Ошибка при получении данных истории.');
+        });
+    },
+    addToDebtsTableFinish({
+                            ids,
+                            date = null,
+                          }) {
+      this.$q.loading.show();
+      this.$axios.post(getUrl('addTransfersToDebts'), {
+        ids,
+        date,
+      })
+        .then(() => {
+          this.transferTableReactiveProperties.selected = [];
+          this.$q.loading.hide();
+          this.showNotif('success', 'Данные успешно добавлены в таблицу долгов', 'center');
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          this.showNotif('error', 'Произошла ошибка при добавлении данных', 'center');
+          devlog.error('Ошибка запроса - addTransfersToDebts');
+        });
+    },
+    addToDebtsTable(data) {
+      devlog.log('DATAAAA', data);
+      const ids = _.map(data, 'id');
+      this.showNotif('warning', _.size(ids) > 1 ? 'Добавить записи в талицу долгов?' : 'Добавить запись в талицу долгов?', 'center', [
+        {
+          label: 'Отмена',
+          color: 'white',
+          handler: () => {
+            this.transferTableReactiveProperties.selected = [];
+          },
+        },
+        {
+          label: 'Добавить',
+          color: 'white',
+          handler: () => {
+            this.showDialogChooseDate = true;
+            this.dialogChooseDataForSend = {
+              ids,
+            };
+          },
+        },
+      ]);
+    },
+  },
+};
 </script>
 
 <style lang="stylus">
-  .border_red {
-    border-color $red !important
-  }
+.border_red {
+  border-color $red !important
+}
 
-  .border_positive {
-    border-color $positive !important
-  }
+.border_positive {
+  border-color $positive !important
+}
 
-  .border_warning {
-    border-color $warning !important
-  }
+.border_warning {
+  border-color $warning !important
+}
 
-  .border_grey {
-    border-color $grey !important
-  }
+.border_grey {
+  border-color $grey !important
+}
 
-  .border_info {
-    border-color $info !important
-  }
+.border_info {
+  border-color $info !important
+}
 
-  .statistics_title
-    background-color lightgrey
-    text-align center
+.statistics_title
+  background-color lightgrey
+  text-align center
 </style>
