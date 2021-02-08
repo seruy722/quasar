@@ -270,9 +270,18 @@
 
             <IconBtn
               dense
+              icon="save"
+              tooltip="Сохранить"
+              color="positive"
+              @icon-btn-click="checkErrors(transferData, updateData)"
+            />
+
+            <IconBtn
+              dense
               icon="clear"
               tooltip="Закрыть"
-              @icon-btn-click="cancel(transferData)"
+              color="negative"
+              @icon-btn-click="confirm"
             />
           </div>
         </q-card-section>
@@ -728,6 +737,27 @@ export default {
     this.getTransfers();
   },
   methods: {
+    confirm() {
+      this.$q.dialog({
+        title: 'Предупреждение!',
+        message: 'Закрыть окно?',
+        ok: {
+          push: true,
+          label: 'Закрыть',
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+        },
+        persistent: true,
+      })
+        .onOk(() => {
+          this.cancel(this.transferData);
+        })
+        .onCancel(() => {
+          // console.log('>>>> Cancel')
+        });
+    },
     updateData(data) {
       const sendData = _.cloneDeep(data);
       devlog.log('DATA_N0', sendData);
@@ -746,11 +776,10 @@ export default {
         this.$axios.post(getUrl('storeTransfers'), values)
           .then(({ data: { transfer } }) => {
             devlog.log('DDFR', transfer);
-            this.$store.dispatch('transfers/addTransfer', this.setAdditionalData([_.first(transfer)]));
-            this.openCloseDialog(false);
-            setChangeValue(this.transferData);
+            this.$store.dispatch('transfers/addTransfer', transfer);
+            this.cancel(this.transferData);
             this.$q.loading.hide();
-            this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно добавлена.`, 'center');
+            this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно добавлена.`, 'center');
           })
           .catch((errors) => {
             this.$q.loading.hide();
@@ -785,12 +814,10 @@ export default {
           this.$axios.post(getUrl('updateTransfers'), dataToSend)
             .then(({ data: { transfer } }) => {
               devlog.log('DDFR', transfer);
-              this.$store.dispatch('transfers/updateTransfer', this.setAdditionalData([_.first(transfer)]));
-              this.openCloseDialog(false);
-              this.localProps.selected = false;
+              this.$store.dispatch('transfers/updateTransfer', transfer);
+              this.cancel(this.transferData);
               this.$q.loading.hide();
-              setChangeValue(this.transferData);
-              this.showNotif('success', `Запись клиента - ${_.get(transfer, '[0].client_name')} успешно обновлена.`, 'center');
+              this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно обновлена.`, 'center');
             })
             .catch((errors) => {
               this.$q.loading.hide();

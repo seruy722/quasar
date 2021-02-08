@@ -39,7 +39,7 @@
             label="OK"
             color="positive"
             :dense="$q.screen.xs || $q.screen.sm"
-            @click-base-btn="setDate(localDate)"
+            @click-base-btn="$emit('set-date')"
           />
         </q-card-actions>
       </q-card>
@@ -48,56 +48,58 @@
 </template>
 
 <script>
-    export default {
-        name: 'DialogChooseDate',
-        components: {
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
-        },
-        props: {
-            showDialog: {
-                type: Boolean,
-                default: false,
-            },
-            date: {
-                type: String,
-                default: new Date().toLocaleDateString()
-                  .split('.')
-                  .reverse()
-                  .join('-'),
-            },
-        },
-        data() {
-            return {
-                show: false,
-                localDate: new Date().toLocaleDateString()
-                  .split('.')
-                  .reverse()
-                  .join('-'),
-            };
-        },
-        watch: {
-            showDialog(val) {
-                this.show = val;
-            },
-            show(val) {
-                this.$emit('update:showDialog', val);
-            },
-            date(val) {
-                this.localDate = val;
-            },
-        },
-        methods: {
-            setDate(date) {
-                this.$emit('update:date', date);
-                this.close();
-            },
-            close() {
-                this.show = false;
-            },
-        },
+export default {
+  name: 'DialogChooseDate',
+  components: {
+    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
+    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    Separator: () => import('src/components/Separator.vue'),
+    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
+  },
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    date: {
+      type: String,
+      default: new Date().toLocaleDateString()
+        .split('.')
+        .reverse()
+        .join('-'),
+    },
+  },
+  data() {
+    return {
+      show: false,
+      localDate: new Date().toLocaleDateString()
+        .split('.')
+        .reverse()
+        .join('-'),
     };
+  },
+  watch: {
+    showDialog(val) {
+      this.show = val;
+      if (val) {
+        this.$emit('update:date', this.localDate);
+      }
+    },
+    show(val) {
+      this.$emit('update:showDialog', val);
+    },
+    date(val) {
+      this.localDate = val;
+    },
+    localDate(val) {
+      this.$emit('update:date', val);
+    },
+  },
+  methods: {
+    close() {
+      this.show = false;
+    },
+  },
+};
 </script>

@@ -209,15 +209,8 @@
               @click.stop="uploadToCargo(props.row)"
             >
               <q-icon
-                v-if="!props.row.uploaded_to_cargo"
                 dense
-                name="vertical_align_bottom"
-                @click.stop="uploadToCargo(props.row)"
-              ></q-icon>
-              <q-icon
-                v-else
-                dense
-                name="vertical_align_top"
+                :name="!props.row.uploaded_to_cargo ? 'vertical_align_bottom':'vertical_align_top'"
                 @click.stop="uploadToCargo(props.row)"
               ></q-icon>
             </q-td>
@@ -258,7 +251,7 @@
             :key="i"
           >
             <q-item-section>
-              <q-item-label>{{ `${i+1}. ${elem.name}` }}</q-item-label>
+              <q-item-label>{{ `${i + 1}. ${elem.name}` }}</q-item-label>
             </q-item-section>
             <q-item-section side>
               <q-item-label>{{ elem.transport_name }}</q-item-label>
@@ -296,365 +289,386 @@
     <DialogChooseDate
       :show-dialog.sync="showDialogChooseDate"
       :date.sync="dialogChooseDateData"
+      @set-date="setDateFromDialog(dialogChooseDateData)"
     />
-    <DialogNotDeliveredCargo :show.sync="showDialogNotDeliveredCargo"/>
+    <DialogNotDeliveredCargo :show.sync="showDialogNotDeliveredCargo" />
   </q-page>
 </template>
 
 <script>
-    import { getUrl } from 'src/tools/url';
-    import getFromSettings from 'src/tools/settings';
-    import { setFormatedDate, prepareHistoryData, getFaxes } from 'src/utils/FrequentlyCalledFunctions';
-    import { callFunction } from 'src/utils/index';
-    import showNotif from 'src/mixins/showNotif';
-    import { addTime } from 'src/utils/formatDate';
+import { getUrl } from 'src/tools/url';
+import getFromSettings from 'src/tools/settings';
+import { setFormatedDate, prepareHistoryData, getFaxes } from 'src/utils/FrequentlyCalledFunctions';
+import { callFunction } from 'src/utils/index';
+import showNotif from 'src/mixins/showNotif';
+import { addTime } from 'src/utils/formatDate';
 
-    export default {
-        name: 'Faxes',
-        components: {
-            Table: () => import('components/Elements/Table/Table.vue'),
-            List: () => import('components/Elements/List/List.vue'),
-            BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-            DialogAddFax: () => import('components/Dialogs/DialogAddFax.vue'),
-            IconBtn: () => import('components/Buttons/IconBtn.vue'),
-            Menu: () => import('components/Menu.vue'),
-            FaxesHistory: () => import('components/History/FaxesHistory.vue'),
-            Dialog: () => import('components/Dialogs/Dialog.vue'),
-            PullRefresh: () => import('src/components/PullRefresh.vue'),
-            UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-            DialogChooseDate: () => import('src/components/Dialogs/DialogChooseDate.vue'),
-            DialogNotDeliveredCargo: () => import('components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue'),
+export default {
+  name: 'Faxes',
+  components: {
+    Table: () => import('components/Elements/Table/Table.vue'),
+    List: () => import('components/Elements/List/List.vue'),
+    BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
+    DialogAddFax: () => import('components/Dialogs/DialogAddFax.vue'),
+    IconBtn: () => import('components/Buttons/IconBtn.vue'),
+    Menu: () => import('components/Menu.vue'),
+    FaxesHistory: () => import('components/History/FaxesHistory.vue'),
+    Dialog: () => import('components/Dialogs/Dialog.vue'),
+    PullRefresh: () => import('src/components/PullRefresh.vue'),
+    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
+    DialogChooseDate: () => import('src/components/Dialogs/DialogChooseDate.vue'),
+    DialogNotDeliveredCargo: () => import('components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue'),
+  },
+  filters: {
+    statusFilter(value) {
+      const options = getFromSettings('transportStatusOptions');
+      return _.get(_.find(options, { value }), 'label');
+    },
+  },
+  mixins: [showNotif],
+  data() {
+    return {
+      showDialogNotDeliveredCargo: false,
+      dialogHistory: false,
+      showFaxDialog: false,
+      faxHistoryData: {
+        cols: {},
+        historyData: [],
+      },
+      localFaxesEditData: {},
+      faxesTableProperties: {
+        title: 'Факсы',
+        viewBody: true,
+        viewTop: true,
+        hideBottom: false,
+        columns: [
+          {
+            name: 'name',
+            label: this.$t('fax'),
+            align: 'center',
+            field: 'name',
+            sortable: true,
+          },
+          {
+            name: 'status',
+            label: 'Статус',
+            field: 'status',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'transporter_name',
+            label: this.$t('transporter'),
+            field: 'transporter_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'transport_name',
+            label: this.$t('transport'),
+            field: 'transport_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'departure_date',
+            label: this.$t('departureDate'),
+            align: 'center',
+            field: 'departure_date',
+            sortable: true,
+          },
+          {
+            name: 'arrival_date',
+            label: 'Дата прибытия',
+            align: 'center',
+            field: 'arrival_date',
+            sortable: true,
+          },
+          {
+            name: 'user_name',
+            label: 'Пользователь',
+            field: 'user_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'notation',
+            label: 'Примечания',
+            field: 'notation',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'up_to_cargo',
+            label: 'В карго',
+            field: 'up_to_cargo',
+            align: 'center',
+          },
+        ],
+      },
+      faxesTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['name', 'departure_date', 'up_to_cargo', 'notation', 'arrival_date', 'status', 'transport_name', 'transporter_name', 'user_name'],
+      },
+      showDialogChooseDate: false,
+      dialogChooseDateData: null,
+      dialogChooseDataForSend: {},
+    };
+  },
+  computed: {
+    faxes() {
+      return this.$store.getters['faxes/getFaxes'];
+    },
+    transporters() {
+      return this.$store.getters['transporter/getTransporters'];
+    },
+    transport() {
+      return this.$store.getters['transport/getTransports'];
+    },
+    faxesStatusData() {
+      const { faxes } = this;
+      return [
+        {
+          status: 'Погрузка',
+          count: _.size(_.filter(faxes, { status: 1 })),
+          data: _.filter(faxes, { status: 1 }),
         },
-        filters: {
-            statusFilter(value) {
-                const options = getFromSettings('transportStatusOptions');
-                return _.get(_.find(options, { value }), 'label');
-            },
+        {
+          status: 'Ушло',
+          count: _.size(_.filter(faxes, { status: 2 })),
+          data: _.filter(faxes, { status: 2 }),
         },
-        mixins: [showNotif],
-        data() {
-            return {
-                showDialogNotDeliveredCargo: false,
-                dialogHistory: false,
-                showFaxDialog: false,
-                faxHistoryData: {
-                    cols: {},
-                    historyData: [],
-                },
-                localFaxesEditData: {},
-                faxesTableProperties: {
-                    title: 'Факсы',
-                    viewBody: true,
-                    viewTop: true,
-                    hideBottom: false,
-                    columns: [
-                        {
-                            name: 'name',
-                            label: this.$t('fax'),
-                            align: 'center',
-                            field: 'name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'status',
-                            label: 'Статус',
-                            field: 'status',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'transporter_name',
-                            label: this.$t('transporter'),
-                            field: 'transporter_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'transport_name',
-                            label: this.$t('transport'),
-                            field: 'transport_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'departure_date',
-                            label: this.$t('departureDate'),
-                            align: 'center',
-                            field: 'departure_date',
-                            sortable: true,
-                        },
-                        {
-                            name: 'arrival_date',
-                            label: 'Дата прибытия',
-                            align: 'center',
-                            field: 'arrival_date',
-                            sortable: true,
-                        },
-                        {
-                            name: 'user_name',
-                            label: 'Пользователь',
-                            field: 'user_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: 'Примечания',
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'up_to_cargo',
-                            label: 'В карго',
-                            field: 'up_to_cargo',
-                            align: 'center',
-                        },
-                    ],
-                },
-                faxesTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['name', 'departure_date', 'up_to_cargo', 'notation', 'arrival_date', 'status', 'transport_name', 'transporter_name', 'user_name'],
-                },
-                showDialogChooseDate: false,
-                dialogChooseDateData: null,
-                dialogChooseDataForSend: {},
-            };
+        {
+          status: 'Задерживается',
+          count: _.size(_.filter(faxes, { status: 4 })),
+          data: _.filter(faxes, { status: 4 }),
         },
-        computed: {
-            faxes() {
-                return this.$store.getters['faxes/getFaxes'];
-            },
-            transporters() {
-                return this.$store.getters['transporter/getTransporters'];
-            },
-            transport() {
-                return this.$store.getters['transport/getTransports'];
-            },
-            faxesStatusData() {
-                const { faxes } = this;
-                return [
-                    {
-                        status: 'Погрузка',
-                        count: _.size(_.filter(faxes, { status: 1 })),
-                        data: _.filter(faxes, { status: 1 }),
-                    },
-                    {
-                        status: 'Ушло',
-                        count: _.size(_.filter(faxes, { status: 2 })),
-                        data: _.filter(faxes, { status: 2 }),
-                    },
-                    {
-                        status: 'Задерживается',
-                        count: _.size(_.filter(faxes, { status: 4 })),
-                        data: _.filter(faxes, { status: 4 }),
-                    },
-                ];
-            },
+      ];
+    },
+  },
+  // watch: {
+  //   dialogChooseDateData(val) {
+  //     devlog.log('WW_dialogChooseDateData', val);
+  //     if (val) {
+  //       this.dialogChooseDataForSend.date = addTime(val)
+  //         .toISOString();
+  //       this.uploadToCargoFinish(this.dialogChooseDataForSend);
+  //     }
+  //   },
+  // },
+  mounted() {
+    this.$q.loading.show();
+    Promise.all([getFaxes(this.$store)])
+      .finally(() => {
+        this.$q.loading.hide();
+      });
+  },
+  methods: {
+    setDateFromDialog(date) {
+      devlog.log('setDateFromDialog', date);
+      if (date) {
+        this.dialogChooseDataForSend.date = addTime(date)
+          .toISOString();
+        this.uploadToCargoFinish(this.dialogChooseDataForSend);
+      }
+    },
+    goToFaxData(item) {
+      this.$store.dispatch('faxes/setCurrentFaxItem', _.find(this.$store.getters['faxes/getFaxes'], { id: item.id }));
+      this.$router.push({
+        name: 'admin-fax',
+        params: { id: item.id },
+      });
+    },
+    deleteFaxItems(selectedFaxes) {
+      // devlog.log('ID', this.faxesTableProperties.selected);
+      const selectedIds = _.map(selectedFaxes, 'id');
+      const faxNames = _.map(selectedFaxes, 'name');
+      this.showNotif('warning', `Удалить факс - ${faxNames.join(', ')}?`, 'center', [
+        {
+          label: 'Отмена',
+          color: 'white',
+          handler: () => {
+            this.faxesTableReactiveProperties.selected = [];
+          },
         },
-        watch: {
-            dialogChooseDateData(val) {
-                if (val) {
-                    this.dialogChooseDataForSend.date = addTime(val)
-                      .toISOString();
-                    this.uploadToCargoFinish(this.dialogChooseDataForSend);
-                }
-            },
-        },
-        mounted() {
+        {
+          label: 'Удалить',
+          color: 'white',
+          handler: () => {
             this.$q.loading.show();
-            Promise.all([getFaxes(this.$store)])
-              .finally(() => {
+            this.$axios.post(getUrl('deleteFax'), { ids: selectedIds })
+              .then(({ data }) => {
+                if (data.status) {
+                  this.faxesTableReactiveProperties.selected = [];
+                  this.$store.dispatch('faxes/deleteFaxes', selectedIds);
                   this.$q.loading.hide();
+                  this.showNotif('success', 'Данные успешно удалены.', 'center');
+                }
+              })
+              .catch((errors) => {
+                this.$q.loading.hide();
+                devlog.log(errors);
               });
+          },
         },
-        methods: {
-            goToFaxData(item) {
-                this.$store.dispatch('faxes/setCurrentFaxItem', _.find(this.$store.getters['faxes/getFaxes'], { id: item.id }));
-                this.$router.push({
-                    name: 'admin-fax',
-                    params: { id: item.id },
+      ]);
+    },
+    viewEditDialog(val, event) {
+      if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox') && !_.includes(_.get(event, 'target.classList'), 'upload_to_cargo') && !_.includes(_.get(event, 'target.classList'), 'fax_name')) {
+        this.showFaxDialog = true;
+        this.localFaxesEditData = val;
+        this.localFaxesEditData.historyFunc = this.getFaxesHistory;
+        this.faxesTableReactiveProperties.selected = [];
+
+        setTimeout(() => {
+          val.selected = !val.selected;
+        }, 100);
+      }
+    },
+    uploadToCargoFinish({
+                          id,
+                          value,
+                          date = null,
+                        }) {
+      this.$q.loading.show();
+      this.$axios.post(getUrl('uploadFaxToCargo'), {
+        id,
+        value,
+        date,
+      })
+        .then(({ data: { fax } }) => {
+          this.$q.loading.hide();
+          this.$store.dispatch('faxes/updateFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
+          this.showDialogChooseDate = false;
+          this.showNotif('success', fax.uploaded_to_cargo ? 'Данные успешно загружены' : 'Данные успешно выгружены', 'center');
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          devlog.error('Ошибка загрузки факса в карго');
+        });
+    },
+    uploadToCargo({
+                    id,
+                    uploaded_to_cargo: value,
+                  }) {
+      devlog.log('value', value);
+      if (!value) {
+        this.showNotif('warning', value ? 'Выгрузить факс из карго?' : 'Загрузить факс в карго?', 'center', [
+          {
+            label: 'Отмена',
+            color: 'white',
+            handler: () => {
+            },
+          },
+          {
+            label: value ? 'Выгрузить' : 'Загрузить',
+            color: 'white',
+            handler: () => {
+              this.showDialogChooseDate = true;
+              this.dialogChooseDataForSend = {
+                id,
+                value,
+              };
+            },
+          },
+        ]);
+      } else {
+        this.showNotif('warning', value ? 'Выгрузить факс из карго?' : 'Загрузить факс в карго?', 'center', [
+          {
+            label: 'Отмена',
+            color: 'white',
+            handler: () => {
+            },
+          },
+          {
+            label: value ? 'Выгрузить' : 'Загрузить',
+            color: 'white',
+            handler: () => {
+              devlog.log('uploadToCargoFinish', value);
+              this.uploadToCargoFinish({
+                id,
+                value,
+              });
+              devlog.log('VVV', value ? 'Выгрузить' : 'Загрузить');
+            },
+          },
+        ]);
+      }
+    },
+    async getFaxesHistory(id, cols) {
+      this.$q.loading.show();
+      await this.$axios.get(`${getUrl('faxHistory')}/${id}`)
+        .then(({ data: { faxHistory } }) => {
+          if (!_.isEmpty(faxHistory)) {
+            this.$q.loading.hide();
+            this.dialogHistory = true;
+            this.faxHistoryData = prepareHistoryData(cols, faxHistory);
+            this.faxHistoryData.cols.uploaded_to_cargo = 'Загрузка';
+            this.faxHistoryData.historyData = setFormatedDate(this.faxHistoryData.historyData, ['created_at', 'arrival_date', 'departure_date']);
+            devlog.log('storehouseDataHistory', faxHistory);
+          } else {
+            this.$q.loading.hide();
+            this.showNotif('info', 'По этой записи нет истории.', 'center');
+          }
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          devlog.error('Ошибка при получении данных истории.');
+        });
+    },
+    async refresh(done) {
+      if (!done) {
+        this.$q.loading.show();
+      }
+      this.$store.dispatch('faxes/fetchFaxes')
+        .then(() => {
+          callFunction(done);
+          this.$q.loading.hide();
+          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          callFunction(done);
+        });
+    },
+    combineFaxes(selectedFaxes) {
+      const faxNames = _.map(selectedFaxes, 'name');
+      const faxIds = _.uniq(_.map(selectedFaxes, 'transporter_id'));
+      devlog.log('faxIds', faxIds);
+      if (!_.isEmpty(selectedFaxes) && _.size(faxIds) === 1) {
+        this.showNotif('warning', `Обьеденить факсы - ${faxNames.join(', ')}?`, 'center', [
+          {
+            label: 'Отмена',
+            color: 'white',
+            handler: () => {
+            },
+          },
+          {
+            label: 'Обьеденить',
+            color: 'white',
+            handler: () => {
+              this.$q.loading.show();
+              this.$axios.post(getUrl('combineFaxes'), selectedFaxes)
+                .then(({ data: { fax } }) => {
+                  devlog.log('COM_DATA', fax);
+                  this.$store.dispatch('faxes/addFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
+                  this.faxesTableReactiveProperties.selected = [];
+                  this.$q.loading.hide();
+                  this.showNotif('success', 'Факсы успешно обьеденены.', 'center');
+                })
+                .catch((errors) => {
+                  devlog.error('Ошибка запроса combineFaxes', errors);
+                  this.showNotif('error', 'Произошла ошибка при обьеденении факсов. Обновите страницу пожалуйста.', 'center');
+                  this.faxesTableReactiveProperties.selected = [];
+                  this.$q.loading.hide();
                 });
             },
-            deleteFaxItems(selectedFaxes) {
-                // devlog.log('ID', this.faxesTableProperties.selected);
-                const selectedIds = _.map(selectedFaxes, 'id');
-                const faxNames = _.map(selectedFaxes, 'name');
-                this.showNotif('warning', `Удалить факс - ${faxNames.join(', ')}?`, 'center', [
-                    {
-                        label: 'Отмена',
-                        color: 'white',
-                        handler: () => {
-                            this.faxesTableReactiveProperties.selected = [];
-                        },
-                    },
-                    {
-                        label: 'Удалить',
-                        color: 'white',
-                        handler: () => {
-                            this.$q.loading.show();
-                            this.$axios.post(getUrl('deleteFax'), { ids: selectedIds })
-                              .then(({ data }) => {
-                                  if (data.status) {
-                                      this.faxesTableReactiveProperties.selected = [];
-                                      this.$store.dispatch('faxes/deleteFaxes', selectedIds);
-                                      this.$q.loading.hide();
-                                      this.showNotif('success', 'Данные успешно удалены.', 'center');
-                                  }
-                              })
-                              .catch((errors) => {
-                                  this.$q.loading.hide();
-                                  devlog.log(errors);
-                              });
-                        },
-                    },
-                ]);
-            },
-            viewEditDialog(val, event) {
-                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox') && !_.includes(_.get(event, 'target.classList'), 'upload_to_cargo') && !_.includes(_.get(event, 'target.classList'), 'fax_name')) {
-                    this.showFaxDialog = true;
-                    this.localFaxesEditData = val;
-                    this.localFaxesEditData.historyFunc = this.getFaxesHistory;
-                    this.faxesTableReactiveProperties.selected = [];
-
-                    setTimeout(() => {
-                        val.selected = !val.selected;
-                    }, 100);
-                }
-            },
-            uploadToCargoFinish({ id, value, date = null }) {
-                this.$q.loading.show();
-                this.$axios.post(getUrl('uploadFaxToCargo'), {
-                    id,
-                    value,
-                    date,
-                })
-                  .then(({ data: { fax } }) => {
-                      this.$q.loading.hide();
-                      this.$store.dispatch('faxes/updateFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
-                      this.showNotif('success', fax.uploaded_to_cargo ? 'Данные успешно загружены' : 'Данные успешно выгружены', 'center');
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      devlog.error('Ошибка загрузки факса в карго');
-                  });
-            },
-            uploadToCargo({ id, uploaded_to_cargo: value }) {
-                if (!value) {
-                    this.showNotif('warning', value ? 'Выгрузить факс из карго?' : 'Загрузить факс в карго?', 'center', [
-                        {
-                            label: 'Отмена',
-                            color: 'white',
-                            handler: () => {
-                            },
-                        },
-                        {
-                            label: value ? 'Выгрузить' : 'Загрузить',
-                            color: 'white',
-                            handler: () => {
-                                this.showDialogChooseDate = true;
-                                this.dialogChooseDataForSend = {
-                                    id,
-                                    value,
-                                };
-                            },
-                        },
-                    ]);
-                } else {
-                    this.showNotif('warning', value ? 'Выгрузить факс из карго?' : 'Загрузить факс в карго?', 'center', [
-                        {
-                            label: 'Отмена',
-                            color: 'white',
-                            handler: () => {
-                            },
-                        },
-                        {
-                            label: value ? 'Выгрузить' : 'Загрузить',
-                            color: 'white',
-                            handler: () => {
-                                this.uploadToCargoFinish({
-                                    id,
-                                    value,
-                                });
-                            },
-                        },
-                    ]);
-                }
-            },
-            async getFaxesHistory(id, cols) {
-                this.$q.loading.show();
-                await this.$axios.get(`${getUrl('faxHistory')}/${id}`)
-                  .then(({ data: { faxHistory } }) => {
-                      if (!_.isEmpty(faxHistory)) {
-                          this.$q.loading.hide();
-                          this.dialogHistory = true;
-                          this.faxHistoryData = prepareHistoryData(cols, faxHistory);
-                          this.faxHistoryData.cols.uploaded_to_cargo = 'Загрузка';
-                          this.faxHistoryData.historyData = setFormatedDate(this.faxHistoryData.historyData, ['created_at', 'arrival_date', 'departure_date']);
-                          devlog.log('storehouseDataHistory', faxHistory);
-                      } else {
-                          this.$q.loading.hide();
-                          this.showNotif('info', 'По этой записи нет истории.', 'center');
-                      }
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      devlog.error('Ошибка при получении данных истории.');
-                  });
-            },
-            async refresh(done) {
-                if (!done) {
-                    this.$q.loading.show();
-                }
-                this.$store.dispatch('faxes/fetchFaxes')
-                  .then(() => {
-                      callFunction(done);
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      callFunction(done);
-                  });
-            },
-            combineFaxes(selectedFaxes) {
-                const faxNames = _.map(selectedFaxes, 'name');
-                const faxIds = _.uniq(_.map(selectedFaxes, 'transporter_id'));
-                devlog.log('faxIds', faxIds);
-                if (!_.isEmpty(selectedFaxes) && _.size(faxIds) === 1) {
-                    this.showNotif('warning', `Обьеденить факсы - ${faxNames.join(', ')}?`, 'center', [
-                        {
-                            label: 'Отмена',
-                            color: 'white',
-                            handler: () => {
-                            },
-                        },
-                        {
-                            label: 'Обьеденить',
-                            color: 'white',
-                            handler: () => {
-                                this.$q.loading.show();
-                                this.$axios.post(getUrl('combineFaxes'), selectedFaxes)
-                                  .then(({ data: { fax } }) => {
-                                      devlog.log('COM_DATA', fax);
-                                      this.$store.dispatch('faxes/addFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
-                                      this.faxesTableReactiveProperties.selected = [];
-                                      this.$q.loading.hide();
-                                      this.showNotif('success', 'Факсы успешно обьеденены.', 'center');
-                                  })
-                                  .catch((errors) => {
-                                      devlog.error('Ошибка запроса combineFaxes', errors);
-                                      this.showNotif('error', 'Произошла ошибка при обьеденении факсов. Обновите страницу пожалуйста.', 'center');
-                                      this.faxesTableReactiveProperties.selected = [];
-                                      this.$q.loading.hide();
-                                  });
-                            },
-                        },
-                    ]);
-                } else {
-                    this.showNotif('warning', 'Нельзя соеденять факсы разных перевожчиков!', 'center');
-                }
-            },
-        },
-    };
+          },
+        ]);
+      } else {
+        this.showNotif('warning', 'Нельзя соеденять факсы разных перевожчиков!', 'center');
+      }
+    },
+  },
+};
 </script>

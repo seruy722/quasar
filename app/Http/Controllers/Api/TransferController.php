@@ -124,7 +124,7 @@ class TransferController extends Controller
             $notificationData = ['text' => $notificationText, 'player_ids' => json_decode(auth()->user()->player_id), 'url' => 'https://cargo007.net/#/moder/client-transfers'];
             $this->createNotification($notificationData);
         }
-        return response(['transfer' => $this->query()->where('transfers.id', $request->id)->get()]);
+        return response(['transfer' => $this->query()->where('transfers.id', $request->id)->first()]);
     }
 
     public function store(Request $request)
@@ -167,7 +167,7 @@ class TransferController extends Controller
             $this->createNotification($notificationData);
         }
 
-        return response(['transfer' => $this->query()->where('transfers.id', $transfer->id)->get()]);
+        return response(['transfer' => $this->query()->where('transfers.id', $transfer->id)->first()]);
     }
 
     public function getNewTransfers(Request $request)

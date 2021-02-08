@@ -9,7 +9,7 @@ import {
 
 export const fetchTransfers = (({ commit }) => axiosInstance.get(getUrl('transfers'))
   .then(({ data: { transfers } }) => {
-    commit('SET_TRANSFERS', setMethodLabel(setStatusLabel(transfers)));
+    commit('SET_TRANSFERS', transfers);
   })
   .catch(() => {
     devlog.warn('Ошибка при запросе fetchTransfers');
@@ -34,7 +34,7 @@ export const fetchNewAndChangedTransfers = (({
     updatedAt,
   })
     .then(({ data: { transfers } }) => {
-      commit('UPDATE_TRANSFERS', setMethodLabel(setStatusLabel(transfers)));
+      commit('UPDATE_TRANSFERS', transfers);
     })
     .catch(() => {
       devlog.warn('Ошибка при запросе fetchTransfers');
@@ -43,23 +43,6 @@ export const fetchNewAndChangedTransfers = (({
 
 export const setTransfers = (({ commit }, data) => {
   commit('SET_TRANSFERS', data);
-  // let size = 5;
-  // if (_.size(data) >= 60) {
-  //   size = 30;
-  // }
-  // const queue = new JobQueue();
-  // // devlog.log('queue', queue);
-  // _.forEach(_.chunk(data, size), (chunk) => {
-  //   queue.addJob((done) => {
-  //     requestAnimationFrame(() => {
-  //       commit('SET_TRANSFERS', chunk);
-  //       // devlog.log('RF', chunk);
-  //       done();
-  //     });
-  //   });
-  // });
-  //
-  // queue.start();
 });
 
 export const addTransfer = (({ commit }, data) => {
