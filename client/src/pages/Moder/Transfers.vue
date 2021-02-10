@@ -938,6 +938,7 @@ export default {
       })
         .then(() => {
           this.transferTableReactiveProperties.selected = [];
+          this.showDialogChooseDate = false;
           this.$q.loading.hide();
           this.showNotif('success', 'Данные успешно добавлены в таблицу долгов', 'center');
         })
@@ -975,26 +976,6 @@ export default {
 </script>
 
 <style lang="stylus">
-.border_red {
-  border-color $red !important
-}
-
-.border_positive {
-  border-color $positive !important
-}
-
-.border_warning {
-  border-color $warning !important
-}
-
-.border_grey {
-  border-color $grey !important
-}
-
-.border_info {
-  border-color $info !important
-}
-
 .statistics_title
   background-color lightgrey
   text-align center

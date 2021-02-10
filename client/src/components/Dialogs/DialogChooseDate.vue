@@ -14,7 +14,7 @@
               dense
               icon="clear"
               tooltip="Закрыть"
-              @icon-btn-click="close"
+              @icon-btn-click="show = false"
             />
           </div>
         </q-card-section>
@@ -32,14 +32,14 @@
             label="Отмена"
             color="negative"
             :dense="$q.screen.xs || $q.screen.sm"
-            @click-base-btn="close"
+            @click-base-btn="show = false"
           />
 
           <BaseBtn
             label="OK"
             color="positive"
             :dense="$q.screen.xs || $q.screen.sm"
-            @click-base-btn="$emit('set-date')"
+            @click-base-btn="setDate(localDate)"
           />
         </q-card-actions>
       </q-card>
@@ -72,33 +72,38 @@ export default {
   },
   data() {
     return {
-      show: false,
       localDate: new Date().toLocaleDateString()
         .split('.')
         .reverse()
         .join('-'),
     };
   },
+  computed: {
+    show: {
+      get: function get() {
+        return this.showDialog;
+      },
+      set: function set(val) {
+        this.$emit('update:showDialog', val);
+      },
+    },
+  },
   watch: {
     showDialog(val) {
-      this.show = val;
-      if (val) {
-        this.$emit('update:date', this.localDate);
+      if (val && this.date) {
+        this.localDate = this.date;
       }
-    },
-    show(val) {
-      this.$emit('update:showDialog', val);
-    },
-    date(val) {
-      this.localDate = val;
-    },
-    localDate(val) {
-      this.$emit('update:date', val);
     },
   },
   methods: {
-    close() {
-      this.show = false;
+    setDate(date) {
+      this.$emit('update:date', date);
+    },
+    dateToday() {
+      return new Date().toLocaleDateString()
+        .split('.')
+        .reverse()
+        .join('-');
     },
   },
 };
