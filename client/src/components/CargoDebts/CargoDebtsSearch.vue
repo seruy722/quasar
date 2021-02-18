@@ -121,6 +121,7 @@
               </q-item-section>
               <q-item-section avatar>
                 <q-icon
+                  v-show="dialogChooseDateData"
                   name="clear"
                   color="negative"
                   class="cursor-pointer"

@@ -98,6 +98,7 @@ export default {
   methods: {
     setDate(date) {
       this.$emit('update:date', date);
+      this.$emit('set-date');
     },
     dateToday() {
       return new Date().toLocaleDateString()
