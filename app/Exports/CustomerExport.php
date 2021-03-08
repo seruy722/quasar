@@ -21,12 +21,12 @@ class CustomerExport implements FromView, WithTitle, ShouldAutoSize
     public function __construct(array $ids)
     {
         if (empty($ids)) {
-            $this->data = \App\Customer::select('codes.code as client_name', 'customers.name', 'customers.phone', 'customers.code_id', 'cities.name as city_name', 'customers.created_at')
+            $this->data = \App\Customer::select('codes.code as client_name', 'customers.name', 'customers.phone', 'customers.code_id', 'cities.name as city_name', 'customers.created_at', 'customers.sex')
                 ->join('codes', 'customers.code_id', '=', 'codes.id')
                 ->leftJoin('cities', 'cities.id', '=', 'customers.city_id')
                 ->get();
         } else {
-            $this->data = \App\Customer::select('codes.code as client_name', 'customers.name', 'customers.phone', 'customers.code_id', 'cities.name as city_name', 'customers.created_at')
+            $this->data = \App\Customer::select('codes.code as client_name', 'customers.name', 'customers.phone', 'customers.code_id', 'cities.name as city_name', 'customers.created_at', 'customers.sex')
                 ->join('codes', 'customers.code_id', '=', 'codes.id')
                 ->leftJoin('cities', 'cities.id', '=', 'customers.city_id')
                 ->whereIn('customers.code_id', $ids)

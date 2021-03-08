@@ -7,6 +7,7 @@
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Гор</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Сп. доставки</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Отд</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Пол</th>
     </tr>
     </thead>
     <tbody>
@@ -18,6 +19,7 @@
             <td style="border: 1px solid black;text-align: center;">{{ $elem->city_name }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem->delivery_method_name }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem->department }}</td>
+            <td style="border: 1px solid black;text-align: center;">{{ $elem->sex }}</td>
         </tr>
     @endforeach
     </tbody>
