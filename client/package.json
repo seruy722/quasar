@@ -22,13 +22,13 @@
     "lodash": "^4.17.21",
     "quasar": "^1.15.5",
     "validator": "^13.5.2",
-    "vue-i18n": "^8.24.0"
+    "vue-i18n": "^8.24.1"
   },
   "devDependencies": {
     "@quasar/app": "2.2.1",
     "@vue/eslint-config-airbnb": "^5.3.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.21.0",
+    "eslint": "^7.22.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-vue": "^7.7.0",
     "quasar-app-extension-ide-helper": "^1.0.0"

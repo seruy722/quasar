@@ -151,6 +151,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 //    Route::get('/update-all-price-in-fax-data/{id}', 'Api\FaxDataController@updatePrice');
     Route::get('/update-prices-in-fax/{id}', 'Api\FaxDataController@updatePricesInFax')->name('update-prices-in-fax')->middleware(['role_or_permission:admin|fax|update-prices-in-fax']);
     Route::post('/export-fax-moder-data', 'Api\FaxDataController@exportModer');
+    Route::post('/export-fax-moder-mail-data', 'Api\FaxDataController@exportModerFaxMailData');
     Route::post('/export-fax-admin-data', 'Api\FaxDataController@exportAdmin');
     Route::post('/export-fax-admin-data-odessa-kharkov', 'Api\FaxDataController@exportFaxDataOdessaKharkov')->name('export fax admin data odessa kharkov')->middleware(['role_or_permission:admin|fax|export fax admin data odessa kharkov']);
     Route::post('/export-fax-admin-data-odessa', 'Api\FaxDataController@exportFaxDataOdessa')->name('export fax admin data odessa')->middleware(['role_or_permission:admin|fax|export fax admin data odessa']);

@@ -308,6 +308,11 @@ class FaxDataController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxSheetsExport($request->id, $request->ids), 'storehouseData.xlsx');
     }
 
+    public function exportModerFaxMailData(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxPostSheetModerExport($request->id, $request->ids), 'storehouseData.xlsx');
+    }
+
     public function exportAdmin(Request $request)
     {
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxExportForAdmin\FaxSheetsExport($request->id, $request->ids), 'storehouseData.xlsx');

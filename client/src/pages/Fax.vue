@@ -26,8 +26,15 @@
         <IconBtn
           color="positive"
           icon="explicit"
-          tooltip="excel"
+          tooltip="Excel"
           @icon-btn-click="exportFaxData(faxTableReactiveProperties.selected)"
+        />
+
+        <IconBtn
+          color="orange"
+          icon="mail"
+          tooltip="Почта"
+          @icon-btn-click="exportFaxMailData(faxTableReactiveProperties.selected)"
         />
 
         <IconBtn
@@ -852,6 +859,20 @@ export default {
         }
       });
       this.exportDataToExcel(getUrl('exportFaxModerData'), {
+        id: this.currentFaxItem.id,
+        ids,
+      }, `${this.currentFaxItem.name}.xlsx`);
+    },
+    exportFaxMailData(data) {
+      const ids = [];
+      _.forEach(data, ({ arr, id }) => {
+        if (!_.isEmpty(arr)) {
+          ids.push(..._.map(arr, 'id'));
+        } else {
+          ids.push(id);
+        }
+      });
+      this.exportDataToExcel(getUrl('exportFaxModerMailData'), {
         id: this.currentFaxItem.id,
         ids,
       }, `${this.currentFaxItem.name}.xlsx`);
