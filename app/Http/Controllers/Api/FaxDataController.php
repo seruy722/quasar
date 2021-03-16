@@ -310,7 +310,7 @@ class FaxDataController extends Controller
 
     public function exportModerFaxMailData(Request $request)
     {
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxPostSheetModerExport($request->id, $request->ids), 'storehouseData.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxSheetsCommonExport($request->id, $request->ids), 'storehouseData.xlsx');
     }
 
     public function exportAdmin(Request $request)
