@@ -303,7 +303,7 @@ export default {
     },
     show(val) {
       this.$emit('update:showDialog', val);
-      if (val && this.settingsDate) {
+      if (val && this.settingsDate && _.isEmpty(this.entryData)) {
         this.storehouseData.created_at.value = this.settingsDate;
         this.storehouseData.created_at.changeValue = true;
       }

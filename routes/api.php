@@ -276,6 +276,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 
     Route::post('/upload-faxes', 'CommonController@uploadFaxes');
     Route::post('/search-in-faxes', 'CommonController@searchInFaxes');
+    Route::get('/get-entries-with-pay-notation', 'Api\CargoController@getEntriesWithPayNotation');
     Route::get('/areas', function () {
         $client = new Client();
         return $client->get("https://api.hh.ru/areas/5");

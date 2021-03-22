@@ -97,6 +97,11 @@
     </div>
 
     <div style="border: 1px solid blue;">
+      Клиенты в нотации которых написано оплачено
+      <q-btn label="GET" @click="getEntriesWithPayNotation" />
+    </div>
+
+    <div style="border: 1px solid blue;">
       Оборот товара Одесса
       <div class="q-pa-md">
         <q-date
@@ -304,6 +309,37 @@ export default {
         .catch(() => {
 
         });
+    },
+    getEntriesWithPayNotation() {
+      this.$axios({
+        url: '/api/get-entries-with-pay-notation',
+        method: 'GET',
+        responseType: 'blob', // important
+        // headers: {
+        //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        // },
+      })
+        .then((response) => {
+          devlog.log('RES_BLOB', response);
+          if (!window.navigator.msSaveOrOpenBlob) {
+            // BLOB NAVIGATOR
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'brands.xlsx');
+            document.body.appendChild(link);
+            link.click();
+          } else {
+            // BLOB FOR EXPLORER 11
+            window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
+          }
+        });
+      // this.$axios.get('/api/get-entries-with-pay-notation')
+      //   .then(() => {
+      //   })
+      //   .catch(() => {
+      //
+      //   });
     },
     getBrandClients() {
       this.$axios({
