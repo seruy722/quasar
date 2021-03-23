@@ -16,9 +16,9 @@
           v-show="currentCodeClientId"
           @update-btn-click="refresh"
         />
-        <ExportBtn
-          @export-btn-click="exportFaxData(cargoTableReactiveProperties.selected)"
-        />
+<!--        <ExportBtn-->
+<!--          @export-btn-click="exportFaxData(cargoTableReactiveProperties.selected)"-->
+<!--        />-->
         <IconBtn
           v-show="cargoTableReactiveProperties.selected.length"
           color="negative"
@@ -40,6 +40,26 @@
           tooltip="Оплатить все"
           @icon-btn-click="paymentsAll(currentCodeClientId)"
         />
+        <q-btn-dropdown
+          split
+          color="positive"
+          icon="explicit"
+          dense
+        >
+          <q-list separator>
+            <q-item clickable v-close-popup @click="exportFaxData(cargoTableReactiveProperties.selected)">
+              <q-item-section>
+                <q-item-label>Выгрузить</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item clickable v-close-popup @click="exportDetailFaxData(cargoTableReactiveProperties.selected)">
+              <q-item-section>
+                <q-item-label>Выгрузить детально</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
         <IconBtn
           v-show="currentCodeClientId"
           icon="payment"
@@ -402,7 +422,7 @@ export default {
     DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
     DialogAddCargoPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPayEntry.vue'),
     IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
+    // ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
     CalculateClient: () => import('src/components/CargoDebts/CalculateClient.vue'),
     Dialog: () => import('src/components/Dialogs/Dialog.vue'),
   },
@@ -642,22 +662,6 @@ export default {
     },
     async exportFaxData(selected) {
       const data = !_.isEmpty(selected) ? selected : this.cargo;
-      // if (_.isEmpty(data)) {
-      //     data = this.cargo;
-      // } else {
-      //     const searchData = this.$store.getters['cargoDebts/getCargoForSearch'];
-      //     const newArr = [];
-      //     _.forEach(data, ({ id, arr }) => {
-      //         if (!_.isEmpty(arr)) {
-      //             _.forEach(arr, ({ id: ID }) => {
-      //                 newArr.push(_.find(searchData, { id: ID }));
-      //             });
-      //         } else {
-      //             newArr.push(_.find(searchData, { id }));
-      //         }
-      //     });
-      //     data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
-      // }
       if (!_.isEmpty(data)) {
         const clientName = `${_.get(_.first(data), 'code_client_name')} код карго`;
         const { getUrl } = await import('src/tools/url');
@@ -666,9 +670,30 @@ export default {
         }, `${clientName}.xlsx`);
       }
     },
+    async exportDetailFaxData(selected) {
+      const data = !_.isEmpty(selected) ? selected : this.cargo;
+      if (!_.isEmpty(data)) {
+        const clientName = `${_.get(_.first(data), 'code_client_name')} код карго`;
+        const { getUrl } = await import('src/tools/url');
+        const ids = [];
+        _.forEach(data, (item) => {
+          if (item.arr) {
+            ids.push(..._.map(item.arr, 'id'));
+          } else {
+            ids.push(item.id);
+          }
+        });
+        this.exportDataToExcel(getUrl('exportDetailCargoData'), {
+          ids,
+        }, `${clientName}.xlsx`);
+      }
+    },
     getIds(data) {
       const ids = [];
-      _.forEach(data, ({ arr, id }) => {
+      _.forEach(data, ({
+                         arr,
+                         id,
+                       }) => {
         if (!_.isEmpty(arr)) {
           ids.push(..._.map(arr, 'id'));
         } else {
@@ -725,6 +750,9 @@ export default {
       } else {
         this.dialogCalculateClient = this.calculateData.length;
       }
+    },
+    onItemClick() {
+      // console.log('Clicked on an Item')
     },
   },
 };

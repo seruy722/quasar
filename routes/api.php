@@ -111,6 +111,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/create-debt-entry', 'Api\CargoController@createDebtEntry')->name('create debt entry')->middleware(['role_or_permission:admin|create debt entry']);
     Route::post('/update-debt-entry', 'Api\CargoController@updateDebtEntry')->name('update debt entry')->middleware(['role_or_permission:admin|update debt entry']);
     Route::post('/export-cargo-data', 'Api\CargoController@exportCargoData')->name('export cargo data')->middleware(['role_or_permission:admin|client|export cargo data']);
+    Route::post('/export-detail-cargo-data', 'Api\CargoController@exportDetailCargoData')->name('export detail cargo data')->middleware(['role_or_permission:admin|client|export detail cargo data']);
     Route::post('/export-debts-data', 'Api\CargoController@exportDebtsData')->name('export debts data')->middleware(['role_or_permission:admin|export debts data']);
     Route::post('/export-general-cargo-data', 'Api\CargoController@exportGeneralCargoData')->name('export general cargo data')->middleware(['role_or_permission:admin|export general cargo data']);
     Route::post('/export-cargo', 'Api\CargoController@exportGeneralCargoData')->name('export cargo')->middleware(['role_or_permission:admin|export cargo']);
