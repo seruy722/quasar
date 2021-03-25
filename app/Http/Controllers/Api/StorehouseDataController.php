@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Cargo;
 use App\Category;
 use App\CodesPrices;
 use App\Fax;
@@ -13,6 +14,7 @@ use App\Thingslist;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\PushNotifications;
+use function foo\func;
 
 class StorehouseDataController extends Controller
 {
@@ -613,6 +615,17 @@ class StorehouseDataController extends Controller
     public function getEntriesWithPayNotation()
     {
         $data = $this->storehouseDataList(1)->where('storehouse_data.notation', 'like', '%' . 'опл' . '%')->get();
+        $arr = [];
+        $clientsIds = $data->map(function ($item) {
+            return $item->code_client_id;
+        })->unique()->values()->all();
+        foreach ($clientsIds as $id) {
+            $data = Cargo::where('code_client_id', $id)->get();
+            if ($data->sum('sum')) {
+                array_push($arr, $id);
+            }
+        }
+        $data = $this->storehouseDataList(1)->where('storehouse_data.notation', 'like', '%' . 'опл' . '%')->whereIn('storehouse_data.code_client_id', $arr)->get();
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxSheetsExport(0, $data->map(function ($item) {
             return $item->id;
         })), 'storehouseData.xlsx');
