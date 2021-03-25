@@ -609,4 +609,12 @@ class StorehouseDataController extends Controller
 
         return response(['clientStorehouseData' => $data4]);
     }
+
+    public function getEntriesWithPayNotation()
+    {
+        $data = $this->storehouseDataList(1)->where('storehouse_data.notation', 'like', '%' . 'опл' . '%')->get();
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxSheetsExport(0, $data->map(function ($item) {
+            return $item->id;
+        })), 'storehouseData.xlsx');
+    }
 }

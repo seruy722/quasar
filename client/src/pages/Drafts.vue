@@ -331,7 +331,7 @@ export default {
             link.click();
           } else {
             // BLOB FOR EXPLORER 11
-            window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
+            window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'олаченные места.xlsx');
           }
         });
       // this.$axios.get('/api/get-entries-with-pay-notation')

@@ -16,13 +16,13 @@
     "build:android": "quasar build -m android"
   },
   "dependencies": {
-    "@quasar/extras": "^1.9.19",
+    "@quasar/extras": "^1.10.0",
     "axios": "^0.21.1",
     "date-fns": "^2.19.0",
     "lodash": "^4.17.21",
     "quasar": "^1.15.7",
     "validator": "^13.5.2",
-    "vue-i18n": "^8.24.1"
+    "vue-i18n": "^8.24.2"
   },
   "devDependencies": {
     "@quasar/app": "2.2.3",

@@ -497,11 +497,4 @@ class CargoController extends Controller
         $data = $this->query()->whereIn('cargos.id', $request->ids)->get();
         return response(['cargo' => $data]);
     }
-
-    public function getEntriesWithPayNotation()
-    {
-        $data = $this->query()->where('cargos.notation', 'like', '%' . 'опл' . '%')->get();
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoExport($data->toArray()), 'transfers.xlsx');
-    }
-
 }
