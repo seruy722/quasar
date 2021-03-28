@@ -130,8 +130,6 @@ class CargoController extends Controller
 
         if (array_key_exists('created_at', $data)) {
             $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
-        } else {
-            $data['created_at'] = date("Y-m-d H:i:s");
         }
         Cargo::where('id', $request->id)->update($data);
         $entry = $this->query()->where('cargos.id', $request->id)->first();
