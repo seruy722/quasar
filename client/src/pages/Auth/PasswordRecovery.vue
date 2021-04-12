@@ -1,14 +1,9 @@
 <template>
   <q-card
     class="q-pa-md"
-    style="max-width: 400px;margin: 0 auto;"
+    style="margin: 0 auto;"
     data-vue-component-name="PasswordRecovery"
   >
-    <q-card-section class="bg-primary text-white row justify-between">
-      <div class="text-h6">
-        Восстановление доступа
-      </div>
-    </q-card-section>
     <q-card-section>
       <q-form
         v-show="!yesPhoneInDB"

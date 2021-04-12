@@ -110,8 +110,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/delete-debt-entry', 'Api\CargoController@deleteDebtEntry')->name('delete debt entry')->middleware(['role_or_permission:admin|delete debt entry']);
     Route::post('/create-debt-entry', 'Api\CargoController@createDebtEntry')->name('create debt entry')->middleware(['role_or_permission:admin|create debt entry']);
     Route::post('/update-debt-entry', 'Api\CargoController@updateDebtEntry')->name('update debt entry')->middleware(['role_or_permission:admin|update debt entry']);
-    Route::post('/export-cargo-data', 'Api\CargoController@exportCargoData')->name('export cargo data')->middleware(['role_or_permission:admin|client|export cargo data']);
-    Route::post('/export-detail-cargo-data', 'Api\CargoController@exportDetailCargoData')->name('export detail cargo data')->middleware(['role_or_permission:admin|client|export detail cargo data']);
+    Route::post('/export-cargo-data', 'Api\CargoController@exportCargoData')->name('export cargo data')->middleware(['role_or_permission:admin|client|moderator|assistant|export cargo data']);
+    Route::post('/export-detail-cargo-data', 'Api\CargoController@exportDetailCargoData')->name('export detail cargo data')->middleware(['role_or_permission:admin|client|moderator|assistant|export detail cargo data']);
     Route::post('/export-debts-data', 'Api\CargoController@exportDebtsData')->name('export debts data')->middleware(['role_or_permission:admin|export debts data']);
     Route::post('/export-general-cargo-data', 'Api\CargoController@exportGeneralCargoData')->name('export general cargo data')->middleware(['role_or_permission:admin|export general cargo data']);
     Route::post('/export-cargo', 'Api\CargoController@exportGeneralCargoData')->name('export cargo')->middleware(['role_or_permission:admin|export cargo']);
@@ -299,7 +299,14 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 //    Route::post('create-notification', 'Api\NotificationController@createNotification')->name('create notification');
 });
 Route::group(['middleware' => 'throttle:500,5'], function () {
-    Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');
+//    Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');
+    Route::post('register-client-code', function (Request $request) {
+        $client = new Client();
+        return $client->post( "https://api.turbosms.ua/message/send.json", ['body' => json_encode($request->obj), 'headers' => [
+            'Content-Type' => 'application/json',
+            "Authorization" => 'Bearer 55090e130c778e25675c1580655da1d0c8e89f43',
+        ]]);
+    })->name('code');
     Route::post('change-password-code', 'Api\AuthController@getCodeForChangePassword')->name('code for password');
     Route::post('change-password', 'Api\AuthController@changePassword')->name('change password');
     Route::post('register-client-register', 'Api\AuthController@registerClient')->name('register client');
@@ -308,6 +315,7 @@ Route::group(['middleware' => 'throttle:500,5'], function () {
 Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'middleware' => 'throttle:10,10']], function () {
     Route::post('/login', 'Api\AuthController@login');
 //    Route::post('/register', 'Api\AuthController@register');
+//    Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');
 
 
 //    Route::post('/password/email', 'Api\ForgotPasswordController@sendResetLinkEmail');

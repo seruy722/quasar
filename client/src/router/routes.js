@@ -11,7 +11,7 @@ const routes = [
         meta: {
           title: 'Авторизация',
         },
-        component: () => import('pages/Auth/Login.vue'),
+        component: () => import('pages/Auth/Index.vue'),
       },
       {
         path: '/register-client',

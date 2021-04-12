@@ -1,24 +1,12 @@
 <template>
   <q-card
-    class="q-pa-md"
-    style="max-width: 400px;margin: 0 auto;"
+    style="margin: 0 auto;"
     data-vue-component-name="RegisterClient"
   >
-    <q-card-section class="bg-primary text-white row justify-between">
-      <div class="text-h6">
-        Форма регистрации
-      </div>
-      <q-btn
-        label="Войти"
-        color="positive"
-        :to="{name:'login'}"
-      />
-    </q-card-section>
     <q-card-section>
       <q-form
         v-show="!yesPhoneInDB"
-        class="q-gutter-md"
-        @submit="onSubmit"
+        @submit="getCodeForRegister"
       >
         <q-input
           v-model="phone"
@@ -104,22 +92,32 @@ export default {
         this.$router.push({ name: 'login' });
       }, 3000);
     },
-    onSubmit() {
-      this.$axios.post(getUrl('registerClientCode'), { phone: parseInt(this.phone.replace(/[^\d]/g, ''), 10) })
-        .then(({ data: { codeStatus, message } }) => {
-          if (codeStatus === 3) {
-            this.yesPhoneInDB = true;
-            this.showNotif('info', `На номер ${this.phone} отправлен код подтверждения`, 'center');
-          } else if (codeStatus === 2) {
-            this.showNotif('warning', message, 'center');
-          } else if (codeStatus === 1) {
-            this.showNotif('info', message, 'center');
-            this.goToLogin();
-          }
-        })
-        .catch(() => {
-          this.showNotif('warning', 'Слишком много попыток на получение кода. Повторите попытку через 5 минут', 'center');
-        });
+    getCodeForRegister() {
+      const sendData = {
+        obj: {
+          recipients: ['380977376062'],
+          sms: {
+            sender: 'Cargo007',
+            text: 'TurboSMS приветствует Вас!',
+          },
+        },
+      };
+      this.$axios.post(getUrl('registerClientCode'), sendData);
+      // this.$axios.post(getUrl('registerClientCode'), { phone: parseInt(this.phone.replace(/[^\d]/g, ''), 10) })
+      //   .then(({ data: { codeStatus, message } }) => {
+      //     if (codeStatus === 3) {
+      //       this.yesPhoneInDB = true;
+      //       this.showNotif('info', `На номер ${this.phone} отправлен код подтверждения`, 'center');
+      //     } else if (codeStatus === 2) {
+      //       this.showNotif('warning', message, 'center');
+      //     } else if (codeStatus === 1) {
+      //       this.showNotif('info', message, 'center');
+      //       this.goToLogin();
+      //     }
+      //   })
+      //   .catch(() => {
+      //     this.showNotif('warning', 'Слишком много попыток на получение кода. Повторите попытку через 5 минут', 'center');
+      //   });
     },
     onSubmitRegister() {
       this.$axios.post(getUrl('registerClientCodeRegister'), {
