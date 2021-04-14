@@ -63,7 +63,7 @@ class AuthController extends Controller
         if ($yesPhoneInDB && User::where('code_id', $yesPhoneInDB->code_id)->first()) {
             return response(['codeStatus' => 1, 'message' => 'Вы уже зарегестрированы. Выполните вход пожалуйста']);
         } else if ($yesPhoneInDB) {
-            $code = rand(111111, 999999);
+            $code = $this->getRandCode();
             $data = $request->obj;
             $data['sms']['text'] = $data['sms']['text'] . ' ' . $code;
             $this->sendSms($data);
@@ -73,11 +73,16 @@ class AuthController extends Controller
         return response(['codeStatus' => 2, 'message' => 'Номера телефона нет в базе']);
     }
 
+    public function getRandCode()
+    {
+        return rand(111111, 999999);
+    }
+
     public function getCodeForChangePassword(Request $request)
     {
         $yesPhoneInDB = \App\Customer::where('phone', $request->phone)->first();
         if ($yesPhoneInDB && User::where('code_id', $yesPhoneInDB->code_id)->first()) {
-            $code = rand(111111, 999999);
+            $code = $this->getRandCode();
             $data = $request->obj;
             $data['sms']['text'] = $data['sms']['text'] . ' ' . $code;
             $this->sendSMS($data);
