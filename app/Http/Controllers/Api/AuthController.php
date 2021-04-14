@@ -73,7 +73,7 @@ class AuthController extends Controller
         return response(['codeStatus' => 2, 'message' => 'Номера телефона нет в базе']);
     }
 
-    public function getRandCode()
+    public function getRandCode(): int
     {
         return rand(111111, 999999);
     }
