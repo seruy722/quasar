@@ -1,8 +1,7 @@
 <template>
   <q-card
-    class="q-pa-md"
-    style="margin: 0 auto;"
     data-vue-component-name="PasswordRecovery"
+    flat
   >
     <q-card-section>
       <q-form
@@ -49,7 +48,7 @@
           type="password"
           lazy-rules
           filled
-          label="Пароль"
+          label="Новый пароль"
           :rules="[ val => val && val.length > 0 || 'Введите пароль',val => val && val.length >= 6 || 'Пароль должен состоять из 6 символов']"
         />
         <q-input
@@ -90,12 +89,21 @@ export default {
   },
   methods: {
     goToLogin() {
-      setTimeout(() => {
-        this.$router.push({ name: 'login' });
-      }, 3000);
+      this.$emit('change-tab', 'login');
     },
     onSubmit() {
-      this.$axios.post(getUrl('changePasswordCode'), { phone: parseInt(this.phone.replace(/[^\d]/g, ''), 10) })
+      const phone = parseInt(this.phone.replace(/[^\d]/g, ''), 10);
+      const sendData = {
+        phone,
+        obj: {
+          recipients: [phone],
+          sms: {
+            sender: 'Cargo007',
+            text: 'Code for recover: ',
+          },
+        },
+      };
+      this.$axios.post(getUrl('changePasswordCode'), sendData)
         .then(({
                  data: {
                    codeStatus,

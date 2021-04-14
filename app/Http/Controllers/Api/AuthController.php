@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use App\Traits\UserSetAccessData;
+use GuzzleHttp\Client;
 
 class AuthController extends Controller
 {
@@ -63,7 +64,9 @@ class AuthController extends Controller
             return response(['codeStatus' => 1, 'message' => 'Вы уже зарегестрированы. Выполните вход пожалуйста']);
         } else if ($yesPhoneInDB) {
             $code = rand(111111, 999999);
-            $this->sendSMSForRegister($yesPhoneInDB->phone, $code);
+            $data = $request->obj;
+            $data['sms']['text'] = $data['sms']['text'] . ' ' . $code;
+            $this->sendSms($data);
             Cache::put($yesPhoneInDB->phone, ['code' => $code, 'code_id' => $yesPhoneInDB->code_id], 300);
             return response(['codeStatus' => 3]);
         }
@@ -75,7 +78,9 @@ class AuthController extends Controller
         $yesPhoneInDB = \App\Customer::where('phone', $request->phone)->first();
         if ($yesPhoneInDB && User::where('code_id', $yesPhoneInDB->code_id)->first()) {
             $code = rand(111111, 999999);
-            $this->sendSMSForRegister($yesPhoneInDB->phone, $code);
+            $data = $request->obj;
+            $data['sms']['text'] = $data['sms']['text'] . ' ' . $code;
+            $this->sendSMS($data);
             Cache::put($yesPhoneInDB->phone, ['code' => $code, 'code_id' => $yesPhoneInDB->code_id], 300);
             return response(['codeStatus' => 3]);
         }
@@ -129,42 +134,12 @@ class AuthController extends Controller
         return response(['error' => 'Неверный код подтверждения или срок действия кода истек']);
     }
 
-    public function sendSMSForRegister($phone, $code)
+    public function sendSms($data)
     {
-        $text = iconv('windows-1251', 'utf-8', htmlspecialchars('Code cargo 007: ' . $code));
-        $description = iconv('windows-1251', 'utf-8', htmlspecialchars('Моя первая рассылка'));
-        $start_time = 'AUTO'; // отправить немедленно или ставим дату и время  в формате YYYY-MM-DD HH:MM:SS
-        $end_time = 'AUTO'; // автоматически рассчитать системой или ставим дату и время  в формате YYYY-MM-DD HH:MM:SS
-        $rate = 1; // скорость отправки сообщений (1 = 1 смс минута). Одиночные СМС сообщения отправляются всегда с максимальной скоростью.
-        $lifetime = 4; // срок жизни сообщения 4 часа
-        $source = 'InfoCentr'; // Alfaname
-        $recipient = $phone;
-        $user = '380977376062'; // тут ваш логин в международном формате без знака +. Пример: 380501234567
-        $password = 'seruy123'; // Ваш пароль
-
-        $newsXML = new \SimpleXMLElement("<request></request>");
-        $newsXML->addChild('operation', 'SENDSMS');
-        $newsOp = $newsXML->addChild('message');
-        $newsOp->addChild('body', $text);
-        $newsOp->addChild('recipient', $recipient);
-        $newsOp->addAttribute('start_time', $start_time);
-        $newsOp->addAttribute('end_time', $end_time);
-        $newsOp->addAttribute('lifetime', $lifetime);
-        $newsOp->addAttribute('rate', $rate);
-        $newsOp->addAttribute('desc', $description);
-        $newsOp->addAttribute('source', $source);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_USERPWD, $user . ':' . $password);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_URL, 'http://sms-fly.com/api/api.noai.php');
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: text/xml", "Accept: text/xml"));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $newsXML->asXML());
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        return $response;
+        $client = new Client();
+        return $client->post("https://api.turbosms.ua/message/send.json", ['body' => json_encode($data), 'headers' => [
+            'Content-Type' => 'application/json',
+            "Authorization" => 'Bearer 55090e130c778e25675c1580655da1d0c8e89f43',
+        ]]);
     }
 }

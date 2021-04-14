@@ -3,46 +3,49 @@
     data-vue-component-name="Index"
     class="row items-center justify-center"
   >
-    <div
-      style="max-width: 320px;width: 100%;height: 400px;"
-    >
+    <q-card style="min-width: 330px;min-height: 320px">
       <q-tabs
         v-model="tab"
-        class="bg-primary text-white shadow-2"
+        dense
+        class="text-grey"
+        active-color="primary"
+        indicator-color="primary"
         align="justify"
-        inline-label
+        narrow-indicator
       >
-        <q-tab
-          name="mails"
-          label="Вход"
-        />
-        <q-tab
-          name="alarms"
-          label="Регистрация"
-        />
-<!--        <q-tab-->
-<!--          name="movies"-->
-<!--          label="Востановление пароля"-->
-<!--        />-->
+        <q-tab name="login" label="Вход" />
+        <q-tab name="register" label="Регистрация" />
+        <!--        <q-tab name="recover" label="Восстановление пароля" />-->
       </q-tabs>
 
-      <q-tab-panels
-        v-model="tab"
-        animated
-      >
-        <q-tab-panel name="mails">
+      <q-separator />
+
+      <q-tab-panels v-model="tab" animated>
+        <q-tab-panel name="login">
           <Login />
         </q-tab-panel>
 
-        <q-tab-panel name="alarms">
-          <RegisterClient />
+        <q-tab-panel name="register">
+          <RegisterClient @change-tab="changeTab" />
         </q-tab-panel>
 
-        <q-tab-panel name="movies">
-          <PasswordRecovery />
+        <q-tab-panel name="recover">
+          <PasswordRecovery @change-tab="changeTab" />
         </q-tab-panel>
       </q-tab-panels>
-    </div>
+      <q-card-actions
+        v-show="tab === 'login'"
+        align="center"
+      >
+        <q-btn
+          dense
+          flat
+          text-color="primary"
+          label="Забыли пароль?"
+          @click="tab = 'recover'"
+        />
+      </q-card-actions>
+    </q-card>
   </q-page>
 </template>
 
@@ -103,7 +106,7 @@ export default {
   },
   data() {
     return {
-      tab: 'mails',
+      tab: 'login',
     };
   },
   computed: {
@@ -112,6 +115,12 @@ export default {
     },
     toPath() {
       return this.$store.getters['auth/getToPath'];
+    },
+  },
+  methods: {
+    changeTab(tab) {
+      devlog.log('ERT', tab);
+      this.tab = tab;
     },
   },
 };

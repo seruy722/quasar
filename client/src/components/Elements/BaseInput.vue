@@ -10,7 +10,7 @@
     :error="isError"
     :no-error-icon="noErrorIcon"
     clearable
-    clear-icon="cancel"
+    clear-icon="clear"
     :color="color"
     :filled="filled"
     :mask="mask"

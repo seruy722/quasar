@@ -1,5 +1,5 @@
 <template>
-  <q-card data-vue-component-name="Login">
+  <q-card data-vue-component-name="Login" flat>
     <q-card-section>
       <BaseInput
         v-model.trim="loginData.email.value"
@@ -30,7 +30,7 @@
     <q-card-actions align="right">
       <BaseBtn
         label="Войти"
-        @click-outline-btn="checkErrors(loginData, login)"
+        @click-base-btn="checkErrors(loginData, login)"
       />
     </q-card-actions>
   </q-card>

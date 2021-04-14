@@ -298,15 +298,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('update-player-id', 'Api\NotificationController@updatePlayerId')->name('update player id');
 //    Route::post('create-notification', 'Api\NotificationController@createNotification')->name('create notification');
 });
-Route::group(['middleware' => 'throttle:500,5'], function () {
-//    Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');
-    Route::post('register-client-code', function (Request $request) {
-        $client = new Client();
-        return $client->post( "https://api.turbosms.ua/message/send.json", ['body' => json_encode($request->obj), 'headers' => [
-            'Content-Type' => 'application/json',
-            "Authorization" => 'Bearer 55090e130c778e25675c1580655da1d0c8e89f43',
-        ]]);
-    })->name('code');
+Route::group(['middleware' => 'throttle:500,10'], function () {
+    Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');
     Route::post('change-password-code', 'Api\AuthController@getCodeForChangePassword')->name('code for password');
     Route::post('change-password', 'Api\AuthController@changePassword')->name('change password');
     Route::post('register-client-register', 'Api\AuthController@registerClient')->name('register client');
