@@ -30,7 +30,7 @@ class PermissionController extends Controller
 
     public function getUsersWithRolesAndPermissions()
     {
-        $users = User::with('roles')->get();
+        $users = User::with('roles')->where('dismissed', 0)->where('code_id', 0)->get();
         $users->map(function ($user) {
             $user->permissions;
             return $user['roles']->map(function ($role) {
