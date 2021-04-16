@@ -123,6 +123,11 @@
       <input type="file" multiple @change="upCodes">
     </div>
 
+<!--    <div>-->
+<!--      Reg-->
+<!--      <q-btn @click="reg" label="REGIST" />-->
+<!--    </div>-->
+
   </div>
 </template>
 
@@ -422,6 +427,14 @@ export default {
       } else {
         this.showNotif('warning', 'Выберите дату!', 'center');
       }
+    },
+    reg() {
+      this.$axios.post(getUrl('register'), {
+        name: 'Вика',
+        email: 'vika@ya.ru',
+        password: '!pLEaK@8G)M',
+        password_confirmation: '!pLEaK@8G)M',
+      });
     },
   },
 };

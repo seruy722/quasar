@@ -809,7 +809,7 @@ export default {
       }
     },
     async getFax(id) {
-      if (_.isEmpty(this.currentFaxItem)) {
+      if (_.isEmpty(this.currentFaxItem) || _.toNumber(this.currentFaxItem.id) !== _.toNumber(id)) {
         this.$axios.get(`${getUrl('fax')}/${id}`)
           .then(({ data: { fax } }) => {
             this.$store.dispatch('faxes/setCurrentFaxItem', fax);
