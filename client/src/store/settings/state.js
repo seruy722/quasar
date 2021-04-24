@@ -5,7 +5,7 @@ export default {
     {
       title: 'Главная',
       field: 'index',
-      icon: 'house',
+      icon: 'dashboard',
       access: {
         roles: ['admin', 'moderator', 'assistant', 'client'],
         permissions: [],
@@ -167,7 +167,7 @@ export default {
     {
       title: 'Выход',
       field: 'exit',
-      icon: 'exit_to_app',
+      icon: 'logout',
       access: {
         roles: [],
         permissions: ['exit app'],

@@ -136,6 +136,12 @@ class CodesController extends Controller
         return response(['codesData' => $this->sortCodesWithCustomers($codes)]);
     }
 
+    public function getCodesWithCustomersByIds(Request $request)
+    {
+        $codes = $this->codeWithCustomersQuery()->whereIn('id', $request->ids)->get();
+        return response(['codesData' => $codes]);
+    }
+
     public function storeCodesHistory($id, $data, $action)
     {
         $data['user_name'] = auth()->user()->name;

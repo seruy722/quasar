@@ -56,6 +56,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     });
     // CODES
     Route::get('/codes', 'Api\CodesController@getCodesWithCustomers')->name('view codes list')->middleware(['role_or_permission:admin|codes|view codes list']);
+    Route::post('/codes-by-ids', 'Api\CodesController@getCodesWithCustomersByIds')->name('get codes by id')->middleware(['role_or_permission:admin|codes|get codes by id']);
     Route::get('/get-code-history/{id}', 'Api\CodesController@getCodeHistory')->name('get-code-history')->middleware(['role_or_permission:admin|codes|get-code-history']);
 //    Route::post('/get-new-codes', 'Api\CodesController@getNewCodes')->name('get-new-codes')->middleware(['role_or_permission:admin|codes|get-new-codes']);
 //    Route::get('/codes', function () {

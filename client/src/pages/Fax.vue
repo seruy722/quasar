@@ -56,12 +56,12 @@
           @icon-btn-click="destroyEntry(faxTableReactiveProperties.selected)"
         />
 
-        <!--        <IconBtn-->
-        <!--          icon="data_usage"-->
-        <!--          color="orange"-->
-        <!--          tooltip="Обновить цены"-->
-        <!--          @icon-btn-click="updatePricesInFax(currentFaxItem.id)"-->
-        <!--        />-->
+        <IconBtn
+          icon="send"
+          color="primary"
+          tooltip="Отправить смс"
+          @icon-btn-click="openDialogSendSms(faxTableData, faxTableReactiveProperties.selected)"
+        />
       </template>
 
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -507,6 +507,11 @@
       :show.sync="showMoveToFaxDialog"
       :values.sync="faxTableReactiveProperties.selected"
     />
+    <DialogSendSms
+      :show.sync="showSendSmsDialog"
+      :values.sync="sendSmsDialogData"
+      :fax="currentFaxItem"
+    />
   </q-page>
 </template>
 
@@ -543,6 +548,7 @@ export default {
     // Badge: () => import('src/components/Elements/Badge.vue'),
     BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
     DialogFaxData: () => import('src/components/Dialogs/DialogFaxData.vue'),
+    DialogSendSms: () => import('src/components/Dialogs/DialogSendSms.vue'),
     StorehouseDataHistory: () => import('src/components/History/StorehouseDataHistory.vue'),
     Card: () => import('src/components/Elements/Card/Card.vue'),
     CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
@@ -566,6 +572,8 @@ export default {
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {
     return {
+      showSendSmsDialog: false,
+      sendSmsDialogData: [],
       isTransfer: false,
       addToSaveArray: [],
       search: null,
@@ -764,6 +772,10 @@ export default {
     clearTimeout(this.timer);
   },
   methods: {
+    openDialogSendSms(allData, selected) {
+      this.sendSmsDialogData = _.isEmpty(selected) ? allData : selected;
+      this.showSendSmsDialog = true;
+    },
     moveToFax() {
       this.showMoveToFaxDialog = true;
     },
@@ -851,7 +863,10 @@ export default {
     },
     exportFaxData(data) {
       const ids = [];
-      _.forEach(data, ({ arr, id }) => {
+      _.forEach(data, ({
+                         arr,
+                         id,
+                       }) => {
         if (!_.isEmpty(arr)) {
           ids.push(..._.map(arr, 'id'));
         } else {
@@ -865,7 +880,10 @@ export default {
     },
     exportFaxMailData(data) {
       const ids = [];
-      _.forEach(data, ({ arr, id }) => {
+      _.forEach(data, ({
+                         arr,
+                         id,
+                       }) => {
         if (!_.isEmpty(arr)) {
           ids.push(..._.map(arr, 'id'));
         } else {

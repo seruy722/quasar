@@ -8,6 +8,7 @@ const urls = {
     userModel: `${prefix}/user`,
     usersWithRoles: `${prefix}/users-with-roles`,
     codes: `${prefix}/codes`,
+    codesIds: `${prefix}/codes-by-ids`,
     codesAssistant: `${prefix}/codes-assistant`,
     uploadCodes: `${prefix}/upload-codes`,
     uploadCargoTable: `${prefix}/upload-cargo-table`,
