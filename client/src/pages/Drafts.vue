@@ -428,14 +428,14 @@ export default {
         this.showNotif('warning', 'Выберите дату!', 'center');
       }
     },
-    reg() {
-      this.$axios.post(getUrl('register'), {
-        name: 'Вика',
-        email: 'vika@ya.ru',
-        password: '!pLEaK@8G)M',
-        password_confirmation: '!pLEaK@8G)M',
-      });
-    },
+    // reg() {
+    //   this.$axios.post(getUrl('register'), {
+    //     name: 'Вика',
+    //     email: 'vikas@ya.ru',
+    //     password: 'Gpc5rZ9H73',
+    //     password_confirmation: 'Gpc5rZ9H73',
+    //   });
+    // },
   },
 };
 </script>

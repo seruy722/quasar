@@ -16,6 +16,7 @@ const routes = [
       {
         path: '/register-client',
         name: 'register-client',
+        redirect: '/',
         meta: {
           title: 'Регистрация клиента',
         },
@@ -24,6 +25,7 @@ const routes = [
       {
         path: '/password-recovery',
         name: 'password-recovery',
+        redirect: '/',
         meta: {
           title: 'Восстановление доступа',
         },
