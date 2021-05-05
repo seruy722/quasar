@@ -43,9 +43,6 @@
   </q-page>
 </template>
 
-<style>
-</style>
-
 <script>
 import accessFunc from 'src/tools/access';
 

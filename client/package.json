@@ -18,14 +18,14 @@
   "dependencies": {
     "@quasar/extras": "^1.10.4",
     "axios": "^0.21.1",
-    "date-fns": "^2.21.1",
+    "date-fns": "^2.21.2",
     "lodash": "^4.17.21",
-    "quasar": "^1.15.11",
+    "quasar": "^1.15.13",
     "validator": "^13.6.0",
-    "vue-i18n": "^8.24.3"
+    "vue-i18n": "^8.24.4"
   },
   "devDependencies": {
-    "@quasar/app": "2.2.5",
+    "@quasar/app": "2.2.6",
     "@vue/eslint-config-airbnb": "^5.3.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.25.0",
