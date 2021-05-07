@@ -149,7 +149,10 @@
               auto-width
               class="select_checkbox"
             >
-              <q-checkbox dense v-model="props.selected" />
+              <q-checkbox
+                v-model="props.selected"
+                dense
+              />
             </q-td>
 
             <q-td

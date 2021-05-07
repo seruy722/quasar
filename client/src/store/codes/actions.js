@@ -5,6 +5,11 @@ import { setFormatedDate } from 'src/utils/FrequentlyCalledFunctions';
 
 export const setCodes = (({ commit }) => axiosInstance.get(getUrl('codeList'))
   .then(({ data: { codeList } }) => {
+    const collator = new Intl.Collator(undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    });
+    codeList.sort((a, b) => collator.compare(a.label, b.label));
     commit('SET_CODES', codeList);
   })
   .catch((e) => {
