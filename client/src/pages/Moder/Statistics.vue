@@ -1,6 +1,6 @@
 <template>
   <div data-vue-component-name="Statistics">
-    <div id="chart">    </div>
+    <div id="chart"></div>
     <PullRefresh @refresh="refresh">
       <Table
         :table-properties="cargoTableProperties"
@@ -264,6 +264,7 @@ export default {
       options: {
         chart: {
           type: 'bar',
+          height: '100%',
         },
         colors: ['#06F30CFF', '#F80319FF'],
         series: [
