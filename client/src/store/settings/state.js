@@ -5,7 +5,7 @@ export default {
     {
       title: 'Главная',
       field: 'index',
-      icon: 'house',
+      icon: 'dashboard',
       access: {
         roles: ['admin', 'moderator', 'assistant', 'client'],
         permissions: [],
@@ -50,7 +50,7 @@ export default {
     {
       title: 'Вопросы',
       field: 'questions',
-      icon: 'help_center',
+      icon: 'help',
       access: {
         roles: ['admin', 'questions'],
         permissions: [],
@@ -165,9 +165,18 @@ export default {
       },
     },
     {
+      title: 'Статистика',
+      field: 'statistics',
+      icon: 'trending_up',
+      access: {
+        roles: ['admin'],
+        permissions: ['view statistics'],
+      },
+    },
+    {
       title: 'Выход',
       field: 'exit',
-      icon: 'exit_to_app',
+      icon: 'logout',
       access: {
         roles: [],
         permissions: ['exit app'],

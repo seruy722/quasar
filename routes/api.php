@@ -56,6 +56,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     });
     // CODES
     Route::get('/codes', 'Api\CodesController@getCodesWithCustomers')->name('view codes list')->middleware(['role_or_permission:admin|codes|view codes list']);
+    Route::post('/codes-by-ids', 'Api\CodesController@getCodesWithCustomersByIds')->name('get codes by id')->middleware(['role_or_permission:admin|codes|get codes by id']);
     Route::get('/get-code-history/{id}', 'Api\CodesController@getCodeHistory')->name('get-code-history')->middleware(['role_or_permission:admin|codes|get-code-history']);
 //    Route::post('/get-new-codes', 'Api\CodesController@getNewCodes')->name('get-new-codes')->middleware(['role_or_permission:admin|codes|get-new-codes']);
 //    Route::get('/codes', function () {
@@ -242,6 +243,16 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/delete-questions', 'Api\QuestionController@deleteQuestions')->name('delete questions')->middleware(['role_or_permission:admin|questions|delete questions']);
     Route::post('/update-question', 'Api\QuestionController@updateQuestion')->name('update question')->middleware(['role_or_permission:admin|questions|update question']);
     Route::post('/add-question-comment', 'Api\QuestionController@addQuestionComment')->name('add question comment')->middleware(['role_or_permission:admin|question|add question comment']);
+
+    // EXPENSE
+    Route::get('/get-expenses', function () {
+        $data = \App\Expense::select('name')->orderBy('name')->get();
+        return $data->map(function ($elem) {
+            return $elem->name;
+        });
+    })->name('get-expenses')->middleware(['role_or_permission:admin|expense|get-expenses']);
+    Route::post('/add-expense', 'Api\ExpenseController@store')->name('add-expense')->middleware(['role_or_permission:admin|expense|add-expense']);
+    Route::get('/get-statistics', 'Api\ExpenseController@index')->name('get-statistics')->middleware(['role_or_permission:admin|expense|get-statistics']);
 
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды

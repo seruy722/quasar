@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Debt extends Model
+class Statistics extends Model
 {
-    protected $fillable = ['code_client_id', 'type', 'sum', 'notation', 'user_id', 'transfer_id', 'paid', 'created_at', 'commission', 'get_pay_user_id', 'zero'];
+    protected $fillable = ['expense_id', 'sum', 'created_at'];
 
     public function getCreatedAtAttribute($value)
     {

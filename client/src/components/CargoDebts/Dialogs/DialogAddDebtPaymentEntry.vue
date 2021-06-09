@@ -65,6 +65,7 @@
             <BaseInput
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
+              :autofocus="item.autofocus"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"

@@ -16,7 +16,7 @@ const routes = [
       {
         path: '/register-client',
         name: 'register-client',
-        redirect: '/',
+        redirect: { name: 'login' },
         meta: {
           title: 'Регистрация клиента',
         },
@@ -24,8 +24,8 @@ const routes = [
       },
       {
         path: '/password-recovery',
+        redirect: { name: 'login' },
         name: 'password-recovery',
-        redirect: '/',
         meta: {
           title: 'Восстановление доступа',
         },
@@ -387,6 +387,21 @@ const routes = [
           },
         },
         component: () => import('pages/Moder/Documents.vue'),
+      },
+      {
+        path: 'statistics',
+        name: 'statistics',
+        meta: {
+          title: 'Статистика',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin'],
+            permissions: [],
+          },
+        },
+        component: () => import('pages/Moder/Statistics.vue'),
       },
       {
         path: 'client-cargo-debts',

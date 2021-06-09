@@ -112,8 +112,23 @@ class CargoController extends Controller
         $data['type'] = true;
         $data['place'] = 0;
         $entry = Cargo::create($data);
+        if (array_key_exists('code_client_id', $data)) {
+            $this->checkZero('cargo', $data['code_client_id']);
+        }
         $entry = $this->query()->where('cargos.id', $entry->id)->first();
         return response(['answer' => $entry]);
+    }
+
+    public function checkZero($model, $clientId)
+    {
+        if ($clientId) {
+            $collection = $model === 'cargo' ? Cargo::where('code_client_id', $clientId)->get() : Debt::where('code_client_id', $clientId)->get();
+            if (!$collection->sum('sum')) {
+                $entry = $collection->last();
+                $entry->zero = 1;
+                $entry->save();
+            }
+        }
     }
 
     public function updateCargoPaymentEntry(Request $request)
@@ -132,6 +147,9 @@ class CargoController extends Controller
             $data['created_at'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
         }
         Cargo::where('id', $request->id)->update($data);
+        if (array_key_exists('code_client_id', $data)) {
+            $this->checkZero('cargo', $data['code_client_id']);
+        }
         $entry = $this->query()->where('cargos.id', $request->id)->first();
         return response(['answer' => $entry]);
     }
@@ -167,6 +185,10 @@ class CargoController extends Controller
                 $entry->save();
             }
         }
+        if (array_key_exists('code_client_id', $data)) {
+            $this->checkZero('cargo', $data['code_client_id']);
+        }
+
         $entry = $this->query()->where('cargos.id', $entry->id)->first();
         return response(['answer' => $entry]);
     }
@@ -198,6 +220,9 @@ class CargoController extends Controller
                 $entry->save();
             }
         }
+        if (array_key_exists('code_client_id', $data)) {
+            $this->checkZero('cargo', $data['code_client_id']);
+        }
         $entry = $this->query()->where('cargos.id', $request->id)->first();
         return response(['answer' => $entry]);
     }
@@ -225,6 +250,9 @@ class CargoController extends Controller
         }
         $data['type'] = true;
         $entry = Debt::create($data);
+        if (array_key_exists('code_client_id', $data)) {
+            $this->checkZero('debt', $data['code_client_id']);
+        }
         $entry = $this->queryDebt()->where('debts.id', $entry->id)->first();
         return response(['answer' => $entry]);
     }
@@ -251,6 +279,9 @@ class CargoController extends Controller
             $data['commission'] = $data['commission'] * -1;
         }
         Debt::where('id', $request->id)->update($data);
+        if (array_key_exists('code_client_id', $data)) {
+            $this->checkZero('debt', $data['code_client_id']);
+        }
         $entry = $this->queryDebt()->where('debts.id', $request->id)->first();
         return response(['answer' => $entry]);
     }
@@ -286,6 +317,9 @@ class CargoController extends Controller
         }
 
         $entry = Debt::create($data);
+        if (array_key_exists('code_client_id', $data)) {
+            $this->checkZero('debt', $data['code_client_id']);
+        }
         $entry = $this->queryDebt()->where('debts.id', $entry->id)->first();
         return response(['answer' => $entry]);
     }
@@ -315,6 +349,9 @@ class CargoController extends Controller
         $debt = Debt::find($request->id);
         if (array_key_exists('paid', $data)) {
             Transfer::where('id', $debt->transfer_id)->update(['paid' => $data['paid']]);
+        }
+        if (array_key_exists('code_client_id', $data)) {
+            $this->checkZero('debt', $data['code_client_id']);
         }
         $entry = $this->queryDebt()->where('debts.id', $request->id)->first();
         return response(['answer' => $entry, '$debt' => $debt]);
@@ -346,6 +383,9 @@ class CargoController extends Controller
             return response(['answer' => $entries]);
         }
         Cargo::where('id', $request->entry_id)->update(['paid' => true]);
+        if (array_key_exists('code_client_id', $data)) {
+            $this->checkZero('cargo', $data['code_client_id']);
+        }
         $entries = $this->query()->whereIn('cargos.id', [$entry->id, $request->entry_id])->get();
         return response(['answer' => $entries]);
     }
@@ -389,6 +429,9 @@ class CargoController extends Controller
         if ($newEntry) {
             array_push($arrData, $newEntry->id);
         }
+        if (array_key_exists('code_client_id', $data)) {
+            $this->checkZero('debt', $data['code_client_id']);
+        }
         $entries = $this->queryDebt()->whereIn('debts.id', $arrData)->get();
         return response(['answer' => $entries]);
     }
@@ -396,6 +439,9 @@ class CargoController extends Controller
     public function cargoPaymentsAllForClient($id)
     {
         Cargo::where('type', false)->where('code_client_id', $id)->update(['paid' => true]);
+
+        $this->checkZero('cargo', $id);
+
         $data = $this->query()
             ->where('cargos.type', false)
             ->where('cargos.code_client_id', $id)
@@ -416,6 +462,8 @@ class CargoController extends Controller
         if (!empty($ids)) {
             Transfer::whereIn('id', $ids)->update(['paid' => true]);
         }
+
+        $this->checkZero('debt', $id);
 
         $data = $this->queryDebt()
             ->where('debts.type', false)

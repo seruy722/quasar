@@ -22,13 +22,14 @@
       <div>{{ viewPeriodDate }}</div>
     </div>
     <CountTransfersData :enter-data="statisticsData" />
+
+    <!--Топ 10 клиентов-->
     <q-list
       separator
       bordered
       dense
       style="max-width: 450px;margin: 20px auto;font-weight: bold;"
     >
-      <!--Топ 10 клиентов-->
       <q-item>
         <q-item-section class="statistics_title">Топ 10 клиентов</q-item-section>
         <q-item-section>

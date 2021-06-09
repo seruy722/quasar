@@ -36,7 +36,6 @@
               v-if="item.type === 'text'"
               v-model.trim="item.value"
               :label="item.label"
-              :autofocus="item.autofocus"
               :type="item.type"
               :mask="item.mask"
               :dense="$q.screen.xs || $q.screen.sm"
@@ -50,8 +49,8 @@
             <BaseInput
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
-              :label="item.label"
               :autofocus="item.autofocus"
+              :label="item.label"
               :type="item.type"
               :mask="item.mask"
               :dense="$q.screen.xs || $q.screen.sm"
