@@ -974,9 +974,3 @@ export default {
   },
 };
 </script>
-
-<style lang="stylus">
-.statistics_title
-  background-color lightgrey
-  text-align center
-</style>

@@ -22,6 +22,7 @@
     data-vue-component="BaseInput"
     @input="inputEvent"
     @keyup="$emit('on-key-up', $event)"
+    @focus="$event.target.select()"
   >
     <template #append>
       <slot name="append"></slot>

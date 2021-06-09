@@ -50,7 +50,7 @@ export default {
     {
       title: 'Вопросы',
       field: 'questions',
-      icon: 'help_center',
+      icon: 'help',
       access: {
         roles: ['admin', 'questions'],
         permissions: [],
@@ -162,6 +162,15 @@ export default {
       access: {
         roles: ['admin'],
         permissions: ['view access list'],
+      },
+    },
+    {
+      title: 'Статистика',
+      field: 'statistics',
+      icon: 'trending_up',
+      access: {
+        roles: ['admin'],
+        permissions: ['view statistics'],
       },
     },
     {

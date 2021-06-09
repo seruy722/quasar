@@ -31,7 +31,9 @@
             size="70px"
           />
           <q-card-section>
-            <div class="text-subtitle2">{{ item.title }}</div>
+            <div class="text-subtitle2">
+              {{ item.title }}
+            </div>
           </q-card-section>
         </q-card>
       </q-intersection>
@@ -42,9 +44,6 @@
     />
   </q-page>
 </template>
-
-<style>
-</style>
 
 <script>
 import accessFunc from 'src/tools/access';

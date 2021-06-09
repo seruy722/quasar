@@ -21,6 +21,7 @@ import settings from './settings';
 import tasks from './tasks';
 import documents from './documents';
 import questions from './questions';
+import statistics from './statistics';
 
 Vue.use(Vuex);
 
@@ -52,6 +53,7 @@ export default function (/* { ssrContext } */) {
       tasks,
       documents,
       questions,
+      statistics,
     },
 
     // enable strict mode (adds overhead!)

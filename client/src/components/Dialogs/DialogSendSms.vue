@@ -7,7 +7,7 @@
     transition-hide="slide-down"
     data-vue-component-name="DialogSendSms"
   >
-    <q-card class="bg-primary text-white">
+    <q-card>
       <q-bar>
         <q-space />
 
@@ -25,7 +25,7 @@
       <q-card-section>
         <Table
           :table-properties="faxTableProperties"
-          :table-data="values"
+          :table-data="faxTableData"
           :table-reactive-properties="faxTableReactiveProperties"
           :title="fax.name"
         >
@@ -117,7 +117,7 @@
           <template #inner-body="{props}">
             <q-tr
               :props="props"
-              :class="{table__tr_bold_text: props.row.brand, 'cursor-pointer': !combineTableData}"
+              :class="{table__tr_bold_text: props.row.brand}"
             >
               <q-td auto-width>
                 <q-checkbox
@@ -128,24 +128,23 @@
 
               <q-td
                 key="code_client_name"
-                class="cursor-pointer"
                 :props="props"
               >
-                {{ props.row.code_client_id }}
-                <PopupEdit
-                  v-if="combineTableData"
-                  :value.sync="props.row.code_client_id"
-                  type="number"
-                  :title="props.row.code_client_name"
-                  @add-to-save="addToAddSaveArray(props.row, 'code_client_id')"
-                >
-                  <SearchSelect
-                    v-model="props.row.code_client_id"
-                    label="Клиент"
-                    :dense="$q.screen.xs || $q.screen.sm"
-                    :options="clientCodes"
-                  />
-                </PopupEdit>
+                {{ props.row.code_client_name }}
+                <!--                <PopupEdit-->
+                <!--                  v-if="combineTableData"-->
+                <!--                  :value.sync="props.row.code_client_id"-->
+                <!--                  type="number"-->
+                <!--                  :title="props.row.code_client_name"-->
+                <!--                  @add-to-save="addToAddSaveArray(props.row, 'code_client_id')"-->
+                <!--                >-->
+                <!--                  <SearchSelect-->
+                <!--                    v-model="props.row.code_client_id"-->
+                <!--                    label="Клиент"-->
+                <!--                    :dense="$q.screen.xs || $q.screen.sm"-->
+                <!--                    :options="clientCodes"-->
+                <!--                  />-->
+                <!--                </PopupEdit>-->
               </q-td>
 
               <q-td
@@ -164,84 +163,125 @@
 
               <q-td
                 key="for_kg"
-                class="text-bold text-red cursor-pointer"
+                class="text-bold text-red"
                 :props="props"
               >
                 {{ props.row.for_kg | numberFormatFilter }}
-                <PopupEdit
-                  v-if="combineTableData"
-                  :value.sync="props.row.for_kg"
-                  type="number"
-                  :title="props.row.code_client_name"
-                  @add-to-save="addToAddSaveArray(props.row, 'for_kg')"
-                >
-                  <q-input
-                    v-model.number="props.row.for_kg"
-                    type="number"
-                    autofocus
-                    dense
-                  />
-                  <q-checkbox
-                    v-model="props.row.replacePrice"
-                    label="Заменить"
-                    dense
-                  />
-                </PopupEdit>
+                <!--                <PopupEdit-->
+                <!--                  v-if="combineTableData"-->
+                <!--                  :value.sync="props.row.for_kg"-->
+                <!--                  type="number"-->
+                <!--                  :title="props.row.code_client_name"-->
+                <!--                  @add-to-save="addToAddSaveArray(props.row, 'for_kg')"-->
+                <!--                >-->
+                <!--                  <q-input-->
+                <!--                    v-model.number="props.row.for_kg"-->
+                <!--                    type="number"-->
+                <!--                    autofocus-->
+                <!--                    dense-->
+                <!--                  />-->
+                <!--                  <q-checkbox-->
+                <!--                    v-model="props.row.replacePrice"-->
+                <!--                    label="Заменить"-->
+                <!--                    dense-->
+                <!--                  />-->
+                <!--                </PopupEdit>-->
               </q-td>
 
               <q-td
                 key="for_place"
-                class="text-bold text-red cursor-pointer"
+                class="text-bold text-red"
                 :props="props"
               >
                 {{ props.row.for_place | numberFormatFilter }}
-                <PopupEdit
-                  v-if="combineTableData"
-                  :value.sync="props.row.for_place"
-                  type="number"
-                  :title="props.row.code_client_name"
-                  @add-to-save="addToAddSaveArray(props.row, 'for_place')"
-                />
+                <!--                <PopupEdit-->
+                <!--                  v-if="combineTableData"-->
+                <!--                  :value.sync="props.row.for_place"-->
+                <!--                  type="number"-->
+                <!--                  :title="props.row.code_client_name"-->
+                <!--                  @add-to-save="addToAddSaveArray(props.row, 'for_place')"-->
+                <!--                />-->
+              </q-td>
+
+              <q-td
+                key="sum"
+                class="text-bold"
+                :props="props"
+              >
+                {{ props.row.sum }}
               </q-td>
 
               <q-td
                 key="category_name"
-                class="cursor-pointer"
                 :props="props"
               >
-                {{ props.row.category_id | optionsFilter(categories) }}
-                <PopupEdit
-                  v-if="combineTableData"
-                  :value.sync="props.row.category_id"
-                  type="number"
-                  :title="props.row.code_client_name"
-                  @add-to-save="addToAddSaveArray(props.row, 'category_id')"
-                >
-                  <SearchSelect
-                    v-model="props.row.category_id"
-                    label="Категория"
-                    :dense="$q.screen.xs || $q.screen.sm"
-                    :options="categories"
-                  />
-                </PopupEdit>
+                {{ props.row.category_name }}
+                <!--                <PopupEdit-->
+                <!--                  v-if="combineTableData"-->
+                <!--                  :value.sync="props.row.category_id"-->
+                <!--                  type="number"-->
+                <!--                  :title="props.row.code_client_name"-->
+                <!--                  @add-to-save="addToAddSaveArray(props.row, 'category_id')"-->
+                <!--                >-->
+                <!--                  <SearchSelect-->
+                <!--                    v-model="props.row.category_id"-->
+                <!--                    label="Категория"-->
+                <!--                    :dense="$q.screen.xs || $q.screen.sm"-->
+                <!--                    :options="categories"-->
+                <!--                  />-->
+                <!--                </PopupEdit>-->
               </q-td>
 
               <q-td
-                key="notation"
+                key="text"
                 :props="props"
               >
-                {{ props.row.notation }}
+                {{ props.row.text }}
               </q-td>
 
+              <q-td
+                key="phones"
+                :props="props"
+              >
+                <q-option-group
+                  v-model="props.row.selectedPhones"
+                  :options="props.row.phones"
+                  color="green"
+                  type="checkbox"
+                />
+              </q-td>
             </q-tr>
           </template>
         </Table>
       </q-card-section>
-
-      <q-card-section class="q-pt-none">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro.
-        Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.
+      <q-card-section>
+        <q-btn-group outline>
+          <q-btn
+            v-for="(item,index) in options"
+            :key="index"
+            outline
+            :color="item.color"
+            :label="item.label"
+            @click="text = `${text}${item.value}`"
+          />
+        </q-btn-group>
+        <q-input
+          v-model="text"
+          filled
+          counter
+          label="Сообщение"
+          type="textarea"
+          :rules="[val => val.length < 71 || 'Превышено максимальное количество символов']"
+        />
       </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn
+          label="Просмотр"
+          color="primary"
+          @click="viewSms(text, faxTableData, sendSmsDialogData, options)"
+        />
+      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
@@ -253,10 +293,8 @@ export default {
   name: 'DialogSendSms',
   components: {
     Table: () => import('components/Elements/Table/Table.vue'),
-    PopupEdit: () => import('components/PopupEdit.vue'),
     IconBtn: () => import('components/Buttons/IconBtn.vue'),
     BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-    SearchSelect: () => import('components/Elements/SearchSelect.vue'),
   },
   props: {
     show: {
@@ -274,6 +312,31 @@ export default {
   },
   data() {
     return {
+      group: [],
+      options: [
+        {
+          label: 'Мест',
+          value: '{place}',
+          field: 'place',
+          text: 'мест',
+        },
+        {
+          label: 'Вес',
+          value: '{kg}',
+          field: 'kg',
+          color: 'green',
+          text: 'вес',
+        },
+        {
+          label: 'Сумма',
+          value: '{sum}',
+          field: 'sum',
+          color: 'red',
+          text: '',
+        },
+      ],
+      sendSmsDialogData: [],
+      text: '',
       maximizedToggle: true,
       faxTableData: [],
       faxTableProperties: {
@@ -314,6 +377,13 @@ export default {
             sortable: true,
           },
           {
+            name: 'sum',
+            label: 'Сумма',
+            field: 'sum',
+            align: 'center',
+            sortable: true,
+          },
+          {
             name: 'category_name',
             label: this.$t('category'),
             field: 'category_name',
@@ -321,24 +391,22 @@ export default {
             sortable: true,
           },
           {
-            name: 'notation',
-            label: this.$t('notation'),
-            field: 'notation',
+            name: 'text',
+            label: 'Сообщение',
+            field: 'sms',
             align: 'center',
-            sortable: true,
           },
           {
-            name: 'things',
-            label: this.$t('things'),
-            field: 'things',
+            name: 'phones',
+            label: 'Телефоны',
+            field: 'phones',
             align: 'center',
-            sortable: true,
           },
         ],
       },
       faxTableReactiveProperties: {
         selected: [],
-        visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'category_name'],
+        visibleColumns: ['code_client_name', 'place', 'kg', 'for_kg', 'for_place', 'category_name', 'sum', 'text', 'phones'],
         title: '',
       },
     };
@@ -352,17 +420,59 @@ export default {
         return this.show;
       },
     },
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+  },
+  watch: {
+    show(val) {
+      if (val && _.isEmpty(this.sendSmsDialogData)) {
+        this.getCustomersPhones(this.values, this.faxTableReactiveProperties.selected);
+      }
+    },
   },
   methods: {
-    sendSms(allData, selected) {
+    sum(data) {
+      return _.round((_.get(data, 'for_kg') * _.get(data, 'kg')) + (_.get(data, 'for_place') * _.get(data, 'place')));
+    },
+    getCustomersPhones(allData, selected) {
       const list = _.isEmpty(selected) ? allData : selected;
       const codeIds = _.uniq(_.map(list, 'code_client_id'));
       devlog.log('codeIds', codeIds);
       this.$axios.post(getUrl('codesIds'), { ids: codeIds })
         .then(({ data: { codesData } }) => {
           this.sendSmsDialogData = codesData;
-          this.showSendSmsDialog = true;
+          this.faxTableData = _.cloneDeep(this.values);
+          this.setSmsObj(this.faxTableData, codesData);
         });
+    },
+    viewSms(text, data, phonesData, options) {
+      const cloneData = _.cloneDeep(data);
+      _.forEach(cloneData, (item) => {
+        let cloneText = _.clone(text);
+        _.forEach(options, (elem) => {
+          cloneText = cloneText.replaceAll(elem.value, item[elem.field]);
+        });
+
+        _.set(item, 'text', cloneText);
+      });
+      this.faxTableData = cloneData;
+    },
+    setSmsObj(data, phonesData) {
+      const cloneData = _.cloneDeep(data);
+      _.forEach(cloneData, (item) => {
+        const findPhonesData = _.find(phonesData, { id: item.code_client_id });
+        devlog.log('findPhonesData', findPhonesData);
+        item.sum = this.sum(item);
+        item.text = '';
+        const phones = _.uniqBy(_.map(_.get(findPhonesData, 'customers') || [], ({ phone }) => ({
+          label: phone,
+          value: phone,
+        })), 'label');
+        item.phones = phones;
+        item.selectedPhones = [_.get(_.first(phones), 'value')] || [];
+      });
+      this.faxTableData = cloneData;
     },
   },
 };

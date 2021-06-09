@@ -244,6 +244,16 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/update-question', 'Api\QuestionController@updateQuestion')->name('update question')->middleware(['role_or_permission:admin|questions|update question']);
     Route::post('/add-question-comment', 'Api\QuestionController@addQuestionComment')->name('add question comment')->middleware(['role_or_permission:admin|question|add question comment']);
 
+    // EXPENSE
+    Route::get('/get-expenses', function () {
+        $data = \App\Expense::select('name')->orderBy('name')->get();
+        return $data->map(function ($elem) {
+            return $elem->name;
+        });
+    })->name('get-expenses')->middleware(['role_or_permission:admin|expense|get-expenses']);
+    Route::post('/add-expense', 'Api\ExpenseController@store')->name('add-expense')->middleware(['role_or_permission:admin|expense|add-expense']);
+    Route::get('/get-statistics', 'Api\ExpenseController@index')->name('get-statistics')->middleware(['role_or_permission:admin|expense|get-statistics']);
+
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды
     Route::get('/export-brands-customers', 'Api\CodesController@getCustomersWhoGetTheBrand');
