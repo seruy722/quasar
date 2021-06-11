@@ -1,7 +1,6 @@
 <template>
   <div data-vue-component-name="Statistics">
     <div id="chart"></div>
-    <PullRefresh @refresh="refresh">
       <Table
         :table-properties="cargoTableProperties"
         :table-data="tasks"
@@ -241,7 +240,6 @@
           </q-tr>
         </template>
       </Table>
-    </PullRefresh>
     <DialogAddExpense :show-dialog.sync="showDialogAddExpense" />
   </div>
 </template>
@@ -256,7 +254,6 @@ export default {
     DialogAddExpense: () => import('src/components/Dialogs/DialogAddExpense.vue'),
     Table: () => import('src/components/Elements/Table/Table.vue'),
     MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
-    PullRefresh: () => import('src/components/PullRefresh.vue'),
   },
   mixins: [showNotif],
   data() {
@@ -322,26 +319,7 @@ export default {
   },
   watch: {
     tasks(val) {
-      _.forEach(val, (item) => {
-        if (item.start_sum && item.end_sum) {
-          this.options.series[0].data.push(item.end_sum - item.start_sum);
-        }
-        this.options.series[1].data.push(_.sumBy(item.data, 'sum') * -1);
-      });
-      const size0 = _.size(this.options.series[0].data);
-      const size1 = _.size(this.options.series[1].data);
-      const sizeCategories = _.size(this.options.xaxis.categories);
-      if (size0 !== sizeCategories) {
-        this.options.series[0].data.push(..._.fill(Array(sizeCategories - size0), 0));
-      }
-      if (size1 !== sizeCategories) {
-        this.options.series[1].data.push(..._.fill(Array(sizeCategories - size1), 0));
-      }
-
-      this.$nextTick(() => {
-        const chart = new ApexCharts(document.getElementById('chart'), this.options);
-        chart.render();
-      });
+      this.fillData(val);
     },
   },
   created() {
@@ -352,42 +330,35 @@ export default {
           this.$q.loading.hide();
         });
     }
+
+    this.fillData(this.tasks);
   },
   methods: {
-    fillData() {
-      this.datacollection = {
-        labels: [this.getRandomInt(), this.getRandomInt()],
-        datasets: [
-          {
-            label: 'Data One',
-            backgroundColor: '#f87979',
-            data: [this.getRandomInt(), this.getRandomInt()],
-          }, {
-            label: 'Data One',
-            backgroundColor: '#f87979',
-            data: [this.getRandomInt(), this.getRandomInt()],
-          },
-        ],
-      };
-    },
-    getRandomInt() {
-      return Math.floor(Math.random() * (50 - 5 + 1)) + 5;
-    },
-    async refresh(done) {
-      if (!done) {
-        this.$q.loading.show();
-      }
-      const { callFunction } = await import('src/utils/index');
-      await this.$store.dispatch('tasks/fetchTasks')
-        .then(() => {
-          callFunction(done);
-          this.$q.loading.hide();
-          this.showNotif('success', 'Данные успешно обновлены.', 'center');
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          callFunction(done);
+    fillData(val) {
+      if (!_.isEmpty(val)) {
+        this.options.series[0].data = [];
+        this.options.series[1].data = [];
+        _.forEach(val, (item) => {
+          if (item.start_sum && item.end_sum) {
+            this.options.series[0].data.push(item.end_sum - item.start_sum);
+          }
+          this.options.series[1].data.push(_.sumBy(item.data, 'sum') * -1);
         });
+        const size0 = _.size(this.options.series[0].data);
+        const size1 = _.size(this.options.series[1].data);
+        const sizeCategories = _.size(this.options.xaxis.categories);
+        if (size0 !== sizeCategories) {
+          this.options.series[0].data.push(..._.fill(Array(sizeCategories - size0), 0));
+        }
+        if (size1 !== sizeCategories) {
+          this.options.series[1].data.push(..._.fill(Array(sizeCategories - size1), 0));
+        }
+
+        this.$nextTick(() => {
+          const chart = new ApexCharts(document.getElementById('chart'), this.options);
+          chart.render();
+        });
+      }
     },
     destroyEntry(selected, tasks) {
       const items = !_.isEmpty(selected) ? selected : tasks;
@@ -430,10 +401,6 @@ export default {
         }, 100);
         this.showDialogAddTask = true;
       }
-    },
-    update() {
-      this.entryData = { row: _.first(this.cargoTableReactiveProperties.selected) };
-      this.showDialogAddTask = true;
     },
   },
 };

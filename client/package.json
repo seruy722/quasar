@@ -26,12 +26,12 @@
     "vue-i18n": "^8.24.4"
   },
   "devDependencies": {
-    "@quasar/app": "2.2.9",
+    "@quasar/app": "2.2.10",
     "@vue/eslint-config-airbnb": "^5.3.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.28.0",
     "eslint-loader": "^4.0.2",
-    "eslint-plugin-vue": "^7.10.0",
+    "eslint-plugin-vue": "^7.11.0",
     "quasar-app-extension-ide-helper": "^1.0.0"
   },
   "engines": {
