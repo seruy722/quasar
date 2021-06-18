@@ -22,6 +22,10 @@
         </q-btn>
       </q-bar>
 
+      <div>
+        Тариф: {{ rate }} | Баланс : {{ balance }}
+      </div>
+
       <q-card-section>
         <Table
           :table-properties="faxTableProperties"
@@ -281,6 +285,12 @@
           color="primary"
           @click="viewSms(text, faxTableData, sendSmsDialogData, options)"
         />
+
+        <q-btn
+          label="Отправить"
+          color="secondary"
+          @click="sendSms(faxTableData)"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -312,6 +322,8 @@ export default {
   },
   data() {
     return {
+      rate: 0.35,
+      balance: null,
       group: [],
       options: [
         {
@@ -431,7 +443,37 @@ export default {
       }
     },
   },
+  created() {
+    this.$axios.get(getUrl('getSmsBalance'))
+      .then(({ data: { response_result: { balance } } }) => {
+        devlog.log('balance', balance);
+        this.balance = balance;
+      });
+  },
   methods: {
+    sendSms(values) {
+      // const phone = parseInt(this.phone.replace(/[^\d]/g, ''), 10);
+      // const sendData = [
+      //   {
+      //     phones: [],
+      //     text: 'Code for register: 62',
+      //   },
+      //   {
+      //     phones: [],
+      //     text: 'Code for register: 90',
+      //   },
+      // ];
+      devlog.log('VALSD', values);
+      const res = _.map(values, ({
+                                   selectedPhones,
+                                   text,
+                                 }) => ({
+        selectedPhones,
+        text,
+      }));
+      devlog.log('VALSD_RES', res);
+      this.$axios.post(getUrl('sendSms'), res);
+    },
     sum(data) {
       return _.round((_.get(data, 'for_kg') * _.get(data, 'kg')) + (_.get(data, 'for_place') * _.get(data, 'place')));
     },

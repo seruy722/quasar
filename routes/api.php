@@ -254,6 +254,12 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/add-expense', 'Api\ExpenseController@store')->name('add-expense')->middleware(['role_or_permission:admin|expense|add-expense']);
     Route::get('/get-statistics', 'Api\ExpenseController@index')->name('get-statistics')->middleware(['role_or_permission:admin|expense|get-statistics']);
 
+    // SMS
+//    Route::post('/send-sms', 'CommonController@sendSms')->name('send-sms')->middleware(['role_or_permission:admin|sms|send-sms']);
+    Route::post('/send-sms', 'CommonController@sendSms')->name('send-sms')->middleware(['role_or_permission:admin|sms|send-sms']);
+    Route::get('/sms-balance', 'CommonController@getSmsBalance')->name('sms-balance')->middleware(['role_or_permission:admin|sms|sms-balance']);
+
+
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды
     Route::get('/export-brands-customers', 'Api\CodesController@getCustomersWhoGetTheBrand');

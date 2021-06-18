@@ -158,6 +158,8 @@ const urls = {
   getExpenses: `${prefix}/get-expenses`,
   addExpense: `${prefix}/add-expense`,
   getStatistics: `${prefix}/get-statistics`,
+  sendSms: `${prefix}/send-sms`,
+  getSmsBalance: `${prefix}/sms-balance`,
   serverUrl: 'https://servercargo007.net.ua',
   axiosData: {
     baseURL: process.env.API,

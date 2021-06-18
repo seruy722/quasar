@@ -12,9 +12,11 @@ use App\Imports\ImportData;
 use App\Sklad;
 use App\StorehouseData;
 use App\Test;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use GuzzleHttp\Client;
 
 class CommonController extends Controller
 {
@@ -309,5 +311,33 @@ class CommonController extends Controller
     {
         $s = $request->search;
         return response(['searchData' => Test::where('client', $s)->get()]);
+    }
+
+    public function sendSms(Request $request)
+    {
+        $client = new Client();
+        $arr = [];
+        foreach ($request->all() as $item) {
+            foreach ($item['selectedPhones'] as $phone) {
+                if ($phone) {
+                    $dd = ['recipients' => [$phone], 'sms' => ['sender' => 'Cargo007', 'text' => $item['text']]];
+//            $answ = $client->post("https://api.turbosms.ua/message/send.json", ['body' => json_encode($dd), 'headers' => [
+//                'Content-Type' => 'application/json',
+//                "Authorization" => 'Bearer 55090e130c778e25675c1580655da1d0c8e89f43',
+//            ]]);
+                    array_push($arr, $dd);
+                }
+            }
+        }
+        return response(['answ' => $arr]);
+    }
+
+    public function getSmsBalance()
+    {
+        $client = new Client();
+        return $client->get("https://api.turbosms.ua/user/balance.json", ['headers' => [
+            'Content-Type' => 'application/json',
+            "Authorization" => 'Bearer 55090e130c778e25675c1580655da1d0c8e89f43',
+        ]]);
     }
 }
