@@ -3,7 +3,7 @@
     data-vue-component-name="DialogChangeThings"
   >
     <Dialog
-      :dialog.sync="thingsData.dialog"
+      v-model:dialog="thingsData.dialog"
       :persistent="true"
       title="Запись"
     >

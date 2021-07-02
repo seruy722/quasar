@@ -11,14 +11,43 @@
       <q-bar>
         <q-space />
 
-        <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
-          <q-tooltip v-if="maximizedToggle" content-class="bg-white text-primary">Minimize</q-tooltip>
+        <q-btn
+          dense
+          flat
+          icon="minimize"
+          :disable="!maximizedToggle"
+          @click="maximizedToggle = false"
+        >
+          <q-tooltip
+            v-if="maximizedToggle"
+            content-class="bg-white text-primary"
+          >
+            Minimize
+          </q-tooltip>
         </q-btn>
-        <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
-          <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximize</q-tooltip>
+        <q-btn
+          dense
+          flat
+          icon="crop_square"
+          :disable="maximizedToggle"
+          @click="maximizedToggle = true"
+        >
+          <q-tooltip
+            v-if="!maximizedToggle"
+            content-class="bg-white text-primary"
+          >
+            Maximize
+          </q-tooltip>
         </q-btn>
-        <q-btn dense flat icon="close" v-close-popup>
-          <q-tooltip content-class="bg-white text-primary">Close</q-tooltip>
+        <q-btn
+          v-close-popup
+          dense
+          flat
+          icon="close"
+        >
+          <q-tooltip content-class="bg-white text-primary">
+            Close
+          </q-tooltip>
         </q-btn>
       </q-bar>
 
@@ -86,12 +115,12 @@
                         v-if="col.field === 'things'"
                         :lines="10"
                       >
-                        {{ col.value | thingsFilter }}
+                        {{ thingsFilter(col.value) }}
                       </q-item-label>
                       <q-item-label
                         v-else-if="col.field === 'kg'"
                       >
-                        {{ col.value | numberFormatFilter }}
+                        {{ numberFormat(col.value) }}
                       </q-item-label>
                       <q-item-label
                         v-else-if="col.field === 'notation'"
@@ -162,7 +191,7 @@
                 key="kg"
                 :props="props"
               >
-                {{ props.row.kg | numberFormatFilter }}
+                {{ numberFormat(props.row.kg) }}
               </q-td>
 
               <q-td
@@ -170,7 +199,7 @@
                 class="text-bold text-red"
                 :props="props"
               >
-                {{ props.row.for_kg | numberFormatFilter }}
+                {{ numberFormat(props.row.for_kg) }}
                 <!--                <PopupEdit-->
                 <!--                  v-if="combineTableData"-->
                 <!--                  :value.sync="props.row.for_kg"-->
@@ -197,7 +226,7 @@
                 class="text-bold text-red"
                 :props="props"
               >
-                {{ props.row.for_place | numberFormatFilter }}
+                {{ numberFormat(props.row.for_place) }}
                 <!--                <PopupEdit-->
                 <!--                  v-if="combineTableData"-->
                 <!--                  :value.sync="props.row.for_place"-->
@@ -298,6 +327,7 @@
 
 <script>
 import { getUrl } from 'src/tools/url';
+import { thingsFilter, numberFormat } from 'src/utils';
 
 export default {
   name: 'DialogSendSms',
@@ -320,6 +350,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:show'],
   data() {
     return {
       rate: 0.35,
@@ -451,6 +482,8 @@ export default {
       });
   },
   methods: {
+    thingsFilter,
+    numberFormat,
     sendSms(values) {
       // const phone = parseInt(this.phone.replace(/[^\d]/g, ''), 10);
       // const sendData = [

@@ -5,7 +5,7 @@
         :top="top"
         data-vue-component-name="ItemSection"
     >
-        <slot></slot>
+        <slot />
     </q-item-section>
 </template>
 

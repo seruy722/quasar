@@ -3,7 +3,10 @@
     data-vue-component-name="StorehouseDataHistory"
     color="secondary"
   >
-    <TimelineEntry heading tag="h6">
+    <TimelineEntry
+      heading
+      tag="h6"
+    >
       История изменения данных
     </TimelineEntry>
 
@@ -31,7 +34,9 @@
                   {{ storehouseHistoryData.cols[i] }}
                 </Badge>
               </ItemLabel>
-              <ItemLabel v-else>{{ storehouseHistoryData.cols[i] }}</ItemLabel>
+              <ItemLabel v-else>
+                {{ storehouseHistoryData.cols[i] }}
+              </ItemLabel>
             </ItemSection>
             <ItemSection side>
               <ItemLabel
@@ -51,9 +56,11 @@
                 v-else-if="i === 'things'"
                 :lines="5"
               >
-                {{ history | thingsFilter }}
+                {{ thingsFilter(history) }}
               </ItemLabel>
-              <ItemLabel v-else>{{ history }}</ItemLabel>
+              <ItemLabel v-else>
+                {{ history }}
+              </ItemLabel>
             </ItemSection>
           </ListItem>
           <Separator v-if="storehouseHistoryData.cols[i]" />
@@ -64,30 +71,34 @@
 </template>
 
 <script>
-    import TransferMixin from 'src/mixins/Transfer';
-    import getFromSettings from 'src/tools/settings';
+import TransferMixin from 'src/mixins/Transfer';
+import getFromSettings from 'src/tools/settings';
+import { thingsFilter } from 'src/utils';
 
-    export default {
-        name: 'StorehouseDataHistory',
-        components: {
-            TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            Badge: () => import('src/components/Elements/Badge.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-        },
-        mixins: [TransferMixin],
-        props: {
-            storehouseHistoryData: {
-                type: Object,
-                default: () => ({}),
-            },
-        },
-        data() {
-            this.$action = getFromSettings('historyActionForIcon');
-            return {};
-        },
-    };
+export default {
+  name: 'StorehouseDataHistory',
+  components: {
+    TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
+    List: () => import('src/components/Elements/List/List.vue'),
+    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
+    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
+    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
+    Badge: () => import('src/components/Elements/Badge.vue'),
+    Separator: () => import('src/components/Separator.vue'),
+  },
+  mixins: [TransferMixin],
+  props: {
+    storehouseHistoryData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    this.$action = getFromSettings('historyActionForIcon');
+    return {};
+  },
+  methods: {
+    thingsFilter,
+  },
+};
 </script>

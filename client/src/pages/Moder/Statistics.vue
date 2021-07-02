@@ -1,6 +1,6 @@
 <template>
   <div data-vue-component-name="Statistics">
-    <div id="chart"></div>
+    <div id="chart" />
       <Table
         :table-properties="cargoTableProperties"
         :table-data="tasks"
@@ -133,7 +133,7 @@
 
                   <q-item-section>
                     <q-item-label>
-                      {{ item.created_at | formatToDotDate }}
+                      {{ formatToDotDate(item.created_at) }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -240,13 +240,14 @@
           </q-tr>
         </template>
       </Table>
-    <DialogAddExpense :show-dialog.sync="showDialogAddExpense" />
+    <DialogAddExpense v-model:show-dialog="showDialogAddExpense" />
   </div>
 </template>
 
 <script>
 import showNotif from 'src/mixins/showNotif';
 import ApexCharts from 'apexcharts';
+import { formatToDotDate } from 'src/utils/formatDate';
 
 export default {
   name: 'Statistics',
@@ -334,6 +335,7 @@ export default {
     this.fillData(this.tasks);
   },
   methods: {
+    formatToDotDate,
     fillData(val) {
       if (!_.isEmpty(val)) {
         this.options.series[0].data = [];

@@ -9,7 +9,6 @@ module.exports = function (ctx) {
     boot: [
       'i18n',
       'axios',
-      'filters',
     ],
 
     css: [
@@ -25,10 +24,12 @@ module.exports = function (ctx) {
       // iconSet: 'ionicons-v4',
       lang: 'ru', // Quasar language
 
-      importStrategy: 'all', // --- includes everything; for dev only!
-
       // Quasar plugins
-      plugins: [],
+      plugins: [
+        'Loading',
+        'LocalStorage',
+        'Dialog',
+      ],
       config: {
         // loading: {
         //   spinner: 'QSpinnerFacebook',

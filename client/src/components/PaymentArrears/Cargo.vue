@@ -33,13 +33,13 @@
             <template #header>
               <q-item-section>
                 <q-item-label>
-                  {{ props.row.created_at.slice(0,5) }}
+                  {{ props.row.created_at.slice(0, 5) }}
                 </q-item-label>
               </q-item-section>
 
               <q-item-section>
                 <q-item-label>
-                  {{ props.row.sum | numberFormatFilter }}
+                  {{ numberFormat(props.row.sum) }}
                 </q-item-label>
               </q-item-section>
 
@@ -51,9 +51,10 @@
 
               <q-item-section>
                 <q-item-label :lines="2">
-                  {{ props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name || ''}` : props.row.type
-                  ?
-                  props.row.sum : props.row.notation
+                  {{
+                    props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name || ''}` : props.row.type
+                      ?
+                      props.row.sum : props.row.notation
                   }}
                 </q-item-label>
               </q-item-section>
@@ -75,23 +76,26 @@
                     v-if="col.field === 'things'"
                     :lines="10"
                   >
-                    {{ col.value | thingsFilter }}
+                    {{ thingsFilter(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'kg'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'sum'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'paid'"
                   >
-                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
-                      props.row.type ? null : 'Нет' }}
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+                      {{
+                        props.row.paid ? 'Да' :
+                          props.row.type ? null : 'Нет'
+                      }}
                     </q-badge>
                   </q-item-label>
                   <q-item-label
@@ -192,7 +196,7 @@
             key="sum"
             :props="props"
           >
-            {{ props.row.sum | numberFormatFilter }}
+            {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
             key="sale"
@@ -204,8 +208,11 @@
             key="paid"
             :props="props"
           >
-            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
-              props.row.type ? null : 'Нет' }}
+            <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+              {{
+                props.row.paid ? 'Да' :
+                  props.row.type ? null : 'Нет'
+              }}
             </q-badge>
           </q-td>
 
@@ -234,7 +241,12 @@
         </q-tr>
       </template>
     </Table>
-    <q-dialog v-model="dialogSelectDeliveredPlace" persistent transition-show="scale" transition-hide="scale">
+    <q-dialog
+      v-model="dialogSelectDeliveredPlace"
+      persistent
+      transition-show="scale"
+      transition-hide="scale"
+    >
       <q-card style="width: 300px">
         <q-card-section>
           <div class="text-h6 text-teal">
@@ -250,7 +262,10 @@
           />
         </q-card-section>
 
-        <q-card-actions align="right" class="bg-white text-teal">
+        <q-card-actions
+          align="right"
+          class="bg-white text-teal"
+        >
           <q-btn
             v-close-popup
             label="Отмена"
@@ -269,159 +284,162 @@
 </template>
 
 <script>
-    import { getUrl } from 'src/tools/url';
+import { getUrl } from 'src/tools/url';
+import { thingsFilter, numberFormat } from 'src/utils';
 
-    export default {
-        name: 'Cargo',
-        components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            BaseSelect: () => import('components/Elements/BaseSelect.vue'),
-            IconBtn: () => import('components/Buttons/IconBtn.vue'),
-        },
-        props: {
-            list: {
-                type: Array,
-                default: () => ([]),
-            },
-        },
-        data() {
-            return {
-                deliveredPlace: 1,
-                dialogSelectDeliveredPlace: false,
-                cargoTableProperties: {
-                    columns: [
-                        {
-                            name: 'created_at',
-                            label: 'Дата',
-                            align: 'center',
-                            field: 'created_at',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_place',
-                            label: 'Код',
-                            align: 'center',
-                            field: 'code_place',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_client_name',
-                            label: 'Клиент',
-                            align: 'center',
-                            field: 'code_client_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'type',
-                            label: 'Тип',
-                            align: 'center',
-                            field: 'type',
-                            sortable: true,
-                        },
-                        {
-                            name: 'place',
-                            label: this.$t('place'),
-                            field: 'place',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'kg',
-                            label: this.$t('kg'),
-                            field: 'kg',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'for_kg',
-                            label: this.$t('forKg'),
-                            field: 'for_kg',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'for_place',
-                            label: this.$t('forPlace'),
-                            field: 'for_place',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sum',
-                            label: 'Сумма',
-                            field: 'sum',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sale',
-                            label: 'Скидка',
-                            field: 'sale',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'paid',
-                            label: 'Оплачен',
-                            field: 'paid',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'category_name',
-                            label: this.$t('category'),
-                            field: 'category_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'fax_name',
-                            label: 'Факс',
-                            field: 'fax_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                cargoTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'place', 'kg', 'for_kg', 'for_place', 'notation', 'category_name', 'fax_name'],
-                    title: '',
-                },
-            };
-        },
-        methods: {
-            setDeliveredPlace(data, flag) {
-                this.$q.loading.show();
-                const ids = [];
-                _.forEach(data, (item) => {
-                    if (item.arr) {
-                        ids.push(..._.map(item.arr, 'id'));
-                    } else {
-                        ids.push(item.id);
-                    }
-                });
-                devlog.log('ids', ids);
-                this.$axios.post(getUrl('setDeliveredCargo'), {
-                    ids,
-                    flag,
-                })
-                  .then(() => {
-                      this.cargoTableReactiveProperties.selected = [];
-                      this.$q.loading.hide();
-                  })
-                  .catch(() => {
-                      this.cargoTableReactiveProperties.selected = [];
-                      this.$q.loading.hide();
-                  });
-            },
-        },
+export default {
+  name: 'Cargo',
+  components: {
+    Table: () => import('src/components/Elements/Table/Table.vue'),
+    BaseSelect: () => import('components/Elements/BaseSelect.vue'),
+    IconBtn: () => import('components/Buttons/IconBtn.vue'),
+  },
+  props: {
+    list: {
+      type: Array,
+      default: () => ([]),
+    },
+  },
+  data() {
+    return {
+      deliveredPlace: 1,
+      dialogSelectDeliveredPlace: false,
+      cargoTableProperties: {
+        columns: [
+          {
+            name: 'created_at',
+            label: 'Дата',
+            align: 'center',
+            field: 'created_at',
+            sortable: true,
+          },
+          {
+            name: 'code_place',
+            label: 'Код',
+            align: 'center',
+            field: 'code_place',
+            sortable: true,
+          },
+          {
+            name: 'code_client_name',
+            label: 'Клиент',
+            align: 'center',
+            field: 'code_client_name',
+            sortable: true,
+          },
+          {
+            name: 'type',
+            label: 'Тип',
+            align: 'center',
+            field: 'type',
+            sortable: true,
+          },
+          {
+            name: 'place',
+            label: this.$t('place'),
+            field: 'place',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'kg',
+            label: this.$t('kg'),
+            field: 'kg',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'for_kg',
+            label: this.$t('forKg'),
+            field: 'for_kg',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'for_place',
+            label: this.$t('forPlace'),
+            field: 'for_place',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'sum',
+            label: 'Сумма',
+            field: 'sum',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'sale',
+            label: 'Скидка',
+            field: 'sale',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'paid',
+            label: 'Оплачен',
+            field: 'paid',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'category_name',
+            label: this.$t('category'),
+            field: 'category_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'fax_name',
+            label: 'Факс',
+            field: 'fax_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'notation',
+            label: this.$t('notation'),
+            field: 'notation',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      cargoTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'place', 'kg', 'for_kg', 'for_place', 'notation', 'category_name', 'fax_name'],
+        title: '',
+      },
     };
+  },
+  methods: {
+    thingsFilter,
+    numberFormat,
+    setDeliveredPlace(data, flag) {
+      this.$q.loading.show();
+      const ids = [];
+      _.forEach(data, (item) => {
+        if (item.arr) {
+          ids.push(..._.map(item.arr, 'id'));
+        } else {
+          ids.push(item.id);
+        }
+      });
+      devlog.log('ids', ids);
+      this.$axios.post(getUrl('setDeliveredCargo'), {
+        ids,
+        flag,
+      })
+        .then(() => {
+          this.cargoTableReactiveProperties.selected = [];
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          this.cargoTableReactiveProperties.selected = [];
+          this.$q.loading.hide();
+        });
+    },
+  },
+};
 </script>

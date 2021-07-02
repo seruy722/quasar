@@ -19,10 +19,10 @@
           <q-item-label>{{ item.name }}</q-item-label>
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ item.place | numberFormatFilter }}</q-item-label>
+          <q-item-label>{{ numberFormat(item.place) }}</q-item-label>
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ item.kg | numberFormatFilter }}</q-item-label>
+          <q-item-label>{{ numberFormat(item.kg) }}</q-item-label>
         </q-item-section>
       </q-item>
       <!--      FOOTER-->
@@ -32,12 +32,12 @@
         </q-item-section>
         <q-item-section>
           <q-item-label class="text-bold">
-            <q-badge>{{ footer.place | numberFormatFilter }}</q-badge>
+            <q-badge>{{ numberFormat(footer.place) }}</q-badge>
           </q-item-label>
         </q-item-section>
         <q-item-section>
           <q-item-label class="text-bold">
-            <q-badge>{{ footer.kg | numberFormatFilter }}</q-badge>
+            <q-badge>{{ numberFormat(footer.kg) }}</q-badge>
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -46,44 +46,49 @@
 </template>
 
 <script>
-    import { setCategoriesStoreHouseData } from 'src/utils/FrequentlyCalledFunctions';
+import { setCategoriesStoreHouseData } from 'src/utils/FrequentlyCalledFunctions';
+import { numberFormat } from 'src/utils';
 
-    export default {
-        name: 'CountStorehouseCategories',
-        props: {
-            list: {
-                type: Array,
-                default: () => [],
-            },
-            title: {
-                type: String,
-                default: 'Категории',
-            },
-        },
-        data() {
-            return {
-                localList: [],
-                footer: {},
-            };
-        },
-        watch: {
-            list: {
-                handler: function setList(val) {
-                    if (!_.isEmpty(val)) {
-                        this.setLocalList(val, null);
-                    } else {
-                        this.localList = [];
-                    }
-                },
-                immediate: true,
-            },
-        },
-        methods: {
-            setLocalList(list, transporterPriceData) {
-                const { categoriesList, footer } = setCategoriesStoreHouseData(list, transporterPriceData);
-                this.localList = categoriesList;
-                this.footer = footer;
-            },
-        },
+export default {
+  name: 'CountStorehouseCategories',
+  props: {
+    list: {
+      type: Array,
+      default: () => [],
+    },
+    title: {
+      type: String,
+      default: 'Категории',
+    },
+  },
+  data() {
+    return {
+      localList: [],
+      footer: {},
     };
+  },
+  watch: {
+    list: {
+      handler: function setList(val) {
+        if (!_.isEmpty(val)) {
+          this.setLocalList(val, null);
+        } else {
+          this.localList = [];
+        }
+      },
+      immediate: true,
+    },
+  },
+  methods: {
+    numberFormat,
+    setLocalList(list, transporterPriceData) {
+      const {
+        categoriesList,
+        footer,
+      } = setCategoriesStoreHouseData(list, transporterPriceData);
+      this.localList = categoriesList;
+      this.footer = footer;
+    },
+  },
+};
 </script>

@@ -3,7 +3,10 @@
     data-vue-component-name="CodeHistory"
     color="secondary"
   >
-    <TimelineEntry heading tag="h6">
+    <TimelineEntry
+      heading
+      tag="h6"
+    >
       История изменения данных
     </TimelineEntry>
 
@@ -31,12 +34,20 @@
                   {{ historyData.cols[i] }}
                 </Badge>
               </ItemLabel>
-              <ItemLabel v-else>{{ historyData.cols[i] }}</ItemLabel>
+              <ItemLabel v-else>
+                {{ historyData.cols[i] }}
+              </ItemLabel>
             </ItemSection>
             <ItemSection side>
-              <ItemLabel v-if="i === 'sex'">{{ parseInt(history, 10) === 2 ? 'Мужской': 'Женский' }}</ItemLabel>
-              <ItemLabel v-else-if="i === 'phone'">{{ history | phoneNumberFilter }}</ItemLabel>
-              <ItemLabel v-else>{{ history }}</ItemLabel>
+              <ItemLabel v-if="i === 'sex'">
+                {{ parseInt(history, 10) === 2 ? 'Мужской' : 'Женский' }}
+              </ItemLabel>
+              <ItemLabel v-else-if="i === 'phone'">
+                {{ phoneNumberFilter(history) }}
+              </ItemLabel>
+              <ItemLabel v-else>
+                {{ history }}
+              </ItemLabel>
             </ItemSection>
           </ListItem>
           <Separator v-if="historyData.cols[i]" />
@@ -47,30 +58,34 @@
 </template>
 
 <script>
-    import TransferMixin from 'src/mixins/Transfer';
-    import getFromSettings from 'src/tools/settings';
+import TransferMixin from 'src/mixins/Transfer';
+import getFromSettings from 'src/tools/settings';
+import { phoneNumberFilter } from 'src/utils';
 
-    export default {
-        name: 'CodeHistory',
-        components: {
-            TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            Badge: () => import('src/components/Elements/Badge.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-        },
-        mixins: [TransferMixin],
-        props: {
-            historyData: {
-                type: Object,
-                default: () => ({}),
-            },
-        },
-        data() {
-            this.$action = getFromSettings('historyActionForIcon');
-            return {};
-        },
-    };
+export default {
+  name: 'CodeHistory',
+  components: {
+    TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
+    List: () => import('src/components/Elements/List/List.vue'),
+    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
+    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
+    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
+    Badge: () => import('src/components/Elements/Badge.vue'),
+    Separator: () => import('src/components/Separator.vue'),
+  },
+  mixins: [TransferMixin],
+  props: {
+    historyData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    this.$action = getFromSettings('historyActionForIcon');
+    return {};
+  },
+  methods: {
+    phoneNumberFilter,
+  },
+};
 </script>

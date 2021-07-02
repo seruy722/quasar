@@ -3,7 +3,10 @@
     view="hHh Lpr lff"
     class="shadow-2 rounded-borders"
   >
-    <q-header elevated class="bg-primary">
+    <q-header
+      elevated
+      class="bg-primary"
+    >
       <q-toolbar>
         <IconBtn
           color="white"
@@ -70,69 +73,72 @@
 </template>
 
 <script>
-    import accessFunc from 'src/tools/access';
+import accessFunc from 'src/tools/access';
+import IconBtn from 'components/Buttons/IconBtn.vue';
+import { ref } from 'vue';
 
-    export default {
-        name: 'ModerLayout',
-        components: {
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-        },
-        data() {
-            return {
-                drawer: false,
-                miniState: true,
-                menu: [],
-            };
-        },
-        computed: {
-            pageTitle() {
-                return this.$route.meta.title;
-            },
-            userName() {
-                return _.get(this.$store.getters['auth/getUser'], 'name');
-            },
-            userAccess() {
-                return _.get(this.$store.getters['auth/getUser'], 'access');
-            },
-            mainMenu() {
-                return this.$store.getters['settings/getMenu'];
-            },
-        },
-        watch: {
-            userAccess(val) {
-                this.setMenu(val);
-            },
-        },
-        created() {
-            this.setMenu(this.userAccess);
-        },
-        methods: {
-            onClickDrawerMenu({ field }) {
-                if (this.$route.name !== field) {
-                    if (field === 'exit') {
-                        this.$q.localStorage.clear();
-                        this.$store.commit('auth/REMOVE_USER_DATA');
-                        this.$router.push({ name: 'login' });
-                    } else {
-                        this.$router.push({ name: field });
-                    }
-                }
-            },
-            setMenu(userAccess) {
-                if (userAccess) {
-                    _.forEach(this.mainMenu, (item) => {
-                        if (accessFunc(userAccess, item.access)) {
-                            this.menu.push(item);
-                        }
-                    });
-                }
-            },
-        },
+export default {
+  name: 'ModerLayout',
+  components: {
+    IconBtn,
+  },
+  setup() {
+    return {
+      drawer: ref(false),
+      miniState: ref(true),
+      menu: ref([]),
     };
+  },
+  computed: {
+    pageTitle() {
+      return this.$route.meta.title;
+    },
+    userName() {
+      return _.get(this.$store.getters['auth/getUser'], 'name');
+    },
+    userAccess() {
+      return _.get(this.$store.getters['auth/getUser'], 'access');
+    },
+    mainMenu() {
+      return this.$store.getters['settings/getMenu'];
+    },
+  },
+  watch: {
+    userAccess(val) {
+      this.setMenu(val);
+    },
+  },
+  created() {
+    this.setMenu(this.userAccess);
+  },
+  methods: {
+    onClickDrawerMenu({ field }) {
+      if (this.$route.name !== field) {
+        if (field === 'exit') {
+          this.$q.localStorage.clear();
+          this.$store.commit('auth/REMOVE_USER_DATA');
+          this.$router.push({ name: 'login' });
+        } else {
+          this.$router.push({ name: field });
+        }
+      }
+    },
+    setMenu(userAccess) {
+      if (userAccess) {
+        _.forEach(this.mainMenu, (item) => {
+          if (accessFunc(userAccess, item.access)) {
+            this.menu.push(item);
+          }
+        });
+      }
+    },
+  },
+};
 </script>
 
-<style lang="stylus">
-  .my-menu-link
-    color white
-    background $orange_bg
+<style lang="scss">
+.my-menu-link {
+  color: white;
+  background-color: orange;
+}
 </style>

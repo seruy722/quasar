@@ -16,14 +16,20 @@
               transition-show="scale"
               transition-hide="scale"
             >
-              <q-list separator style="min-width: 100px">
+              <q-list
+separator
+style="min-width: 100px"
+>
                 <q-item
                   v-close-popup
                   clickable
                   @click="showDialogAddDocuments = true"
                 >
                   <q-item-section avatar>
-                    <q-icon name="add" color="positive" />
+                    <q-icon
+name="add"
+color="positive"
+/>
                   </q-item-section>
                   <q-item-section>Добавить</q-item-section>
                 </q-item>
@@ -44,7 +50,10 @@
                   @click="refresh"
                 >
                   <q-item-section avatar>
-                    <q-icon name="sync" color="primary" />
+                    <q-icon
+name="sync"
+color="primary"
+/>
                   </q-item-section>
                   <q-item-section>Обновить</q-item-section>
                 </q-item>
@@ -160,12 +169,12 @@
       </Table>
     </PullRefresh>
     <DialogAddDocuments
-      :show-dialog.sync="showDialogAddDocuments"
+      v-model:show-dialog="showDialogAddDocuments"
     />
     <DialogShowImageGallery
-      :show-dialog.sync="showDialogImageGallery"
+      v-model:show-dialog="showDialogImageGallery"
+      v-model:slide="slide"
       :files="filesGallery"
-      :slide.sync="slide"
     />
   </q-page>
 </template>

@@ -11,8 +11,8 @@
       >
         <template #top-buttons>
           <DialogAddEntryOnStorehouse
-            :show-dialog.sync="showAddEntryOnStorehouseDialog"
-            :entry-data.sync="localStorehouseEditData"
+            v-model:show-dialog="showAddEntryOnStorehouseDialog"
+            v-model:entry-data="localStorehouseEditData"
           />
           <Menu />
 
@@ -102,12 +102,12 @@
                       v-if="col.field === 'things'"
                       :lines="10"
                     >
-                      {{ col.value | thingsFilter }}
+                      {{ thingsFilter(col.value) }}
                     </q-item-label>
                     <q-item-label
                       v-else-if="col.field === 'kg'"
                     >
-                      {{ col.value | numberFormatFilter }}
+                      {{ numberFormat(col.value) }}
                     </q-item-label>
                     <q-item-label v-else>
                       {{ col.value }}
@@ -170,7 +170,7 @@
               key="kg"
               :props="props"
             >
-              {{ props.row.kg | numberFormatFilter }}
+              {{ numberFormat(props.row.kg) }}
             </q-td>
 
             <q-td
@@ -212,7 +212,7 @@
               key="things"
               :props="props"
             >
-              {{ props.row.things | thingsFilter }}
+              {{ thingsFilter(props.row.things) }}
             </q-td>
           </q-tr>
         </template>
@@ -246,8 +246,8 @@
       </Dialog>
     </PullRefresh>
     <DialogMoveToFax
-      :show.sync="showMoveToFaxDialog"
-      :values.sync="storehouseTableReactiveProperties.selected"
+      v-model:show="showMoveToFaxDialog"
+      v-model:values="storehouseTableReactiveProperties.selected"
     />
     <Dialog
       :dialog="dialogStorehouseInfo"
@@ -281,7 +281,7 @@
 import { getUrl } from 'src/tools/url';
 import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
-import { callFunction } from 'src/utils/index';
+import { callFunction, thingsFilter, numberFormat } from 'src/utils';
 import {
   getClientCodes,
   getCategories,
@@ -414,6 +414,8 @@ export default {
       });
   },
   methods: {
+    numberFormat,
+    thingsFilter,
     moveToFax() {
       this.showMoveToFaxDialog = true;
     },

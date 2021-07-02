@@ -74,7 +74,7 @@
                       </q-badge>
                     </q-item-label>
                     <q-item-label v-else-if="col.field === 'receiver_phone'">
-                      {{ col.value | phoneNumberFilter }}
+                      {{ phoneNumberFilter(col.value) }}
                     </q-item-label>
                     <q-item-label v-else-if="col.field === 'receiver_name'">
                       {{ col.value }}
@@ -128,14 +128,14 @@
               key="receiver_phone"
               :props="props"
             >
-              {{ props.row.receiver_phone | phoneNumberFilter }}
+              {{ phoneNumberFilter(props.row.receiver_phone) }}
             </q-td>
 
             <q-td
               key="sum"
               :props="props"
             >
-              {{ props.row.sum | numberFormatFilter }}
+              {{ numberFormat(props.row.sum) }}
             </q-td>
 
             <q-td
@@ -214,11 +214,11 @@
             <BaseInput
               v-if="item.type === 'text'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"
               :unmasked-value="item.unmaskedValue"
-              :change-value.sync="item.changeValue"
               dense
               :field="item.field"
               :errors="errorsData"
@@ -227,11 +227,11 @@
             <BaseInput
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"
               :unmasked-value="item.unmaskedValue"
-              :change-value.sync="item.changeValue"
               dense
               :field="item.field"
               :errors="errorsData"
@@ -240,41 +240,41 @@
             <SearchSelect
               v-else-if="item.type === 'searchSelect'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               dense
               :options="item.options"
               :label="item.label"
               :field="item.field"
               :func-load-data="item.funcLoadData"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <BaseSelect
               v-else-if="item.type === 'select'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :dense="true"
               :options="item.options"
               :field="item.field"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <BaseInput
               v-else-if="item.type === 'date'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :errors="errorsData"
               :field="item.field"
               :readonly="item.readonly"
               :mask="item.mask"
-              :change-value.sync="item.changeValue"
               dense
             >
               <template #append>
                 <Date
-                  :value.sync="item.value"
-                  :change-value.sync="item.changeValue"
+                  v-model:value="item.value"
+                  v-model:change-value="item.changeValue"
                 />
               </template>
             </BaseInput>
@@ -309,7 +309,7 @@ import {
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
-import { callFunction } from 'src/utils/index';
+import { callFunction, phoneNumberFilter, numberFormat } from 'src/utils';
 import TransferMixin from 'src/mixins/Transfer';
 import {
   setMethodLabel,
@@ -513,6 +513,8 @@ export default {
     this.getTransfers();
   },
   methods: {
+    phoneNumberFilter,
+    numberFormat,
     updateData(data) {
       const sendData = _.cloneDeep(data);
       devlog.log('DATA_N0', sendData);

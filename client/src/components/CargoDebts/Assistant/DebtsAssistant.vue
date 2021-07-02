@@ -70,13 +70,14 @@
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label v-if="col.field === 'sum'">
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'commission'">
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'paid'">
-                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{ props.row.paid ? 'Да':
                       props.row.type ? null : 'Нет' }}
                     </q-badge>
                   </q-item-label>
@@ -142,7 +143,7 @@
             key="sum"
             :props="props"
           >
-            {{ props.row.sum | numberFormatFilter }}
+            {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
             key="commission"
@@ -154,7 +155,8 @@
             key="paid"
             :props="props"
           >
-            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+            <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{ props.row.paid ? 'Да':
               props.row.type ? null : 'Нет' }}
             </q-badge>
           </q-td>
@@ -178,6 +180,7 @@
 
 <script>
     import ExportDataMixin from 'src/mixins/ExportData';
+    import { numberFormat } from 'src/utils';
 
     export default {
         name: 'Debts',
@@ -266,6 +269,7 @@
             },
         },
         methods: {
+          numberFormat,
             async exportFaxData(selected) {
                 let data = selected;
                 if (_.isEmpty(data)) {

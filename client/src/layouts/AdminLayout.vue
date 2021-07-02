@@ -3,7 +3,10 @@
     view="hHh Lpr lff"
     class="shadow-2 rounded-borders"
   >
-    <q-header elevated class="bg-primary">
+    <q-header
+elevated
+class="bg-primary"
+>
       <q-toolbar>
         <IconBtn
           dense

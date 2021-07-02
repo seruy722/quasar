@@ -31,10 +31,10 @@
     </IconBtn>
 
     <DialogAddCargoPaymentEntry
-      :show-dialog.sync="showDialogAddCargoPaymentEntry"
+      v-model:show-dialog="showDialogAddCargoPaymentEntry"
     />
     <DialogAddCargoDebtEntry
-      :show-dialog.sync="showDialogAddCargoDebtEntry"
+      v-model:show-dialog="showDialogAddCargoDebtEntry"
     />
   </div>
 </template>

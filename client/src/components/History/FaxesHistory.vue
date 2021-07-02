@@ -3,7 +3,10 @@
     data-vue-component-name="StorehouseDataHistory"
     color="secondary"
   >
-    <TimelineEntry heading tag="h6">
+    <TimelineEntry
+heading
+tag="h6"
+>
       История изменения данных
     </TimelineEntry>
 
@@ -31,7 +34,9 @@
                   {{ faxHistoryData.cols[i] }}
                 </Badge>
               </ItemLabel>
-              <ItemLabel v-else>{{ faxHistoryData.cols[i] }}</ItemLabel>
+              <ItemLabel v-else>
+{{ faxHistoryData.cols[i] }}
+</ItemLabel>
             </ItemSection>
             <ItemSection side>
               <ItemLabel
@@ -47,7 +52,9 @@
                   {{ history }}
                 </Badge>
               </ItemLabel>
-              <ItemLabel v-else>{{ history }}</ItemLabel>
+              <ItemLabel v-else>
+{{ history }}
+</ItemLabel>
             </ItemSection>
           </ListItem>
           <Separator v-if="faxHistoryData.cols[i]" />

@@ -41,23 +41,44 @@
         <q-markup-table>
           <thead>
           <TR>
-            <th class="text-left" style="width: 150px">
-              <Skeleton animation="blink" type="text" />
+            <th
+class="text-left"
+style="width: 150px"
+>
+              <Skeleton
+animation="blink"
+type="text"
+/>
             </th>
             <th class="text-right">
-              <Skeleton animation="blink" type="text" />
+              <Skeleton
+animation="blink"
+type="text"
+/>
             </th>
             <th class="text-right">
-              <Skeleton animation="blink" type="text" />
+              <Skeleton
+animation="blink"
+type="text"
+/>
             </th>
             <th class="text-right">
-              <Skeleton animation="blink" type="text" />
+              <Skeleton
+animation="blink"
+type="text"
+/>
             </th>
             <th class="text-right">
-              <Skeleton animation="blink" type="text" />
+              <Skeleton
+animation="blink"
+type="text"
+/>
             </th>
             <th class="text-right">
-              <Skeleton animation="blink" type="text" />
+              <Skeleton
+animation="blink"
+type="text"
+/>
             </th>
           </TR>
           </thead>
@@ -68,7 +89,11 @@
             :key="n"
           >
             <td class="text-left">
-              <Skeleton animation="blink" type="text" width="85px" />
+              <Skeleton
+animation="blink"
+type="text"
+width="85px"
+/>
             </td>
             <td
               v-for="n in 5"

@@ -52,19 +52,19 @@
             <div class="row items-center">
               <span>От:</span>
               <DateWithInputForCargo
-                :value.sync="period.from"
+                v-model:value="period.from"
               />
             </div>
             <div class="row items-center">
               <span>До:</span>
               <DateWithInputForCargo
-                :value.sync="period.to"
+                v-model:value="period.to"
               />
             </div>
           </div>
           <div v-show="statisticsSelectData.value === 3">
             <DateWithInputForCargo
-              :value.sync="period.day"
+              v-model:value="period.day"
             />
           </div>
         </q-card-section>
@@ -113,7 +113,7 @@
             <q-item>
               <q-item-section avatar>
                 <Date
-                  :value.sync="dialogChooseDateData"
+                  v-model:value="dialogChooseDateData"
                 />
               </q-item-section>
               <q-item-section>
@@ -233,7 +233,7 @@ export default {
       _.set(this, 'settings.date', val);
     },
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.$store.dispatch('cargoDebts/setCargo', this.cargoForSearch);
     this.$store.dispatch('cargoDebts/setDebts', this.debtsForSearch);
   },

@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     :persistent="true"
     title="Запись"
     data-vue-component-name="DialogAddEntryOnStorehouse"
@@ -36,6 +36,7 @@
             <BaseInput
               v-if="item.type === 'text'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :autofocus="item.autofocus"
               :type="item.type"
@@ -44,31 +45,30 @@
               :field="index"
               :readonly="item.readonly"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <BaseInput
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"
               :dense="$q.screen.xs || $q.screen.sm"
               :field="index"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <SelectChips
               v-else-if="item.type === 'select-chips'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
@@ -76,11 +76,11 @@
             <SearchSelect
               v-else
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
@@ -122,9 +122,9 @@
                   Опись вложения
                 </div>
                 <DialogAddThings
-                  :things.sync="things"
-                  :show-dialog.sync="showThingsDialog"
-                  :change-things.sync="changeThings"
+                  v-model:things="things"
+                  v-model:show-dialog="showThingsDialog"
+                  v-model:change-things="changeThings"
                 />
               </div>
             </ItemLabel>
@@ -220,6 +220,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:entryData', 'update:showDialog'],
   data() {
     return {
       show: false,
@@ -394,7 +395,10 @@ export default {
   methods: {
     saveData() {
       devlog.log('saveData');
-      const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
+      const sendData = _.reduce(this.storehouseData, (result, {
+        changeValue,
+        value,
+      }, index) => {
         if (changeValue) {
           result[index] = value;
         }
@@ -412,7 +416,13 @@ export default {
         if (!this.entryData.row) {
           this.$q.loading.show();
           this.$axios.post(getUrl('addStorehouseData'), sendData)
-            .then(({ data: { storehouseData, shopNames, thingsList } }) => {
+            .then(({
+                     data: {
+                       storehouseData,
+                       shopNames,
+                       thingsList,
+                     },
+                   }) => {
               this.$store.commit('shopsList/SET_SHOPS_LIST', shopNames);
               this.$store.commit('thingsList/SET_THINGS_LIST', thingsList);
               this.$store.dispatch('storehouse/addToStorehouseData', setFormatedDate(storehouseData, ['created_at']));
@@ -430,7 +440,13 @@ export default {
             sendData.id = _.get(this.entryData, 'row.id');
             this.$q.loading.show();
             this.$axios.post(getUrl('updateStorehouseData'), sendData)
-              .then(({ data: { storehouseData, shopNames, thingsList } }) => {
+              .then(({
+                       data: {
+                         storehouseData,
+                         shopNames,
+                         thingsList,
+                       },
+                     }) => {
                 devlog.log('DTA_UPDATE', storehouseData);
                 this.$store.commit('shopsList/SET_SHOPS_LIST', shopNames);
                 this.$store.commit('thingsList/SET_THINGS_LIST', thingsList);

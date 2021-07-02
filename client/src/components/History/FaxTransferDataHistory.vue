@@ -3,14 +3,17 @@
     data-vue-component-name="FaxTransferDataHistory"
     color="secondary"
   >
-    <TimelineEntry heading tag="h6">
+    <TimelineEntry
+      heading
+      tag="h6"
+    >
       История изменения данных
     </TimelineEntry>
 
     <TimelineEntry
       v-for="(transfer, index) in historyData"
       :key="index"
-      :subtitle="transfer.created_at | formatToDashDate"
+      :subtitle="fullDate(transfer.created_at)"
       :icon="$action[transfer.action]"
     >
       <q-list
@@ -41,7 +44,9 @@
         </div>
         <q-separator />
         <q-item>
-          <q-item-section class="text-center text-bold">Информация</q-item-section>
+          <q-item-section class="text-center text-bold">
+            Информация
+          </q-item-section>
         </q-item>
         <q-item v-if="movedData(JSON.parse(transfer.history_data), 'to')">
           <q-item-section>
@@ -69,44 +74,46 @@
 </template>
 
 <script>
-    import getFromSettings from 'src/tools/settings';
+import getFromSettings from 'src/tools/settings';
+import { fullDate } from 'src/utils/formatDate';
 
-    export default {
-        name: 'FaxTransferDataHistory',
-        components: {
-            TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
-        },
-        props: {
-            historyData: {
-                type: Array,
-                default: () => ([]),
-            },
-        },
-        data() {
-            this.$action = getFromSettings('historyActionForIcon');
-            return {};
-        },
-        methods: {
-            sum(field, data) {
-                let sum = 0;
-                _.forEach(data, (elem) => {
-                    if (_.isNumber(elem[field])) {
-                        sum += elem[field];
-                    }
-                });
-                return sum;
-            },
-            movedData(data, direction) {
-                let res = '';
-                if (direction === 'to') {
-                    res = _.get(data, 'moveData.moveToFax');
-                } else if (direction === 'from') {
-                    res = _.get(data, 'moveData.moveFromFax');
-                } else {
-                    res = data.user_name;
-                }
-                return res;
-            },
-        },
-    };
+export default {
+  name: 'FaxTransferDataHistory',
+  components: {
+    TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
+  },
+  props: {
+    historyData: {
+      type: Array,
+      default: () => ([]),
+    },
+  },
+  data() {
+    this.$action = getFromSettings('historyActionForIcon');
+    return {};
+  },
+  methods: {
+    fullDate,
+    sum(field, data) {
+      let sum = 0;
+      _.forEach(data, (elem) => {
+        if (_.isNumber(elem[field])) {
+          sum += elem[field];
+        }
+      });
+      return sum;
+    },
+    movedData(data, direction) {
+      let res = '';
+      if (direction === 'to') {
+        res = _.get(data, 'moveData.moveToFax');
+      } else if (direction === 'from') {
+        res = _.get(data, 'moveData.moveFromFax');
+      } else {
+        res = data.user_name;
+      }
+      return res;
+    },
+  },
+};
 </script>

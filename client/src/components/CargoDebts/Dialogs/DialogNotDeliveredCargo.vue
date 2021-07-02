@@ -20,7 +20,9 @@
             icon="close"
             color="negative"
           >
-            <q-tooltip content-class="bg-white text-primary">Закрыть</q-tooltip>
+            <q-tooltip content-class="bg-white text-primary">
+              Закрыть
+            </q-tooltip>
           </q-btn>
         </q-bar>
 
@@ -50,43 +52,44 @@
 </template>
 
 <script>
-    export default {
-        name: 'DialogNotDeliveredCargo',
-        components: {
-            Cargo: () => import('components/PaymentArrears/Cargo.vue'),
-        },
-        props: {
-            show: {
-                type: Boolean,
-                default: false,
-            },
-        },
-        data() {
-            return {
-                cargo: [],
-            };
-        },
-        computed: {
-            dialog: {
-                get: function get() {
-                    return this.show;
-                },
-                set: function set(val) {
-                    this.$emit('update:show', val);
-                },
-            },
-        },
-        methods: {
-            async getNotDeliveredCargo() {
-                this.$q.loading.show();
-                const { getUrl } = await import('src/tools/url');
-                this.$axios.get(getUrl('getNotDeliveredCargo'))
-                  .then(({ data: { cargo } }) => {
-                      this.cargo = cargo;
-                      devlog.log(cargo);
-                      this.$q.loading.hide();
-                  });
-            },
-        },
+export default {
+  name: 'DialogNotDeliveredCargo',
+  components: {
+    Cargo: () => import('components/PaymentArrears/Cargo.vue'),
+  },
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['update:show'],
+  data() {
+    return {
+      cargo: [],
     };
+  },
+  computed: {
+    dialog: {
+      get: function get() {
+        return this.show;
+      },
+      set: function set(val) {
+        this.$emit('update:show', val);
+      },
+    },
+  },
+  methods: {
+    async getNotDeliveredCargo() {
+      this.$q.loading.show();
+      const { getUrl } = await import('src/tools/url');
+      this.$axios.get(getUrl('getNotDeliveredCargo'))
+        .then(({ data: { cargo } }) => {
+          this.cargo = cargo;
+          devlog.log(cargo);
+          this.$q.loading.hide();
+        });
+    },
+  },
+};
 </script>

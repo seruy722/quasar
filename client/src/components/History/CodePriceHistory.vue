@@ -3,7 +3,10 @@
     data-vue-component-name="CodePriceHistory"
     color="secondary"
   >
-    <TimelineEntry heading tag="h6">
+    <TimelineEntry
+heading
+tag="h6"
+>
       История изменения данных
     </TimelineEntry>
 
@@ -31,10 +34,14 @@
                   {{ historyData.cols[i] }}
                 </q-badge>
               </q-item-label>
-              <q-item-label v-else>{{ historyData.cols[i] }}</q-item-label>
+              <q-item-label v-else>
+{{ historyData.cols[i] }}
+</q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-item-label :lines="3">{{ history }}</q-item-label>
+              <q-item-label :lines="3">
+{{ history }}
+</q-item-label>
             </q-item-section>
           </q-item>
           <Separator v-if="historyData.cols[i]" />

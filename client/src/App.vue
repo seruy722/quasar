@@ -1,11 +1,12 @@
 <template>
-  <div id="q-app">
-    <router-view />
-  </div>
+  <router-view />
 </template>
 
 <script>
 import { getUrl } from 'src/tools/url';
+// import { computed, watch } from 'vue';
+// import { useStore } from 'vuex';
+// import { axiosInstance } from 'boot/axios';
 /* eslint-disable */
 export default {
   name: 'App',

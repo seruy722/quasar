@@ -7,7 +7,7 @@
     :tag="tag"
     data-vue-component-name="TimelineEntry"
   >
-    <slot></slot>
+    <slot />
   </q-timeline-entry>
 </template>
 

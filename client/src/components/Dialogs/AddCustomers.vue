@@ -3,7 +3,7 @@
         data-vue-component-name="AddCustomers"
         class="row items-center justify-center"
     >
-        <Dialog :dialog.sync="dialogAddClientData">
+        <Dialog v-model:dialog="dialogAddClientData">
             <template #body>
                 <q-card-section>
                     <div
@@ -12,9 +12,9 @@
                     >
                         <BaseSelect
                             v-if="input.type==='select'"
+                            v-model:value="input.value"
                             :input-data="input"
                             :options="input.options"
-                            :value.sync="input.value"
                             :errors="errorsData"
                         />
                         <BaseInput
@@ -29,14 +29,13 @@
 
                 <q-card-actions align="center">
                     <OutlineBtn
-                        :btnData="btnData"
+                        :btn-data="btnData"
                         @click-outline-btn="checkValidCustomerData"
                     />
                 </q-card-actions>
             </template>
         </Dialog>
-
-    </div>
+</div>
 </template>
 
 <script>

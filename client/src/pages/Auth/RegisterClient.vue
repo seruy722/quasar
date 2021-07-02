@@ -1,5 +1,8 @@
 <template>
-  <q-card data-vue-component-name="RegisterClient" flat>
+  <q-card
+    data-vue-component-name="RegisterClient"
+    flat
+  >
     <q-card-section>
       <q-form
         v-show="!yesPhoneInDB"
@@ -74,6 +77,7 @@ import showNotif from 'src/mixins/showNotif';
 export default {
   name: 'RegisterClient',
   mixins: [showNotif],
+  emits: ['change-tab'],
   data() {
     return {
       phone: null,

@@ -32,18 +32,19 @@
           >
             <template #header>
               <q-item-section>
-                <q-checkbox v-model="props.selected"/>
+                <q-checkbox v-model="props.selected" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>
-                  {{ props.row.sum | numberFormatFilter }}
+                  {{ numberFormat(props.row.sum) }}
                 </q-item-label>
               </q-item-section>
 
               <q-item-section>
                 <q-item-label :lines="2">
-                  {{ props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name}` : props.row.type ?
-                  props.row.sum : props.row.notation
+                  {{
+                    props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name}` : props.row.type ?
+                      props.row.sum : props.row.notation
                   }}
                 </q-item-label>
               </q-item-section>
@@ -77,23 +78,26 @@
                     v-if="col.field === 'things'"
                     :lines="10"
                   >
-                    {{ col.value | thingsFilter }}
+                    {{ thingsFilter(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'kg'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'sum'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'paid'"
                   >
-                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
-                      props.row.type ? null : 'Нет' }}
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+                      {{
+                        props.row.paid ? 'Да' :
+                          props.row.type ? null : 'Нет'
+                      }}
                     </q-badge>
                   </q-item-label>
                   <q-item-label
@@ -205,7 +209,7 @@
             key="sum"
             :props="props"
           >
-            {{ props.row.sum | numberFormatFilter }}
+            {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
             key="sale"
@@ -217,8 +221,11 @@
             key="paid"
             :props="props"
           >
-            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
-              props.row.type ? null : 'Нет' }}
+            <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+              {{
+                props.row.paid ? 'Да' :
+                  props.row.type ? null : 'Нет'
+              }}
             </q-badge>
           </q-td>
 
@@ -254,7 +261,7 @@
             key="things"
             :props="props"
           >
-            {{ props.row.things | thingsFilter }}
+            {{ thingsFilter(props.row.things) }}
           </q-td>
 
           <q-td
@@ -282,193 +289,196 @@
 </template>
 
 <script>
-    import ExportDataMixin from 'src/mixins/ExportData';
+import ExportDataMixin from 'src/mixins/ExportData';
+import { numberFormat, thingsFilter } from 'src/utils';
 
-    export default {
-        name: 'Cargo',
-        components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-            // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-            GeneralClientCargoData: () => import('src/components/CargoDebts/GeneralClientCargoData.vue'),
-        },
-        mixins: [ExportDataMixin],
-        props: {
-            refresh: {
-                type: Function,
-                default: () => {
-                },
-            },
-        },
-        data() {
-            return {
-                cargoTableProperties: {
-                    columns: [
-                        {
-                            name: 'created_at',
-                            label: 'Дата',
-                            align: 'center',
-                            field: 'created_at',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_place',
-                            label: 'Код',
-                            align: 'center',
-                            field: 'code_place',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_client_name',
-                            label: 'Клиент',
-                            align: 'center',
-                            field: 'code_client_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'type',
-                            label: 'Тип',
-                            align: 'center',
-                            field: 'type',
-                            sortable: true,
-                        },
-                        {
-                            name: 'place',
-                            label: this.$t('place'),
-                            field: 'place',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'kg',
-                            label: this.$t('kg'),
-                            field: 'kg',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'for_kg',
-                            label: this.$t('forKg'),
-                            field: 'for_kg',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'for_place',
-                            label: this.$t('forPlace'),
-                            field: 'for_place',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sum',
-                            label: 'Сумма',
-                            field: 'sum',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sale',
-                            label: 'Скидка',
-                            field: 'sale',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'paid',
-                            label: 'Оплачен',
-                            field: 'paid',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'category_name',
-                            label: this.$t('category'),
-                            field: 'category_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'fax_name',
-                            label: 'Факс',
-                            field: 'fax_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'shop',
-                            label: this.$t('shop'),
-                            field: 'shop',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'things',
-                            label: this.$t('things'),
-                            field: 'things',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'delivery_method_name',
-                            label: 'Способ доставки',
-                            field: 'delivery_method_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'department',
-                            label: 'Отделение',
-                            field: 'department',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                cargoTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'place', 'kg', 'for_kg', 'for_place', 'notation', 'category_name', 'fax_name', 'sale'],
-                    title: '',
-                },
-            };
-        },
-        computed: {
-            cargo() {
-                return this.$store.getters['cargoDebts/getCargo'];
-            },
-            currentCodeClientId() {
-                return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
-            },
-        },
-        methods: {
-            async exportFaxData(selected) {
-                let data = selected;
-                if (_.isEmpty(data)) {
-                    data = this.cargo;
-                } else {
-                    const searchData = this.$store.getters['cargoDebts/getCargoForSearch'];
-                    const newArr = [];
-                    _.forEach(data, ({ id }) => {
-                        newArr.push(_.find(searchData, { id }));
-                    });
-                    devlog.log('DSDGF', data);
-                    data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
-                }
-                if (!_.isEmpty(data)) {
-                    const { getUrl } = await import('src/tools/url');
-                    this.exportDataToExcel(getUrl('exportCargoData'), {
-                        data,
-                    }, 'Cargo.xlsx');
-                }
-            },
-        },
+export default {
+  name: 'Cargo',
+  components: {
+    Table: () => import('src/components/Elements/Table/Table.vue'),
+    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
+    // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
+    GeneralClientCargoData: () => import('src/components/CargoDebts/GeneralClientCargoData.vue'),
+  },
+  mixins: [ExportDataMixin],
+  props: {
+    refresh: {
+      type: Function,
+      default: () => {
+      },
+    },
+  },
+  data() {
+    return {
+      cargoTableProperties: {
+        columns: [
+          {
+            name: 'created_at',
+            label: 'Дата',
+            align: 'center',
+            field: 'created_at',
+            sortable: true,
+          },
+          {
+            name: 'code_place',
+            label: 'Код',
+            align: 'center',
+            field: 'code_place',
+            sortable: true,
+          },
+          {
+            name: 'code_client_name',
+            label: 'Клиент',
+            align: 'center',
+            field: 'code_client_name',
+            sortable: true,
+          },
+          {
+            name: 'type',
+            label: 'Тип',
+            align: 'center',
+            field: 'type',
+            sortable: true,
+          },
+          {
+            name: 'place',
+            label: this.$t('place'),
+            field: 'place',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'kg',
+            label: this.$t('kg'),
+            field: 'kg',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'for_kg',
+            label: this.$t('forKg'),
+            field: 'for_kg',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'for_place',
+            label: this.$t('forPlace'),
+            field: 'for_place',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'sum',
+            label: 'Сумма',
+            field: 'sum',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'sale',
+            label: 'Скидка',
+            field: 'sale',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'paid',
+            label: 'Оплачен',
+            field: 'paid',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'category_name',
+            label: this.$t('category'),
+            field: 'category_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'fax_name',
+            label: 'Факс',
+            field: 'fax_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'notation',
+            label: this.$t('notation'),
+            field: 'notation',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'shop',
+            label: this.$t('shop'),
+            field: 'shop',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'things',
+            label: this.$t('things'),
+            field: 'things',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'delivery_method_name',
+            label: 'Способ доставки',
+            field: 'delivery_method_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'department',
+            label: 'Отделение',
+            field: 'department',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      cargoTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'place', 'kg', 'for_kg', 'for_place', 'notation', 'category_name', 'fax_name', 'sale'],
+        title: '',
+      },
     };
+  },
+  computed: {
+    cargo() {
+      return this.$store.getters['cargoDebts/getCargo'];
+    },
+    currentCodeClientId() {
+      return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
+    },
+  },
+  methods: {
+    numberFormat,
+    thingsFilter,
+    async exportFaxData(selected) {
+      let data = selected;
+      if (_.isEmpty(data)) {
+        data = this.cargo;
+      } else {
+        const searchData = this.$store.getters['cargoDebts/getCargoForSearch'];
+        const newArr = [];
+        _.forEach(data, ({ id }) => {
+          newArr.push(_.find(searchData, { id }));
+        });
+        devlog.log('DSDGF', data);
+        data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
+      }
+      if (!_.isEmpty(data)) {
+        const { getUrl } = await import('src/tools/url');
+        this.exportDataToExcel(getUrl('exportCargoData'), {
+          data,
+        }, 'Cargo.xlsx');
+      }
+    },
+  },
+};
 </script>

@@ -29,10 +29,10 @@
         :key="index"
       >
         <q-item-section>
-          <q-item-label>{{ item.sum | numberFormatFilter }}</q-item-label>
+          <q-item-label>{{ numberFormat(item.sum) }}</q-item-label>
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ item.commission | numberFormatFilter }}</q-item-label>
+          <q-item-label>{{ numberFormat(item.commission) }}</q-item-label>
         </q-item-section>
       </q-item>
     </q-list>

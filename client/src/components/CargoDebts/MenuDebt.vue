@@ -31,10 +31,10 @@
     </IconBtn>
 
     <DialogAddDebtPaymentEntry
-      :show-dialog.sync="showDialogAddDebtPaymentEntry"
+      v-model:show-dialog="showDialogAddDebtPaymentEntry"
     />
     <DialogAddDebEntry
-      :show-dialog.sync="showDialogAddDebtEntry"
+      v-model:show-dialog="showDialogAddDebtEntry"
     />
   </div>
 </template>

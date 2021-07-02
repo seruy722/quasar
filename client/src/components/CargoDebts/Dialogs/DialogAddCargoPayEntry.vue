@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     :persistent="true"
     title="Оплата"
     data-vue-component-name="DialogAddCargoPayEntry"
@@ -35,6 +35,7 @@
             <BaseInput
               v-if="item.type === 'text'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"
@@ -42,13 +43,13 @@
               :field="index"
               :readonly="item.readonly"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <BaseInput
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
+              v-model:change-value="item.changeValue"
               :autofocus="item.autofocus"
               :label="item.label"
               :type="item.type"
@@ -56,35 +57,34 @@
               :dense="$q.screen.xs || $q.screen.sm"
               :field="index"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <SelectChips
               v-else-if="item.type === 'select-chips'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
             <BaseInput
               v-else-if="item.type === 'date'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :mask="item.mask"
-              :change-value.sync="item.changeValue"
               :dense="$q.screen.xs || $q.screen.sm"
               :errors="errorsData"
             >
               <template #append>
                 <Date
-                  :value.sync="item.value"
-                  :change-value.sync="item.changeValue"
+                  v-model:value="item.value"
+                  v-model:change-value="item.changeValue"
                 />
               </template>
             </BaseInput>
@@ -92,11 +92,11 @@
             <SearchSelect
               v-else
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
@@ -161,6 +161,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:entryData', 'update:showDialog'],
   data() {
     return {
       show: false,
@@ -310,14 +311,20 @@ export default {
   },
   methods: {
     async saveData() {
-      const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
+      const sendData = _.reduce(this.storehouseData, (result, {
+        changeValue,
+        value,
+      }, index) => {
         if (changeValue) {
           result[index] = value;
         }
         return result;
       }, {});
       if (_.has(sendData, 'created_at')) {
-        const { reverseDate, addTime } = await import('src/utils/formatDate');
+        const {
+          reverseDate,
+          addTime,
+        } = await import('src/utils/formatDate');
         sendData.created_at = addTime(reverseDate(sendData.created_at))
           .toISOString();
       }

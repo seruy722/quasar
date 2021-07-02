@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     title="Код"
     :persistent="true"
     data-vue-component-name="DialogAddStatisticForMonth"
@@ -22,38 +22,38 @@
         <div class="row justify-between">
           <SearchSelect
             v-model="codePriceData.category_id.value"
+            v-model:change-value="codePriceData.category_id.changeValue"
             :label="codePriceData.category_id.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="codePriceData.category_id.field"
-            :change-value.sync="codePriceData.category_id.changeValue"
             :options="categories"
             :errors="errorsData"
           />
           <BaseInput
             v-model="codePriceData.for_kg.value"
+            v-model:change-value="codePriceData.for_kg.changeValue"
             type="number"
             :label="codePriceData.for_kg.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="codePriceData.for_kg.field"
-            :change-value.sync="codePriceData.for_kg.changeValue"
             :errors="errorsData"
           />
           <BaseInput
             v-model="codePriceData.for_place.value"
+            v-model:change-value="codePriceData.for_place.changeValue"
             type="number"
             :label="codePriceData.for_place.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="codePriceData.for_place.field"
-            :change-value.sync="codePriceData.for_place.changeValue"
             :errors="errorsData"
           />
           <BaseInput
             v-model="codePriceData.commission.value"
+            v-model:change-value="codePriceData.commission.changeValue"
             type="number"
             :label="codePriceData.commission.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="codePriceData.commission.field"
-            :change-value.sync="codePriceData.commission.changeValue"
             :errors="errorsData"
           />
         </div>
@@ -210,8 +210,8 @@ export default {
             .then(({
                      data: {
                        updatedCodePrice,
-                       error
-                     }
+                       error,
+                     },
                    }) => {
               if (error) {
                 this.$q.loading.hide();

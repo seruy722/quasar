@@ -10,7 +10,7 @@
     />
 
     <Dialog
-      :dialog.sync="show"
+      v-model:dialog="show"
       :persistent="true"
       title="Оплата"
     >
@@ -94,19 +94,19 @@
                   <div class="row items-center">
                     <span>От:</span>
                     <DateWithInputForCargo
-                      :value.sync="period.from"
+                      v-model:value="period.from"
                     />
                   </div>
                   <div class="row items-center">
                     <span>До:</span>
                     <DateWithInputForCargo
-                      :value.sync="period.to"
+                      v-model:value="period.to"
                     />
                   </div>
                 </div>
                 <div v-show="selectData.value === 3">
                   <DateWithInputForCargo
-                    :value.sync="period.day"
+                    v-model:value="period.day"
                   />
                 </div>
               </q-card-section>

@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     title="Код"
     :persistent="true"
     data-vue-component-name="DialogAddExpense"
@@ -22,26 +22,26 @@
         <div class="row justify-between">
           <SelectChips
             v-model="expenseData.expense.value"
+            v-model:change-value="expenseData.expense.changeValue"
             :label="expenseData.expense.label"
             :field="expenseData.expense.field"
             :dense="$q.screen.xs || $q.screen.sm"
             :options="expenseData.expense.options"
-            :change-value.sync="expenseData.expense.changeValue"
             :func-load-data="expenseData.expense.funcLoadData"
             :errors="errorsData"
           />
           <BaseInput
             v-model="expenseData.sum.value"
+            v-model:change-value="expenseData.sum.changeValue"
             type="number"
             :label="expenseData.sum.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="expenseData.sum.field"
-            :change-value.sync="expenseData.sum.changeValue"
             :errors="errorsData"
           />
           <DateWithInputForCargo
-            :value.sync="expenseData.date.value"
-            :change-value.sync="expenseData.date.changeValue"
+            v-model:value="expenseData.date.value"
+            v-model:change-value="expenseData.date.changeValue"
           />
         </div>
       </CardSection>
@@ -99,6 +99,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:entryData', 'update:showDialog'],
   data() {
     return {
       show: false,

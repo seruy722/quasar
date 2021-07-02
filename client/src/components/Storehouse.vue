@@ -52,7 +52,7 @@
               <q-item-section>
                 <q-item-label>
                   <q-badge>
-                    {{ props.row.status | statusFilter }}
+                    {{ statusFilter(props.row.status) }}
                   </q-badge>
                 </q-item-label>
               </q-item-section>
@@ -74,22 +74,22 @@
                     v-if="col.field === 'things'"
                     :lines="10"
                   >
-                    {{ col.value | thingsFilter }}
+                    {{ thingsFilter(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'kg'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'status'"
                   >
-                    <q-badge>{{ col.value | statusFilter }}</q-badge>
+                    <q-badge>{{ statusFilter(col.value) }}</q-badge>
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'created_at'"
                   >
-                    {{ col.value | formatToDotDate }}
+                    {{ fullDate(col.value) }}
                   </q-item-label>
                   <q-item-label v-else>
                     {{ col.value }}
@@ -118,7 +118,7 @@
             key="status"
             :props="props"
           >
-            <q-badge>{{ props.row.status | statusFilter }}</q-badge>
+            <q-badge>{{ statusFilter(props.row.status) }}</q-badge>
           </q-td>
           <q-td
             key="code_place"
@@ -138,7 +138,7 @@
             key="kg"
             :props="props"
           >
-            {{ props.row.kg | numberFormatFilter }}
+            {{ numberFormat(props.row.kg) }}
           </q-td>
 
           <q-td
@@ -166,14 +166,14 @@
             key="things"
             :props="props"
           >
-            {{ props.row.things | thingsFilter }}
+            {{ thingsFilter(props.row.things) }}
           </q-td>
 
           <q-td
             key="created_at"
             :props="props"
           >
-            {{ props.row.created_at | formatToDotDate }}
+            {{ formatToDotDate(props.row.created_at) }}
           </q-td>
         </q-tr>
       </template>
@@ -189,8 +189,8 @@
 import { getUrl } from 'src/tools/url';
 import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
-import { callFunction } from 'src/utils/index';
-import getFromSettings from 'src/tools/settings';
+import { callFunction, thingsFilter, numberFormat } from 'src/utils';
+import { fullDate } from 'src/utils/formatDate';
 
 export default {
   name: 'Storehouse',
@@ -199,13 +199,6 @@ export default {
     CountCategories: () => import('src/components/CountCategories.vue'),
     UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
     IconBtn: () => import('components/Buttons/IconBtn.vue'),
-  },
-  filters: {
-    statusFilter(value) {
-      const options = getFromSettings('transportStatusOptions');
-      const val = _.get(_.find(options, { value }), 'label');
-      return val || 'На складе';
-    },
   },
   mixins: [showNotif, ExportDataMixin],
   props: {
@@ -299,6 +292,9 @@ export default {
     };
   },
   methods: {
+    numberFormat,
+    thingsFilter,
+    fullDate,
     exportStorehouseData() {
       const data = _.isEmpty(this.storehouseTableReactiveProperties.selected) ? this.storehouseData : this.storehouseTableReactiveProperties.selected;
       devlog.log('DATA', data);

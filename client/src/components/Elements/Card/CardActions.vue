@@ -1,6 +1,9 @@
 <template>
-  <q-card-actions :align="align" data-vue-component-name="CardActions">
-    <slot></slot>
+  <q-card-actions
+:align="align"
+data-vue-component-name="CardActions"
+>
+    <slot />
   </q-card-actions>
 </template>
 

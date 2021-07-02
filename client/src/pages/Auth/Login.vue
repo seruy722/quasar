@@ -1,5 +1,8 @@
 <template>
-  <q-card data-vue-component-name="Login" flat>
+  <q-card
+    data-vue-component-name="Login"
+    flat
+  >
     <q-card-section>
       <BaseInput
         v-model.trim="loginData.email.value"
@@ -41,12 +44,13 @@ import { getUrl } from 'src/tools/url';
 import { getLSKey } from 'src/tools/lsKeys';
 import OnKeyUp from 'src/mixins/OnKeyUp';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
+import { defineAsyncComponent } from 'vue';
 
 export default {
   name: 'Login',
   components: {
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    BaseInput: defineAsyncComponent(() => import('src/components/Elements/BaseInput.vue')),
+    BaseBtn: defineAsyncComponent(() => import('src/components/Buttons/BaseBtn.vue')),
   },
   mixins: [OnKeyUp, CheckErrorsMixin],
   data() {
@@ -96,7 +100,7 @@ export default {
       return this.$store.getters['auth/getToPath'];
     },
   },
-  destroyed() {
+  unmounted() {
     this.$q.loading.hide();
   },
   methods: {

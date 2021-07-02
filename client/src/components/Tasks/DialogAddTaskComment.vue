@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     title="Клиент"
     :persistent="true"
     data-vue-component-name="DialogAddTaskComment"
@@ -70,7 +70,7 @@
       </q-card-section>
       <q-card-section v-show="!addFileToComment">
         <DateWithInputForCargo
-          :value.sync="localDate"
+          v-model:value="localDate"
         />
       </q-card-section>
       <q-card-section v-show="!isEdit">
@@ -104,176 +104,177 @@
 </template>
 
 <script>
-    import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
-    import showNotif from 'src/mixins/showNotif';
+import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
+import showNotif from 'src/mixins/showNotif';
 
-    export default {
-        name: 'DialogAddTaskComment',
-        components: {
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-            DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
-        },
-        mixins: [showNotif],
-        props: {
-            showDialog: {
-                type: Boolean,
-                default: false,
-            },
-            addFileToComment: {
-                type: Boolean,
-                default: false,
-            },
-            commentId: {
-                type: Number,
-                default: 0,
-            },
-            editData: {
-                type: Object,
-                default: () => ({}),
-            },
-        },
-        data() {
-            return {
-                showDialogChooseDate: false,
-                dialogChooseDateData: null,
-                files: [],
-                extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
-                codeClientId: null,
-                text: null,
-                localDate: null,
-            };
-        },
-        computed: {
-            show: {
-                get: function get() {
-                    return this.showDialog;
-                },
-                set: function set(val) {
-                    this.$emit('update:showDialog', val);
-                },
-            },
-            clientCodes() {
-                return this.$store.getters['codes/getCodes'];
-            },
-            isEdit() {
-                return !_.isEmpty(this.editData);
-            },
-        },
-        watch: {
-            editData(val) {
-                this.text = val.title;
-                this.localDate = val.created_at;
-                this.codeClientId = val.code_client_id;
-            },
-        },
-        created() {
-            getClientCodes(this.$store);
-        },
-        methods: {
-            selectedFiles(value) {
-                this.files = _.map(value, (file) => {
-                    file.url = URL.createObjectURL(file);
-                    return file;
-                });
-                if (_.isNull(value)) {
-                    this.files = [];
-                }
-            },
-            getFileExt({ name }) {
-                if (name) {
-                    return name.slice(name.lastIndexOf('.') + 1);
-                }
-                return name;
-            },
-            remove(index) {
-                this.files.splice(index, 1);
-            },
-            close() {
-                this.files = [];
-                this.show = false;
-                if (this.addFileToComment) {
-                    this.$emit('update:addFileToComment', false);
-                }
-            },
-            async save(files) {
-                const formData = new FormData();
-                _.forEach(files, (file, index) => {
-                    formData.set(`img${index}`, file);
-                });
-                if (this.codeClientId) {
-                    formData.set('code_client_id', this.codeClientId);
-                }
-                if (this.text) {
-                    formData.set('title', _.startCase(this.text));
-                }
-                if (this.localDate) {
-                    const { addTime } = await import('src/utils/formatDate');
-                    formData.set('created_at', addTime(this.localDate)
-                      .toISOString());
-                }
-                formData.set('task_id', this.$route.params.id);
-
-                if (this.text || files.length > 0) {
-                    this.$q.loading.show();
-                    const { getUrl } = await import('src/tools/url');
-                    if (this.addFileToComment) {
-                        formData.set('comment_id', this.commentId);
-                        this.$axios.post(getUrl('addFileToComment'), formData)
-                          .then(({ data: { comment } }) => {
-                              devlog.log('comment', comment);
-                              this.$store.dispatch('tasks/updateTaskComment', comment);
-                              this.files = [];
-                              this.$emit('update:addFileToComment', false);
-                              this.show = false;
-                              this.$q.loading.hide();
-                              this.showNotif('success', 'Файл успешно добавлен', 'center');
-                          })
-                          .catch(() => {
-                              this.$q.loading.hide();
-                              this.showNotif('warning', 'Файлы из google диска не загружаются!', 'center');
-                              devlog.error('storeComment');
-                          });
-                    } else if (this.isEdit) {
-                        formData.set('comment_id', this.commentId);
-                        this.$axios.post(getUrl('updateCommentData'), formData)
-                          .then(({ data: { comment } }) => {
-                              devlog.log('comment', comment);
-                              this.$store.dispatch('tasks/updateTaskComment', comment);
-                              this.files = [];
-                              this.$emit('update:addFileToComment', false);
-                              this.show = false;
-                              this.$q.loading.hide();
-                              this.showNotif('success', 'Файл успешно добавлен', 'center');
-                          })
-                          .catch(() => {
-                              this.$q.loading.hide();
-                              this.showNotif('warning', 'Файлы из google диска не загружаются!', 'center');
-                              devlog.error('storeComment');
-                          });
-                    } else {
-                        this.$axios.post(getUrl('storeComment'), formData)
-                          .then(({ data: { comment } }) => {
-                              devlog.log('comment', comment);
-                              this.$store.dispatch('tasks/addTaskComment', comment);
-                              this.text = '';
-                              this.files = [];
-                              this.localDate = null;
-                              this.codeClientId = null;
-                              this.$q.loading.hide();
-                              this.showNotif('success', 'Данные успешно сохранены', 'center');
-                          })
-                          .catch(() => {
-                              this.$q.loading.hide();
-                              this.showNotif('warning', 'Файлы из google диска не загружаются!', 'center');
-                              devlog.error('storeComment');
-                          });
-                    }
-                } else {
-                    this.showNotif('warning', 'Введите сообщение или выберите файл!', 'center');
-                }
-            },
-        },
+export default {
+  name: 'DialogAddTaskComment',
+  components: {
+    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
+    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
+  },
+  mixins: [showNotif],
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    addFileToComment: {
+      type: Boolean,
+      default: false,
+    },
+    commentId: {
+      type: Number,
+      default: 0,
+    },
+    editData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  emits: ['update:addFileToComment', 'update:showDialog'],
+  data() {
+    return {
+      showDialogChooseDate: false,
+      dialogChooseDateData: null,
+      files: [],
+      extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
+      codeClientId: null,
+      text: null,
+      localDate: null,
     };
+  },
+  computed: {
+    show: {
+      get: function get() {
+        return this.showDialog;
+      },
+      set: function set(val) {
+        this.$emit('update:showDialog', val);
+      },
+    },
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+    isEdit() {
+      return !_.isEmpty(this.editData);
+    },
+  },
+  watch: {
+    editData(val) {
+      this.text = val.title;
+      this.localDate = val.created_at;
+      this.codeClientId = val.code_client_id;
+    },
+  },
+  created() {
+    getClientCodes(this.$store);
+  },
+  methods: {
+    selectedFiles(value) {
+      this.files = _.map(value, (file) => {
+        file.url = URL.createObjectURL(file);
+        return file;
+      });
+      if (_.isNull(value)) {
+        this.files = [];
+      }
+    },
+    getFileExt({ name }) {
+      if (name) {
+        return name.slice(name.lastIndexOf('.') + 1);
+      }
+      return name;
+    },
+    remove(index) {
+      this.files.splice(index, 1);
+    },
+    close() {
+      this.files = [];
+      this.show = false;
+      if (this.addFileToComment) {
+        this.$emit('update:addFileToComment', false);
+      }
+    },
+    async save(files) {
+      const formData = new FormData();
+      _.forEach(files, (file, index) => {
+        formData.set(`img${index}`, file);
+      });
+      if (this.codeClientId) {
+        formData.set('code_client_id', this.codeClientId);
+      }
+      if (this.text) {
+        formData.set('title', _.startCase(this.text));
+      }
+      if (this.localDate) {
+        const { addTime } = await import('src/utils/formatDate');
+        formData.set('created_at', addTime(this.localDate)
+          .toISOString());
+      }
+      formData.set('task_id', this.$route.params.id);
+
+      if (this.text || files.length > 0) {
+        this.$q.loading.show();
+        const { getUrl } = await import('src/tools/url');
+        if (this.addFileToComment) {
+          formData.set('comment_id', this.commentId);
+          this.$axios.post(getUrl('addFileToComment'), formData)
+            .then(({ data: { comment } }) => {
+              devlog.log('comment', comment);
+              this.$store.dispatch('tasks/updateTaskComment', comment);
+              this.files = [];
+              this.$emit('update:addFileToComment', false);
+              this.show = false;
+              this.$q.loading.hide();
+              this.showNotif('success', 'Файл успешно добавлен', 'center');
+            })
+            .catch(() => {
+              this.$q.loading.hide();
+              this.showNotif('warning', 'Файлы из google диска не загружаются!', 'center');
+              devlog.error('storeComment');
+            });
+        } else if (this.isEdit) {
+          formData.set('comment_id', this.commentId);
+          this.$axios.post(getUrl('updateCommentData'), formData)
+            .then(({ data: { comment } }) => {
+              devlog.log('comment', comment);
+              this.$store.dispatch('tasks/updateTaskComment', comment);
+              this.files = [];
+              this.$emit('update:addFileToComment', false);
+              this.show = false;
+              this.$q.loading.hide();
+              this.showNotif('success', 'Файл успешно добавлен', 'center');
+            })
+            .catch(() => {
+              this.$q.loading.hide();
+              this.showNotif('warning', 'Файлы из google диска не загружаются!', 'center');
+              devlog.error('storeComment');
+            });
+        } else {
+          this.$axios.post(getUrl('storeComment'), formData)
+            .then(({ data: { comment } }) => {
+              devlog.log('comment', comment);
+              this.$store.dispatch('tasks/addTaskComment', comment);
+              this.text = '';
+              this.files = [];
+              this.localDate = null;
+              this.codeClientId = null;
+              this.$q.loading.hide();
+              this.showNotif('success', 'Данные успешно сохранены', 'center');
+            })
+            .catch(() => {
+              this.$q.loading.hide();
+              this.showNotif('warning', 'Файлы из google диска не загружаются!', 'center');
+              devlog.error('storeComment');
+            });
+        }
+      } else {
+        this.showNotif('warning', 'Введите сообщение или выберите файл!', 'center');
+      }
+    },
+  },
+};
 </script>

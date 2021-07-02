@@ -62,8 +62,8 @@
               <template #header>
                 <q-item-section avatar>
                   <q-checkbox
-                    dense
                     v-model="props.selected"
+                    dense
                   />
                 </q-item-section>
 
@@ -90,7 +90,7 @@
                     <q-item-label
                       v-if="col.field === 'status'"
                     >
-                      {{ col.value | statusFilter }}
+                      {{ statusFilter(col.value) }}
                     </q-item-label>
 
                     <q-item-label
@@ -156,7 +156,7 @@
               :props="props"
             >
               <q-badge>
-                {{ props.row.status | statusFilter }}
+                {{ statusFilter(props.row.status) }}
               </q-badge>
             </q-td>
 
@@ -212,7 +212,7 @@
                 dense
                 :name="!props.row.uploaded_to_cargo ? 'vertical_align_bottom':'vertical_align_top'"
                 @click.stop="uploadToCargo(props.row)"
-              ></q-icon>
+              />
             </q-td>
           </q-tr>
         </template>
@@ -236,7 +236,7 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>
-              <q-badge>{{ count | numberFormatFilter }}</q-badge>
+              <q-badge>{{ numberFormat(count) }}</q-badge>
             </q-item-label>
           </q-item-section>
         </template>
@@ -261,8 +261,8 @@
       </q-expansion-item>
     </q-list>
     <DialogAddFax
-      :show-dialog.sync="showFaxDialog"
-      :entry-data.sync="localFaxesEditData"
+      v-model:show-dialog="showFaxDialog"
+      v-model:entry-data="localFaxesEditData"
     />
     <Dialog
       :dialog="dialogHistory"
@@ -287,19 +287,18 @@
       </q-card>
     </Dialog>
     <DialogChooseDate
-      :show-dialog.sync="showDialogChooseDate"
-      :date.sync="dialogChooseDateData"
+      v-model:show-dialog="showDialogChooseDate"
+      v-model:date="dialogChooseDateData"
       @set-date="setDateFromDialog(dialogChooseDateData)"
     />
-    <DialogNotDeliveredCargo :show.sync="showDialogNotDeliveredCargo" />
+    <DialogNotDeliveredCargo v-model:show="showDialogNotDeliveredCargo" />
   </q-page>
 </template>
 
 <script>
 import { getUrl } from 'src/tools/url';
-import getFromSettings from 'src/tools/settings';
 import { setFormatedDate, prepareHistoryData, getFaxes } from 'src/utils/FrequentlyCalledFunctions';
-import { callFunction } from 'src/utils/index';
+import { callFunction, statusFilter } from 'src/utils';
 import showNotif from 'src/mixins/showNotif';
 import { addTime } from 'src/utils/formatDate';
 
@@ -318,12 +317,6 @@ export default {
     UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
     DialogChooseDate: () => import('src/components/Dialogs/DialogChooseDate.vue'),
     DialogNotDeliveredCargo: () => import('components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue'),
-  },
-  filters: {
-    statusFilter(value) {
-      const options = getFromSettings('transportStatusOptions');
-      return _.get(_.find(options, { value }), 'label');
-    },
   },
   mixins: [showNotif],
   data() {
@@ -464,6 +457,7 @@ export default {
       });
   },
   methods: {
+    statusFilter,
     setDateFromDialog(date) {
       devlog.log('setDateFromDialog', date);
       if (date) {

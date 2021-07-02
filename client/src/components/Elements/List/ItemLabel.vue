@@ -4,7 +4,7 @@
     :caption="caption"
     :lines="lines"
   >
-    <slot></slot>
+    <slot />
   </q-item-label>
 </template>
 

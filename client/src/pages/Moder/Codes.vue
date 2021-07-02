@@ -140,7 +140,7 @@
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>
-                      {{ item.phone | phoneNumberFilter }}
+                      {{ phoneNumberFilter(item.phone) }}
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
@@ -177,7 +177,10 @@
               auto-width
               class="select_checkbox"
             >
-              <q-checkbox v-model="props.selected" dense />
+              <q-checkbox
+                v-model="props.selected"
+                dense
+              />
             </q-td>
 
             <q-td
@@ -198,7 +201,10 @@
               key="phones"
               :props="props"
             >
-              <ListNumbered :values="props.row.phones" type="phones" />
+              <ListNumbered
+                :values="props.row.phones"
+                type="phones"
+              />
             </q-td>
 
             <!--            <q-td-->
@@ -264,28 +270,43 @@
                   </q-item-label>
                 </q-item-section>
                 <q-item-section side>
-                  <q-item-label v-if="col.name === 'code'" :lines="3">
+                  <q-item-label
+                    v-if="col.name === 'code'"
+                    :lines="3"
+                  >
                     <q-badge>{{ col.value }}</q-badge>
                   </q-item-label>
                   <q-item-label v-else-if="col.name === 'cities'">
                     <ListNumbered :values="compactArray(col.value)" />
                   </q-item-label>
                   <q-item-label v-else-if="col.name === 'phones'">
-                    <ListNumbered :values="col.value" :type="col.name" />
+                    <ListNumbered
+                      :values="col.value"
+                      :type="col.name"
+                    />
                   </q-item-label>
-                  <q-item-label v-else :lines="3">
+                  <q-item-label
+                    v-else
+                    :lines="3"
+                  >
                     {{ col.value }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
 
-              <q-item class="text-bold text-center" style="border-bottom: 1px solid blue;border-top: 1px solid blue;">
+              <q-item
+                class="text-bold text-center"
+                style="border-bottom: 1px solid blue;border-top: 1px solid blue;"
+              >
                 <q-item-section>
                   Клиенты
                 </q-item-section>
               </q-item>
 
-              <q-item v-if="localProps.row.customers.length" class="text-bold">
+              <q-item
+                v-if="localProps.row.customers.length"
+                class="text-bold"
+              >
                 <q-item-section>
                   <q-item-label>
                     Имя
@@ -316,7 +337,7 @@
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>
-                    {{ item.phone | phoneNumberFilter }}
+                    {{ phoneNumberFilter(item.phone) }}
                   </q-item-label>
                 </q-item-section>
                 <q-item-section side>
@@ -342,7 +363,7 @@
           <Separator />
         </q-card>
       </Dialog>
-      <DialogAddCode :show-dialog.sync="showCodeDialog" />
+      <DialogAddCode v-model:show-dialog="showCodeDialog" />
 
       <Dialog
         :dialog="dialogHistory"
@@ -370,9 +391,9 @@
       </Dialog>
     </PullRefresh>
     <DialogAddClient
-      :show-dialog.sync="showClientDialog"
-      :entry-data.sync="localClientEditData"
-      :code-id.sync="codeId"
+      v-model:show-dialog="showClientDialog"
+      v-model:entry-data="localClientEditData"
+      v-model:code-id="codeId"
     />
   </q-page>
 </template>
@@ -382,7 +403,7 @@ import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
-import { callFunction, createSpecialLink } from 'src/utils/index';
+import { callFunction, createSpecialLink, phoneNumberFilter } from 'src/utils';
 import TransferMixin from 'src/mixins/Transfer';
 import {
   setMethodLabel,
@@ -485,6 +506,7 @@ export default {
     this.getCodes();
   },
   methods: {
+    phoneNumberFilter,
     call(phone) {
       const link = createSpecialLink(phone, 'tel');
       link.click();
@@ -644,7 +666,11 @@ export default {
           devlog.error('Ошибка при получении данных истории.');
         });
     },
-    destroyCustomer({ id, name, code_id: codeId }) {
+    destroyCustomer({
+                      id,
+                      name,
+                      code_id: codeId,
+                    }) {
       this.showNotif('warning', `Удалить клиента - ${name} ?`, 'center', [
         {
           label: 'Отмена',
@@ -686,23 +712,23 @@ export default {
 
 <style lang="stylus">
 .border_red {
-  border-color $red !important
+  border-color $ red !important
 }
 
 .border_positive {
-  border-color $positive !important
+  border-color $ positive !important
 }
 
 .border_warning {
-  border-color $warning !important
+  border-color $ warning !important
 }
 
 .border_grey {
-  border-color $grey !important
+  border-color $ grey !important
 }
 
 .border_info {
-  border-color $info !important
+  border-color $ info !important
 }
 
 </style>

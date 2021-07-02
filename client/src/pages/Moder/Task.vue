@@ -195,15 +195,15 @@
         </template>
       </Table>
       <DialogShowImageGallery
-        :show-dialog.sync="showDialogImageGallery"
+        v-model:show-dialog="showDialogImageGallery"
         :files="filesGallery"
         :slide="slide"
       />
       <DialogAddTaskComment
-        :show-dialog.sync="showDialogAddTaskComment"
-        :add-file-to-comment.sync="addFileToCom"
+        v-model:show-dialog="showDialogAddTaskComment"
+        v-model:add-file-to-comment="addFileToCom"
+        v-model:edit-data="entryData"
         :comment-id="commentId"
-        :edit-data.sync="entryData"
       />
     </q-page>
   </PullRefresh>

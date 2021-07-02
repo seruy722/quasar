@@ -1,7 +1,7 @@
 <template>
   <div>
     <Dialog
-      :dialog.sync="show"
+      :dialog="show"
       title="Код"
       :persistent="true"
       data-vue-component-name="DialogChooseDate"
@@ -21,7 +21,7 @@
 
         <q-card-section>
           <DateWithInputForCargo
-            :value.sync="localDate"
+            v-model:value="localDate"
           />
         </q-card-section>
 
@@ -48,14 +48,16 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
+
 export default {
   name: 'DialogChooseDate',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
+    DateWithInputForCargo: defineAsyncComponent(() => import('src/components/DateWithInputForCargo.vue')),
+    Dialog: defineAsyncComponent(() => import('components/Dialogs/Dialog.vue')),
+    BaseBtn: defineAsyncComponent(() => import('src/components/Buttons/BaseBtn.vue')),
+    Separator: defineAsyncComponent(() => import('components/Separator.vue')),
+    IconBtn: defineAsyncComponent(() => import('components/Buttons/IconBtn.vue')),
   },
   props: {
     showDialog: {
@@ -70,6 +72,7 @@ export default {
         .join('-'),
     },
   },
+  emits: ['set-date', 'update:date', 'update:showDialog'],
   data() {
     return {
       localDate: new Date().toLocaleDateString()

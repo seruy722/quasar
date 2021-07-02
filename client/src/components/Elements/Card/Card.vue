@@ -3,12 +3,13 @@
     data-vue-component-name="Card"
     @click="$emit('click-card')"
   >
-    <slot></slot>
+    <slot />
   </q-card>
 </template>
 
 <script>
-    export default {
-        name: 'Card',
-    };
+export default {
+  name: 'Card',
+  emits: ['click-card'],
+};
 </script>

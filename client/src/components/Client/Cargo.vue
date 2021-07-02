@@ -82,22 +82,23 @@
                     v-if="col.field === 'things'"
                     :lines="10"
                   >
-                    {{ col.value | thingsFilter }}
+                    {{ thingsFilter(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'kg'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'sum'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'paid'"
                   >
-                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+                      {{
                         props.row.paid ? 'Да' :
                           props.row.type ? null : 'Нет'
                       }}
@@ -200,7 +201,7 @@
             key="sum"
             :props="props"
           >
-            {{ props.row.sum | numberFormatFilter }}
+            {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
             key="sale"
@@ -212,7 +213,8 @@
             key="paid"
             :props="props"
           >
-            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{
+            <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+              {{
                 props.row.paid ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}
@@ -244,7 +246,8 @@
             key="in_cargo"
             :props="props"
           >
-            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{
+            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
+              {{
                 props.row.in_cargo ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}
@@ -262,7 +265,7 @@
             key="things"
             :props="props"
           >
-            {{ props.row.things | thingsFilter }}
+            {{ thingsFilter(props.row.things) }}
           </q-td>
 
           <!--          <q-td-->
@@ -290,6 +293,7 @@
 
 <script>
 import ExportDataMixin from 'src/mixins/ExportData';
+import { numberFormat, thingsFilter } from 'src/utils';
 
 export default {
   name: 'Cargo',
@@ -448,6 +452,8 @@ export default {
     },
   },
   methods: {
+    numberFormat,
+    thingsFilter,
     async exportFaxData(selected) {
       const data = !_.isEmpty(selected) ? selected : this.cargo;
       if (!_.isEmpty(data)) {

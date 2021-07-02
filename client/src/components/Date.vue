@@ -14,17 +14,20 @@
         v-model="valueData"
         today-btn
         mask="DD-MM-YYYY"
-        @input="() => $refs.qDateProxy.hide()"
+        @update:model-value="$refs.qDateProxy.hide()"
       />
     </q-popup-proxy>
   </Icon>
 </template>
 
 <script>
+import Icon from 'components/Elements/Icon.vue';
+import { computed } from 'vue';
+
 export default {
   name: 'Date',
   components: {
-    Icon: () => import('components/Elements/Icon.vue'),
+    Icon,
   },
   props: {
     value: {
@@ -36,18 +39,17 @@ export default {
       default: false,
     },
   },
-  computed: {
-    valueData: {
-      get: function get() {
-        devlog.log('this.value', this.value);
-        return this.value;
+  emits: ['update:changeValue', 'update:value'],
+  setup(props, { emit }) {
+    const valueData = computed({
+      get: () => props.value,
+      set: (val) => {
+        emit('update:value', val);
+        emit('update:changeValue', true);
       },
-      set: function set(val) {
-        devlog.log('this.value_ЫУЕ', val);
-        this.$emit('update:value', val);
-        this.$emit('update:changeValue', true);
-      },
-    },
+    });
+
+    return { valueData };
   },
 };
 </script>

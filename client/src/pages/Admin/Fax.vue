@@ -125,12 +125,12 @@
                     v-if="col.field === 'things'"
                     :lines="10"
                   >
-                    {{ col.value | thingsFilter }}
+                    {{ thingsFilter(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'kg'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'notation'"
@@ -182,10 +182,10 @@
             class="cursor-pointer"
             :props="props"
           >
-            {{ props.row.code_client_id | optionsFilter(clientCodes) }}
+            {{ optionsFilter(props.row.code_client_id, clientCodes) }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.code_client_id"
+              v-model:value="props.row.code_client_id"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'code_client_id')"
@@ -210,7 +210,7 @@
             key="kg"
             :props="props"
           >
-            {{ props.row.kg | numberFormatFilter }}
+            {{ numberFormat(props.row.kg) }}
           </q-td>
 
           <q-td
@@ -218,10 +218,10 @@
             class="text-bold text-red cursor-pointer"
             :props="props"
           >
-            {{ props.row.for_kg | numberFormatFilter }}
+            {{ numberFormat(props.row.for_kg) }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.for_kg"
+              v-model:value="props.row.for_kg"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'for_kg')"
@@ -245,10 +245,10 @@
             class="text-bold text-red cursor-pointer"
             :props="props"
           >
-            {{ props.row.for_place | numberFormatFilter }}
+            {{ numberFormat(props.row.for_place) }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.for_place"
+              v-model:value="props.row.for_place"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'for_place')"
@@ -263,7 +263,7 @@
             {{ props.row.cube }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.cube"
+              v-model:value="props.row.cube"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'cube')"
@@ -282,10 +282,10 @@
             class="cursor-pointer"
             :props="props"
           >
-            {{ props.row.category_id | optionsFilter(categories) }}
+            {{ optionsFilter(props.row.category_id, categories) }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.category_id"
+              v-model:value="props.row.category_id"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'category_id')"
@@ -303,7 +303,8 @@
             key="in_cargo"
             :props="props"
           >
-            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{ props.row.in_cargo ? 'Да' : 'Нет' }}
+            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
+              {{ props.row.in_cargo ? 'Да' : 'Нет' }}
             </q-badge>
           </q-td>
 
@@ -319,10 +320,10 @@
             class="cursor-pointer"
             :props="props"
           >
-            {{ props.row.delivery_method_id | optionsFilter(deliveryMethodsList) }}
+            {{ optionsFilter(props.row.delivery_method_id, deliveryMethodsList) }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.delivery_method_id"
+              v-model:value="props.row.delivery_method_id"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'delivery_method_id')"
@@ -344,7 +345,7 @@
             {{ props.row.department }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.department"
+              v-model:value="props.row.department"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'department')"
             />
@@ -361,7 +362,7 @@
             key="things"
             :props="props"
           >
-            {{ props.row.things | thingsFilter }}
+            {{ thingsFilter(props.row.things) }}
           </q-td>
         </q-tr>
       </template>
@@ -373,8 +374,8 @@
       style="max-width: 600px;margin:0 auto;"
     />
     <DialogFaxData
-      :show-dialog.sync="showFaxDataDialog"
-      :entry-data.sync="localFaxEditData"
+      v-model:show-dialog="showFaxDataDialog"
+      v-model:entry-data="localFaxEditData"
     />
     <Dialog
       :dialog="dialogHistory"
@@ -429,10 +430,18 @@
           >
             <template #before>
               <div class="q-pa-md">
-                <div class="text-h6 q-mb-md"> Факс</div>
+                <div class="text-h6 q-mb-md">
+                  Факс
+                </div>
                 <!--                <Search v-model="search" />-->
-                <CountCategories :list="faxSideData" style="margin-bottom: 20px;" />
-                <q-list bordered separator>
+                <CountCategories
+                  :list="faxSideData"
+                  style="margin-bottom: 20px;"
+                />
+                <q-list
+                  bordered
+                  separator
+                >
                   <q-slide-item
                     v-for="(item, index) in faxSideData"
                     :key="index"
@@ -455,15 +464,28 @@
             </template>
 
             <template #separator>
-              <q-avatar color="primary" text-color="white" size="40px" icon="drag_indicator" />
+              <q-avatar
+                color="primary"
+                text-color="white"
+                size="40px"
+                icon="drag_indicator"
+              />
             </template>
 
             <template #after>
               <div class="q-pa-md">
-                <div class="text-h6 q-mb-md"> Склад</div>
+                <div class="text-h6 q-mb-md">
+                  Склад
+                </div>
                 <!--                <Search v-model="searchStorehouseData" />-->
-                <CountCategories :list="storehouseSideData" style="margin-bottom: 20px;" />
-                <q-list bordered separator>
+                <CountCategories
+                  :list="storehouseSideData"
+                  style="margin-bottom: 20px;"
+                />
+                <q-list
+                  bordered
+                  separator
+                >
                   <q-slide-item
                     v-for="(item, index) in storehouseSideData"
                     :key="index"
@@ -508,11 +530,16 @@
         <q-card-section class="q-pt-none">
           <FaxTransferDataHistory
             :history-data="historyData"
-          ></FaxTransferDataHistory>
+          />
         </q-card-section>
       </q-card>
     </Dialog>
-    <q-dialog v-model="dialogSelectDeliveredPlace" persistent transition-show="scale" transition-hide="scale">
+    <q-dialog
+      v-model="dialogSelectDeliveredPlace"
+      persistent
+      transition-show="scale"
+      transition-hide="scale"
+    >
       <q-card style="width: 300px">
         <q-card-section>
           <div class="text-h6 text-teal">
@@ -528,7 +555,10 @@
           />
         </q-card-section>
 
-        <q-card-actions align="right" class="bg-white text-teal">
+        <q-card-actions
+          align="right"
+          class="bg-white text-teal"
+        >
           <q-btn
             v-close-popup
             label="Отмена"
@@ -565,6 +595,7 @@ import {
   // prepareHistoryData,
 } from 'src/utils/FrequentlyCalledFunctions';
 import StorehouseDataMixin from 'src/mixins/StorehouseData';
+import { numberFormat, thingsFilter, optionsFilter } from 'src/utils';
 
 export default {
   name: 'Fax',
@@ -583,15 +614,6 @@ export default {
     BaseSelect: () => import('components/Elements/BaseSelect.vue'),
     FaxTransferDataHistory: () => import('components/History/FaxTransferDataHistory.vue'),
     // Search: () => import('components/Search.vue'),
-  },
-  filters: {
-    optionsFilter(id, categories) {
-      const find = _.find(categories, { value: id });
-      if (find) {
-        return find.label;
-      }
-      return id;
-    },
   },
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {
@@ -777,10 +799,13 @@ export default {
         this.$q.loading.hide();
       });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearTimeout(this.timer);
   },
   methods: {
+    numberFormat,
+    thingsFilter,
+    optionsFilter,
     async getFax(id) {
       if (_.isEmpty(this.currentFaxItem) || _.toNumber(this.currentFaxItem.id) !== _.toNumber(id)) {
         this.$axios.get(`${getUrl('fax')}/${id}`)
@@ -824,7 +849,10 @@ export default {
     },
     exportFaxData(data) {
       const ids = [];
-      _.forEach(data, ({ arr, id }) => {
+      _.forEach(data, ({
+                         arr,
+                         id,
+                       }) => {
         if (!_.isEmpty(arr)) {
           ids.push(..._.map(arr, 'id'));
         } else {

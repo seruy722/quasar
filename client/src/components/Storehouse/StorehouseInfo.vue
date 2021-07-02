@@ -5,8 +5,7 @@
         color="primary"
         label="Выбрать период"
         @click="choosePeriodDialog = true"
-      >
-      </q-btn>
+      />
       <div>{{ viewPeriodDate }}</div>
     </div>
     <Cargo
@@ -23,19 +22,19 @@
       transition-hide="flip-down"
     >
       <q-card style="max-width: 600px;">
-        <q-bar></q-bar>
+        <q-bar />
         <q-card-section class="q-pt-none">
           <div>
             <div class="row items-center">
               <span>От:</span>
               <DateWithInputForCargo
-                :value.sync="period.from"
+                v-model:value="period.from"
               />
             </div>
             <div class="row items-center">
               <span>До:</span>
               <DateWithInputForCargo
-                :value.sync="period.to"
+                v-model:value="period.to"
               />
             </div>
           </div>

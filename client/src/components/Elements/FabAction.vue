@@ -8,17 +8,18 @@
 </template>
 
 <script>
-    export default {
-        name: 'FabAction',
-        props: {
-            color: {
-                type: String,
-                default: 'primary',
-            },
-            icon: {
-                type: String,
-                default: 'add',
-            },
-        },
-    };
+export default {
+  name: 'FabAction',
+  props: {
+    color: {
+      type: String,
+      default: 'primary',
+    },
+    icon: {
+      type: String,
+      default: 'add',
+    },
+  },
+  emits: ['fab-action-click'],
+};
 </script>

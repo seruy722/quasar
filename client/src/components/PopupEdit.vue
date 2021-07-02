@@ -33,51 +33,52 @@
 </template>
 
 <script>
-    export default {
-        name: 'PopupEdit',
-        props: {
-            value: {
-                type: [String, Number],
-                default: '',
-            },
-            title: {
-                type: String,
-                default: 'edit',
-            },
-            rowProps: {
-                type: Object,
-                default: () => ({}),
-            },
-            labelSet: {
-                type: String,
-                default: 'Сохранить',
-            },
-            labelCancel: {
-                type: String,
-                default: 'Отмена',
-            },
-            type: {
-                type: String,
-                default: 'text',
-            },
-            mask: {
-                type: String,
-                default: '',
-            },
-            edit: {
-                type: Boolean,
-                default: false,
-            },
-        },
-        computed: {
-            modelData: {
-                get: function getData() {
-                    return this.value;
-                },
-                set: function setData(newValue) {
-                    this.$emit('update:value', newValue);
-                },
-            },
-        },
-    };
+export default {
+  name: 'PopupEdit',
+  props: {
+    value: {
+      type: [String, Number],
+      default: '',
+    },
+    title: {
+      type: String,
+      default: 'edit',
+    },
+    rowProps: {
+      type: Object,
+      default: () => ({}),
+    },
+    labelSet: {
+      type: String,
+      default: 'Сохранить',
+    },
+    labelCancel: {
+      type: String,
+      default: 'Отмена',
+    },
+    type: {
+      type: String,
+      default: 'text',
+    },
+    mask: {
+      type: String,
+      default: '',
+    },
+    edit: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['update:value', 'update:edit', 'add-to-save', 'show'],
+  computed: {
+    modelData: {
+      get: function getData() {
+        return this.value;
+      },
+      set: function setData(newValue) {
+        this.$emit('update:value', newValue);
+      },
+    },
+  },
+};
 </script>

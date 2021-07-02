@@ -14,7 +14,7 @@
           :options="clientCodes"
           style="max-width: 320px;"
         />
-        <CargoDebtsSearch :settings.sync="settings" />
+        <CargoDebtsSearch v-model:settings="settings" />
       </div>
       <div class="q-gutter-y-md">
         <q-card>
@@ -86,28 +86,28 @@
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalCargoData.kg | numberFormatFilter }}
+                            {{ numberFormat(generalCargoData.kg) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalCargoData.place | numberFormatFilter }}
+                            {{ numberFormat(generalCargoData.place) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalCargoData.sale | numberFormatFilter }}
+                            {{ numberFormat(generalCargoData.sale) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalCargoData.sum | numberFormatFilter }}
+                            {{ numberFormat(generalCargoData.sum) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
@@ -123,7 +123,10 @@
                   </q-card-actions>
                 </q-card-section>
                 <q-inner-loading :showing="generalCargoData.visible">
-                  <q-spinner-gears size="50px" color="primary" />
+                  <q-spinner-gears
+size="50px"
+color="primary"
+/>
                 </q-inner-loading>
               </q-card>
 
@@ -150,14 +153,14 @@
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalDebtsData.commission | numberFormatFilter }}
+                            {{ numberFormat(generalDebtsData.commission) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalDebtsData.sum |numberFormatFilter }}
+                            {{ numberFormat(generalDebtsData.sum) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
@@ -209,6 +212,7 @@
 
 <script>
 import showNotif from 'src/mixins/showNotif';
+import { numberFormat } from 'src/utils';
 
 export default {
   name: 'CargoDebts',
@@ -275,6 +279,7 @@ export default {
     this.$store.dispatch('cargoDebts/getGeneralData');
   },
   methods: {
+    numberFormat,
     getClientData(clientId) {
       this.$q.loading.show();
       this.$store.dispatch('cargoDebts/getCargoDebts', clientId)

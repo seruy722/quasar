@@ -3,7 +3,10 @@
     data-vue-component-name="TransferHistory"
     color="secondary"
   >
-    <TimelineEntry heading tag="h6">
+    <TimelineEntry
+      heading
+      tag="h6"
+    >
       История изменения данных
     </TimelineEntry>
 
@@ -31,7 +34,9 @@
                   {{ transferHistoryData.cols[i] }}
                 </Badge>
               </ItemLabel>
-              <ItemLabel v-else>{{ transferHistoryData.cols[i] }}</ItemLabel>
+              <ItemLabel v-else>
+                {{ transferHistoryData.cols[i] }}
+              </ItemLabel>
             </ItemSection>
             <ItemSection side>
               <ItemLabel
@@ -50,9 +55,11 @@
               <ItemLabel
                 v-else-if="i === 'receiver_phone'"
               >
-                {{ history | phoneNumberFilter }}
+                {{ phoneNumberFilter(history) }}
               </ItemLabel>
-              <ItemLabel v-else>{{ history }}</ItemLabel>
+              <ItemLabel v-else>
+                {{ history }}
+              </ItemLabel>
             </ItemSection>
           </ListItem>
           <Separator v-if="transferHistoryData.cols[i]" />
@@ -63,30 +70,34 @@
 </template>
 
 <script>
-    import TransferMixin from 'src/mixins/Transfer';
-    import getFromSettings from 'src/tools/settings';
+import TransferMixin from 'src/mixins/Transfer';
+import getFromSettings from 'src/tools/settings';
+import { phoneNumberFilter } from 'src/utils';
 
-    export default {
-        name: 'TransferHistory',
-        components: {
-            TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            Badge: () => import('src/components/Elements/Badge.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-        },
-        mixins: [TransferMixin],
-        props: {
-            transferHistoryData: {
-                type: Object,
-                default: () => ({}),
-            },
-        },
-        data() {
-            this.$action = getFromSettings('historyActionForIcon');
-            return {};
-        },
-    };
+export default {
+  name: 'TransferHistory',
+  components: {
+    TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
+    List: () => import('src/components/Elements/List/List.vue'),
+    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
+    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
+    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
+    Badge: () => import('src/components/Elements/Badge.vue'),
+    Separator: () => import('src/components/Separator.vue'),
+  },
+  mixins: [TransferMixin],
+  props: {
+    transferHistoryData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    this.$action = getFromSettings('historyActionForIcon');
+    return {};
+  },
+  methods: {
+    phoneNumberFilter,
+  },
+};
 </script>

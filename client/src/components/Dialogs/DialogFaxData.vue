@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     :persistent="true"
     title="Запись"
     data-vue-component-name="DialogFaxData"
@@ -35,6 +35,7 @@
             <BaseInput
               v-if="item.type === 'text'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :autofocus="item.autofocus"
               :type="item.type"
@@ -42,32 +43,31 @@
               :dense="$q.screen.xs || $q.screen.sm"
               :field="index"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <BaseInput
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"
               :dense="$q.screen.xs || $q.screen.sm"
               :field="index"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <SelectChips
               v-else-if="item.type === 'select-chips'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
@@ -75,12 +75,12 @@
             <SearchSelect
               v-else-if="item.type === 'select'"
               v-model.number="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
@@ -129,9 +129,9 @@
                     Опись вложения
                   </div>
                   <DialogAddThings
-                    :things.sync="things"
-                    :show-dialog.sync="showThingsDialog"
-                    :change-things.sync="changeThings"
+                    v-model:things="things"
+                    v-model:show-dialog="showThingsDialog"
+                    v-model:change-things="changeThings"
                   />
                 </div>
               </ItemLabel>
@@ -226,6 +226,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:entryData', 'update:showDialog'],
   data() {
     return {
       showReplacePrice: true,
@@ -468,7 +469,10 @@ export default {
   methods: {
     saveData() {
       devlog.log('saveData');
-      const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
+      const sendData = _.reduce(this.storehouseData, (result, {
+        changeValue,
+        value,
+      }, index) => {
         if (changeValue) {
           result[index] = value;
         } else if (index === 'replacePrice' && value) {

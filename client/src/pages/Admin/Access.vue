@@ -3,7 +3,9 @@
     data-vue-component-name="Access"
     class="q-pa-md"
   >
-    <div class="text-bold text-center text-h5">Доступ пользователей к роутам</div>
+    <div class="text-bold text-center text-h5">
+Доступ пользователей к роутам
+</div>
     <div style="max-width: 500px">
       <List
         dense
@@ -25,7 +27,9 @@
 
             <q-item-section>
               <div>
-                <Badge color="info">{{ getRoles.length }}</Badge>
+                <Badge color="info">
+{{ getRoles.length }}
+</Badge>
               </div>
             </q-item-section>
 
@@ -80,7 +84,11 @@
 
         <q-separator />
 
-        <q-expansion-item icon="lock" label="Разрешения" header-class="text-teal">
+        <q-expansion-item
+icon="lock"
+label="Разрешения"
+header-class="text-teal"
+>
           <template #header>
             <q-item-section avatar>
               <q-icon name="lock" />
@@ -92,7 +100,9 @@
 
             <q-item-section>
               <div>
-                <Badge color="info">{{ getPermissions.length }}</Badge>
+                <Badge color="info">
+{{ getPermissions.length }}
+</Badge>
               </div>
             </q-item-section>
 
@@ -147,10 +157,17 @@
         </q-expansion-item>
       </List>
     </div>
-    <div v-for="(item, index) in usersWithRolesAndPermissions" :key="index">
+    <div
+v-for="(item, index) in usersWithRolesAndPermissions"
+:key="index"
+>
       <div style="border: 1px solid lightgray;margin: 10px 0;padding: 10px;">
         <div>USER_NAME: {{ item.name }}</div>
-        <div v-for="(role, i) in item.roles" :key="i" class="q-ml-md">
+        <div
+v-for="(role, i) in item.roles"
+:key="i"
+class="q-ml-md"
+>
           USER_ROLE: {{ role.name }}
           <IconBtn
             flat
@@ -160,7 +177,11 @@
             tooltip="Удалить роль"
             @icon-btn-click="deleteRoleFromUser(item, role)"
           />
-          <div v-for="(permission, ind) in role.permissions" :key="ind" class="q-ml-lg">
+          <div
+v-for="(permission, ind) in role.permissions"
+:key="ind"
+class="q-ml-lg"
+>
             ROLE_PERMISIION: {{ permission.name }}
             <IconBtn
               flat
@@ -172,7 +193,10 @@
             />
           </div>
         </div>
-        <div v-for="(permission) in item.permissions" :key="permission.name">
+        <div
+v-for="(permission) in item.permissions"
+:key="permission.name"
+>
           USER_PERMISIION: {{ permission.name }}
           <IconBtn
             flat
@@ -186,15 +210,15 @@
       </div>
     </div>
     <DialogAddRole
-      :show-dialog.sync="showDialogAddRole"
+      v-model:show-dialog="showDialogAddRole"
+      v-model:role-name="roleName"
       :users="users"
-      :role-name.sync="roleName"
     />
     <DialogAddPermission
-      :show-dialog.sync="showDialogAddPermission"
+      v-model:show-dialog="showDialogAddPermission"
+      v-model:permission-name="permissionName"
       :users="users"
       :roles="rolesNames"
-      :permission-name.sync="permissionName"
     />
   </q-page>
 </template>

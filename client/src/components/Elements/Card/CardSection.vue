@@ -1,6 +1,6 @@
 <template>
   <q-card-section data-vue-component-name="CardSection">
-    <slot></slot>
+    <slot />
   </q-card-section>
 </template>
 

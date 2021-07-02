@@ -81,7 +81,9 @@
                 >
                   <q-item-section>
                     <q-item-label :lines="3">
-                      <q-badge color="positive">{{ elem.category_name }}</q-badge>
+                      <q-badge color="positive">
+{{ elem.category_name }}
+</q-badge>
                     </q-item-label>
                   </q-item-section>
 
@@ -166,12 +168,12 @@
         </template>
       </Table>
       <DialogAddCodePrice
-        :show-dialog.sync="showDialogAddCodePrice"
-        :code-id.sync="codeId"
-        :entry-data.sync="entryData"
+        v-model:show-dialog="showDialogAddCodePrice"
+        v-model:code-id="codeId"
+        v-model:entry-data="entryData"
       />
       <DialogAddNewCodePrice
-        :show-dialog.sync="showDialogAddNewCodePrice"
+        v-model:show-dialog="showDialogAddNewCodePrice"
       />
 
       <Dialog
@@ -251,7 +253,9 @@
             >
               <q-item-section>
                 <q-item-label :lines="3">
-                  <q-badge color="positive">{{ elem.category_name }}</q-badge>
+                  <q-badge color="positive">
+{{ elem.category_name }}
+</q-badge>
                 </q-item-label>
               </q-item-section>
 

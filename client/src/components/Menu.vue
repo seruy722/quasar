@@ -30,12 +30,12 @@
       </q-menu>
     </IconBtn>
 
-    <DialogAddEntryOnStorehouse :show-dialog.sync="showAddEntryOnStorehouseDialog" />
-    <DialogAddTransporter :show-dialog.sync="showTransporterDialog" />
-    <DialogAddCategory :show-dialog.sync="showCategoryDialog" />
-    <DialogAddFax :show-dialog.sync="showFaxDialog" />
-    <DialogAddClient :show-dialog.sync="showCustomerDialog" />
-    <DialogAddCode :show-dialog.sync="showCodeDialog" />
+    <DialogAddEntryOnStorehouse v-model:show-dialog="showAddEntryOnStorehouseDialog" />
+    <DialogAddTransporter v-model:show-dialog="showTransporterDialog" />
+    <DialogAddCategory v-model:show-dialog="showCategoryDialog" />
+    <DialogAddFax v-model:show-dialog="showFaxDialog" />
+    <DialogAddClient v-model:show-dialog="showCustomerDialog" />
+    <DialogAddCode v-model:show-dialog="showCodeDialog" />
   </div>
 </template>
 

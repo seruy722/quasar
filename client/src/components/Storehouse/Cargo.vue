@@ -23,7 +23,7 @@
             <template #header>
               <q-item-section>
                 <q-item-label>
-                  {{ props.row.created_at | formatToDashDate }}
+                  {{ fullDate(props.row.created_at) }}
                 </q-item-label>
               </q-item-section>
 
@@ -55,7 +55,7 @@
                   <q-item-label
                     v-if="col.field === 'kg'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ fullDate(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'notation'"
@@ -92,7 +92,7 @@
             key="created_at"
             :props="props"
           >
-            {{ props.row.created_at | formatToDashDate }}
+            {{ fullDate(props.row.created_at) }}
           </q-td>
 
           <q-td
@@ -143,78 +143,83 @@
 </template>
 
 <script>
-    export default {
-        name: 'Cargo',
-        components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-        },
-        props: {
-            list: {
-                type: Array,
-                default: () => ([]),
-            },
-        },
-        data() {
-            return {
-                cargoTableProperties: {
-                    columns: [
-                        {
-                            name: 'created_at',
-                            label: 'Дата',
-                            align: 'center',
-                            field: 'created_at',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_place',
-                            label: 'Код',
-                            align: 'center',
-                            field: 'code_place',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_client_name',
-                            label: 'Клиент',
-                            align: 'center',
-                            field: 'code_client_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'place',
-                            label: this.$t('place'),
-                            field: 'place',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'kg',
-                            label: this.$t('kg'),
-                            field: 'kg',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'category_name',
-                            label: this.$t('category'),
-                            field: 'category_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                cargoTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['code_client_name', 'created_at', 'place', 'kg', 'notation', 'category_name'],
-                    title: '',
-                },
-            };
-        },
+import { fullDate } from 'src/utils/formatDate';
+
+export default {
+  name: 'Cargo',
+  components: {
+    Table: () => import('src/components/Elements/Table/Table.vue'),
+  },
+  props: {
+    list: {
+      type: Array,
+      default: () => ([]),
+    },
+  },
+  data() {
+    return {
+      cargoTableProperties: {
+        columns: [
+          {
+            name: 'created_at',
+            label: 'Дата',
+            align: 'center',
+            field: 'created_at',
+            sortable: true,
+          },
+          {
+            name: 'code_place',
+            label: 'Код',
+            align: 'center',
+            field: 'code_place',
+            sortable: true,
+          },
+          {
+            name: 'code_client_name',
+            label: 'Клиент',
+            align: 'center',
+            field: 'code_client_name',
+            sortable: true,
+          },
+          {
+            name: 'place',
+            label: this.$t('place'),
+            field: 'place',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'kg',
+            label: this.$t('kg'),
+            field: 'kg',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'category_name',
+            label: this.$t('category'),
+            field: 'category_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'notation',
+            label: this.$t('notation'),
+            field: 'notation',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      cargoTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['code_client_name', 'created_at', 'place', 'kg', 'notation', 'category_name'],
+        title: '',
+      },
     };
+  },
+  methods: {
+    fullDate,
+  },
+};
 </script>

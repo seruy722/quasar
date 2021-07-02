@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     :persistent="true"
     title="Оплата"
     data-vue-component-name="DialogAddDebtPayEntry"
@@ -45,6 +45,7 @@
             <BaseInput
               v-if="item.type === 'text'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"
@@ -52,13 +53,13 @@
               :field="index"
               :readonly="item.readonly"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <BaseInput
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
+              v-model:change-value="item.changeValue"
               :autofocus="item.autofocus"
               :label="item.label"
               :type="item.type"
@@ -66,35 +67,34 @@
               :dense="$q.screen.xs || $q.screen.sm"
               :field="index"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <SelectChips
               v-else-if="item.type === 'select-chips'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
             <BaseInput
               v-else-if="item.type === 'date'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :mask="item.mask"
-              :change-value.sync="item.changeValue"
               :dense="$q.screen.xs || $q.screen.sm"
               :errors="errorsData"
             >
               <template #append>
                 <Date
-                  :value.sync="item.value"
-                  :change-value.sync="item.changeValue"
+                  v-model:value="item.value"
+                  v-model:change-value="item.changeValue"
                 />
               </template>
             </BaseInput>
@@ -102,11 +102,11 @@
             <SearchSelect
               v-else
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
@@ -144,224 +144,231 @@
 </template>
 
 <script>
-    import CheckErrorsMixin from 'src/mixins/CheckErrors';
-    import showNotif from 'src/mixins/showNotif';
-    import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
+import CheckErrorsMixin from 'src/mixins/CheckErrors';
+import showNotif from 'src/mixins/showNotif';
+import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
 
-    export default {
-        name: 'DialogAddDebtPayEntry',
-        components: {
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-            SelectChips: () => import('src/components/Elements/SelectChips.vue'),
-            Date: () => import('src/components/Date.vue'),
+export default {
+  name: 'DialogAddDebtPayEntry',
+  components: {
+    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
+    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
+    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    Separator: () => import('src/components/Separator.vue'),
+    SelectChips: () => import('src/components/Elements/SelectChips.vue'),
+    Date: () => import('src/components/Date.vue'),
+  },
+  mixins: [CheckErrorsMixin, showNotif],
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    entryData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  emits: ['update:entryData', 'update:showDialog'],
+  data() {
+    return {
+      show: false,
+      storehouseData: {
+        created_at: {
+          name: 'created_at',
+          type: 'date',
+          label: 'Дата',
+          require: true,
+          requireError: 'Поле обьзательное для заполнения.',
+          changeValue: false,
+          default: new Date().toISOString()
+            .slice(0, 10)
+            .split('-')
+            .reverse()
+            .join('-'),
+          value: new Date().toISOString()
+            .slice(0, 10)
+            .split('-')
+            .reverse()
+            .join('-'),
         },
-        mixins: [CheckErrorsMixin, showNotif],
-        props: {
-            showDialog: {
-                type: Boolean,
-                default: false,
-            },
-            entryData: {
-                type: Object,
-                default: () => ({}),
-            },
+        code_client_id: {
+          name: 'code_client_id',
+          type: 'select',
+          label: this.$t('client'),
+          options: [],
+          require: true,
+          requireError: 'Выберите значение.',
+          changeValue: false,
+          funcLoadData: getClientCodes,
+          default: null,
+          value: null,
         },
-        data() {
-            return {
-                show: false,
-                storehouseData: {
-                    created_at: {
-                        name: 'created_at',
-                        type: 'date',
-                        label: 'Дата',
-                        require: true,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        changeValue: false,
-                        default: new Date().toISOString()
-                          .slice(0, 10)
-                          .split('-')
-                          .reverse()
-                          .join('-'),
-                        value: new Date().toISOString()
-                          .slice(0, 10)
-                          .split('-')
-                          .reverse()
-                          .join('-'),
-                    },
-                    code_client_id: {
-                        name: 'code_client_id',
-                        type: 'select',
-                        label: this.$t('client'),
-                        options: [],
-                        require: true,
-                        requireError: 'Выберите значение.',
-                        changeValue: false,
-                        funcLoadData: getClientCodes,
-                        default: null,
-                        value: null,
-                    },
-                    sum: {
-                        name: 'sum',
-                        type: 'number',
-                        label: 'Сумма',
-                        changeValue: false,
-                        autofocus: true,
-                        default: 0,
-                        value: 0,
-                    },
-                    commission: {
-                        name: 'commission',
-                        type: 'number',
-                        label: 'Комиссия',
-                        changeValue: false,
-                        default: 0,
-                        value: 0,
-                    },
-                    notation: {
-                        name: 'notation',
-                        type: 'text',
-                        label: this.$t('notation'),
-                        changeValue: false,
-                        default: '',
-                        value: '',
-                    },
-                    get_pay_user_id: {
-                        name: 'get_pay_user_id',
-                        type: 'select',
-                        label: 'Пользователь',
-                        options: [],
-                        changeValue: false,
-                        funcLoadData: getClientCodes,
-                        default: 0,
-                        value: 0,
-                    },
-                },
-            };
+        sum: {
+          name: 'sum',
+          type: 'number',
+          label: 'Сумма',
+          changeValue: false,
+          autofocus: true,
+          default: 0,
+          value: 0,
         },
-        computed: {
-            usersList() {
-                return this.$store.getters['auth/getUsersList'];
-            },
-            clientCodes() {
-                return this.$store.getters['codes/getCodes'];
-            },
-            size() {
-                const {
-                    sm,
-                    xs,
-                    md,
-                    lg,
-                } = this.$q.screen;
-
-                let size = '';
-                if (sm) {
-                    size = 'sm';
-                } else if (xs) {
-                    size = 'xs';
-                } else if (md) {
-                    size = 'md';
-                } else if (lg) {
-                    size = 'lg';
-                }
-                return size;
-            },
-          settingsDate() {
-            return this.$store.getters['settings/getDateForSaveData'];
-          },
+        commission: {
+          name: 'commission',
+          type: 'number',
+          label: 'Комиссия',
+          changeValue: false,
+          default: 0,
+          value: 0,
         },
-        watch: {
-            entryData(val) {
-                if (!_.isEmpty(val)) {
-                    devlog.log('vALIN_ADD', val);
-                    _.forEach(this.storehouseData, (item, index) => {
-                        const prop = _.get(this.entryData, index);
-                        if (index === 'sum' || index === 'commission') {
-                            _.set(item, 'value', prop * -1);
-                        } else if (index !== 'created_at' && index !== 'notation') {
-                            _.set(item, 'value', prop);
-                        }
-                    });
-                }
-            },
-            clientCodes: {
-                handler: function set(val) {
-                    this.storehouseData.code_client_id.options = val;
-                },
-                immediate: true,
-            },
-            usersList: {
-                handler: function set(val) {
-                    this.storehouseData.get_pay_user_id.options = val;
-                },
-                immediate: true,
-            },
-            showDialog(val) {
-                this.storehouseData.code_client_id.changeValue = true;
-                this.storehouseData.sum.changeValue = true;
-                this.storehouseData.commission.changeValue = true;
-                if (_.isEmpty(this.usersList)) {
-                    this.$store.dispatch('auth/fetchUsersList');
-                }
-                this.show = val;
-            },
-            show(val) {
-                this.$emit('update:showDialog', val);
-              if (val && this.settingsDate) {
-                this.storehouseData.created_at.value = this.settingsDate;
-                this.storehouseData.created_at.changeValue = true;
-              }
-            },
+        notation: {
+          name: 'notation',
+          type: 'text',
+          label: this.$t('notation'),
+          changeValue: false,
+          default: '',
+          value: '',
         },
-        methods: {
-            async saveData() {
-                const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
-                    if (changeValue) {
-                        result[index] = value;
-                    }
-                    return result;
-                }, {});
-                if (_.has(sendData, 'created_at')) {
-                    const { reverseDate, addTime } = await import('src/utils/formatDate');
-                    sendData.created_at = addTime(reverseDate(sendData.created_at))
-                      .toISOString();
-                }
-                const { getUrl } = await import('src/tools/url');
-                sendData.entry_id = this.entryData.id;
-                this.$q.loading.show();
-                this.$axios.post(getUrl('debtPayEntry'), sendData)
-                  .then(({ data: { answer } }) => {
-                      devlog.log(answer);
-                      _.forEach(answer, (item) => {
-                          this.$store.dispatch('cargoDebts/updateOrAddDebtEntry', item);
-                      });
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Запись успешно добавлена.', false);
-                      this.close(this.storehouseData);
-                  })
-                  .catch((errors) => {
-                      this.errorsData.errors = _.get(errors, 'response.data.errors');
-                      this.$q.loading.hide();
-                  });
-                devlog.log('DATA_TO_SAVE', sendData);
-            },
-            clear(data) {
-                _.forEach(data, (item) => {
-                    item.value = item.default;
-                });
-            },
-            close(data) {
-                this.clear(data);
-                this.show = false;
-                if (!_.isEmpty(this.entryData)) {
-                    _.set(this.entryData, 'selected', false);
-                    this.$emit('update:entryData', {});
-                }
-            },
+        get_pay_user_id: {
+          name: 'get_pay_user_id',
+          type: 'select',
+          label: 'Пользователь',
+          options: [],
+          changeValue: false,
+          funcLoadData: getClientCodes,
+          default: 0,
+          value: 0,
         },
+      },
     };
+  },
+  computed: {
+    usersList() {
+      return this.$store.getters['auth/getUsersList'];
+    },
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+    size() {
+      const {
+        sm,
+        xs,
+        md,
+        lg,
+      } = this.$q.screen;
+
+      let size = '';
+      if (sm) {
+        size = 'sm';
+      } else if (xs) {
+        size = 'xs';
+      } else if (md) {
+        size = 'md';
+      } else if (lg) {
+        size = 'lg';
+      }
+      return size;
+    },
+    settingsDate() {
+      return this.$store.getters['settings/getDateForSaveData'];
+    },
+  },
+  watch: {
+    entryData(val) {
+      if (!_.isEmpty(val)) {
+        devlog.log('vALIN_ADD', val);
+        _.forEach(this.storehouseData, (item, index) => {
+          const prop = _.get(this.entryData, index);
+          if (index === 'sum' || index === 'commission') {
+            _.set(item, 'value', prop * -1);
+          } else if (index !== 'created_at' && index !== 'notation') {
+            _.set(item, 'value', prop);
+          }
+        });
+      }
+    },
+    clientCodes: {
+      handler: function set(val) {
+        this.storehouseData.code_client_id.options = val;
+      },
+      immediate: true,
+    },
+    usersList: {
+      handler: function set(val) {
+        this.storehouseData.get_pay_user_id.options = val;
+      },
+      immediate: true,
+    },
+    showDialog(val) {
+      this.storehouseData.code_client_id.changeValue = true;
+      this.storehouseData.sum.changeValue = true;
+      this.storehouseData.commission.changeValue = true;
+      if (_.isEmpty(this.usersList)) {
+        this.$store.dispatch('auth/fetchUsersList');
+      }
+      this.show = val;
+    },
+    show(val) {
+      this.$emit('update:showDialog', val);
+      if (val && this.settingsDate) {
+        this.storehouseData.created_at.value = this.settingsDate;
+        this.storehouseData.created_at.changeValue = true;
+      }
+    },
+  },
+  methods: {
+    async saveData() {
+      const sendData = _.reduce(this.storehouseData, (result, {
+        changeValue,
+        value,
+      }, index) => {
+        if (changeValue) {
+          result[index] = value;
+        }
+        return result;
+      }, {});
+      if (_.has(sendData, 'created_at')) {
+        const {
+          reverseDate,
+          addTime,
+        } = await import('src/utils/formatDate');
+        sendData.created_at = addTime(reverseDate(sendData.created_at))
+          .toISOString();
+      }
+      const { getUrl } = await import('src/tools/url');
+      sendData.entry_id = this.entryData.id;
+      this.$q.loading.show();
+      this.$axios.post(getUrl('debtPayEntry'), sendData)
+        .then(({ data: { answer } }) => {
+          devlog.log(answer);
+          _.forEach(answer, (item) => {
+            this.$store.dispatch('cargoDebts/updateOrAddDebtEntry', item);
+          });
+          this.$q.loading.hide();
+          this.showNotif('success', 'Запись успешно добавлена.', false);
+          this.close(this.storehouseData);
+        })
+        .catch((errors) => {
+          this.errorsData.errors = _.get(errors, 'response.data.errors');
+          this.$q.loading.hide();
+        });
+      devlog.log('DATA_TO_SAVE', sendData);
+    },
+    clear(data) {
+      _.forEach(data, (item) => {
+        item.value = item.default;
+      });
+    },
+    close(data) {
+      this.clear(data);
+      this.show = false;
+      if (!_.isEmpty(this.entryData)) {
+        _.set(this.entryData, 'selected', false);
+        this.$emit('update:entryData', {});
+      }
+    },
+  },
+};
 </script>
