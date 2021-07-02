@@ -1,245 +1,251 @@
 <template>
   <div data-vue-component-name="Statistics">
     <div id="chart"></div>
-      <Table
-        :table-properties="cargoTableProperties"
-        :table-data="tasks"
-        :table-reactive-properties="cargoTableReactiveProperties"
-        title="Расходы"
-      >
-        <template #top-buttons>
-          <MenuBtn :list="menuList">
-            <q-menu
-              transition-show="scale"
-              transition-hide="scale"
-            >
-              <q-list
-                separator
-                style="min-width: 100px"
-              >
-                <q-item
-                  v-close-popup
-                  clickable
-                  @click="showDialogAddExpense = true"
-                >
-                  <q-item-section avatar>
-                    <q-icon
-                      name="add"
-                      color="positive"
-                    />
-                  </q-item-section>
-                  <q-item-section>Добавить</q-item-section>
-                </q-item>
-                <q-item
-                  v-show="cargoTableReactiveProperties.selected.length"
-                  v-close-popup
-                  clickable
-                  @click="destroyEntry(cargoTableReactiveProperties.selected, tasks)"
-                >
-                  <q-item-section avatar>
-                    <q-icon
-                      name="delete"
-                      color="negative"
-                    />
-                  </q-item-section>
-                  <q-item-section>Удалить</q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </MenuBtn>
-        </template>
-        <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-        <template #inner-item="{props}">
-          <div
-            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-            :style="props.selected ? 'transform: scale(0.95);' : ''"
+    <Table
+      :table-properties="cargoTableProperties"
+      :table-data="tasks"
+      :table-reactive-properties="cargoTableReactiveProperties"
+      title="Расходы"
+    >
+      <template #top-buttons>
+        <MenuBtn :list="menuList">
+          <q-menu
+            transition-show="scale"
+            transition-hide="scale"
           >
-            <q-expansion-item
-              expand-separator
-              class="shadow-1 overflow-hidden"
-              :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
-              :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
-              expand-icon-class="text-white"
+            <q-list
+              separator
+              style="min-width: 100px"
             >
-              <template #header>
+              <q-item
+                v-close-popup
+                clickable
+                @click="showDialogAddExpense = true"
+              >
                 <q-item-section avatar>
-                  <q-checkbox
-                    v-model="props.selected"
-                    dense
+                  <q-icon
+                    name="add"
+                    color="positive"
                   />
                 </q-item-section>
+                <q-item-section>Добавить</q-item-section>
+              </q-item>
+              <q-item
+                v-show="cargoTableReactiveProperties.selected.length"
+                v-close-popup
+                clickable
+                @click="destroyEntry(cargoTableReactiveProperties.selected, tasks)"
+              >
+                <q-item-section avatar>
+                  <q-icon
+                    name="delete"
+                    color="negative"
+                  />
+                </q-item-section>
+                <q-item-section>Удалить</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </MenuBtn>
+      </template>
+      <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
+      <template #inner-item="{props}">
+        <div
+          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+          :style="props.selected ? 'transform: scale(0.95);' : ''"
+        >
+          <q-expansion-item
+            expand-separator
+            class="shadow-1 overflow-hidden"
+            :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
+            :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
+            expand-icon-class="text-white"
+          >
+            <template #header>
+              <q-item-section avatar>
+                <q-checkbox
+                  v-model="props.selected"
+                  dense
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ props.row.date }}
+                </q-item-label>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>
+                  <q-badge color="positive">
+                    {{ sumProfit(props.row.end_sum, props.row.start_sum) }}
+                  </q-badge>
+                </q-item-label>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>
+                  <q-badge color="negative">
+                    {{ sumExpenses(props.row.data) }}
+                  </q-badge>
+                </q-item-label>
+              </q-item-section>
+            </template>
+
+            <q-list
+              dense
+              separator
+              bordered
+              padding
+              class="rounded-borders"
+            >
+              <q-item>
                 <q-item-section>
                   <q-item-label>
-                    {{ props.row.date }}
+                    Название
                   </q-item-label>
                 </q-item-section>
 
                 <q-item-section>
                   <q-item-label>
-                    {{ props.row.start_sum }}
+                    Сумма
                   </q-item-label>
                 </q-item-section>
 
-                <q-item-section
-                  side
-                >
+                <q-item-section>
                   <q-item-label>
-                    {{ props.row.end_sum }}
+                    Дата
                   </q-item-label>
                 </q-item-section>
-              </template>
-
-              <q-list
-                dense
-                separator
-                bordered
-                padding
-                class="rounded-borders"
+              </q-item>
+              <q-item
+                v-for="(item, index) in props.row.data"
+                :key="index"
               >
-                <q-item>
-                  <q-item-section>
-                    <q-item-label>
-                      Название
-                    </q-item-label>
-                  </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ item.expense_name }}
+                  </q-item-label>
+                </q-item-section>
 
-                  <q-item-section>
-                    <q-item-label>
-                      Сумма
-                    </q-item-label>
-                  </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ item.sum }}
+                  </q-item-label>
+                </q-item-section>
 
-                  <q-item-section>
-                    <q-item-label>
-                      Дата
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-for="(item, index) in props.row.data"
-                  :key="index"
-                >
-                  <q-item-section>
-                    <q-item-label>
-                      {{ item.expense_name }}
-                    </q-item-label>
-                  </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ item.created_at | formatToDotDate }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-expansion-item>
+        </div>
+      </template>
 
-                  <q-item-section>
-                    <q-item-label>
-                      {{ item.sum }}
-                    </q-item-label>
-                  </q-item-section>
-
-                  <q-item-section>
-                    <q-item-label>
-                      {{ item.created_at | formatToDotDate }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-expansion-item>
-          </div>
-        </template>
-
-        <template #inner-body="{props}">
-          <q-tr
-            :props="props"
-            class="cursor-pointer"
+      <template #inner-body="{props}">
+        <q-tr
+          :props="props"
+          class="cursor-pointer"
+        >
+          <q-td
+            auto-width
+            class="select_checkbox"
           >
-            <q-td
-              auto-width
-              class="select_checkbox"
-            >
-              <q-btn
-                size="sm"
-                color="accent"
-                round
-                dense
-                :icon="props.expand ? 'remove' : 'add'"
-                @click="props.expand = !props.expand"
-              />
-            </q-td>
+            <q-btn
+              size="sm"
+              color="accent"
+              round
+              dense
+              :icon="props.expand ? 'remove' : 'add'"
+              @click="props.expand = !props.expand"
+            />
+          </q-td>
 
-            <q-td
-              key="date"
-              :props="props"
-            >
-              {{ props.row.date }}
-            </q-td>
-
-            <q-td
-              key="start_sum"
-              :props="props"
-            >
-              {{ props.row.start_sum }}
-            </q-td>
-
-            <q-td
-              key="end_sum"
-              :props="props"
-            >
-              {{ props.row.end_sum }}
-            </q-td>
-          </q-tr>
-          <q-tr
-            v-show="props.expand"
+          <q-td
+            key="date"
             :props="props"
           >
-            <q-td colspan="100%">
-              <q-list
-                dense
-                separator
-                bordered
-                padding
-                class="rounded-borders"
+            {{ props.row.date }}
+          </q-td>
+
+          <q-td
+            key="start_sum"
+            :props="props"
+          >
+            <q-badge color="positive">
+              {{ sumProfit(props.row.end_sum, props.row.start_sum) }}
+            </q-badge>
+          </q-td>
+
+          <q-td
+            key="end_sum"
+            :props="props"
+          >
+            <q-badge color="negative">
+              {{ sumExpenses(props.row.data) }}
+            </q-badge>
+          </q-td>
+        </q-tr>
+        <q-tr
+          v-show="props.expand"
+          :props="props"
+        >
+          <q-td colspan="100%">
+            <q-list
+              dense
+              separator
+              bordered
+              padding
+              class="rounded-borders"
+            >
+              <q-item>
+                <q-item-section>
+                  <q-item-label>
+                    Название
+                  </q-item-label>
+                </q-item-section>
+
+                <q-item-section>
+                  <q-item-label>
+                    Сумма
+                  </q-item-label>
+                </q-item-section>
+
+                <q-item-section>
+                  <q-item-label>
+                    Дата
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-for="(item, index) in props.row.data"
+                :key="index"
               >
-                <q-item>
-                  <q-item-section>
-                    <q-item-label>
-                      Название
-                    </q-item-label>
-                  </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ item.expense_name }}
+                  </q-item-label>
+                </q-item-section>
 
-                  <q-item-section>
-                    <q-item-label>
-                      Сумма
-                    </q-item-label>
-                  </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    {{ item.sum }}
+                  </q-item-label>
+                </q-item-section>
 
-                  <q-item-section>
-                    <q-item-label>
-                      Дата
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-for="(item, index) in props.row.data"
-                  :key="index"
-                >
-                  <q-item-section>
-                    <q-item-label>
-                      {{ item.expense_name }}
-                    </q-item-label>
-                  </q-item-section>
-
-                  <q-item-section>
-                    <q-item-label>
-                      {{ item.sum }}
-                    </q-item-label>
-                  </q-item-section>
-
-                  <q-item-section>
-                    <q-item-label>
-                      {{ item.created_at }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-td>
-          </q-tr>
-        </template>
-      </Table>
+                <q-item-section>
+                  <q-item-label>
+                    {{ formatToDotDate(item.created_at) }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-td>
+        </q-tr>
+      </template>
+    </Table>
     <DialogAddExpense :show-dialog.sync="showDialogAddExpense" />
   </div>
 </template>
@@ -247,6 +253,7 @@
 <script>
 import showNotif from 'src/mixins/showNotif';
 import ApexCharts from 'apexcharts';
+import { formatToDotDate } from 'src/utils/formatDate';
 
 export default {
   name: 'Statistics',
@@ -261,7 +268,7 @@ export default {
       options: {
         chart: {
           type: 'bar',
-          height: '100%',
+          height: '400px',
         },
         colors: ['#06F30CFF', '#F80319FF'],
         series: [
@@ -289,14 +296,14 @@ export default {
           },
           {
             name: 'start_sum',
-            label: 'Начало месяца',
+            label: 'Доход',
             align: 'center',
             field: 'start_sum',
             sortable: true,
           },
           {
             name: 'end_sum',
-            label: 'Конец месяца',
+            label: 'Затраты',
             align: 'center',
             field: 'end_sum',
             sortable: true,
@@ -334,15 +341,22 @@ export default {
     this.fillData(this.tasks);
   },
   methods: {
+    sumExpenses(data) {
+      return _.sumBy(data, 'sum') * -1;
+    },
+    sumProfit(end, start) {
+      return start && end ? end - start : 0;
+    },
+    formatToDotDate,
     fillData(val) {
       if (!_.isEmpty(val)) {
         this.options.series[0].data = [];
         this.options.series[1].data = [];
         _.forEach(val, (item) => {
           if (item.start_sum && item.end_sum) {
-            this.options.series[0].data.push(item.end_sum - item.start_sum);
+            this.options.series[0].data.push(this.sumProfit(item.end_sum, item.start_sum));
           }
-          this.options.series[1].data.push(_.sumBy(item.data, 'sum') * -1);
+          this.options.series[1].data.push(this.sumExpenses(item.data));
         });
         const size0 = _.size(this.options.series[0].data);
         const size1 = _.size(this.options.series[1].data);

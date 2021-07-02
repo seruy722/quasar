@@ -252,7 +252,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
         });
     })->name('get-expenses')->middleware(['role_or_permission:admin|expense|get-expenses']);
     Route::post('/add-expense', 'Api\ExpenseController@store')->name('add-expense')->middleware(['role_or_permission:admin|expense|add-expense']);
-    Route::get('/get-statistics', 'Api\ExpenseController@index')->name('get-statistics')->middleware(['role_or_permission:admin|expense|get-statistics']);
+    Route::get('/get-statistics', 'Api\ExpenseController@index')->name('view statistics')->middleware(['role_or_permission:admin|expense|view statistics']);
 
     // SMS
 //    Route::post('/send-sms', 'CommonController@sendSms')->name('send-sms')->middleware(['role_or_permission:admin|sms|send-sms']);
