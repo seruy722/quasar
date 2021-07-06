@@ -65,7 +65,6 @@
             />
 
             <SearchSelect
-              ref="sele"
               v-else-if="item.type === 'searchSelect'"
               v-model="item.value"
               v-model:change-value="item.changeValue"
