@@ -210,8 +210,8 @@ export default {
             .then(({
                      data: {
                        updatedCodePrice,
-                       error
-                     }
+                       error,
+                     },
                    }) => {
               if (error) {
                 this.$q.loading.hide();

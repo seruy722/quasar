@@ -7,7 +7,11 @@
     data-vue-component-name="UpdateBtn"
     @click="$emit('update-btn-click')"
   >
-    <q-tooltip anchor="bottom middle" self="top middle" :offset="[10, 10]">
+    <q-tooltip
+anchor="bottom middle"
+self="top middle"
+:offset="[10, 10]"
+>
       Обновить
     </q-tooltip>
   </q-btn>

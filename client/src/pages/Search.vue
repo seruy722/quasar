@@ -4,7 +4,9 @@
   >
     <q-card>
       <q-card-section>
-        <div class="text-h6 text-center">Поиск данных по таблицам</div>
+        <div class="text-h6 text-center">
+Поиск данных по таблицам
+</div>
         <div style="max-width: 300px; text-align: center;">
           <q-select
             v-model="model"
@@ -25,7 +27,12 @@
             mask="###/###/###"
             label="Введите код"
           />
-          <q-btn label="Найти" @click="getClientData(clientId, codePlace)" color="primary" class="q-mt-md" />
+          <q-btn
+label="Найти"
+color="primary"
+class="q-mt-md"
+@click="getClientData(clientId, codePlace)"
+/>
         </div>
       </q-card-section>
       <q-card-section>
@@ -40,20 +47,51 @@
           <!--                    <q-tab name="debts" icon="alarm" label="ДОЛГИ">-->
           <!--                      <q-badge floating color="red">{{ badges.debts }}</q-badge>-->
           <!--                    </q-tab>-->
-          <q-tab name="storehouse" icon="store" label="СКЛАД">
-            <q-badge floating color="red">{{ storehouseTableData.data.length }}</q-badge>
+          <q-tab
+name="storehouse"
+icon="store"
+label="СКЛАД"
+>
+            <q-badge
+floating
+color="red"
+>
+{{ storehouseTableData.data.length }}
+</q-badge>
           </q-tab>
-          <q-tab name="faxes" icon="library_books" label="ФАКСЫ">
-            <q-badge floating color="red">{{ faxesTableData.data.length }}</q-badge>
+          <q-tab
+name="faxes"
+icon="library_books"
+label="ФАКСЫ"
+>
+            <q-badge
+floating
+color="red"
+>
+{{ faxesTableData.data.length }}
+</q-badge>
           </q-tab>
-          <q-tab name="basket" icon="delete" label="Корзина">
-            <q-badge floating color="red">{{ basketTableData.data.length }}</q-badge>
+          <q-tab
+name="basket"
+icon="delete"
+label="Корзина"
+>
+            <q-badge
+floating
+color="red"
+>
+{{ basketTableData.data.length }}
+</q-badge>
           </q-tab>
         </q-tabs>
 
         <q-separator />
 
-        <q-tab-panels v-model="tab" animated swipeable>
+        <q-tab-panels
+v-model="tab"
+animated
+swipeable
+>
           <q-tab-panel name="storehouse">
             <BaseTable
               title="Склад"
@@ -66,18 +104,38 @@
                   :style="props.selected ? 'transform: scale(0.95);' : ''"
                 >
                   <q-card :class="props.selected ? 'bg-grey-2' : ''">
-                    <q-list dense separator>
-                      <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
+                    <q-list
+dense
+separator
+>
+                      <q-item
+v-for="col in props.cols.filter(col => col.name !== 'desc')"
+:key="col.name"
+>
                         <q-item-section>
                           <q-item-label>{{ col.label }}</q-item-label>
                         </q-item-section>
                         <q-item-section side>
-                          <q-item-label v-if="col.field === 'things'" caption lines="4">{{ col.value | thingsFilter }}
+                          <q-item-label
+v-if="col.field === 'things'"
+caption
+lines="4"
+>
+{{ col.value | thingsFilter }}
                           </q-item-label>
-                          <q-item-label v-else-if="col.field === 'created_at'" caption>{{ col.value | formatToDotDate
+                          <q-item-label
+v-else-if="col.field === 'created_at'"
+caption
+>
+{{ col.value | formatToDotDate
                             }}
                           </q-item-label>
-                          <q-item-label v-else caption>{{ col.value }}</q-item-label>
+                          <q-item-label
+v-else
+caption
+>
+{{ col.value }}
+</q-item-label>
                         </q-item-section>
                       </q-item>
                     </q-list>
@@ -167,27 +225,54 @@
                   :style="props.selected ? 'transform: scale(0.95);' : ''"
                 >
                   <q-card :class="props.selected ? 'bg-grey-2' : ''">
-                    <q-list dense separator>
-                      <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
+                    <q-list
+dense
+separator
+>
+                      <q-item
+v-for="col in props.cols.filter(col => col.name !== 'desc')"
+:key="col.name"
+>
                         <q-item-section>
                           <q-item-label>{{ col.label }}</q-item-label>
                         </q-item-section>
                         <q-item-section side>
-                          <q-item-label v-if="col.field === 'things'" caption lines="4">{{ col.value | thingsFilter }}
+                          <q-item-label
+v-if="col.field === 'things'"
+caption
+lines="4"
+>
+{{ col.value | thingsFilter }}
                           </q-item-label>
-                          <q-item-label v-else-if="col.field === 'created_at'" caption>{{ col.value | formatToDotDate
+                          <q-item-label
+v-else-if="col.field === 'created_at'"
+caption
+>
+{{ col.value | formatToDotDate
                             }}
                           </q-item-label>
-                          <q-item-label v-else-if="col.field === 'in_cargo'" caption>
-                            <q-badge :color="col.value ? 'positive' : 'negative'">{{ col.value ? 'Да': 'Нет' }}
+                          <q-item-label
+v-else-if="col.field === 'in_cargo'"
+caption
+>
+                            <q-badge :color="col.value ? 'positive' : 'negative'">
+{{ col.value ? 'Да': 'Нет' }}
                             </q-badge>
                           </q-item-label>
-                          <q-item-label v-else-if="col.field === 'fax_status'" caption>
+                          <q-item-label
+v-else-if="col.field === 'fax_status'"
+caption
+>
                             <q-badge>
                               {{ col.value | statusFilter }}
                             </q-badge>
                           </q-item-label>
-                          <q-item-label v-else caption>{{ col.value }}</q-item-label>
+                          <q-item-label
+v-else
+caption
+>
+{{ col.value }}
+</q-item-label>
                         </q-item-section>
                       </q-item>
                     </q-list>
@@ -265,7 +350,8 @@
                     key="in_cargo"
                     :props="props"
                   >
-                    <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{ props.row.in_cargo ? 'Да':
+                    <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
+{{ props.row.in_cargo ? 'Да':
                       props.row.type ? null : 'Нет' }}
                     </q-badge>
                   </q-td>
@@ -298,18 +384,38 @@
                   :style="props.selected ? 'transform: scale(0.95);' : ''"
                 >
                   <q-card :class="props.selected ? 'bg-grey-2' : ''">
-                    <q-list dense separator>
-                      <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
+                    <q-list
+dense
+separator
+>
+                      <q-item
+v-for="col in props.cols.filter(col => col.name !== 'desc')"
+:key="col.name"
+>
                         <q-item-section>
                           <q-item-label>{{ col.label }}</q-item-label>
                         </q-item-section>
                         <q-item-section side>
-                          <q-item-label v-if="col.field === 'things'" caption lines="4">{{ col.value | thingsFilter }}
+                          <q-item-label
+v-if="col.field === 'things'"
+caption
+lines="4"
+>
+{{ col.value | thingsFilter }}
                           </q-item-label>
-                          <q-item-label v-else-if="col.field === 'created_at'" caption>{{ col.value | formatToDotDate
+                          <q-item-label
+v-else-if="col.field === 'created_at'"
+caption
+>
+{{ col.value | formatToDotDate
                             }}
                           </q-item-label>
-                          <q-item-label v-else caption>{{ col.value }}</q-item-label>
+                          <q-item-label
+v-else
+caption
+>
+{{ col.value }}
+</q-item-label>
                         </q-item-section>
                       </q-item>
                     </q-list>

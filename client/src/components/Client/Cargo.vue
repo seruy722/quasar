@@ -97,7 +97,8 @@
                   <q-item-label
                     v-else-if="col.field === 'paid'"
                   >
-                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{
                         props.row.paid ? 'Да' :
                           props.row.type ? null : 'Нет'
                       }}
@@ -212,7 +213,8 @@
             key="paid"
             :props="props"
           >
-            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{
+            <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{
                 props.row.paid ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}
@@ -244,7 +246,8 @@
             key="in_cargo"
             :props="props"
           >
-            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{
+            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
+{{
                 props.row.in_cargo ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}

@@ -303,7 +303,8 @@
             key="in_cargo"
             :props="props"
           >
-            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{ props.row.in_cargo ? 'Да' : 'Нет' }}
+            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
+{{ props.row.in_cargo ? 'Да' : 'Нет' }}
             </q-badge>
           </q-td>
 
@@ -429,10 +430,18 @@
           >
             <template #before>
               <div class="q-pa-md">
-                <div class="text-h6 q-mb-md"> Факс</div>
+                <div class="text-h6 q-mb-md">
+Факс
+</div>
                 <!--                <Search v-model="search" />-->
-                <CountCategories :list="faxSideData" style="margin-bottom: 20px;" />
-                <q-list bordered separator>
+                <CountCategories
+:list="faxSideData"
+style="margin-bottom: 20px;"
+/>
+                <q-list
+bordered
+separator
+>
                   <q-slide-item
                     v-for="(item, index) in faxSideData"
                     :key="index"
@@ -455,15 +464,28 @@
             </template>
 
             <template #separator>
-              <q-avatar color="primary" text-color="white" size="40px" icon="drag_indicator" />
+              <q-avatar
+color="primary"
+text-color="white"
+size="40px"
+icon="drag_indicator"
+/>
             </template>
 
             <template #after>
               <div class="q-pa-md">
-                <div class="text-h6 q-mb-md"> Склад</div>
+                <div class="text-h6 q-mb-md">
+Склад
+</div>
                 <!--                <Search v-model="searchStorehouseData" />-->
-                <CountCategories :list="storehouseSideData" style="margin-bottom: 20px;" />
-                <q-list bordered separator>
+                <CountCategories
+:list="storehouseSideData"
+style="margin-bottom: 20px;"
+/>
+                <q-list
+bordered
+separator
+>
                   <q-slide-item
                     v-for="(item, index) in storehouseSideData"
                     :key="index"
@@ -508,11 +530,16 @@
         <q-card-section class="q-pt-none">
           <FaxTransferDataHistory
             :history-data="historyData"
-          ></FaxTransferDataHistory>
+          />
         </q-card-section>
       </q-card>
     </Dialog>
-    <q-dialog v-model="dialogSelectDeliveredPlace" persistent transition-show="scale" transition-hide="scale">
+    <q-dialog
+v-model="dialogSelectDeliveredPlace"
+persistent
+transition-show="scale"
+transition-hide="scale"
+>
       <q-card style="width: 300px">
         <q-card-section>
           <div class="text-h6 text-teal">
@@ -528,7 +555,10 @@
           />
         </q-card-section>
 
-        <q-card-actions align="right" class="bg-white text-teal">
+        <q-card-actions
+align="right"
+class="bg-white text-teal"
+>
           <q-btn
             v-close-popup
             label="Отмена"

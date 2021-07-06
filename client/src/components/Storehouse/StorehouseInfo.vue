@@ -5,8 +5,7 @@
         color="primary"
         label="Выбрать период"
         @click="choosePeriodDialog = true"
-      >
-      </q-btn>
+      />
       <div>{{ viewPeriodDate }}</div>
     </div>
     <Cargo
@@ -23,7 +22,7 @@
       transition-hide="flip-down"
     >
       <q-card style="max-width: 600px;">
-        <q-bar></q-bar>
+        <q-bar />
         <q-card-section class="q-pt-none">
           <div>
             <div class="row items-center">

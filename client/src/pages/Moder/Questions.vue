@@ -26,7 +26,10 @@
                   @click="showDialogAddQuestion = true"
                 >
                   <q-item-section avatar>
-                    <q-icon name="add" color="positive" />
+                    <q-icon
+name="add"
+color="positive"
+/>
                   </q-item-section>
                   <q-item-section>Добавить вопрос</q-item-section>
                 </q-item>
@@ -38,7 +41,10 @@
                   @click="addQuestionComment(cargoTableReactiveProperties.selected[0])"
                 >
                   <q-item-section avatar>
-                    <q-icon name="add" color="positive" />
+                    <q-icon
+name="add"
+color="positive"
+/>
                   </q-item-section>
                   <q-item-section>Добавить комментарий</q-item-section>
                 </q-item>
@@ -50,7 +56,10 @@
                   @click="update(cargoTableReactiveProperties.selected[0])"
                 >
                   <q-item-section avatar>
-                    <q-icon name="edit" color="teal" />
+                    <q-icon
+name="edit"
+color="teal"
+/>
                   </q-item-section>
                   <q-item-section>Редактировать</q-item-section>
                 </q-item>
@@ -60,7 +69,10 @@
                   @click="refresh"
                 >
                   <q-item-section avatar>
-                    <q-icon name="sync" color="primary" />
+                    <q-icon
+name="sync"
+color="primary"
+/>
                   </q-item-section>
                   <q-item-section>Обновить</q-item-section>
                 </q-item>
@@ -71,7 +83,10 @@
                   @click="destroy(cargoTableReactiveProperties.selected)"
                 >
                   <q-item-section avatar>
-                    <q-icon name="delete" color="negative" />
+                    <q-icon
+name="delete"
+color="negative"
+/>
                   </q-item-section>
                   <q-item-section>Удалить</q-item-section>
                 </q-item>
@@ -110,7 +125,11 @@
                   </q-item-label>
                 </q-item-section>
               </template>
-              <q-list separator bordered dense>
+              <q-list
+separator
+bordered
+dense
+>
                 <q-item>
                   <q-item-section>
                     <q-item-label>

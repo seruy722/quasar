@@ -3,7 +3,10 @@
     data-vue-component-name="FaxTransferDataHistory"
     color="secondary"
   >
-    <TimelineEntry heading tag="h6">
+    <TimelineEntry
+heading
+tag="h6"
+>
       История изменения данных
     </TimelineEntry>
 
@@ -41,7 +44,9 @@
         </div>
         <q-separator />
         <q-item>
-          <q-item-section class="text-center text-bold">Информация</q-item-section>
+          <q-item-section class="text-center text-bold">
+Информация
+</q-item-section>
         </q-item>
         <q-item v-if="movedData(JSON.parse(transfer.history_data), 'to')">
           <q-item-section>

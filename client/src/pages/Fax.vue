@@ -105,7 +105,8 @@
 
               <ItemSection v-show="!combineTableData">
                 <ItemLabel>
-                  <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{ props.row.in_cargo ? 'Да' : 'Нет' }}
+                  <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
+                    {{ props.row.in_cargo ? 'Да' : 'Нет' }}
                   </q-badge>
                 </ItemLabel>
               </ItemSection>
@@ -161,7 +162,10 @@
           :class="{table__tr_bold_text: props.row.brand, 'cursor-pointer': !combineTableData}"
           @click.stop="viewEditDialog(props, $event)"
         >
-          <q-td auto-width class="select_checkbox">
+          <q-td
+auto-width
+class="select_checkbox"
+>
             <q-checkbox
               v-model="props.selected"
               dense
@@ -300,7 +304,8 @@
             key="in_cargo"
             :props="props"
           >
-            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{ props.row.in_cargo ? 'Да' : 'Нет' }}
+            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
+{{ props.row.in_cargo ? 'Да' : 'Нет' }}
             </q-badge>
           </q-td>
 
@@ -426,10 +431,18 @@
           >
             <template #before>
               <div class="q-pa-md">
-                <div class="text-h6 q-mb-md"> Факс</div>
+                <div class="text-h6 q-mb-md">
+Факс
+</div>
                 <!--                <Search v-model="search" />-->
-                <CountCategories :list="faxSideData" style="margin-bottom: 20px;" />
-                <q-list bordered separator>
+                <CountCategories
+:list="faxSideData"
+style="margin-bottom: 20px;"
+/>
+                <q-list
+bordered
+separator
+>
                   <q-item>
                     <q-item-section>Код</q-item-section>
                     <q-item-section>Клиент</q-item-section>
@@ -452,7 +465,8 @@
                       <q-item-section>{{ item.code_client_name }}</q-item-section>
                       <q-item-section>{{ item.place }}</q-item-section>
                       <q-item-section>{{ item.kg }}</q-item-section>
-                      <q-item-section>{{ item.category_name }}
+                      <q-item-section>
+{{ item.category_name }}
                       </q-item-section>
                     </q-item>
                   </q-slide-item>
@@ -461,15 +475,28 @@
             </template>
 
             <template #separator>
-              <q-avatar color="primary" text-color="white" size="40px" icon="drag_indicator" />
+              <q-avatar
+color="primary"
+text-color="white"
+size="40px"
+icon="drag_indicator"
+/>
             </template>
 
             <template #after>
               <div class="q-pa-md">
-                <div class="text-h6 q-mb-md"> Склад</div>
+                <div class="text-h6 q-mb-md">
+Склад
+</div>
                 <!--                <Search v-model="searchStorehouseData" />-->
-                <CountCategories :list="storehouseSideData" style="margin-bottom: 20px;" />
-                <q-list bordered separator>
+                <CountCategories
+:list="storehouseSideData"
+style="margin-bottom: 20px;"
+/>
+                <q-list
+bordered
+separator
+>
                   <q-item>
                     <q-item-section>Код</q-item-section>
                     <q-item-section>Клиент</q-item-section>
@@ -492,7 +519,8 @@
                       <q-item-section>{{ item.code_client_name }}</q-item-section>
                       <q-item-section>{{ item.place }}</q-item-section>
                       <q-item-section>{{ item.kg }}</q-item-section>
-                      <q-item-section>{{ item.category_name }}
+                      <q-item-section>
+{{ item.category_name }}
                       </q-item-section>
                     </q-item>
                   </q-slide-item>

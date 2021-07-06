@@ -13,40 +13,83 @@
         >
             <template #header="scope">
                 <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
-                    <q-btn v-if="scope.queuedFiles.length > 0" icon="clear_all" @click="scope.removeQueuedFiles" round
-                           dense flat>
+                    <q-btn
+v-if="scope.queuedFiles.length > 0"
+icon="clear_all"
+round
+dense
+                           flat
+@click="scope.removeQueuedFiles"
+>
                         <q-tooltip>{{ $t('clear.two') }}</q-tooltip>
                     </q-btn>
-                    <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles"
-                           round dense flat>
+                    <q-btn
+v-if="scope.uploadedFiles.length > 0"
+icon="done_all"
+round
+                           dense
+flat
+@click="scope.removeUploadedFiles"
+>
                         <q-tooltip>{{ $t('uploadFile.remove') }}</q-tooltip>
                     </q-btn>
-                    <q-spinner v-if="scope.isUploading" class="q-uploader__spinner" />
+                    <q-spinner
+v-if="scope.isUploading"
+class="q-uploader__spinner"
+/>
                     <div class="col">
-                        <div class="q-uploader__title">{{ $t('uploadFile.two') }}</div>
-                        <div class="q-uploader__subtitle">{{ scope.uploadSizeLabel }} / {{ scope.uploadProgressLabel
+                        <div class="q-uploader__title">
+{{ $t('uploadFile.two') }}
+</div>
+                        <div class="q-uploader__subtitle">
+{{ scope.uploadSizeLabel }} / {{ scope.uploadProgressLabel
                             }}
                         </div>
                     </div>
-                    <q-btn v-if="scope.canAddFiles" type="a" icon="add_box" round dense flat>
+                    <q-btn
+v-if="scope.canAddFiles"
+type="a"
+icon="add_box"
+round
+dense
+flat
+>
                         <q-uploader-add-trigger />
                         <q-tooltip>{{ $t('uploadFile.pick') }}</q-tooltip>
                     </q-btn>
-                    <q-btn v-if="!uploadData.hideUploadButton && scope.canUpload" icon="cloud_upload"
-                           @click="scope.upload" round dense flat>
+                    <q-btn
+v-if="!uploadData.hideUploadButton && scope.canUpload"
+icon="cloud_upload"
+                           round
+dense
+flat
+@click="scope.upload"
+>
                         <q-tooltip>{{ $t('uploadFile.two') }}</q-tooltip>
                     </q-btn>
 
-                    <q-btn v-if="scope.isUploading" icon="clear" @click="scope.abort" round dense flat>
+                    <q-btn
+v-if="scope.isUploading"
+icon="clear"
+round
+dense
+flat
+@click="scope.abort"
+>
                         <q-tooltip>{{ $t('uploadFile.abort') }}</q-tooltip>
                     </q-btn>
                 </div>
             </template>
 
             <template #list="scope">
-                <q-list separator class="bg-separator">
-
-                    <q-item v-for="file in scope.files" :key="file.name">
+                <q-list
+separator
+class="bg-separator"
+>
+<q-item
+v-for="file in scope.files"
+:key="file.name"
+>
                         <q-item-section>
                             <q-item-label class="full-width ellipsis text-bold">
                                 {{ file.name }}
@@ -62,18 +105,23 @@
                             thumbnail
                             class="gt-xs"
                         >
-                            <img :src="file.__img.src" alt="Image">
+                            <img
+:src="file.__img.src"
+alt="Image"
+>
                         </q-item-section>
 
-                        <q-item-section center side>
+                        <q-item-section
+center
+side
+>
                             <IconBtn
-                                :iconBtnData="iconBtnData"
+                                :icon-btn-data="iconBtnData"
                                 @icon-btn-click="scope.removeFile(file)"
                             />
                         </q-item-section>
                     </q-item>
-
-                </q-list>
+</q-list>
             </template>
         </q-uploader>
     </div>

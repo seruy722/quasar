@@ -30,7 +30,7 @@ Vue.use(Vuex);
  * directly export the Store instantiation
  */
 
-export default function (/* { ssrContext } */) {
+export default function initStore() {
   const Store = new Vuex.Store({
     modules: {
       auth,

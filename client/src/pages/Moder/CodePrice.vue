@@ -81,7 +81,9 @@
                 >
                   <q-item-section>
                     <q-item-label :lines="3">
-                      <q-badge color="positive">{{ elem.category_name }}</q-badge>
+                      <q-badge color="positive">
+{{ elem.category_name }}
+</q-badge>
                     </q-item-label>
                   </q-item-section>
 
@@ -251,7 +253,9 @@
             >
               <q-item-section>
                 <q-item-label :lines="3">
-                  <q-badge color="positive">{{ elem.category_name }}</q-badge>
+                  <q-badge color="positive">
+{{ elem.category_name }}
+</q-badge>
                 </q-item-label>
               </q-item-section>
 

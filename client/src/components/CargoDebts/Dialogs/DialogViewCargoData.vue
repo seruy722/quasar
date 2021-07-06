@@ -137,7 +137,10 @@
                 :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
                 @click.stop="viewEditDialog(props, $event)"
               >
-                <q-td auto-width class="select_checkbox">
+                <q-td
+auto-width
+class="select_checkbox"
+>
                   <q-checkbox
                     v-model="props.selected"
                     dense

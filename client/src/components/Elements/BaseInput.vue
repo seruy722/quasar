@@ -25,11 +25,11 @@
     @focus="$event.target.select()"
   >
     <template #append>
-      <slot name="append"></slot>
+      <slot name="append" />
     </template>
 
     <template #prepend>
-      <slot name="prepend"></slot>
+      <slot name="prepend" />
     </template>
   </q-input>
 </template>

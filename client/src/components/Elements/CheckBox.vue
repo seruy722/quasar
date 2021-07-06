@@ -5,8 +5,7 @@
     dense
     data-vue-component-name="CheckBox"
     @input="$emit('input', $event)"
-  >
-  </q-checkbox>
+  />
 </template>
 
 <script>

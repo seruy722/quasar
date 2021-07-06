@@ -3,7 +3,7 @@
     data-vue-component-name="Card"
     @click="$emit('click-card')"
   >
-    <slot></slot>
+    <slot />
   </q-card>
 </template>
 

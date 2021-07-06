@@ -29,14 +29,13 @@
 
                 <q-card-actions align="center">
                     <OutlineBtn
-                        :btnData="btnData"
+                        :btn-data="btnData"
                         @click-outline-btn="checkValidCustomerData"
                     />
                 </q-card-actions>
             </template>
         </Dialog>
-
-    </div>
+</div>
 </template>
 
 <script>

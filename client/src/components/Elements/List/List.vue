@@ -7,7 +7,7 @@
         data-vue-component-name="List"
         @click.stop="$emit('click-list')"
     >
-        <slot></slot>
+        <slot />
     </q-list>
 </template>
 

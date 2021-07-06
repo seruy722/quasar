@@ -125,8 +125,7 @@
           color="positive"
           @click-outline-btn="checkErrors(faxData, saveFax)"
         />
-
-      </CardActions>
+</CardActions>
     </Card>
   </Dialog>
 </template>

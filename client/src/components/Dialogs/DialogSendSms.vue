@@ -11,14 +11,43 @@
       <q-bar>
         <q-space />
 
-        <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
-          <q-tooltip v-if="maximizedToggle" content-class="bg-white text-primary">Minimize</q-tooltip>
+        <q-btn
+dense
+flat
+icon="minimize"
+:disable="!maximizedToggle"
+@click="maximizedToggle = false"
+>
+          <q-tooltip
+v-if="maximizedToggle"
+content-class="bg-white text-primary"
+>
+Minimize
+</q-tooltip>
         </q-btn>
-        <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
-          <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximize</q-tooltip>
+        <q-btn
+dense
+flat
+icon="crop_square"
+:disable="maximizedToggle"
+@click="maximizedToggle = true"
+>
+          <q-tooltip
+v-if="!maximizedToggle"
+content-class="bg-white text-primary"
+>
+Maximize
+</q-tooltip>
         </q-btn>
-        <q-btn dense flat icon="close" v-close-popup>
-          <q-tooltip content-class="bg-white text-primary">Close</q-tooltip>
+        <q-btn
+v-close-popup
+dense
+flat
+icon="close"
+>
+          <q-tooltip content-class="bg-white text-primary">
+Close
+</q-tooltip>
         </q-btn>
       </q-bar>
 

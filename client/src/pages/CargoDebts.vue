@@ -123,7 +123,10 @@
                   </q-card-actions>
                 </q-card-section>
                 <q-inner-loading :showing="generalCargoData.visible">
-                  <q-spinner-gears size="50px" color="primary" />
+                  <q-spinner-gears
+size="50px"
+color="primary"
+/>
                 </q-inner-loading>
               </q-card>
 

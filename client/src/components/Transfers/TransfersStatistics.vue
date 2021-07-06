@@ -1,13 +1,19 @@
 <template>
   <div data-vue-component-name="TransfersStatistics">
     <div class="column items-center">
-      <q-btn color="primary" :label="statisticsSelectData.label">
+      <q-btn
+color="primary"
+:label="statisticsSelectData.label"
+>
         <q-menu
           auto-close
           transition-show="scale"
           transition-hide="scale"
         >
-          <q-list separator style="min-width: 100px">
+          <q-list
+separator
+style="min-width: 100px"
+>
             <q-item
               v-for="(item, index) in optionsStatistics"
               :key="index"
@@ -31,10 +37,17 @@
       style="max-width: 450px;margin: 20px auto;font-weight: bold;"
     >
       <q-item>
-        <q-item-section class="statistics_title">Топ 10 клиентов</q-item-section>
+        <q-item-section class="statistics_title">
+Топ 10 клиентов
+</q-item-section>
         <q-item-section>
           <q-item-label>
-            <q-btn push color="primary" label="Показать" @click="setClientStatistics" />
+            <q-btn
+push
+color="primary"
+label="Показать"
+@click="setClientStatistics"
+/>
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -43,7 +56,10 @@
         <q-item-section>Количество</q-item-section>
         <q-item-section>Сумма</q-item-section>
       </q-item>
-      <q-item v-for="(user, index) in topTransfersClients" :key="index">
+      <q-item
+v-for="(user, index) in topTransfersClients"
+:key="index"
+>
         <q-item-section>
           <q-item-label> {{ user.name }}</q-item-label>
         </q-item-section>
@@ -63,7 +79,7 @@
       transition-hide="flip-down"
     >
       <q-card style="max-width: 600px;">
-        <q-bar></q-bar>
+        <q-bar />
         <q-card-section class="q-pt-none">
           <div v-show="statisticsSelectData.value === 2">
             <div class="row items-center">

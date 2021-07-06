@@ -3,7 +3,9 @@
     v-show="list.length"
     data-vue-component-name="CountDataForSearch"
   >
-    <div class="text-center text-bold text-uppercase q-mt-lg">{{ title }}</div>
+    <div class="text-center text-bold text-uppercase q-mt-lg">
+{{ title }}
+</div>
     <q-list
       dense
       bordered
@@ -22,11 +24,17 @@
         <q-item-section>
           <q-item-label>{{ item.kg | numberFormatFilter }}</q-item-label>
         </q-item-section>
-        <q-item-section v-if="item.for_kg !== undefined" class="cursor-pointer">
-          <q-item-label class="text-red text-bold">{{ item.for_kg | numberFormatFilter }}</q-item-label>
+        <q-item-section
+v-if="item.for_kg !== undefined"
+class="cursor-pointer"
+>
+          <q-item-label class="text-red text-bold">
+{{ item.for_kg | numberFormatFilter }}
+</q-item-label>
         </q-item-section>
         <q-item-section v-if="item.sum !== undefined">
-          <q-item-label class="text-bold">{{ item.sum | numberFormatFilter }}
+          <q-item-label class="text-bold">
+{{ item.sum | numberFormatFilter }}
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -46,7 +54,7 @@
           </q-item-label>
         </q-item-section>
         <q-item-section v-if="footer.for_kg > -1">
-          <q-item-label></q-item-label>
+          <q-item-label />
         </q-item-section>
         <q-item-section>
           <q-item-label class="text-bold">

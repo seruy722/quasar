@@ -1,5 +1,8 @@
 <template>
-  <q-card data-vue-component-name="RegisterClient" flat>
+  <q-card
+data-vue-component-name="RegisterClient"
+flat
+>
     <q-card-section>
       <q-form
         v-show="!yesPhoneInDB"

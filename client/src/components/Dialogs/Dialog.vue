@@ -7,7 +7,7 @@
     :transition-hide="transitionHide"
     data-vue-component-name="Dialog"
   >
-    <slot></slot>
+    <slot />
   </q-dialog>
 </template>
 

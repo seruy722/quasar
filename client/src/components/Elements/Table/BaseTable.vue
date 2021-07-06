@@ -12,20 +12,27 @@
     data-vue-component-name="BaseTable"
   >
     <template #top>
-      <div class="col-2 q-mr-md text-bold">{{ title }}</div>
+      <div class="col-2 q-mr-md text-bold">
+{{ title }}
+</div>
       <q-space />
       <Search v-model="search" />
     </template>
 
     <template #item="props">
-      <slot name="inner-item" :props="props"></slot>
+      <slot
+name="inner-item"
+:props="props"
+/>
     </template>
 
     <template #body="props">
-      <slot name="inner-body" :props="props"></slot>
+      <slot
+name="inner-body"
+:props="props"
+/>
     </template>
-
-  </q-table>
+</q-table>
 </template>
 
 <script>

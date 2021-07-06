@@ -26,7 +26,9 @@
         v-if="!tableProperties.hideTop"
         #top="props"
       >
-        <div class="col-4 q-mr-md text-bold">{{ title }}</div>
+        <div class="col-4 q-mr-md text-bold">
+{{ title }}
+</div>
 
         <q-space />
 
@@ -47,21 +49,27 @@
           :tooltip="$t(props.inFullscreen ? 'hide' : 'reveal')"
           @icon-btn-click="props.toggleFullscreen"
         />
-        <slot name="top-buttons"></slot>
+        <slot name="top-buttons" />
       </template>
 
       <template #body="props">
-        <slot name="inner-body" :props="props"></slot>
+        <slot
+name="inner-body"
+:props="props"
+/>
       </template>
 
       <template #item="props">
-        <slot name="inner-item" :props="props"></slot>
+        <slot
+name="inner-item"
+:props="props"
+/>
       </template>
 
       <template #bottom-row>
         <q-tr>
           <q-td colspan="100%">
-            <slot name="inner-bottom-row"></slot>
+            <slot name="inner-bottom-row" />
           </q-td>
         </q-tr>
       </template>

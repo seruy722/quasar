@@ -5,7 +5,7 @@
     data-vue-component-name="PullRefresh"
     @refresh="refresh"
   >
-    <slot></slot>
+    <slot />
   </q-pull-to-refresh>
 </template>
 

@@ -7,15 +7,25 @@
             <img src="https://cdn.quasar.dev/img/mountains.jpg">
 
             <q-card-actions align="center">
-                <q-btn flat>Action 1</q-btn>
+                <q-btn flat>
+Action 1
+</q-btn>
             </q-card-actions>
         </q-card>
 
         <div style="max-width: 350px">
-            <q-list bordered padding>
-                <q-item-label header>User Controls</q-item-label>
+            <q-list
+bordered
+padding
+>
+                <q-item-label header>
+User Controls
+</q-item-label>
 
-                <q-item clickable v-ripple>
+                <q-item
+v-ripple
+clickable
+>
                     <q-item-section>
                         <q-item-label>Content filtering</q-item-label>
                         <q-item-label caption>
@@ -25,7 +35,10 @@
                     </q-item-section>
                 </q-item>
 
-                <q-item clickable v-ripple>
+                <q-item
+v-ripple
+clickable
+>
                     <q-item-section>
                         <q-item-label>Password</q-item-label>
                         <q-item-label caption>
@@ -36,10 +49,18 @@
                 </q-item>
 
                 <q-separator spaced />
-                <q-item-label header>General</q-item-label>
+                <q-item-label header>
+General
+</q-item-label>
 
-                <q-item tag="label" v-ripple>
-                    <q-item-section side top>
+                <q-item
+v-ripple
+tag="label"
+>
+                    <q-item-section
+side
+top
+>
                         <q-checkbox v-model="check1" />
                     </q-item-section>
 
@@ -51,8 +72,14 @@
                     </q-item-section>
                 </q-item>
 
-                <q-item tag="label" v-ripple>
-                    <q-item-section side top>
+                <q-item
+v-ripple
+tag="label"
+>
+                    <q-item-section
+side
+top
+>
                         <q-checkbox v-model="check2" />
                     </q-item-section>
 
@@ -64,8 +91,14 @@
                     </q-item-section>
                 </q-item>
 
-                <q-item tag="label" v-ripple>
-                    <q-item-section side top>
+                <q-item
+v-ripple
+tag="label"
+>
+                    <q-item-section
+side
+top
+>
                         <q-checkbox v-model="check3" />
                     </q-item-section>
 
@@ -78,9 +111,14 @@
                 </q-item>
 
                 <q-separator spaced />
-                <q-item-label header>Notifications</q-item-label>
+                <q-item-label header>
+Notifications
+</q-item-label>
 
-                <q-item tag="label" v-ripple>
+                <q-item
+v-ripple
+tag="label"
+>
                     <q-item-section>
                         <q-item-label>{{ $t('chooseLanguage') }}</q-item-label>
                     </q-item-section>
@@ -89,32 +127,63 @@
                     </q-item-section>
                 </q-item>
 
-                <q-item tag="label" v-ripple>
+                <q-item
+v-ripple
+tag="label"
+>
                     <q-item-section>
                         <q-item-label>Battery too low</q-item-label>
                     </q-item-section>
                     <q-item-section side>
-                        <q-toggle color="blue" v-model="notif1" val="battery" />
+                        <q-toggle
+v-model="notif1"
+color="blue"
+val="battery"
+/>
                     </q-item-section>
                 </q-item>
 
-                <q-item tag="label" v-ripple>
+                <q-item
+v-ripple
+tag="label"
+>
                     <q-item-section>
                         <q-item-label>Friend request</q-item-label>
-                        <q-item-label caption>Allow notification</q-item-label>
+                        <q-item-label caption>
+Allow notification
+</q-item-label>
                     </q-item-section>
-                    <q-item-section side top>
-                        <q-toggle color="green" v-model="notif2" val="friend" />
+                    <q-item-section
+side
+top
+>
+                        <q-toggle
+v-model="notif2"
+color="green"
+val="friend"
+/>
                     </q-item-section>
                 </q-item>
 
-                <q-item tag="label" v-ripple>
+                <q-item
+v-ripple
+tag="label"
+>
                     <q-item-section>
                         <q-item-label>Picture uploaded</q-item-label>
-                        <q-item-label caption>Allow notification when uploading images</q-item-label>
+                        <q-item-label caption>
+Allow notification when uploading images
+</q-item-label>
                     </q-item-section>
-                    <q-item-section side top>
-                        <q-toggle color="red" v-model="notif3" val="picture" />
+                    <q-item-section
+side
+top
+>
+                        <q-toggle
+v-model="notif3"
+color="red"
+val="picture"
+/>
                     </q-item-section>
                 </q-item>
             </q-list>

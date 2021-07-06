@@ -6,8 +6,8 @@
             <template #body>
                 <q-card-section>
                     <q-stepper
-                        v-model="step"
                         ref="stepper"
+                        v-model="step"
                         color="primary"
                         animated
                     >
@@ -20,7 +20,7 @@
                         >
                             <BaseInput
                                 ref="codeInput"
-                                :inputData.sync="inputCode"
+                                :input-data.sync="inputCode"
                                 :errors="errorsData"
                                 @on-key-up="keyUp"
                             />
@@ -32,8 +32,15 @@
                             icon="add"
                             :done="step > 2"
                         >
-                            <q-list bordered class="rounded-borders" separator style="max-width: 600px">
-                                <q-item-label header>Клиенты</q-item-label>
+                            <q-list
+bordered
+class="rounded-borders"
+separator
+style="max-width: 600px"
+>
+                                <q-item-label header>
+Клиенты
+</q-item-label>
 
                                 <q-item
                                     v-for="(customer, index) in customersData.customerList"
@@ -44,12 +51,18 @@
                                     </q-item-section>
                                     <q-item-section>{{ customer.phone }}</q-item-section>
                                     <q-item-section side>
-                                        <q-btn class="gt-xs" size="12px" flat dense round icon="delete"
-                                               @click="removeCustomerFromList(index)" />
+                                        <q-btn
+class="gt-xs"
+size="12px"
+flat
+dense
+round
+icon="delete"
+                                               @click="removeCustomerFromList(index)"
+/>
                                     </q-item-section>
                                 </q-item>
-
-                            </q-list>
+</q-list>
                         </q-step>
 
                         <template #navigation>
@@ -65,7 +78,10 @@
                                     @click-base-btn="$refs.stepper.previous()"
                                 />
 
-                                <AddCustomers v-if="step > 1" :customersData.sync="customersData" />
+                                <AddCustomers
+v-if="step > 1"
+:customers-data.sync="customersData"
+/>
                             </q-stepper-navigation>
                         </template>
                     </q-stepper>
@@ -76,7 +92,7 @@
                 <q-card-actions align="right">
                     <OutlineBtn
                         v-show="step > 1"
-                        :btnData="btnData"
+                        :btn-data="btnData"
                         @click-outline-btn="saveCodeOnServer"
                     />
                 </q-card-actions>

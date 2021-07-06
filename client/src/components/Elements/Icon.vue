@@ -6,7 +6,7 @@
     :size="size"
     @click="$emit('click-icon', $event)"
   >
-    <slot></slot>
+    <slot />
   </q-icon>
 </template>
 

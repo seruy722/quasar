@@ -1,5 +1,8 @@
 <template>
-  <q-card data-vue-component-name="Login" flat>
+  <q-card
+data-vue-component-name="Login"
+flat
+>
     <q-card-section>
       <BaseInput
         v-model.trim="loginData.email.value"

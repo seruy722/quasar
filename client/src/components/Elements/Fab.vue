@@ -6,7 +6,7 @@
     data-vue-component-name="Fab"
     @click="$emit('fab-click')"
   >
-    <slot></slot>
+    <slot />
   </q-fab>
 </template>
 

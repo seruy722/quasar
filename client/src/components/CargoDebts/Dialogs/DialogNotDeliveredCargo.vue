@@ -20,7 +20,9 @@
             icon="close"
             color="negative"
           >
-            <q-tooltip content-class="bg-white text-primary">Закрыть</q-tooltip>
+            <q-tooltip content-class="bg-white text-primary">
+Закрыть
+</q-tooltip>
           </q-btn>
         </q-bar>
 

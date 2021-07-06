@@ -16,7 +16,7 @@
     @input="inputEvent"
   >
     <template #prepend>
-      <slot name="prepend"></slot>
+      <slot name="prepend" />
     </template>
   </q-select>
 </template>

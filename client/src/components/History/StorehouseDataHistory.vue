@@ -3,7 +3,10 @@
     data-vue-component-name="StorehouseDataHistory"
     color="secondary"
   >
-    <TimelineEntry heading tag="h6">
+    <TimelineEntry
+heading
+tag="h6"
+>
       История изменения данных
     </TimelineEntry>
 
@@ -31,7 +34,9 @@
                   {{ storehouseHistoryData.cols[i] }}
                 </Badge>
               </ItemLabel>
-              <ItemLabel v-else>{{ storehouseHistoryData.cols[i] }}</ItemLabel>
+              <ItemLabel v-else>
+{{ storehouseHistoryData.cols[i] }}
+</ItemLabel>
             </ItemSection>
             <ItemSection side>
               <ItemLabel
@@ -53,7 +58,9 @@
               >
                 {{ history | thingsFilter }}
               </ItemLabel>
-              <ItemLabel v-else>{{ history }}</ItemLabel>
+              <ItemLabel v-else>
+{{ history }}
+</ItemLabel>
             </ItemSection>
           </ListItem>
           <Separator v-if="storehouseHistoryData.cols[i]" />

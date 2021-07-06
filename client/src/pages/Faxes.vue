@@ -293,7 +293,7 @@
         </q-card-section>
       </q-card>
     </Dialog>
-    <DialogNotDeliveredCargo :show.sync="showDialogNotDeliveredCargo"/>
+    <DialogNotDeliveredCargo :show.sync="showDialogNotDeliveredCargo" />
   </q-page>
 </template>
 

@@ -90,7 +90,8 @@
                   <q-item-label
                     v-else-if="col.field === 'paid'"
                   >
-                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{ props.row.paid ? 'Да':
                       props.row.type ? null : 'Нет' }}
                     </q-badge>
                   </q-item-label>
@@ -204,7 +205,8 @@
             key="paid"
             :props="props"
           >
-            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+            <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{ props.row.paid ? 'Да':
               props.row.type ? null : 'Нет' }}
             </q-badge>
           </q-td>
@@ -234,7 +236,12 @@
         </q-tr>
       </template>
     </Table>
-    <q-dialog v-model="dialogSelectDeliveredPlace" persistent transition-show="scale" transition-hide="scale">
+    <q-dialog
+v-model="dialogSelectDeliveredPlace"
+persistent
+transition-show="scale"
+transition-hide="scale"
+>
       <q-card style="width: 300px">
         <q-card-section>
           <div class="text-h6 text-teal">
@@ -250,7 +257,10 @@
           />
         </q-card-section>
 
-        <q-card-actions align="right" class="bg-white text-teal">
+        <q-card-actions
+align="right"
+class="bg-white text-teal"
+>
           <q-btn
             v-close-popup
             label="Отмена"

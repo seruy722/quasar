@@ -4,7 +4,7 @@
     :offset="offset"
     data-vue-component-name="PageSticky"
   >
-    <slot></slot>
+    <slot />
   </q-page-sticky>
 </template>
 

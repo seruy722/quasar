@@ -5,19 +5,24 @@
   >
     <div>
       <div>Кода без информации о клиенте</div>
-      <q-btn unelevated rounded color="primary" label="Export" @click="getCodesWithoutInfo" />
+      <q-btn
+unelevated
+rounded
+color="primary"
+label="Export"
+@click="getCodesWithoutInfo"
+/>
     </div>
 
     <div>
       <div>Загрузка карго на сервер</div>
-      <UploadFileToServer :uploadData="uploadData" />
+      <UploadFileToServer :upload-data="uploadData" />
       <Dialog :dialog.sync="dialogUploadCargoData">
-
-        <q-separator />
+<q-separator />
 
         <q-card-actions align="right">
           <OutlineBtn
-            :btnData="btnData"
+            :btn-data="btnData"
             @click-outline-btn="dialogUploadCargoData.value = false"
           />
         </q-card-actions>
@@ -29,14 +34,14 @@
       <Dialog :dialog.sync="dialogUploadDebtsData">
         <template #body>
           <q-card-section>
-            <UploadFileToServer :uploadData="uploadDebtsData" />
+            <UploadFileToServer :upload-data="uploadDebtsData" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions align="right">
             <OutlineBtn
-              :btnData="btnData"
+              :btn-data="btnData"
               @click-outline-btn="dialogUploadDebtsData.value = false"
             />
           </q-card-actions>
@@ -49,14 +54,14 @@
       <Dialog :dialog.sync="dialogUploadSkladData">
         <template #body>
           <q-card-section>
-            <UploadFileToServer :uploadData="uploadSkladData" />
+            <UploadFileToServer :upload-data="uploadSkladData" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions align="right">
             <OutlineBtn
-              :btnData="btnData"
+              :btn-data="btnData"
               @click-outline-btn="dialogUploadSkladData.value = false"
             />
           </q-card-actions>
@@ -71,11 +76,22 @@
 
     <div>
       Загрузка данных факсов
-      <input type="file" multiple @change="upFiles">
+      <input
+type="file"
+multiple
+@change="upFiles"
+>
 
       <div>
-        <q-input v-model.trim="search" type="text" label="Search" />
-        <q-btn label="Test" @click="searchData" />
+        <q-input
+v-model.trim="search"
+type="text"
+label="Search"
+/>
+        <q-btn
+label="Test"
+@click="searchData"
+/>
         <div class="q-pa-md">
           <q-table
             title="Treats"
@@ -89,16 +105,25 @@
 
     <div style="border: 1px solid blue;">
       Клиенты которые получают бренд
-      <q-btn label="GET" @click="getBrandClients" />
+      <q-btn
+label="GET"
+@click="getBrandClients"
+/>
     </div>
     <div style="border: 1px solid blue;">
       Клиенты которые не получали товар больше месяца
-      <q-btn label="GET" @click="exportCustomersWhoLeft" />
+      <q-btn
+label="GET"
+@click="exportCustomersWhoLeft"
+/>
     </div>
 
     <div style="border: 1px solid blue;">
       Клиенты в нотации которых написано оплачено
-      <q-btn label="GET" @click="getEntriesWithPayNotation" />
+      <q-btn
+label="GET"
+@click="getEntriesWithPayNotation"
+/>
     </div>
 
     <div style="border: 1px solid blue;">
@@ -110,25 +135,35 @@
           mask="MM-YYYY"
         />
       </div>
-      <q-btn label="GET" @click="exportReportOdessaData(date)" />
+      <q-btn
+label="GET"
+@click="exportReportOdessaData(date)"
+/>
     </div>
 
     <div>
       Загрузка факсов
-      <input type="file" multiple @change="upFaxDataFiles">
+      <input
+type="file"
+multiple
+@change="upFaxDataFiles"
+>
     </div>
 
     <div>
       Загрузка кодов
-      <input type="file" multiple @change="upCodes">
+      <input
+type="file"
+multiple
+@change="upCodes"
+>
     </div>
 
 <!--    <div>-->
 <!--      Reg-->
 <!--      <q-btn @click="reg" label="REGIST" />-->
 <!--    </div>-->
-
-  </div>
+</div>
 </template>
 
 <script>

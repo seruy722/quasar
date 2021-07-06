@@ -5,7 +5,7 @@
     :scroll-offset="scrollOffset"
     data-vue-component-name="PageScroller"
   >
-    <slot></slot>
+    <slot />
   </q-page-scroller>
 </template>
 

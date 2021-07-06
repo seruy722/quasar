@@ -62,8 +62,8 @@
               <template #header>
                 <q-item-section avatar>
                   <q-checkbox
-                    dense
                     v-model="props.selected"
+                    dense
                   />
                 </q-item-section>
 
@@ -212,7 +212,7 @@
                 dense
                 :name="!props.row.uploaded_to_cargo ? 'vertical_align_bottom':'vertical_align_top'"
                 @click.stop="uploadToCargo(props.row)"
-              ></q-icon>
+              />
             </q-td>
           </q-tr>
         </template>

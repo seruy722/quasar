@@ -3,7 +3,9 @@
     v-show="list.length"
     data-vue-component-name="CountCategories"
   >
-    <div class="text-center text-bold text-uppercase q-mt-lg">{{ title }}</div>
+    <div class="text-center text-bold text-uppercase q-mt-lg">
+{{ title }}
+</div>
     <List
       dense
       bordered
@@ -22,8 +24,13 @@
         <ItemSection>
           <ItemLabel>{{ item.kg | numberFormatFilter }}</ItemLabel>
         </ItemSection>
-        <ItemSection v-if="item.for_kg !== undefined" class="cursor-pointer">
-          <ItemLabel class="text-red text-bold">{{ item.for_kg | numberFormatFilter }}</ItemLabel>
+        <ItemSection
+v-if="item.for_kg !== undefined"
+class="cursor-pointer"
+>
+          <ItemLabel class="text-red text-bold">
+{{ item.for_kg | numberFormatFilter }}
+</ItemLabel>
           <PopupEdit
             v-if="item.name"
             :value.sync="item.for_kg"
@@ -33,7 +40,8 @@
           />
         </ItemSection>
         <ItemSection v-if="item.sum !== undefined">
-          <ItemLabel class="text-bold">{{ item.sum | numberFormatFilter }}
+          <ItemLabel class="text-bold">
+{{ item.sum | numberFormatFilter }}
           </ItemLabel>
         </ItemSection>
       </ListItem>
@@ -53,7 +61,7 @@
           </ItemLabel>
         </ItemSection>
         <ItemSection v-if="footer.for_kg > -1">
-          <ItemLabel></ItemLabel>
+          <ItemLabel />
         </ItemSection>
         <ItemSection v-if="footer.sum">
           <ItemLabel class="text-bold">

@@ -13,14 +13,23 @@
         align="justify"
         narrow-indicator
       >
-        <q-tab name="login" label="Вход" />
-        <q-tab name="register" label="Регистрация" />
+        <q-tab
+name="login"
+label="Вход"
+/>
+        <q-tab
+name="register"
+label="Регистрация"
+/>
         <!--        <q-tab name="recover" label="Восстановление пароля" />-->
       </q-tabs>
 
       <q-separator />
 
-      <q-tab-panels v-model="tab" animated>
+      <q-tab-panels
+v-model="tab"
+animated
+>
         <q-tab-panel name="login">
           <Login />
         </q-tab-panel>

@@ -59,7 +59,8 @@
                     {{ col.value | numberFormatFilter }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'paid'">
-                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{ props.row.paid ? 'Да':
                       props.row.type ? null : 'Нет' }}
                     </q-badge>
                   </q-item-label>
@@ -128,7 +129,8 @@
             key="paid"
             :props="props"
           >
-            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+            <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{ props.row.paid ? 'Да':
               props.row.type ? null : 'Нет' }}
             </q-badge>
           </q-td>
@@ -149,7 +151,10 @@
         </q-tr>
       </template>
     </Table>
-    <q-list separator bordered>
+    <q-list
+separator
+bordered
+>
       <q-item
         v-for="(user, id) in countTransfersStatisticsData"
         :key="id"

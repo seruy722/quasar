@@ -5,7 +5,7 @@
     data-vue-component-name="ListItem"
     @click="$emit('list-item-click')"
   >
-    <slot></slot>
+    <slot />
   </q-item>
 </template>
 

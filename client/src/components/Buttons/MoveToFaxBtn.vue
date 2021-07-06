@@ -6,7 +6,11 @@
     icon="move_to_inbox"
     @click="$emit('move-to-fax-click')"
   >
-    <q-tooltip anchor="bottom middle" self="top middle" :offset="[10, 10]">
+    <q-tooltip
+anchor="bottom middle"
+self="top middle"
+:offset="[10, 10]"
+>
       Переместить
     </q-tooltip>
   </q-btn>

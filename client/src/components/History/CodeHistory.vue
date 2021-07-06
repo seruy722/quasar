@@ -3,7 +3,10 @@
     data-vue-component-name="CodeHistory"
     color="secondary"
   >
-    <TimelineEntry heading tag="h6">
+    <TimelineEntry
+heading
+tag="h6"
+>
       История изменения данных
     </TimelineEntry>
 
@@ -31,12 +34,20 @@
                   {{ historyData.cols[i] }}
                 </Badge>
               </ItemLabel>
-              <ItemLabel v-else>{{ historyData.cols[i] }}</ItemLabel>
+              <ItemLabel v-else>
+{{ historyData.cols[i] }}
+</ItemLabel>
             </ItemSection>
             <ItemSection side>
-              <ItemLabel v-if="i === 'sex'">{{ parseInt(history, 10) === 2 ? 'Мужской': 'Женский' }}</ItemLabel>
-              <ItemLabel v-else-if="i === 'phone'">{{ history | phoneNumberFilter }}</ItemLabel>
-              <ItemLabel v-else>{{ history }}</ItemLabel>
+              <ItemLabel v-if="i === 'sex'">
+{{ parseInt(history, 10) === 2 ? 'Мужской': 'Женский' }}
+</ItemLabel>
+              <ItemLabel v-else-if="i === 'phone'">
+{{ history | phoneNumberFilter }}
+</ItemLabel>
+              <ItemLabel v-else>
+{{ history }}
+</ItemLabel>
             </ItemSection>
           </ListItem>
           <Separator v-if="historyData.cols[i]" />

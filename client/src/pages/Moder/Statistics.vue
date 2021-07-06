@@ -1,6 +1,6 @@
 <template>
   <div data-vue-component-name="Statistics">
-    <div id="chart"></div>
+    <div id="chart" />
     <Table
       :table-properties="cargoTableProperties"
       :table-data="tasks"
@@ -174,7 +174,7 @@
             key="start_sum"
             :props="props"
           >
-            <q-badge color="positive">
+            <q-badge :color="sumProfit(props.row.end_sum, props.row.start_sum) > 0 ? 'positive' : 'negative'">
               {{ sumProfit(props.row.end_sum, props.row.start_sum) }}
             </q-badge>
           </q-td>

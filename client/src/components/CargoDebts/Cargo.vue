@@ -47,13 +47,21 @@
           dense
         >
           <q-list separator>
-            <q-item clickable v-close-popup @click="exportFaxData(cargoTableReactiveProperties.selected)">
+            <q-item
+v-close-popup
+clickable
+@click="exportFaxData(cargoTableReactiveProperties.selected)"
+>
               <q-item-section>
                 <q-item-label>Выгрузить</q-item-label>
               </q-item-section>
             </q-item>
 
-            <q-item clickable v-close-popup @click="exportDetailFaxData(cargoTableReactiveProperties.selected)">
+            <q-item
+v-close-popup
+clickable
+@click="exportDetailFaxData(cargoTableReactiveProperties.selected)"
+>
               <q-item-section>
                 <q-item-label>Выгрузить детально</q-item-label>
               </q-item-section>
@@ -149,7 +157,8 @@
                   <q-item-label
                     v-else-if="col.field === 'paid'"
                   >
-                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{
                         props.row.paid ? 'Да' :
                           props.row.type ? null : 'Нет'
                       }}
@@ -277,7 +286,8 @@
             key="paid"
             :props="props"
           >
-            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{
+            <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{
                 props.row.paid ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}
@@ -325,7 +335,8 @@
             key="in_cargo"
             :props="props"
           >
-            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">{{
+            <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
+{{
                 props.row.in_cargo ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}

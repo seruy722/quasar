@@ -3,7 +3,10 @@
     data-vue-component-name="TransferHistory"
     color="secondary"
   >
-    <TimelineEntry heading tag="h6">
+    <TimelineEntry
+heading
+tag="h6"
+>
       История изменения данных
     </TimelineEntry>
 
@@ -31,7 +34,9 @@
                   {{ transferHistoryData.cols[i] }}
                 </Badge>
               </ItemLabel>
-              <ItemLabel v-else>{{ transferHistoryData.cols[i] }}</ItemLabel>
+              <ItemLabel v-else>
+{{ transferHistoryData.cols[i] }}
+</ItemLabel>
             </ItemSection>
             <ItemSection side>
               <ItemLabel
@@ -52,7 +57,9 @@
               >
                 {{ history | phoneNumberFilter }}
               </ItemLabel>
-              <ItemLabel v-else>{{ history }}</ItemLabel>
+              <ItemLabel v-else>
+{{ history }}
+</ItemLabel>
             </ItemSection>
           </ListItem>
           <Separator v-if="transferHistoryData.cols[i]" />

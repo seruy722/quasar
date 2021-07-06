@@ -7,8 +7,12 @@
     data-vue-component-name="MenuBtn"
     @click="$emit('menu-btn-click')"
   >
-    <slot></slot>
-    <q-tooltip anchor="bottom middle" self="top middle" :offset="[10, 10]">
+    <slot />
+    <q-tooltip
+anchor="bottom middle"
+self="top middle"
+:offset="[10, 10]"
+>
       Меню
     </q-tooltip>
   </q-btn>

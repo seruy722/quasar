@@ -32,7 +32,7 @@
           >
             <template #header>
               <q-item-section>
-                <q-checkbox v-model="props.selected"/>
+                <q-checkbox v-model="props.selected" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>
@@ -92,7 +92,8 @@
                   <q-item-label
                     v-else-if="col.field === 'paid'"
                   >
-                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+                    <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{ props.row.paid ? 'Да':
                       props.row.type ? null : 'Нет' }}
                     </q-badge>
                   </q-item-label>
@@ -217,7 +218,8 @@
             key="paid"
             :props="props"
           >
-            <q-badge :color="props.row.paid ? 'positive' : 'negative'">{{ props.row.paid ? 'Да':
+            <q-badge :color="props.row.paid ? 'positive' : 'negative'">
+{{ props.row.paid ? 'Да':
               props.row.type ? null : 'Нет' }}
             </q-badge>
           </q-td>

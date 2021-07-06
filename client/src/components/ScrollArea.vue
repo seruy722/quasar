@@ -6,7 +6,7 @@
         :style="`height: ${clientWindowHeight}px;`"
         data-vue-component-name="ScrollArea"
     >
-        <slot></slot>
+        <slot />
     </q-scroll-area>
 </template>
 

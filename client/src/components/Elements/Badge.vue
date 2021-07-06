@@ -5,7 +5,7 @@
     transparent
     data-vue-component-name="Badge"
   >
-    <slot></slot>
+    <slot />
   </q-badge>
 </template>
 
