@@ -138,14 +138,18 @@
 
 <script>
 import { format } from 'date-fns';
+import DateWithInputForCargo from 'components/DateWithInputForCargo.vue';
+import OutlineBtn from 'components/Buttons/OutlineBtn.vue';
+import Dialog from 'components/Dialogs/Dialog.vue';
+import Date from 'components/Date.vue';
 
 export default {
   name: 'CargoDebtsSearch',
   components: {
-    DateWithInputForCargo: () => import('components/DateWithInputForCargo.vue'),
-    OutlineBtn: () => import('components/Buttons/OutlineBtn.vue'),
-    Dialog: () => import('components/Dialogs/Dialog.vue'),
-    Date: () => import('components/Date.vue'),
+    DateWithInputForCargo,
+    OutlineBtn,
+    Dialog,
+    Date,
   },
   props: {
     enterData: {
@@ -259,7 +263,10 @@ export default {
       this.choosePeriodDialog = false;
     },
     async setStatisticsData(date) {
-      const { cargoForSearch, debtsForSearch } = this;
+      const {
+        cargoForSearch,
+        debtsForSearch,
+      } = this;
       const { getDateWithoutTime } = await import('src/utils/formatDate');
       devlog.log('DATE', date);
       const type = this.type.value;
@@ -282,7 +289,10 @@ export default {
           await this.$store.dispatch('cargoDebts/setDebts', _.filter(debtsForSearch, (item) => getDateWithoutTime(date.day) === getDateWithoutTime(item.created_at) && item.type === type));
         }
       } else if (_.isObject(date) && this.statisticsSelectData.value === 2) {
-        const { from, to } = date;
+        const {
+          from,
+          to,
+        } = date;
         this.viewPeriodDate = `${from} - ${to}`;
         if (type === -1) {
           await this.$store.dispatch('cargoDebts/setCargo', _.filter(cargoForSearch, (item) => getDateWithoutTime(item.created_at) >= getDateWithoutTime(from) && getDateWithoutTime(item.created_at) <= getDateWithoutTime(to)));

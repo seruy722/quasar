@@ -84,17 +84,24 @@
 import { setCategoriesStoreHouseData } from 'src/utils/FrequentlyCalledFunctions';
 import { getUrl } from 'src/tools/url';
 import { numberFormat } from 'src/utils';
+import List from 'src/components/Elements/List/List.vue';
+import ItemSection from 'src/components/Elements/List/ItemSection.vue';
+import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
+import ListItem from 'src/components/Elements/List/ListItem.vue';
+import Badge from 'src/components/Elements/Badge.vue';
+import PopupEdit from 'src/components/PopupEdit.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 
 export default {
   name: 'CountCategories',
   components: {
-    List: () => import('src/components/Elements/List/List.vue'),
-    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-    Badge: () => import('src/components/Elements/Badge.vue'),
-    PopupEdit: () => import('src/components/PopupEdit.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    List,
+    ItemSection,
+    ItemLabel,
+    ListItem,
+    Badge,
+    PopupEdit,
+    BaseBtn,
   },
   props: {
     list: {

@@ -255,129 +255,6 @@
         </PageScroller>
       </Fab>
     </PageSticky>
-<!--    <Dialog-->
-<!--      v-model:dialog="dialog"-->
-<!--      :persistent="true"-->
-<!--    >-->
-<!--      <q-card style="min-width: 320px;width: 100%;max-width: 500px;">-->
-<!--        <q-card-section class="row justify-between bg-grey q-mb-sm">-->
-<!--          <span class="text-h6">{{ dialogTitle }}</span>-->
-<!--          <div>-->
-<!--            <IconBtn-->
-<!--              v-if="localProps.row"-->
-<!--              dense-->
-<!--              icon="history"-->
-<!--              tooltip="История"-->
-<!--              @icon-btn-click="getTransfersHistory(localProps.row.id, localProps.cols)"-->
-<!--            />-->
-
-<!--            <IconBtn-->
-<!--              dense-->
-<!--              icon="save"-->
-<!--              tooltip="Сохранить"-->
-<!--              color="positive"-->
-<!--              @icon-btn-click="checkErrors(transferData, updateData)"-->
-<!--            />-->
-
-<!--            <IconBtn-->
-<!--              dense-->
-<!--              icon="clear"-->
-<!--              tooltip="Закрыть"-->
-<!--              color="negative"-->
-<!--              @icon-btn-click="confirm"-->
-<!--            />-->
-<!--          </div>-->
-<!--        </q-card-section>-->
-<!--        <q-card-section>-->
-<!--          <div-->
-<!--            v-for="(item, index) in transferData"-->
-<!--            :key="index"-->
-<!--          >-->
-<!--            <BaseInput-->
-<!--              v-if="item.type === 'text'"-->
-<!--              v-model.trim="item.value"-->
-<!--              :change-value="item.changeValue"-->
-<!--              :label="item.label"-->
-<!--              :type="item.type"-->
-<!--              :mask="item.mask"-->
-<!--              :unmasked-value="item.unmaskedValue"-->
-<!--              dense-->
-<!--              :field="item.field"-->
-<!--              :errors="errorsData"-->
-<!--            />-->
-
-<!--            <BaseInput-->
-<!--              v-else-if="item.type === 'number'"-->
-<!--              v-model.number="item.value"-->
-<!--              :change-value="item.changeValue"-->
-<!--              :label="item.label"-->
-<!--              :type="item.type"-->
-<!--              :mask="item.mask"-->
-<!--              :unmasked-value="item.unmaskedValue"-->
-<!--              dense-->
-<!--              :field="item.field"-->
-<!--              :errors="errorsData"-->
-<!--            />-->
-
-<!--            <SearchSelect-->
-<!--              v-else-if="item.type === 'searchSelect'"-->
-<!--              v-model="item.value"-->
-<!--              :change-value="item.changeValue"-->
-<!--              dense-->
-<!--              :options="item.options"-->
-<!--              :label="item.label"-->
-<!--              :field="item.field"-->
-<!--              :func-load-data="item.funcLoadData"-->
-<!--              :errors="errorsData"-->
-<!--            />-->
-
-<!--            <BaseSelect-->
-<!--              v-else-if="item.type === 'select'"-->
-<!--              v-model="item.value"-->
-<!--              :change-value="item.changeValue"-->
-<!--              :label="item.label"-->
-<!--              :dense="true"-->
-<!--              :options="item.options"-->
-<!--              :field="item.field"-->
-<!--              :errors="errorsData"-->
-<!--            />-->
-
-<!--            <BaseInput-->
-<!--              v-else-if="item.type === 'date'"-->
-<!--              v-model="item.value"-->
-<!--              :change-value="item.changeValue"-->
-<!--              :label="item.label"-->
-<!--              :errors="errorsData"-->
-<!--              :field="item.field"-->
-<!--              :readonly="item.readonly"-->
-<!--              :mask="item.mask"-->
-<!--              dense-->
-<!--            >-->
-<!--              <template #append>-->
-<!--                <Date-->
-<!--                  :value="item.value"-->
-<!--                  :change-value="item.changeValue"-->
-<!--                />-->
-<!--              </template>-->
-<!--            </BaseInput>-->
-<!--          </div>-->
-<!--        </q-card-section>-->
-
-<!--        <Separator />-->
-<!--        <q-card-actions>-->
-<!--          <BaseBtn-->
-<!--            label="Отмена"-->
-<!--            color="negative"-->
-<!--            @click-base-btn="cancel(transferData)"-->
-<!--          />-->
-<!--          <BaseBtn-->
-<!--            label="Сохранить"-->
-<!--            color="positive"-->
-<!--            @click-base-btn="checkErrors(transferData, updateData)"-->
-<!--          />-->
-<!--        </q-card-actions>-->
-<!--      </q-card>-->
-<!--    </Dialog>-->
     <DialogAddTransfer
       v-model:show-dialog="dialog"
       v-model:local-props="localProps"
@@ -461,31 +338,33 @@ import {
 import { defineAsyncComponent } from 'vue';
 import Table from 'components/Elements/Table/Table.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
-// import Separator from 'src/components/Separator.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import CountTransfersData from 'src/components/Transfers/CountTransfersData.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import PageSticky from 'src/components/PageSticky.vue';
+import Fab from 'src/components/Elements/Fab.vue';
+import FabAction from 'src/components/Elements/FabAction.vue';
+import PageScroller from 'src/components/PageScroller.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 
 export default {
   name: 'Transfers',
   components: {
     Table,
-    Dialog: defineAsyncComponent(() => import('components/Dialogs/Dialog.vue')),
-    // Date: defineAsyncComponent(() => import('components/Date.vue')),
-    // BaseInput: defineAsyncComponent(() => import('components/Elements/BaseInput.vue')),
-    BaseBtn: defineAsyncComponent(() => import('src/components/Buttons/BaseBtn.vue')),
+    BaseBtn,
     IconBtn,
-    // Separator,
-    // SearchSelect: defineAsyncComponent(() => import('components/Elements/SearchSelect.vue')),
-    // BaseSelect: defineAsyncComponent(() => import('components/Elements/BaseSelect.vue')),
-    DialogAddCode: defineAsyncComponent(() => import('components/Dialogs/DialogAddCode.vue')),
-    DialogAddTransfer: defineAsyncComponent(() => import('components/Dialogs/DialogAddTransfer.vue')),
-    PageSticky: defineAsyncComponent(() => import('components/PageSticky.vue')),
-    Fab: defineAsyncComponent(() => import('components/Elements/Fab.vue')),
-    FabAction: defineAsyncComponent(() => import('components/Elements/FabAction.vue')),
-    PageScroller: defineAsyncComponent(() => import('components/PageScroller.vue')),
-    PullRefresh: defineAsyncComponent(() => import('components/PullRefresh.vue')),
-    TransferHistory: defineAsyncComponent(() => import('components/History/TransferHistory.vue')),
-    CountTransfersData: defineAsyncComponent(() => import('components/Transfers/CountTransfersData.vue')),
+    PageSticky,
+    PullRefresh,
+    CountTransfersData,
+    UpdateBtn,
+    Fab,
+    FabAction,
+    PageScroller,
+    Dialog: defineAsyncComponent(() => import('src/components/Dialogs/Dialog.vue')),
+    DialogAddCode: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddCode.vue')),
+    DialogAddTransfer: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddTransfer.vue')),
+    TransferHistory: defineAsyncComponent(() => import('src/components/History/TransferHistory.vue')),
     TransfersStatistics: defineAsyncComponent(() => import('components/Transfers/TransfersStatistics.vue')),
-    UpdateBtn: defineAsyncComponent(() => import('components/Buttons/UpdateBtn.vue')),
     DialogChooseDate: defineAsyncComponent(() => import('components/Dialogs/DialogChooseDate.vue')),
   },
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
@@ -805,7 +684,7 @@ export default {
         .then(() => {
           callFunction(done);
           this.$q.loading.hide();
-          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+          this.showNotif('success', 'Данные успешно обновлены.');
         })
         .catch(() => {
           this.$q.loading.hide();

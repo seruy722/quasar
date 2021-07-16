@@ -124,9 +124,9 @@
                 </q-card-section>
                 <q-inner-loading :showing="generalCargoData.visible">
                   <q-spinner-gears
-size="50px"
-color="primary"
-/>
+                    size="50px"
+                    color="primary"
+                  />
                 </q-inner-loading>
               </q-card>
 
@@ -213,16 +213,22 @@ color="primary"
 <script>
 import showNotif from 'src/mixins/showNotif';
 import { numberFormat } from 'src/utils';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import Cargo from 'src/components/CargoDebts/Cargo.vue';
+import Debts from 'src/components/CargoDebts/Debts.vue';
+import CargoDebtsSearch from 'src/components/CargoDebts/CargoDebtsSearch.vue';
+import ExportMenuGeneralCargo from 'src/components/CargoDebts/ExportMenuGeneralCargo.vue';
 
 export default {
   name: 'CargoDebts',
   components: {
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    PullRefresh: () => import('src/components/PullRefresh.vue'),
-    Cargo: () => import('src/components/CargoDebts/Cargo.vue'),
-    Debts: () => import('src/components/CargoDebts/Debts.vue'),
-    CargoDebtsSearch: () => import('src/components/CargoDebts/CargoDebtsSearch.vue'),
-    ExportMenuGeneralCargo: () => import('src/components/CargoDebts/ExportMenuGeneralCargo.vue'),
+    SearchSelect,
+    PullRefresh,
+    Cargo,
+    Debts,
+    CargoDebtsSearch,
+    ExportMenuGeneralCargo,
   },
   mixins: [showNotif],
   data() {

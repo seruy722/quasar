@@ -101,21 +101,30 @@ import {
   getCities,
   setChangeValue,
 } from 'src/utils/FrequentlyCalledFunctions';
-import { defineAsyncComponent } from 'vue';
+import BaseSelect from 'src/components/Elements/BaseSelect.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import Separator from 'src/components/Separator.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
 export default {
   name: 'DialogAddClient',
   components: {
-    BaseSelect: defineAsyncComponent(() => import('src/components/Elements/BaseSelect.vue')),
-    SearchSelect: defineAsyncComponent(() => import('src/components/Elements/SearchSelect.vue')),
-    Dialog: defineAsyncComponent(() => import('components/Dialogs/Dialog.vue')),
-    BaseBtn: defineAsyncComponent(() => import('src/components/Buttons/BaseBtn.vue')),
-    BaseInput: defineAsyncComponent(() => import('src/components/Elements/BaseInput.vue')),
-    Separator: defineAsyncComponent(() => import('components/Separator.vue')),
-    Card: defineAsyncComponent(() => import('src/components/Elements/Card/Card.vue')),
-    CardActions: defineAsyncComponent(() => import('src/components/Elements/Card/CardActions.vue')),
-    CardSection: defineAsyncComponent(() => import('src/components/Elements/Card/CardSection.vue')),
-    IconBtn: defineAsyncComponent(() => import('components/Buttons/IconBtn.vue')),
+    BaseSelect,
+    SearchSelect,
+    Dialog,
+    BaseBtn,
+    BaseInput,
+    Separator,
+    Card,
+    CardActions,
+    CardSection,
+    IconBtn,
   },
   mixins: [OnKeyUp, showNotif, CheckErrorsMixin],
   props: {

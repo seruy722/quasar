@@ -52,20 +52,26 @@
 import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import Separator from 'src/components/Separator.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 
 export default {
   name: 'DialogAddTransporter',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    // AddCustomers: () => import('src/components/Dialogs/AddCustomers.vue'),
-    OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
-    // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    Card: () => import('src/components/Elements/Card/Card.vue'),
-    CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    Dialog,
+    OutlineBtn,
+    BaseInput,
+    Card,
+    CardActions,
+    CardSection,
+    Separator,
+    IconBtn,
   },
   mixins: [showNotif, CheckErrorsMixin],
   props: {
@@ -81,7 +87,7 @@ export default {
       transporterData: {
         name: {
           type: 'text',
-          label: this.$t('transporter'),
+          label: 'Первожчик',
           field: 'name',
           autofocus: true,
           rules: [

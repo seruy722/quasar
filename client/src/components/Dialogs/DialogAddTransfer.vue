@@ -177,7 +177,7 @@ export default {
       default: () => ({}),
     },
   },
-  emits: ['update:showDialog'],
+  emits: ['update:showDialog', 'update:localProps'],
   data() {
     return {
       showCodeDialog: false,
@@ -211,6 +211,7 @@ export default {
       devlog.log('this.show', this.show);
       this.show = false;
       setChangeValue(data);
+      this.$emit('update:localProps', {});
     },
     confirm(func, transferData) {
       this.$q.dialog({
@@ -250,8 +251,9 @@ export default {
             devlog.log('DDFR', transfer);
             devlog.log('this.$store', this.$store.dispatch);
             this.$store.dispatch('transfers/addTransfer', transfer);
-            // this.cancel(this.transferData);
+            this.cancel(this.transferData);
             this.$q.loading.hide();
+            this.show = false;
             // this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно добавлена.`, 'center');
           })
           .catch((errors) => {
@@ -288,8 +290,9 @@ export default {
             .then(({ data: { transfer } }) => {
               devlog.log('DDFR', transfer);
               this.$store.dispatch('transfers/updateTransfer', transfer);
-              // this.cancel(this.transferData);
+              this.cancel(this.transferData);
               this.$q.loading.hide();
+              this.show = false;
               // this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно обновлена.`, 'center');
             })
             .catch((errors) => {

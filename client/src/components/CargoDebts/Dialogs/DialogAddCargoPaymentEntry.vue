@@ -97,7 +97,7 @@
               :errors="errorsData"
             >
               <template #append>
-                <Date
+                <DateComponent
                   v-model:value="item.value"
                   v-model:change-value="item.changeValue"
                 />
@@ -121,7 +121,7 @@
       <Separator />
       <q-card-actions align="right">
         <BaseBtn
-          :label="$t('save')"
+          label="Сохранить"
           color="positive"
           icon="save"
           :size="size"
@@ -129,7 +129,7 @@
         />
 
         <BaseBtn
-          :label="$t('clear')"
+          label="Очистить"
           color="negative"
           icon="clear"
           :size="size"
@@ -137,7 +137,7 @@
         />
 
         <BaseBtn
-          :label="$t('close')"
+          label="Закрыть"
           color="negative"
           icon="cancel"
           :size="size"
@@ -152,19 +152,28 @@
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
+import Dialog from 'components/Dialogs/Dialog.vue';
+import IconBtn from 'components/Buttons/IconBtn.vue';
+import BaseInput from 'components/Elements/BaseInput.vue';
+import SearchSelect from 'components/Elements/SearchSelect.vue';
+import BaseBtn from 'components/Buttons/BaseBtn.vue';
+import Separator from 'components/Separator.vue';
+import SelectChips from 'components/Elements/SelectChips.vue';
+import Menu from 'components/Menu.vue';
+import DateComponent from 'components/Date.vue';
 
 export default {
   name: 'DialogAddCargoPaymentEntry',
   components: {
-    Dialog: () => import('components/Dialogs/Dialog.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
-    BaseInput: () => import('components/Elements/BaseInput.vue'),
-    SearchSelect: () => import('components/Elements/SearchSelect.vue'),
-    BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-    Separator: () => import('components/Separator.vue'),
-    SelectChips: () => import('components/Elements/SelectChips.vue'),
-    Menu: () => import('components/Menu.vue'),
-    Date: () => import('components/Date.vue'),
+    Dialog,
+    IconBtn,
+    BaseInput,
+    SearchSelect,
+    BaseBtn,
+    Separator,
+    SelectChips,
+    Menu,
+    DateComponent,
   },
   mixins: [CheckErrorsMixin, showNotif],
   props: {
@@ -203,7 +212,7 @@ export default {
         code_client_id: {
           name: 'code_client_id',
           type: 'select',
-          label: this.$t('client'),
+          label: 'Клиент',
           options: [],
           require: true,
           requireError: 'Выберите значение.',
@@ -232,7 +241,7 @@ export default {
         notation: {
           name: 'notation',
           type: 'text',
-          label: this.$t('notation'),
+          label: 'Примечания',
           changeValue: false,
           default: '',
           value: '',

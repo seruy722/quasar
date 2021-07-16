@@ -83,19 +83,28 @@ import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import { setDefaultData, getCategories, getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import Separator from 'src/components/Separator.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 
 export default {
   name: 'DialogAddNewCodePrice',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    Card: () => import('src/components/Elements/Card/Card.vue'),
-    CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    Dialog,
+    BaseBtn,
+    BaseInput,
+    Separator,
+    Card,
+    CardActions,
+    CardSection,
+    IconBtn,
+    SearchSelect,
   },
   mixins: [showNotif, CheckErrorsMixin],
   props: {
@@ -139,7 +148,7 @@ export default {
         },
         for_place: {
           type: 'number',
-          label: 'За место',
+          label: 'За кг',
           field: 'for_place',
           changeValue: false,
           default: 0,

@@ -147,21 +147,32 @@ import {
   addTime,
 } from 'src/utils/formatDate';
 import { formatISO } from 'date-fns';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import Separator from 'src/components/Separator.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseSelect from 'src/components/Elements/BaseSelect.vue';
+import Date from 'src/components/Date.vue';
 
 export default {
   name: 'DialogAddFax',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    Card: () => import('src/components/Elements/Card/Card.vue'),
-    CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    BaseSelect: () => import('src/components/Elements/BaseSelect.vue'),
-    Date: () => import('src/components/Date.vue'),
+    Dialog,
+    OutlineBtn,
+    BaseInput,
+    SearchSelect,
+    Card,
+    CardActions,
+    CardSection,
+    Separator,
+    IconBtn,
+    BaseSelect,
+    Date,
   },
   mixins: [showNotif, CheckErrorsMixin],
   props: {

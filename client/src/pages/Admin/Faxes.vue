@@ -14,7 +14,7 @@
             v-show="faxesTableReactiveProperties.selected.length"
             color="negative"
             icon="delete"
-            :tooltip="$t('delete')"
+            tooltip="Удалить"
             class="q-ml-md"
             @icon-btn-click="deleteFaxItems(faxesTableReactiveProperties.selected)"
           />
@@ -29,14 +29,6 @@
             tooltip="Обьеденить"
             @icon-btn-click="combineFaxes(faxesTableReactiveProperties.selected)"
           />
-
-          <!--        <IconBtn-->
-          <!--          v-show="faxesTableReactiveProperties.selected.length"-->
-          <!--          icon="swap_vert"-->
-          <!--          tooltip=""-->
-          <!--          class="q-ml-md"-->
-          <!--          @icon-btn-click="deleteFaxItems"-->
-          <!--        />-->
           <IconBtn
             dense
             icon="flight_land"
@@ -298,25 +290,37 @@
 <script>
 import { getUrl } from 'src/tools/url';
 import { setFormatedDate, prepareHistoryData, getFaxes } from 'src/utils/FrequentlyCalledFunctions';
-import { callFunction, statusFilter } from 'src/utils';
+import { callFunction, statusFilter, numberFormat } from 'src/utils';
 import showNotif from 'src/mixins/showNotif';
 import { addTime } from 'src/utils/formatDate';
+import Table from 'components/Elements/Table/Table.vue';
+import IconBtn from 'components/Buttons/IconBtn.vue';
+import BaseBtn from 'components/Buttons/BaseBtn.vue';
+import Dialog from 'components/Dialogs/Dialog.vue';
+import List from 'components/Elements/List/List.vue';
+import DialogAddFax from 'components/Dialogs/DialogAddFax.vue';
+import Menu from 'components/Menu.vue';
+import FaxesHistory from 'components/History/FaxesHistory.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import DialogChooseDate from 'src/components/Dialogs/DialogChooseDate.vue';
+import DialogNotDeliveredCargo from 'src/components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue';
 
 export default {
   name: 'Faxes',
   components: {
-    Table: () => import('components/Elements/Table/Table.vue'),
-    List: () => import('components/Elements/List/List.vue'),
-    BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-    DialogAddFax: () => import('components/Dialogs/DialogAddFax.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
-    Menu: () => import('components/Menu.vue'),
-    FaxesHistory: () => import('components/History/FaxesHistory.vue'),
-    Dialog: () => import('components/Dialogs/Dialog.vue'),
-    PullRefresh: () => import('src/components/PullRefresh.vue'),
-    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-    DialogChooseDate: () => import('src/components/Dialogs/DialogChooseDate.vue'),
-    DialogNotDeliveredCargo: () => import('components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue'),
+    Table,
+    List,
+    BaseBtn,
+    DialogAddFax,
+    IconBtn,
+    Menu,
+    FaxesHistory,
+    Dialog,
+    PullRefresh,
+    UpdateBtn,
+    DialogChooseDate,
+    DialogNotDeliveredCargo,
   },
   mixins: [showNotif],
   data() {
@@ -337,7 +341,7 @@ export default {
         columns: [
           {
             name: 'name',
-            label: this.$t('fax'),
+            label: 'Факс',
             align: 'center',
             field: 'name',
             sortable: true,
@@ -351,21 +355,21 @@ export default {
           },
           {
             name: 'transporter_name',
-            label: this.$t('transporter'),
+            label: 'Перевожчик',
             field: 'transporter_name',
             align: 'center',
             sortable: true,
           },
           {
             name: 'transport_name',
-            label: this.$t('transport'),
+            label: 'Транспорт',
             field: 'transport_name',
             align: 'center',
             sortable: true,
           },
           {
             name: 'departure_date',
-            label: this.$t('departureDate'),
+            label: 'Дата прибытия',
             align: 'center',
             field: 'departure_date',
             sortable: true,
@@ -439,16 +443,6 @@ export default {
       ];
     },
   },
-  // watch: {
-  //   dialogChooseDateData(val) {
-  //     devlog.log('WW_dialogChooseDateData', val);
-  //     if (val) {
-  //       this.dialogChooseDataForSend.date = addTime(val)
-  //         .toISOString();
-  //       this.uploadToCargoFinish(this.dialogChooseDataForSend);
-  //     }
-  //   },
-  // },
   mounted() {
     this.$q.loading.show();
     Promise.all([getFaxes(this.$store)])
@@ -457,6 +451,7 @@ export default {
       });
   },
   methods: {
+    numberFormat,
     statusFilter,
     setDateFromDialog(date) {
       devlog.log('setDateFromDialog', date);

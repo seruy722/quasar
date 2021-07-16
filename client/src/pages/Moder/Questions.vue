@@ -272,16 +272,22 @@ import showNotif from 'src/mixins/showNotif';
 import filesMixin from 'src/mixins/files';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import { fullDate } from 'src/utils/formatDate';
+import Table from 'src/components/Elements/Table/Table.vue';
+import MenuBtn from 'src/components/Buttons/MenuBtn.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import DialogShowImageGallery from 'src/components/Tasks/DialogShowImageGallery.vue';
+import DialogAddQuestion from 'src/components/Questions/DialogAddQuestion.vue';
+import DialogQuestionsComment from 'src/components/Questions/DialogQuestionsComment.vue';
 
 export default {
   name: 'Questions',
   components: {
-    Table: () => import('components/Elements/Table/Table.vue'),
-    MenuBtn: () => import('components/Buttons/MenuBtn.vue'),
-    PullRefresh: () => import('components/PullRefresh.vue'),
-    DialogQuestionsComment: () => import('components/Questions/DialogQuestionsComment.vue'),
-    DialogAddQuestion: () => import('components/Questions/DialogAddQuestion.vue'),
-    DialogShowImageGallery: () => import('components/Tasks/DialogShowImageGallery.vue'),
+    Table,
+    MenuBtn,
+    PullRefresh,
+    DialogQuestionsComment,
+    DialogAddQuestion,
+    DialogShowImageGallery,
   },
   mixins: [showNotif, CheckErrorsMixin, filesMixin],
   data() {

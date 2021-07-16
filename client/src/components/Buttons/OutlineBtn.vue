@@ -1,12 +1,12 @@
 <template>
   <q-btn
-    outline
-    :label="label"
-    :color="color"
-    :size="size"
-    :dense="dense"
-    data-vue-component-name="OutlineBtn"
-    @click="$emit('click-outline-btn')"
+      outline
+      :label="label"
+      :color="color"
+      :size="size"
+      :dense="dense"
+      data-vue-component-name="OutlineBtn"
+      @click="$emit('click-outline-btn')"
   />
 </template>
 

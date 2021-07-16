@@ -52,7 +52,7 @@
           v-show="faxTableReactiveProperties.selected.length"
           color="negative"
           icon="delete"
-          :tooltip="$t('delete')"
+          tooltip="Удалить"
           @icon-btn-click="destroyEntry(faxTableReactiveProperties.selected)"
         />
 
@@ -556,38 +556,48 @@ import {
   setCategoriesStoreHouseData,
   combineStoreHouseData,
   getDeliveryMethodsList,
-  // getStorehouseTableData,
   getFaxes,
-  // setFormatedDate,
-  // prepareHistoryData,
 } from 'src/utils/FrequentlyCalledFunctions';
 import StorehouseDataMixin from 'src/mixins/StorehouseData';
 import { numberFormat, thingsFilter, optionsFilter } from 'src/utils';
+import Table from 'components/Elements/Table/Table.vue';
+import IconBtn from 'components/Buttons/IconBtn.vue';
+import BaseBtn from 'components/Buttons/BaseBtn.vue';
+import DialogFaxData from 'components/Dialogs/DialogFaxData.vue';
+import StorehouseDataHistory from 'components/History/StorehouseDataHistory.vue';
+import Dialog from 'components/Dialogs/Dialog.vue';
+import CountCategories from 'components/CountCategories.vue';
+import PopupEdit from 'components/PopupEdit.vue';
+import SearchSelect from 'components/Elements/SearchSelect.vue';
+import List from 'src/components/Elements/List/List.vue';
+import ItemSection from 'src/components/Elements/List/ItemSection.vue';
+import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
+import ListItem from 'src/components/Elements/List/ListItem.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import MoveToFaxBtn from 'src/components/Buttons/MoveToFaxBtn.vue';
+import DialogMoveToFax from 'src/components/Dialogs/DialogMoveToFax.vue';
 
 export default {
   name: 'Fax',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    // Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    List: () => import('src/components/Elements/List/List.vue'),
-    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-    // Badge: () => import('src/components/Elements/Badge.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    DialogFaxData: () => import('src/components/Dialogs/DialogFaxData.vue'),
-    DialogSendSms: () => import('src/components/Dialogs/DialogSendSms.vue'),
-    StorehouseDataHistory: () => import('src/components/History/StorehouseDataHistory.vue'),
-    Card: () => import('src/components/Elements/Card/Card.vue'),
-    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    CountCategories: () => import('src/components/CountCategories.vue'),
-    PopupEdit: () => import('src/components/PopupEdit.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    MoveToFaxBtn: () => import('src/components/Buttons/MoveToFaxBtn.vue'),
-    DialogMoveToFax: () => import('src/components/Dialogs/DialogMoveToFax.vue'),
-    // Search: () => import('src/components/Search.vue'),
+    Table,
+    IconBtn,
+    List,
+    ItemSection,
+    ItemLabel,
+    ListItem,
+    BaseBtn,
+    DialogFaxData,
+    StorehouseDataHistory,
+    Card,
+    CardSection,
+    Dialog,
+    CountCategories,
+    PopupEdit,
+    SearchSelect,
+    MoveToFaxBtn,
+    DialogMoveToFax,
   },
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {
@@ -627,28 +637,28 @@ export default {
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_kg',
-            label: this.$t('forKg'),
+            label: 'За кг',
             field: 'for_kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_place',
-            label: this.$t('forPlace'),
+            label: 'За место',
             field: 'for_place',
             align: 'center',
             sortable: true,
@@ -662,7 +672,7 @@ export default {
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
@@ -676,7 +686,7 @@ export default {
           },
           {
             name: 'shop',
-            label: this.$t('shop'),
+            label: 'Магазин',
             field: 'shop',
             align: 'center',
             sortable: true,
@@ -697,14 +707,14 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
           },
           {
             name: 'things',
-            label: this.$t('things'),
+            label: 'Опись',
             field: 'things',
             align: 'center',
             sortable: true,

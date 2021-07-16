@@ -106,14 +106,18 @@
 <script>
 import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
 import showNotif from 'src/mixins/showNotif';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
 
 export default {
   name: 'DialogAddTaskComment',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
+    Dialog,
+    BaseBtn,
+    SearchSelect,
+    DateWithInputForCargo,
   },
   mixins: [showNotif],
   props: {

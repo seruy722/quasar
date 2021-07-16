@@ -102,20 +102,23 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
 import { getUrl } from 'src/tools/url';
-// import { getLSKey } from 'src/tools/lsKeys';
 import OnKeyUp from 'src/mixins/OnKeyUp';
 import showNotif from 'src/mixins/showNotif';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import AddCustomers from 'src/components/Dialogs/AddCustomers.vue';
+import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
 
 export default {
   name: 'AddCode',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    AddCustomers: () => import('src/components/Dialogs/AddCustomers.vue'),
-    OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
+    Dialog,
+    AddCustomers,
+    OutlineBtn,
+    BaseBtn,
+    BaseInput,
   },
   mixins: [OnKeyUp, showNotif],
   data() {

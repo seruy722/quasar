@@ -72,21 +72,30 @@ import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import { setDefaultData } from 'src/utils/FrequentlyCalledFunctions';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import Separator from 'src/components/Separator.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import SelectChips from 'src/components/Elements/SelectChips.vue';
+import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
 
 export default {
   name: 'DialogAddExpense',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    Card: () => import('src/components/Elements/Card/Card.vue'),
-    CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    SelectChips: () => import('src/components/Elements/SelectChips.vue'),
-    DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
-    // SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    Dialog,
+    BaseBtn,
+    BaseInput,
+    Separator,
+    Card,
+    CardActions,
+    CardSection,
+    IconBtn,
+    SelectChips,
+    DateWithInputForCargo,
   },
   mixins: [showNotif, CheckErrorsMixin],
   props: {

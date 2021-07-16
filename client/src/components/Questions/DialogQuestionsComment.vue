@@ -96,13 +96,16 @@
 <script>
 import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
 import showNotif from 'src/mixins/showNotif';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 
 export default {
   name: 'DialogQuestionsComment',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    Dialog,
+    BaseBtn,
+    SearchSelect,
   },
   mixins: [showNotif],
   props: {

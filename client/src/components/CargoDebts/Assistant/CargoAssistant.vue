@@ -291,15 +291,18 @@
 <script>
 import ExportDataMixin from 'src/mixins/ExportData';
 import { numberFormat, thingsFilter } from 'src/utils';
+import Table from 'src/components/Elements/Table/Table.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
+import GeneralClientCargoData from 'src/components/CargoDebts/GeneralClientCargoData.vue';
 
 export default {
   name: 'Cargo',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-    // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-    GeneralClientCargoData: () => import('src/components/CargoDebts/GeneralClientCargoData.vue'),
+    Table,
+    UpdateBtn,
+    ExportBtn,
+    GeneralClientCargoData,
   },
   mixins: [ExportDataMixin],
   props: {
@@ -343,28 +346,28 @@ export default {
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_kg',
-            label: this.$t('forKg'),
+            label: 'За кг',
             field: 'for_kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_place',
-            label: this.$t('forPlace'),
+            label: 'За место',
             field: 'for_place',
             align: 'center',
             sortable: true,
@@ -392,7 +395,7 @@ export default {
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
@@ -406,21 +409,21 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
           },
           {
             name: 'shop',
-            label: this.$t('shop'),
+            label: 'Магазин',
             field: 'shop',
             align: 'center',
             sortable: true,
           },
           {
             name: 'things',
-            label: this.$t('things'),
+            label: 'Опись',
             field: 'things',
             align: 'center',
             sortable: true,

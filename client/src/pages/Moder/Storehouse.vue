@@ -289,23 +289,36 @@ import {
   getStorehouseTableData,
 } from 'src/utils/FrequentlyCalledFunctions';
 import StorehouseDataMixin from 'src/mixins/StorehouseData';
+import Table from 'components/Elements/Table/Table.vue';
+import Dialog from 'components/Dialogs/Dialog.vue';
+import DialogAddEntryOnStorehouse from 'components/Dialogs/DialogAddEntryOnStorehouse.vue';
+import IconBtn from 'components/Buttons/IconBtn.vue';
+import Menu from 'components/Menu.vue';
+import BaseBtn from 'components/Buttons/BaseBtn.vue';
+import StorehouseDataHistory from 'components/History/StorehouseDataHistory.vue';
+import PullRefresh from 'components/PullRefresh.vue';
+import CountCategories from 'components/CountCategories.vue';
+import DialogMoveToFax from 'components/Dialogs/DialogMoveToFax.vue';
+import MoveToFaxBtn from 'components/Buttons/MoveToFaxBtn.vue';
+import UpdateBtn from 'components/Buttons/UpdateBtn.vue';
+import StorehouseInfo from 'components/Storehouse/StorehouseInfo.vue';
 
 export default {
   name: 'Storehouse',
   components: {
-    Table: () => import('components/Elements/Table/Table.vue'),
-    Dialog: () => import('components/Dialogs/Dialog.vue'),
-    DialogAddEntryOnStorehouse: () => import('components/Dialogs/DialogAddEntryOnStorehouse.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
-    Menu: () => import('components/Menu.vue'),
-    BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-    StorehouseDataHistory: () => import('components/History/StorehouseDataHistory.vue'),
-    PullRefresh: () => import('components/PullRefresh.vue'),
-    CountCategories: () => import('components/CountCategories.vue'),
-    DialogMoveToFax: () => import('components/Dialogs/DialogMoveToFax.vue'),
-    MoveToFaxBtn: () => import('components/Buttons/MoveToFaxBtn.vue'),
-    UpdateBtn: () => import('components/Buttons/UpdateBtn.vue'),
-    StorehouseInfo: () => import('components/Storehouse/StorehouseInfo.vue'),
+    Table,
+    Dialog,
+    DialogAddEntryOnStorehouse,
+    IconBtn,
+    Menu,
+    BaseBtn,
+    StorehouseDataHistory,
+    PullRefresh,
+    CountCategories,
+    DialogMoveToFax,
+    MoveToFaxBtn,
+    UpdateBtn,
+    StorehouseInfo,
   },
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {
@@ -315,35 +328,35 @@ export default {
       localStorehouseEditData: {},
       showAddEntryOnStorehouseDialog: false,
       storehouseTableProperties: {
-        title: this.$t('storehouse'),
+        title: 'Склад',
         viewBody: true,
         viewTop: true,
         hideBottom: false,
         columns: [
           {
             name: 'code_place',
-            label: this.$t('code'),
+            label: 'Код',
             align: 'center',
             field: 'code_place',
             sortable: true,
           },
           {
             name: 'code_client_name',
-            label: this.$t('client'),
+            label: 'Клиент',
             field: 'code_client_name',
             align: 'center',
             sortable: true,
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
@@ -357,14 +370,14 @@ export default {
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
           },
           {
             name: 'shop',
-            label: this.$t('shop'),
+            label: 'Магазин',
             field: 'shop',
             align: 'center',
             sortable: true,
@@ -378,14 +391,14 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
           },
           {
             name: 'things',
-            label: this.$t('things'),
+            label: 'Опись',
             field: 'things',
             align: 'center',
             sortable: true,

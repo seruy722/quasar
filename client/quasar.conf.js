@@ -29,6 +29,7 @@ module.exports = function (ctx) {
         'Loading',
         'LocalStorage',
         'Dialog',
+        'Notify',
       ],
       config: {
         // loading: {

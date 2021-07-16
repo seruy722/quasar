@@ -40,81 +40,90 @@
 </template>
 
 <script>
-    const listItems = [
-        {
-            title: 'Запись',
-            click: 'showAddEntryOnStorehouseDialog',
-        },
-        {
-            title: 'Код',
-            click: 'showCodeDialog',
-        },
-        {
-            title: 'Клиента',
-            click: 'showCustomerDialog',
-        },
-        {
-            title: 'Категорию',
-            click: 'showCategoryDialog',
-        },
-        {
-            title: 'Факс',
-            click: 'showFaxDialog',
-        },
-        {
-            title: 'Перевожчика',
-            click: 'showTransporterDialog',
-        },
-    ];
-    export default {
-        name: 'Menu',
-        components: {
-            DialogAddEntryOnStorehouse: () => import('src/components/Dialogs/DialogAddEntryOnStorehouse.vue'),
-            DialogAddTransporter: () => import('src/components/Dialogs/DialogAddTransporter.vue'),
-            DialogAddCategory: () => import('src/components/Dialogs/DialogAddCategory.vue'),
-            DialogAddFax: () => import('src/components/Dialogs/DialogAddFax.vue'),
-            DialogAddClient: () => import('src/components/Dialogs/DialogAddClient.vue'),
-            DialogAddCode: () => import('src/components/Dialogs/DialogAddCode.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-        },
-        props: {
-            items: {
-                type: Array,
-                default: () => [],
-            },
-        },
-        data() {
-            return {
-                listItems: [],
-                showAddEntryOnStorehouseDialog: false,
-                showTransporterDialog: false,
-                showCategoryDialog: false,
-                showFaxDialog: false,
-                showCustomerDialog: false,
-                showCodeDialog: false,
-            };
-        },
-        watch: {
-            items: {
-                handler: function set(val) {
-                    if (!_.isEmpty(val)) {
-                        this.listItems = _.reduce(listItems, (result, item) => {
-                            if (val.includes(item.title)) {
-                                result.push(item);
-                            }
-                            return result;
-                        }, []);
-                    } else {
-                        this.listItems = listItems;
-                    }
-                },
-                immediate: true,
-            },
-        },
-        methods: {
-            onClick(value) {
-                this[value] = true;
-            },
-        },
+// import DialogAddEntryOnStorehouse from 'src/components/Dialogs/DialogAddEntryOnStorehouse.vue';
+import DialogAddTransporter from 'src/components/Dialogs/DialogAddTransporter.vue';
+import DialogAddCategory from 'src/components/Dialogs/DialogAddCategory.vue';
+import DialogAddFax from 'src/components/Dialogs/DialogAddFax.vue';
+import DialogAddClient from 'src/components/Dialogs/DialogAddClient.vue';
+import DialogAddCode from 'src/components/Dialogs/DialogAddCode.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import { defineAsyncComponent } from 'vue';
+
+const listItems = [
+  {
+    title: 'Запись',
+    click: 'showAddEntryOnStorehouseDialog',
+  },
+  {
+    title: 'Код',
+    click: 'showCodeDialog',
+  },
+  {
+    title: 'Клиента',
+    click: 'showCustomerDialog',
+  },
+  {
+    title: 'Категорию',
+    click: 'showCategoryDialog',
+  },
+  {
+    title: 'Факс',
+    click: 'showFaxDialog',
+  },
+  {
+    title: 'Перевожчика',
+    click: 'showTransporterDialog',
+  },
+];
+export default {
+  name: 'Menu',
+  components: {
+    DialogAddEntryOnStorehouse: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddEntryOnStorehouse.vue')),
+    DialogAddTransporter,
+    DialogAddCategory,
+    DialogAddFax,
+    DialogAddClient,
+    DialogAddCode,
+    IconBtn,
+  },
+  props: {
+    items: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  data() {
+    return {
+      listItems: [],
+      showAddEntryOnStorehouseDialog: false,
+      showTransporterDialog: false,
+      showCategoryDialog: false,
+      showFaxDialog: false,
+      showCustomerDialog: false,
+      showCodeDialog: false,
     };
+  },
+  watch: {
+    items: {
+      handler: function set(val) {
+        if (!_.isEmpty(val)) {
+          this.listItems = _.reduce(listItems, (result, item) => {
+            if (val.includes(item.title)) {
+              result.push(item);
+            }
+            return result;
+          }, []);
+        } else {
+          this.listItems = listItems;
+        }
+      },
+      immediate: true,
+    },
+  },
+  methods: {
+    onClick(value) {
+      this[value] = true;
+    },
+  },
+};
 </script>

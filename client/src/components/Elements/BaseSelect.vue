@@ -1,18 +1,18 @@
 <template>
   <q-select
-    :filled="filled"
-    :options="options"
-    :label="label"
-    :error-message="viewError()"
-    :error="isError"
-    :value="value"
-    :dense="dense"
-    :options-dense="optionsDense"
-    :no-error-icon="noErrorIcon"
-    data-vue-component-name="BaseSelect"
-    emit-value
-    map-options
-    @input="inputEvent"
+      :filled="filled"
+      :options="options"
+      :label="label"
+      :error-message="viewError()"
+      :error="isError"
+      :value="value"
+      :dense="dense"
+      :options-dense="optionsDense"
+      :no-error-icon="noErrorIcon"
+      data-vue-component-name="BaseSelect"
+      emit-value
+      map-options
+      @input="inputEvent"
   >
     <template #prepend>
       <slot name="prepend" />

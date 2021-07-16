@@ -9,14 +9,6 @@
       <q-card-section class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">{{ dialogTitle }}</span>
         <div>
-          <!--          <IconBtn-->
-          <!--            v-show="entryData.id"-->
-          <!--            dense-->
-          <!--            icon="delete"-->
-          <!--            color="negative"-->
-          <!--            tooltip="Удалить"-->
-          <!--            @icon-btn-click="destroyCustomer(entryData)"-->
-          <!--          />-->
           <IconBtn
             dense
             icon="clear"
@@ -87,16 +79,22 @@ import {
   getClientCodes,
 } from 'src/utils/FrequentlyCalledFunctions';
 import getFromSettings from 'src/tools/settings';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import Separator from 'src/components/Separator.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 
 export default {
   name: 'DialogAddQuestion',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
+    Dialog,
+    BaseInput,
+    SearchSelect,
+    Separator,
+    IconBtn,
+    BaseBtn,
   },
   mixins: [showNotif, CheckErrorsMixin],
   props: {

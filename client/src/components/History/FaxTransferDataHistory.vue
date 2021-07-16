@@ -76,11 +76,12 @@
 <script>
 import getFromSettings from 'src/tools/settings';
 import { fullDate } from 'src/utils/formatDate';
+import TimelineEntry from 'src/components/Timeline/TimelineEntry.vue';
 
 export default {
   name: 'FaxTransferDataHistory',
   components: {
-    TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
+    TimelineEntry,
   },
   props: {
     historyData: {

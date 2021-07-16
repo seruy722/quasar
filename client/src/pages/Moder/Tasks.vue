@@ -16,9 +16,9 @@
               transition-hide="scale"
             >
               <q-list
-separator
-style="min-width: 100px"
->
+                separator
+                style="min-width: 100px"
+              >
                 <q-item
                   v-close-popup
                   clickable
@@ -26,9 +26,9 @@ style="min-width: 100px"
                 >
                   <q-item-section avatar>
                     <q-icon
-name="add"
-color="positive"
-/>
+                      name="add"
+                      color="positive"
+                    />
                   </q-item-section>
                   <q-item-section>Добавить</q-item-section>
                 </q-item>
@@ -40,9 +40,9 @@ color="positive"
                 >
                   <q-item-section avatar>
                     <q-icon
-name="edit"
-color="teal"
-/>
+                      name="edit"
+                      color="teal"
+                    />
                   </q-item-section>
                   <q-item-section>Редактировать</q-item-section>
                 </q-item>
@@ -53,22 +53,12 @@ color="teal"
                 >
                   <q-item-section avatar>
                     <q-icon
-name="sync"
-color="primary"
-/>
+                      name="sync"
+                      color="primary"
+                    />
                   </q-item-section>
                   <q-item-section>Обновить</q-item-section>
                 </q-item>
-                <!--                <q-item-->
-                <!--                  v-close-popup-->
-                <!--                  clickable-->
-                <!--                  @click="exportFaxData(cargoTableReactiveProperties.selected)"-->
-                <!--                >-->
-                <!--                  <q-item-section avatar>-->
-                <!--                    <q-icon name="explicit" color="positive" />-->
-                <!--                  </q-item-section>-->
-                <!--                  <q-item-section>Excel</q-item-section>-->
-                <!--                </q-item>-->
                 <q-item
                   v-show="cargoTableReactiveProperties.selected.length"
                   v-close-popup
@@ -77,9 +67,9 @@ color="primary"
                 >
                   <q-item-section avatar>
                     <q-icon
-name="delete"
-color="negative"
-/>
+                      name="delete"
+                      color="negative"
+                    />
                   </q-item-section>
                   <q-item-section>Удалить</q-item-section>
                 </q-item>
@@ -227,14 +217,18 @@ color="negative"
 import showNotif from 'src/mixins/showNotif';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import getFromSettings from 'src/tools/settings';
+import Table from 'src/components/Elements/Table/Table.vue';
+import MenuBtn from 'src/components/Buttons/MenuBtn.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import DialogAddTask from 'src/components/Tasks/DialogAddTask.vue';
 
 export default {
   name: 'Tasks',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
-    DialogAddTask: () => import('components/Tasks/DialogAddTask.vue'),
-    PullRefresh: () => import('src/components/PullRefresh.vue'),
+    Table,
+    MenuBtn,
+    DialogAddTask,
+    PullRefresh,
   },
   mixins: [showNotif, CheckErrorsMixin],
   data() {

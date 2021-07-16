@@ -16,14 +16,14 @@
           v-show="currentCodeClientId"
           @update-btn-click="refresh"
         />
-<!--        <ExportBtn-->
-<!--          @export-btn-click="exportFaxData(cargoTableReactiveProperties.selected)"-->
-<!--        />-->
+        <!--        <ExportBtn-->
+        <!--          @export-btn-click="exportFaxData(cargoTableReactiveProperties.selected)"-->
+        <!--        />-->
         <IconBtn
           v-show="cargoTableReactiveProperties.selected.length"
           color="negative"
           icon="delete"
-          :tooltip="$t('delete')"
+          tooltip="Удалить"
           @icon-btn-click="destroyEntry(cargoTableReactiveProperties.selected)"
         />
 
@@ -48,20 +48,20 @@
         >
           <q-list separator>
             <q-item
-v-close-popup
-clickable
-@click="exportFaxData(cargoTableReactiveProperties.selected)"
->
+              v-close-popup
+              clickable
+              @click="exportFaxData(cargoTableReactiveProperties.selected)"
+            >
               <q-item-section>
                 <q-item-label>Выгрузить</q-item-label>
               </q-item-section>
             </q-item>
 
             <q-item
-v-close-popup
-clickable
-@click="exportDetailFaxData(cargoTableReactiveProperties.selected)"
->
+              v-close-popup
+              clickable
+              @click="exportDetailFaxData(cargoTableReactiveProperties.selected)"
+            >
               <q-item-section>
                 <q-item-label>Выгрузить детально</q-item-label>
               </q-item-section>
@@ -158,7 +158,7 @@ clickable
                     v-else-if="col.field === 'paid'"
                   >
                     <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{
+                      {{
                         props.row.paid ? 'Да' :
                           props.row.type ? null : 'Нет'
                       }}
@@ -180,16 +180,6 @@ clickable
                   </q-item-label>
                 </q-item-section>
               </q-item>
-              <!--              <q-item>-->
-              <!--                <q-item-section>-->
-              <!--                  <BaseBtn-->
-              <!--                    label="История"-->
-              <!--                    color="info"-->
-              <!--                    style="max-width: 100px;margin: 0 auto;"-->
-              <!--                    @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"-->
-              <!--                  />-->
-              <!--                </q-item-section>-->
-              <!--              </q-item>-->
             </q-list>
           </q-expansion-item>
         </div>
@@ -287,7 +277,7 @@ clickable
             :props="props"
           >
             <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{
+              {{
                 props.row.paid ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}
@@ -336,7 +326,7 @@ clickable
             :props="props"
           >
             <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
-{{
+              {{
                 props.row.in_cargo ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}
@@ -420,23 +410,34 @@ clickable
 import ExportDataMixin from 'src/mixins/ExportData';
 import showNotif from 'src/mixins/showNotif';
 import { numberFormat, thingsFilter } from 'src/utils';
+import Table from 'src/components/Elements/Table/Table.vue';
+import CountCargoCategories from 'src/components/CargoDebts/CountCargoCategories.vue';
+import GeneralClientCargoData from 'src/components/CargoDebts/GeneralClientCargoData.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import DialogViewCargoData from 'src/components/CargoDebts/Dialogs/DialogViewCargoData.vue';
+import MenuCargo from 'src/components/CargoDebts/MenuCargo.vue';
+import DialogAddCargoPaymentEntry from 'src/components/CargoDebts/Dialogs/DialogAddCargoPaymentEntry.vue';
+import DialogAddCargoDebtEntry from 'src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue';
+import DialogAddCargoPayEntry from 'src/components/CargoDebts/Dialogs/DialogAddCargoPayEntry.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import CalculateClient from 'src/components/CargoDebts/CalculateClient.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
 
 export default {
   name: 'Cargo',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    CountCargoCategories: () => import('src/components/CargoDebts/CountCargoCategories.vue'),
-    GeneralClientCargoData: () => import('src/components/CargoDebts/GeneralClientCargoData.vue'),
-    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-    DialogViewCargoData: () => import('src/components/CargoDebts/Dialogs/DialogViewCargoData.vue'),
-    MenuCargo: () => import('src/components/CargoDebts/MenuCargo.vue'),
-    DialogAddCargoPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPaymentEntry.vue'),
-    DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
-    DialogAddCargoPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoPayEntry.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    // ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-    CalculateClient: () => import('src/components/CargoDebts/CalculateClient.vue'),
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
+    Table,
+    CountCargoCategories,
+    GeneralClientCargoData,
+    UpdateBtn,
+    DialogViewCargoData,
+    MenuCargo,
+    DialogAddCargoPaymentEntry,
+    DialogAddCargoDebtEntry,
+    DialogAddCargoPayEntry,
+    IconBtn,
+    CalculateClient,
+    Dialog,
   },
   mixins: [ExportDataMixin, showNotif],
   props: {
@@ -484,28 +485,28 @@ export default {
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_kg',
-            label: this.$t('forKg'),
+            label: 'За кг',
             field: 'for_kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_place',
-            label: this.$t('forPlace'),
+            label: 'За место',
             field: 'for_place',
             align: 'center',
             sortable: true,
@@ -533,7 +534,7 @@ export default {
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
@@ -554,14 +555,14 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
           },
           {
             name: 'shop',
-            label: this.$t('shop'),
+            label: 'Магазин',
             field: 'shop',
             align: 'center',
             sortable: true,
@@ -575,7 +576,7 @@ export default {
           },
           {
             name: 'things',
-            label: this.$t('things'),
+            label: 'Опись',
             field: 'things',
             align: 'center',
             sortable: true,

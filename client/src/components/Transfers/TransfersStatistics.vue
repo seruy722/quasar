@@ -122,14 +122,18 @@
 <script>
 import { format } from 'date-fns';
 import { numberFormat } from 'src/utils';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import CountTransfersData from 'src/components/Transfers/CountTransfersData.vue';
+import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
+import DateWithInput from 'src/components/DateWithInput.vue';
 
 export default {
   name: 'TransfersStatistics',
   components: {
-    DateWithInput: () => import('src/components/DateWithInput.vue'),
-    OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
-    CountTransfersData: () => import('src/components/Transfers/CountTransfersData.vue'),
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
+    DateWithInput,
+    OutlineBtn,
+    CountTransfersData,
+    Dialog,
   },
   props: {
     enterData: {

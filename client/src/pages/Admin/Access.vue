@@ -4,8 +4,8 @@
     class="q-pa-md"
   >
     <div class="text-bold text-center text-h5">
-Доступ пользователей к роутам
-</div>
+      Доступ пользователей к роутам
+    </div>
     <div style="max-width: 500px">
       <List
         dense
@@ -28,8 +28,8 @@
             <q-item-section>
               <div>
                 <Badge color="info">
-{{ getRoles.length }}
-</Badge>
+                  {{ getRoles.length }}
+                </Badge>
               </div>
             </q-item-section>
 
@@ -85,10 +85,10 @@
         <q-separator />
 
         <q-expansion-item
-icon="lock"
-label="Разрешения"
-header-class="text-teal"
->
+          icon="lock"
+          label="Разрешения"
+          header-class="text-teal"
+        >
           <template #header>
             <q-item-section avatar>
               <q-icon name="lock" />
@@ -101,8 +101,8 @@ header-class="text-teal"
             <q-item-section>
               <div>
                 <Badge color="info">
-{{ getPermissions.length }}
-</Badge>
+                  {{ getPermissions.length }}
+                </Badge>
               </div>
             </q-item-section>
 
@@ -158,16 +158,16 @@ header-class="text-teal"
       </List>
     </div>
     <div
-v-for="(item, index) in usersWithRolesAndPermissions"
-:key="index"
->
+      v-for="(item, index) in usersWithRolesAndPermissions"
+      :key="index"
+    >
       <div style="border: 1px solid lightgray;margin: 10px 0;padding: 10px;">
         <div>USER_NAME: {{ item.name }}</div>
         <div
-v-for="(role, i) in item.roles"
-:key="i"
-class="q-ml-md"
->
+          v-for="(role, i) in item.roles"
+          :key="i"
+          class="q-ml-md"
+        >
           USER_ROLE: {{ role.name }}
           <IconBtn
             flat
@@ -178,10 +178,10 @@ class="q-ml-md"
             @icon-btn-click="deleteRoleFromUser(item, role)"
           />
           <div
-v-for="(permission, ind) in role.permissions"
-:key="ind"
-class="q-ml-lg"
->
+            v-for="(permission, ind) in role.permissions"
+            :key="ind"
+            class="q-ml-lg"
+          >
             ROLE_PERMISIION: {{ permission.name }}
             <IconBtn
               flat
@@ -194,9 +194,9 @@ class="q-ml-lg"
           </div>
         </div>
         <div
-v-for="(permission) in item.permissions"
-:key="permission.name"
->
+          v-for="(permission) in item.permissions"
+          :key="permission.name"
+        >
           USER_PERMISIION: {{ permission.name }}
           <IconBtn
             flat
@@ -226,18 +226,26 @@ v-for="(permission) in item.permissions"
 <script>
 import { getUrl } from 'src/tools/url';
 import showNotif from 'src/mixins/showNotif';
+import List from 'src/components/Elements/List/List.vue';
+import ItemSection from 'src/components/Elements/List/ItemSection.vue';
+import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
+import ListItem from 'src/components/Elements/List/ListItem.vue';
+import Badge from 'src/components/Elements/Badge.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import DialogAddRole from 'src/components/Dialogs/DialogAddRole.vue';
+import DialogAddPermission from 'src/components/Dialogs/DialogAddPermission.vue';
 
 export default {
   name: 'Access',
   components: {
-    List: () => import('src/components/Elements/List/List.vue'),
-    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-    Badge: () => import('src/components/Elements/Badge.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    DialogAddRole: () => import('src/components/Dialogs/DialogAddRole.vue'),
-    DialogAddPermission: () => import('src/components/Dialogs/DialogAddPermission.vue'),
+    List,
+    ItemSection,
+    ItemLabel,
+    ListItem,
+    Badge,
+    IconBtn,
+    DialogAddRole,
+    DialogAddPermission,
   },
   mixins: [showNotif],
   data() {

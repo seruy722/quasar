@@ -285,27 +285,23 @@
 </template>
 
 <script>
-// import {
-//     combineCargoData,
-//     // getCategories,
-//     // getShopsList,
-//     setFormatedDate,
-//     // setChangeValue,
-// } from 'src/utils/FrequentlyCalledFunctions';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import Table from 'src/components/Elements/Table/Table.vue';
+import CountCargoCategories from 'src/components/CargoDebts/CountCargoCategories.vue';
+import DialogAddCargoDebtEntry from 'src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue';
 import { thingsFilter, numberFormat } from 'src/utils';
 
 export default {
   name: 'DialogViewCargoData',
   components: {
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    // Separator: () => import('src/components/Separator.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    CountCargoCategories: () => import('src/components/CargoDebts/CountCargoCategories.vue'),
-    DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
-    // IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    // PopupEdit: () => import('src/components/PopupEdit.vue'),
+    BaseBtn,
+    Dialog,
+    IconBtn,
+    Table,
+    CountCargoCategories,
+    DialogAddCargoDebtEntry,
   },
   props: {
     values: {
@@ -356,28 +352,28 @@ export default {
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_kg',
-            label: this.$t('forKg'),
+            label: 'За кг',
             field: 'for_kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_place',
-            label: this.$t('forPlace'),
+            label: 'За место',
             field: 'for_place',
             align: 'center',
             sortable: true,
@@ -398,7 +394,7 @@ export default {
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
@@ -412,21 +408,21 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
           },
           {
             name: 'shop',
-            label: this.$t('shop'),
+            label: 'Магазин',
             field: 'shop',
             align: 'center',
             sortable: true,
           },
           {
             name: 'things',
-            label: this.$t('things'),
+            label: 'Опись',
             field: 'things',
             align: 'center',
             sortable: true,

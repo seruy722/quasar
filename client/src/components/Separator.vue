@@ -6,13 +6,13 @@
 </template>
 
 <script>
-    export default {
-        name: 'Separator',
-        props: {
-            color: {
-                type: String,
-                default: 'grey',
-            },
-        },
-    };
+export default {
+  name: 'Separator',
+  props: {
+    color: {
+      type: String,
+      default: 'grey',
+    },
+  },
+};
 </script>

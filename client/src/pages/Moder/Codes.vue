@@ -16,13 +16,6 @@
             tooltip="Обновить"
             @icon-btn-click="refresh"
           />
-          <!--          <IconBtn-->
-          <!--            color="positive"-->
-          <!--            tooltip="Excel"-->
-          <!--            icon="explicit"-->
-          <!--            class="q-ml-sm"-->
-          <!--            @icon-btn-click="exportTransfers"-->
-          <!--          />-->
           <Menu :items="['Код', 'Клиента']" />
           <IconBtn
             color="positive"
@@ -412,20 +405,30 @@ import {
   prepareHistoryData,
   getClientCodes,
 } from 'src/utils/FrequentlyCalledFunctions';
+import Table from 'components/Elements/Table/Table.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import Separator from 'src/components/Separator.vue';
+import DialogAddCode from 'src/components/Dialogs/DialogAddCode.vue';
+import DialogAddClient from 'src/components/Dialogs/DialogAddClient.vue';
+import Menu from 'src/components/Menu.vue';
+import CodeHistory from 'src/components/History/CodeHistory.vue';
+import ListNumbered from 'src/components/ListNumbered.vue';
 
 export default {
   name: 'Codes',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    DialogAddCode: () => import('src/components/Dialogs/DialogAddCode.vue'),
-    DialogAddClient: () => import('src/components/Dialogs/DialogAddClient.vue'),
-    Menu: () => import('src/components/Menu.vue'),
-    PullRefresh: () => import('src/components/PullRefresh.vue'),
-    CodeHistory: () => import('src/components/History/CodeHistory.vue'),
-    ListNumbered: () => import('src/components/ListNumbered.vue'),
+    Table,
+    Dialog,
+    IconBtn,
+    Separator,
+    DialogAddCode,
+    DialogAddClient,
+    Menu,
+    PullRefresh,
+    CodeHistory,
+    ListNumbered,
   },
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
   data() {

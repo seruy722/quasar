@@ -42,43 +42,43 @@
           <thead>
           <TR>
             <th
-class="text-left"
-style="width: 150px"
->
+              class="text-left"
+              style="width: 150px"
+            >
               <Skeleton
-animation="blink"
-type="text"
-/>
+                animation="blink"
+                type="text"
+              />
             </th>
             <th class="text-right">
               <Skeleton
-animation="blink"
-type="text"
-/>
+                animation="blink"
+                type="text"
+              />
             </th>
             <th class="text-right">
               <Skeleton
-animation="blink"
-type="text"
-/>
+                animation="blink"
+                type="text"
+              />
             </th>
             <th class="text-right">
               <Skeleton
-animation="blink"
-type="text"
-/>
+                animation="blink"
+                type="text"
+              />
             </th>
             <th class="text-right">
               <Skeleton
-animation="blink"
-type="text"
-/>
+                animation="blink"
+                type="text"
+              />
             </th>
             <th class="text-right">
               <Skeleton
-animation="blink"
-type="text"
-/>
+                animation="blink"
+                type="text"
+              />
             </th>
           </TR>
           </thead>
@@ -90,10 +90,10 @@ type="text"
           >
             <td class="text-left">
               <Skeleton
-animation="blink"
-type="text"
-width="85px"
-/>
+                animation="blink"
+                type="text"
+                width="85px"
+              />
             </td>
             <td
               v-for="n in 5"
@@ -115,16 +115,22 @@ width="85px"
 </template>
 
 <script>
-    export default {
-        name: 'TransfersListSkeleton',
-        components: {
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
-            Skeleton: () => import('src/components/Elements/Skeleton.vue'),
-            TR: () => import('src/components/Elements/Table/TR.vue'),
-            // TD: () => import('src/components/Elements/Table/TD.vue'),
-        },
-    };
+import ItemSection from 'src/components/Elements/List/ItemSection.vue';
+import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
+import ListItem from 'src/components/Elements/List/ListItem.vue';
+import Icon from 'src/components/Buttons/Icons/Icon.vue';
+import Skeleton from 'src/components/Elements/Skeleton.vue';
+import TR from 'src/components/Elements/Table/TR.vue';
+
+export default {
+  name: 'TransfersListSkeleton',
+  components: {
+    ItemSection,
+    ItemLabel,
+    ListItem,
+    Icon,
+    Skeleton,
+    TR,
+  },
+};
 </script>

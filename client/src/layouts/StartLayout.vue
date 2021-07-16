@@ -11,7 +11,7 @@
 </template>
 
 <script>
-    export default {
-        name: 'AuthLayout',
-    };
+export default {
+  name: 'AuthLayout',
+};
 </script>

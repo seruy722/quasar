@@ -286,13 +286,16 @@
 <script>
 import { getUrl } from 'src/tools/url';
 import { thingsFilter, numberFormat } from 'src/utils';
+import Table from 'src/components/Elements/Table/Table.vue';
+import BaseSelect from 'src/components/Elements/BaseSelect.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
 export default {
   name: 'Cargo',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    BaseSelect: () => import('components/Elements/BaseSelect.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
+    Table,
+    BaseSelect,
+    IconBtn,
   },
   props: {
     list: {
@@ -336,28 +339,28 @@ export default {
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_kg',
-            label: this.$t('forKg'),
+            label: 'За кг',
             field: 'for_kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_place',
-            label: this.$t('forPlace'),
+            label: 'За место',
             field: 'for_place',
             align: 'center',
             sortable: true,
@@ -385,7 +388,7 @@ export default {
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
@@ -399,7 +402,7 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,

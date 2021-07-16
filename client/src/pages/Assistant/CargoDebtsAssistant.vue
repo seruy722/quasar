@@ -71,79 +71,85 @@
 </template>
 
 <script>
-    export default {
-        name: 'CargoDebtsAssistant',
-        components: {
-            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-            PullRefresh: () => import('src/components/PullRefresh.vue'),
-            CargoAssistant: () => import('src/components/CargoDebts/Assistant/CargoAssistant.vue'),
-            DebtsAssistant: () => import('src/components/CargoDebts/Assistant/DebtsAssistant.vue'),
-            CargoDebtsSearch: () => import('src/components/CargoDebts/CargoDebtsSearch.vue'),
-        },
-        data() {
-            return {
-                tab: 'cargo',
-            };
-        },
-        computed: {
-            clientCodes() {
-                return this.$store.getters['codes/getCodes'];
-            },
-            cargo() {
-                return this.$store.getters['cargoDebts/getCargo'];
-            },
-            debts() {
-                return this.$store.getters['cargoDebts/getDebts'];
-            },
-            currentCodeClientId: {
-                get: function get() {
-                    return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
-                },
-                set: function set(val) {
-                    this.$store.dispatch('cargoDebts/setCurrentCodeClientId', val);
-                },
-            },
-        },
-        watch: {
-            currentCodeClientId(id) {
-                if (id) {
-                    this.getClientData(id);
-                }
-            },
-        },
-        async created() {
-            const { getUrl } = await import('src/tools/url');
-            if (_.isEmpty(this.clientCodes)) {
-                this.$axios.get(getUrl('codesAssistant'))
-                  .then(({ data: { codes } }) => {
-                      this.$store.dispatch('codes/setCodesAssistant', codes);
-                  })
-                  .catch(() => {
-                      devlog.log('EROR', 'codesAssistant');
-                  });
-            }
-        },
-        methods: {
-            getClientData(clientId) {
-                this.$store.dispatch('cargoDebts/getCargoDebts', clientId);
-            },
-            async refresh(done) {
-                if (!done) {
-                    this.$q.loading.show();
-                }
-                const { callFunction } = await import('src/utils/index');
-                this.$store.dispatch('cargoDebts/getGeneralData');
-                this.$store.dispatch('cargoDebts/getCargoDebts', this.currentCodeClientId)
-                  .then(() => {
-                      callFunction(done);
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      callFunction(done);
-                  });
-            },
-        },
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import CargoAssistant from 'src/components/CargoDebts/Assistant/CargoAssistant.vue';
+import DebtsAssistant from 'src/components/CargoDebts/Assistant/DebtsAssistant.vue';
+import CargoDebtsSearch from 'src/components/CargoDebts/CargoDebtsSearch.vue';
+
+export default {
+  name: 'CargoDebtsAssistant',
+  components: {
+    SearchSelect,
+    PullRefresh,
+    CargoAssistant,
+    DebtsAssistant,
+    CargoDebtsSearch,
+  },
+  data() {
+    return {
+      tab: 'cargo',
     };
+  },
+  computed: {
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+    cargo() {
+      return this.$store.getters['cargoDebts/getCargo'];
+    },
+    debts() {
+      return this.$store.getters['cargoDebts/getDebts'];
+    },
+    currentCodeClientId: {
+      get: function get() {
+        return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
+      },
+      set: function set(val) {
+        this.$store.dispatch('cargoDebts/setCurrentCodeClientId', val);
+      },
+    },
+  },
+  watch: {
+    currentCodeClientId(id) {
+      if (id) {
+        this.getClientData(id);
+      }
+    },
+  },
+  async created() {
+    const { getUrl } = await import('src/tools/url');
+    if (_.isEmpty(this.clientCodes)) {
+      this.$axios.get(getUrl('codesAssistant'))
+        .then(({ data: { codes } }) => {
+          this.$store.dispatch('codes/setCodesAssistant', codes);
+        })
+        .catch(() => {
+          devlog.log('EROR', 'codesAssistant');
+        });
+    }
+  },
+  methods: {
+    getClientData(clientId) {
+      this.$store.dispatch('cargoDebts/getCargoDebts', clientId);
+    },
+    async refresh(done) {
+      if (!done) {
+        this.$q.loading.show();
+      }
+      const { callFunction } = await import('src/utils/index');
+      this.$store.dispatch('cargoDebts/getGeneralData');
+      this.$store.dispatch('cargoDebts/getCargoDebts', this.currentCodeClientId)
+        .then(() => {
+          callFunction(done);
+          this.$q.loading.hide();
+          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          callFunction(done);
+        });
+    },
+  },
+};
 </script>

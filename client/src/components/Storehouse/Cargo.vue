@@ -144,11 +144,12 @@
 
 <script>
 import { fullDate } from 'src/utils/formatDate';
+import Table from 'src/components/Elements/Table/Table.vue';
 
 export default {
   name: 'Cargo',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
+    Table,
   },
   props: {
     list: {
@@ -183,28 +184,28 @@ export default {
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,

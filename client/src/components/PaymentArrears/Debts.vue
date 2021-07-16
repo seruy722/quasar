@@ -179,11 +179,12 @@
 
 <script>
 import { numberFormat } from 'src/utils';
+import Table from 'src/components/Elements/Table/Table.vue';
 
 export default {
   name: 'Debts',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
+    Table,
   },
   props: {
     list: {
@@ -239,7 +240,7 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,

@@ -8,17 +8,17 @@
 </template>
 
 <script>
-    export default {
-        name: 'FabBtn',
-        props: {
-            icon: {
-                type: String,
-                default: 'add',
-            },
-            color: {
-                type: String,
-                default: 'primary',
-            },
-        },
-    };
+export default {
+  name: 'FabBtn',
+  props: {
+    icon: {
+      type: String,
+      default: 'add',
+    },
+    color: {
+      type: String,
+      default: 'primary',
+    },
+  },
+};
 </script>

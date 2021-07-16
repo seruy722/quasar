@@ -52,19 +52,23 @@
 </template>
 
 <script>
-// import { getFaxes } from 'src/utils/FrequentlyCalledFunctions';
 import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import Separator from 'src/components/Separator.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
 export default {
   name: 'DialogMoveToFax',
   components: {
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    SearchSelect,
+    BaseBtn,
+    Dialog,
+    Separator,
+    IconBtn,
   },
   mixins: [showNotif, CheckErrorsMixin],
   props: {

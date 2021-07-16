@@ -1,31 +1,31 @@
 <template>
   <Dialog
-    v-model:dialog="show"
-    title="Category"
-    :persistent="true"
-    data-vue-component-name="DialogAddCategory"
+      v-model:dialog="show"
+      title="Category"
+      :persistent="true"
+      data-vue-component-name="DialogAddCategory"
   >
     <Card style="min-width: 320px;width: 100%;max-width: 500px;">
       <CardSection class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">Новая категория</span>
         <div>
           <IconBtn
-            dense
-            icon="clear"
-            tooltip="Закрыть"
-            @icon-btn-click="close"
+              dense
+              icon="clear"
+              tooltip="Закрыть"
+              @icon-btn-click="close"
           />
         </div>
       </CardSection>
       <CardSection class="q-mt-md">
         <BaseInput
-          v-model.trim="categoryData.name.value"
-          label="Категория"
-          :dense="$q.screen.xs || $q.screen.sm"
-          :field="categoryData.name.field"
-          :autofocus="categoryData.name.autofocus"
-          :errors="errorsData"
-          @on-key-up="keyUp"
+            v-model.trim="categoryData.name.value"
+            label="Категория"
+            :dense="$q.screen.xs || $q.screen.sm"
+            :field="categoryData.name.field"
+            :autofocus="categoryData.name.autofocus"
+            :errors="errorsData"
+            @on-key-up="keyUp"
         />
       </CardSection>
 
@@ -33,17 +33,17 @@
 
       <CardActions>
         <OutlineBtn
-          label="Сохранить"
-          color="positive"
-          :dense="$q.screen.xs || $q.screen.sm"
-          @click-outline-btn="checkErrors(categoryData, saveData)"
+            label="Сохранить"
+            color="positive"
+            :dense="$q.screen.xs || $q.screen.sm"
+            @click-outline-btn="checkErrors(categoryData, saveData)"
         />
 
         <OutlineBtn
-          label="Закрыть"
-          color="negative"
-          :dense="$q.screen.xs || $q.screen.sm"
-          @click-outline-btn="close"
+            label="Закрыть"
+            color="negative"
+            :dense="$q.screen.xs || $q.screen.sm"
+            @click-outline-btn="close"
         />
       </CardActions>
     </Card>
@@ -51,25 +51,29 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
 import { getUrl } from 'src/tools/url';
-// import { getLSKey } from 'src/tools/lsKeys';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import Separator from 'src/components/Separator.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
 export default {
   name: 'DialogAddCategory',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    // AddCustomers: () => import('src/components/Dialogs/AddCustomers.vue'),
-    OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
-    // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    Card: () => import('src/components/Elements/Card/Card.vue'),
-    CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
+    Dialog,
+    OutlineBtn,
+    BaseInput,
+    Card,
+    CardActions,
+    CardSection,
+    Separator,
+    IconBtn,
   },
   mixins: [showNotif, CheckErrorsMixin],
   props: {
@@ -85,7 +89,7 @@ export default {
       categoryData: {
         name: {
           type: 'text',
-          label: this.$t('category'),
+          label: 'Категория',
           field: 'name',
           autofocus: true,
           rules: [
@@ -119,17 +123,17 @@ export default {
       devlog.log('S_VAL', value);
       this.$q.loading.show();
       await this.$axios.post(getUrl('addCategory'), { name: _.startCase(value) })
-        .then(({ data: { category } }) => {
-          if (!_.isEmpty(this.$store.getters['category/getCategories'])) {
-            this.$store.dispatch('category/AddCategory', category);
-          }
-          this.$q.loading.hide();
-          this.showNotif('success', 'Категория успешно добавлена.', 'center');
-        })
-        .catch(({ response: { data: { errors } } }) => {
-          this.errorsData.errors = errors;
-          this.$q.loading.hide();
-        });
+          .then(({ data: { category } }) => {
+            if (!_.isEmpty(this.$store.getters['category/getCategories'])) {
+              this.$store.dispatch('category/AddCategory', category);
+            }
+            this.$q.loading.hide();
+            this.showNotif('success', 'Категория успешно добавлена.', 'center');
+          })
+          .catch(({ response: { data: { errors } } }) => {
+            this.errorsData.errors = errors;
+            this.$q.loading.hide();
+          });
     },
     close() {
       this.categoryData.name.value = '';

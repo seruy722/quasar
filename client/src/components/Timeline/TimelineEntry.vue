@@ -12,29 +12,29 @@
 </template>
 
 <script>
-    export default {
-        name: 'TimelineEntry',
-        props: {
-            heading: {
-                type: Boolean,
-                default: false,
-            },
-            title: {
-                type: String,
-                default: '',
-            },
-            subtitle: {
-                type: String,
-                default: '',
-            },
-            icon: {
-                type: String,
-                default: 'lens',
-            },
-            tag: {
-                type: String,
-                default: 'h3',
-            },
-        },
-    };
+export default {
+  name: 'TimelineEntry',
+  props: {
+    heading: {
+      type: Boolean,
+      default: false,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    subtitle: {
+      type: String,
+      default: '',
+    },
+    icon: {
+      type: String,
+      default: 'lens',
+    },
+    tag: {
+      type: String,
+      default: 'h3',
+    },
+  },
+};
 </script>

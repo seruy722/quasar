@@ -186,28 +186,44 @@ import {
   setFormatedDate,
   setChangeValue,
 } from 'src/utils/FrequentlyCalledFunctions';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogAddThings from 'src/components/Dialogs/DialogAddThings.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import List from 'src/components/Elements/List/List.vue';
+import ItemSection from 'src/components/Elements/List/ItemSection.vue';
+import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
+import ListItem from 'src/components/Elements/List/ListItem.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Separator from 'src/components/Separator.vue';
+import SelectChips from 'src/components/Elements/SelectChips.vue';
+import CheckBox from 'src/components/Elements/CheckBox.vue';
+import Menu from 'src/components/Menu.vue';
 
 export default {
   name: 'DialogAddEntryOnStorehouse',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    DialogAddThings: () => import('src/components/Dialogs/DialogAddThings.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    List: () => import('src/components/Elements/List/List.vue'),
-    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-    Card: () => import('src/components/Elements/Card/Card.vue'),
-    CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    SelectChips: () => import('src/components/Elements/SelectChips.vue'),
-    CheckBox: () => import('src/components/Elements/CheckBox.vue'),
-    // MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
-    Menu: () => import('src/components/Menu.vue'),
+    Dialog,
+    DialogAddThings,
+    IconBtn,
+    BaseInput,
+    SearchSelect,
+    List,
+    ItemSection,
+    ItemLabel,
+    ListItem,
+    Card,
+    CardActions,
+    CardSection,
+    BaseBtn,
+    Separator,
+    SelectChips,
+    CheckBox,
+    Menu,
   },
   mixins: [CheckErrorsMixin, showNotif],
   props: {
@@ -232,7 +248,7 @@ export default {
         code_place: {
           name: 'code_place',
           type: 'text',
-          label: this.$t('code'),
+          label: 'Код',
           mask: '###/###/###',
           rules: [
             {
@@ -255,7 +271,7 @@ export default {
         code_client_id: {
           name: 'code_client_id',
           type: 'select',
-          label: this.$t('client'),
+          label: 'Клиент',
           options: [],
           require: true,
           requireError: 'Выберите значение.',
@@ -267,7 +283,7 @@ export default {
         kg: {
           name: 'kg',
           type: 'number',
-          label: this.$t('kg'),
+          label: 'Вес',
           require: true,
           requireError: 'Поле обьзательное для заполнения.',
           changeValue: false,
@@ -287,7 +303,7 @@ export default {
         category_id: {
           name: 'category_id',
           type: 'select',
-          label: this.$t('category'),
+          label: 'Категория',
           options: [],
           require: true,
           requireError: 'Выберите значение.',
@@ -299,7 +315,7 @@ export default {
         shop: {
           name: 'shop',
           type: 'select-chips',
-          label: this.$t('shop'),
+          label: 'Магазин',
           options: [],
           changeValue: false,
           funcLoadData: getShopsList,
@@ -309,7 +325,7 @@ export default {
         notation: {
           name: 'notation',
           type: 'text',
-          label: this.$t('notation'),
+          label: 'Примечания',
           changeValue: false,
           default: '',
           value: '',

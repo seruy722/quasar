@@ -191,14 +191,18 @@ import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
 import { callFunction, thingsFilter, numberFormat } from 'src/utils';
 import { fullDate } from 'src/utils/formatDate';
+import Table from 'src/components/Elements/Table/Table.vue';
+import CountCategories from 'src/components/CountCategories.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
 export default {
   name: 'Storehouse',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    CountCategories: () => import('src/components/CountCategories.vue'),
-    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
+    Table,
+    CountCategories,
+    UpdateBtn,
+    IconBtn,
   },
   mixins: [showNotif, ExportDataMixin],
   props: {
@@ -215,7 +219,7 @@ export default {
   data() {
     return {
       storehouseTableProperties: {
-        title: this.$t('storehouse'),
+        title: 'Склад',
         viewBody: true,
         viewTop: true,
         hideBottom: false,
@@ -229,49 +233,49 @@ export default {
           },
           {
             name: 'code_place',
-            label: this.$t('code'),
+            label: 'Код',
             align: 'center',
             field: 'code_place',
             sortable: true,
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
           },
           {
             name: 'shop',
-            label: this.$t('shop'),
+            label: 'Магазин',
             field: 'shop',
             align: 'center',
             sortable: true,
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
           },
           {
             name: 'things',
-            label: this.$t('things'),
+            label: 'Опись',
             field: 'things',
             align: 'center',
             sortable: true,

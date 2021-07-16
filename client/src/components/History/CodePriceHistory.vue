@@ -4,9 +4,9 @@
     color="secondary"
   >
     <TimelineEntry
-heading
-tag="h6"
->
+      heading
+      tag="h6"
+    >
       История изменения данных
     </TimelineEntry>
 
@@ -35,13 +35,13 @@ tag="h6"
                 </q-badge>
               </q-item-label>
               <q-item-label v-else>
-{{ historyData.cols[i] }}
-</q-item-label>
+                {{ historyData.cols[i] }}
+              </q-item-label>
             </q-item-section>
             <q-item-section side>
               <q-item-label :lines="3">
-{{ history }}
-</q-item-label>
+                {{ history }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <Separator v-if="historyData.cols[i]" />
@@ -52,25 +52,27 @@ tag="h6"
 </template>
 
 <script>
-    import TransferMixin from 'src/mixins/Transfer';
-    import getFromSettings from 'src/tools/settings';
+import TransferMixin from 'src/mixins/Transfer';
+import getFromSettings from 'src/tools/settings';
+import TimelineEntry from 'src/components/Timeline/TimelineEntry.vue';
+import Separator from 'src/components/Separator.vue';
 
-    export default {
-        name: 'CodePriceHistory',
-        components: {
-            TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-        },
-        mixins: [TransferMixin],
-        props: {
-            historyData: {
-                type: Object,
-                default: () => ({}),
-            },
-        },
-        data() {
-            this.$action = getFromSettings('historyActionForIcon');
-            return {};
-        },
-    };
+export default {
+  name: 'CodePriceHistory',
+  components: {
+    TimelineEntry,
+    Separator,
+  },
+  mixins: [TransferMixin],
+  props: {
+    historyData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    this.$action = getFromSettings('historyActionForIcon');
+    return {};
+  },
+};
 </script>

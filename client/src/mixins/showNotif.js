@@ -15,7 +15,7 @@ export default {
             multiLine: true,
             actions: actions || [
               {
-                label: this.$t('close'),
+                label: 'Закрыть',
                 color: 'white',
                 handler: () => {
                 },
@@ -34,7 +34,7 @@ export default {
             multiLine: true,
             actions: actions || [
               {
-                label: this.$t('close'),
+                label: 'Закрыть',
                 color: 'white',
                 handler: () => {
                 },
@@ -53,7 +53,7 @@ export default {
             multiLine: true,
             actions: actions || [
               {
-                label: this.$t('close'),
+                label: 'Закрыть',
                 color: 'white',
                 handler: () => {
                 },
@@ -72,7 +72,7 @@ export default {
             multiLine: true,
             actions: actions || [
               {
-                label: this.$t('close'),
+                label: 'Закрыть',
                 color: 'white',
                 handler: () => {
                 },

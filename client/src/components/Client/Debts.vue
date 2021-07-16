@@ -83,7 +83,7 @@
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'paid'">
                     <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{
+                      {{
                         props.row.paid ? 'Да' :
                           props.row.type ? null : 'Нет'
                       }}
@@ -144,7 +144,7 @@
             :props="props"
           >
             <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{
+              {{
                 props.row.paid ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}
@@ -166,13 +166,16 @@
 <script>
 import ExportDataMixin from 'src/mixins/ExportData';
 import { numberFormat } from 'src/utils';
+import Table from 'src/components/Elements/Table/Table.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
 
 export default {
   name: 'Debts',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
+    Table,
+    UpdateBtn,
+    ExportBtn,
   },
   mixins: [ExportDataMixin],
   props: {
@@ -223,7 +226,7 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,

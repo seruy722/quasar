@@ -97,7 +97,7 @@
               :errors="errorsData"
             >
               <template #append>
-                <Date
+                <DateComponent
                   v-model:value="item.value"
                   v-model:change-value="item.changeValue"
                 />
@@ -151,26 +151,29 @@
 <script>
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
-import {
-  getClientCodes,
-  // getCategories,
-  // getShopsList,
-  // setFormatedDate,
-  // setChangeValue,
-} from 'src/utils/FrequentlyCalledFunctions';
+import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Separator from 'src/components/Separator.vue';
+import SelectChips from 'src/components/Elements/SelectChips.vue';
+import Menu from 'src/components/Menu.vue';
+import DateComponent from 'src/components/Date.vue';
 
 export default {
   name: 'DialogAddDebEntry',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    SelectChips: () => import('src/components/Elements/SelectChips.vue'),
-    Menu: () => import('src/components/Menu.vue'),
-    Date: () => import('src/components/Date.vue'),
+    Dialog,
+    IconBtn,
+    BaseInput,
+    SearchSelect,
+    BaseBtn,
+    Separator,
+    SelectChips,
+    Menu,
+    DateComponent,
   },
   mixins: [CheckErrorsMixin, showNotif],
   props: {
@@ -209,7 +212,7 @@ export default {
         code_client_id: {
           name: 'code_client_id',
           type: 'select',
-          label: this.$t('client'),
+          label: 'Клиент',
           options: [],
           require: true,
           requireError: 'Выберите значение.',
@@ -253,7 +256,7 @@ export default {
         notation: {
           name: 'notation',
           type: 'text',
-          label: this.$t('notation'),
+          label: 'Примечания',
           changeValue: false,
           default: '',
           value: '',

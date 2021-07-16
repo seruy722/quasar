@@ -169,14 +169,18 @@
 <script>
 import { getUrl } from 'src/tools/url';
 import showNotif from 'src/mixins/showNotif';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import AddCode from 'src/components/Dialogs/AddCode.vue';
+import UploadFileToServer from 'src/components/Upload/UploadFileToServer.vue';
+import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 
 export default {
   name: 'Drafts',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    AddCode: () => import('src/components/Dialogs/AddCode.vue'),
-    UploadFileToServer: () => import('src/components/Upload/UploadFileToServer.vue'),
-    OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
+    Dialog,
+    AddCode,
+    UploadFileToServer,
+    OutlineBtn,
   },
   mixins: [showNotif],
   data() {

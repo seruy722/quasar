@@ -11,6 +11,7 @@
     @click="$emit('icon-btn-click')"
   >
     <q-tooltip>{{ tooltip }}</q-tooltip>
+    <slot />
   </q-btn>
 </template>
 

@@ -14,7 +14,7 @@
             v-show="faxesTableReactiveProperties.selected.length"
             color="negative"
             icon="delete"
-            :tooltip="$t('delete')"
+            tooltip="Удалить"
             class="q-ml-md"
             @icon-btn-click="deleteFaxItems(faxesTableReactiveProperties.selected)"
           />
@@ -22,21 +22,6 @@
           <UpdateBtn
             @update-btn-click="refresh"
           />
-          <!--          <IconBtn-->
-          <!--            v-show="faxesTableReactiveProperties.selected.length > 1"-->
-          <!--            color="orange"-->
-          <!--            icon="gamepad"-->
-          <!--            tooltip="Обьеденить"-->
-          <!--            @icon-btn-click="combineFaxes(faxesTableReactiveProperties.selected)"-->
-          <!--          />-->
-
-          <!--        <IconBtn-->
-          <!--          v-show="faxesTableReactiveProperties.selected.length"-->
-          <!--          icon="swap_vert"-->
-          <!--          tooltip=""-->
-          <!--          class="q-ml-md"-->
-          <!--          @icon-btn-click="deleteFaxItems"-->
-          <!--        />-->
           <Menu :items="['Факс', 'Перевожчика']" />
           <IconBtn
             dense
@@ -201,26 +186,6 @@
             >
               {{ props.row.notation }}
             </q-td>
-
-            <!--            <q-td-->
-            <!--              key="up_to_cargo"-->
-            <!--              :props="props"-->
-            <!--              class="upload_to_cargo"-->
-            <!--              @click.stop="uploadToCargo(props.row)"-->
-            <!--            >-->
-            <!--              <q-icon-->
-            <!--                v-if="!props.row.uploaded_to_cargo"-->
-            <!--                dense-->
-            <!--                name="vertical_align_bottom"-->
-            <!--                @click.stop="uploadToCargo(props.row)"-->
-            <!--              ></q-icon>-->
-            <!--              <q-icon-->
-            <!--                v-else-->
-            <!--                dense-->
-            <!--                name="vertical_align_top"-->
-            <!--                @click.stop="uploadToCargo(props.row)"-->
-            <!--              ></q-icon>-->
-            <!--            </q-td>-->
           </q-tr>
         </template>
       </Table>
@@ -303,21 +268,32 @@ import getFromSettings from 'src/tools/settings';
 import { setFormatedDate, prepareHistoryData, getFaxes } from 'src/utils/FrequentlyCalledFunctions';
 import { callFunction, numberFormat } from 'src/utils';
 import showNotif from 'src/mixins/showNotif';
+import Table from 'components/Elements/Table/Table.vue';
+import IconBtn from 'components/Buttons/IconBtn.vue';
+import BaseBtn from 'components/Buttons/BaseBtn.vue';
+import Dialog from 'components/Dialogs/Dialog.vue';
+import List from 'src/components/Elements/List/List.vue';
+import DialogAddFax from 'src/components/Dialogs/DialogAddFax.vue';
+import Menu from 'src/components/Menu.vue';
+import FaxesHistory from 'src/components/History/FaxesHistory.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import DialogNotDeliveredCargo from 'src/components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue';
 
 export default {
   name: 'Faxes',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    List: () => import('src/components/Elements/List/List.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    DialogAddFax: () => import('src/components/Dialogs/DialogAddFax.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    Menu: () => import('src/components/Menu.vue'),
-    FaxesHistory: () => import('src/components/History/FaxesHistory.vue'),
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    PullRefresh: () => import('src/components/PullRefresh.vue'),
-    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-    DialogNotDeliveredCargo: () => import('src/components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue'),
+    Table,
+    List,
+    BaseBtn,
+    DialogAddFax,
+    IconBtn,
+    Menu,
+    FaxesHistory,
+    Dialog,
+    PullRefresh,
+    UpdateBtn,
+    DialogNotDeliveredCargo,
   },
   mixins: [showNotif],
   data() {
@@ -338,7 +314,7 @@ export default {
         columns: [
           {
             name: 'name',
-            label: this.$t('fax'),
+            label: 'Факс',
             align: 'center',
             field: 'name',
             sortable: true,
@@ -352,21 +328,21 @@ export default {
           },
           {
             name: 'transporter_name',
-            label: this.$t('transporter'),
+            label: 'Перевожчик',
             field: 'transporter_name',
             align: 'center',
             sortable: true,
           },
           {
             name: 'transport_name',
-            label: this.$t('transport'),
+            label: 'Транспорт',
             field: 'transport_name',
             align: 'center',
             sortable: true,
           },
           {
             name: 'departure_date',
-            label: this.$t('departureDate'),
+            label: 'Дата прибытия',
             align: 'center',
             field: 'departure_date',
             sortable: true,

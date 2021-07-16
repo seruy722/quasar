@@ -61,17 +61,24 @@
 import TransferMixin from 'src/mixins/Transfer';
 import getFromSettings from 'src/tools/settings';
 import { phoneNumberFilter } from 'src/utils';
+import TimelineEntry from 'src/components/Timeline/TimelineEntry.vue';
+import List from 'src/components/Elements/List/List.vue';
+import ItemSection from 'src/components/Elements/List/ItemSection.vue';
+import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
+import ListItem from 'src/components/Elements/List/ListItem.vue';
+import Badge from 'src/components/Elements/Badge.vue';
+import Separator from 'src/components/Separator.vue';
 
 export default {
   name: 'CodeHistory',
   components: {
-    TimelineEntry: () => import('src/components/Timeline/TimelineEntry.vue'),
-    List: () => import('src/components/Elements/List/List.vue'),
-    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-    Badge: () => import('src/components/Elements/Badge.vue'),
-    Separator: () => import('src/components/Separator.vue'),
+    TimelineEntry,
+    List,
+    ItemSection,
+    ItemLabel,
+    ListItem,
+    Badge,
+    Separator,
   },
   mixins: [TransferMixin],
   props: {

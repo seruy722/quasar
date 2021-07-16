@@ -158,11 +158,11 @@ export const fullDate = ((date) => {
  * @return {string|*}
  */
 export const toDate = (str) => {
-  devlog.log('STR_DATE', str);
+  // devlog.log('STR_DATE', str);
   if (str && _.size(str) === 19) {
     const [date, time] = _.split(str, ' ');
     const parseDate = _.join(_.reverse(_.split(date, '-')), '-');
-    devlog.log('time', time);
+    // devlog.log('time', time);
     return `${parseDate} ${time}`;
   }
   if (_.trim(str) && isDate(new Date(str))) {

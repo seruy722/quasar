@@ -212,15 +212,20 @@
 <script>
 import showNotif from 'src/mixins/showNotif';
 import filesMixin from 'src/mixins/files';
+import Table from 'src/components/Elements/Table/Table.vue';
+import MenuBtn from 'src/components/Buttons/MenuBtn.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import DialogShowImageGallery from 'src/components/Tasks/DialogShowImageGallery.vue';
+import DialogAddTaskComment from 'src/components/Tasks/DialogAddTaskComment.vue';
 
 export default {
   name: 'Task',
   components: {
-    PullRefresh: () => import('src/components/PullRefresh.vue'),
-    DialogShowImageGallery: () => import('src/components/Tasks/DialogShowImageGallery.vue'),
-    MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    DialogAddTaskComment: () => import('src/components/Tasks/DialogAddTaskComment.vue'),
+    PullRefresh,
+    DialogShowImageGallery,
+    MenuBtn,
+    Table,
+    DialogAddTaskComment,
   },
   mixins: [showNotif, filesMixin],
   data() {

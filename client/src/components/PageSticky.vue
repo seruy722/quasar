@@ -9,17 +9,17 @@
 </template>
 
 <script>
-    export default {
-        name: 'PageSticky',
-        props: {
-            position: {
-                type: String,
-                default: 'bottom-right',
-            },
-            offset: {
-                type: Array,
-                default: () => [18, 18],
-            },
-        },
-    };
+export default {
+  name: 'PageSticky',
+  props: {
+    position: {
+      type: String,
+      default: 'bottom-right',
+    },
+    offset: {
+      type: Array,
+      default: () => [18, 18],
+    },
+  },
+};
 </script>

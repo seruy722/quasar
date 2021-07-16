@@ -137,8 +137,6 @@ export default {
     },
   },
   created() {
-    devlog.log('created', this.tableData);
-    devlog.log('ttttt', this.$t('sum'));
     // const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
     // el.setAttribute('style', `max-height: ${document.documentElement.clientHeight - 100}px`);
     // devlog.log('el', el);

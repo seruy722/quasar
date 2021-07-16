@@ -52,10 +52,12 @@
 </template>
 
 <script>
+import Cargo from 'components/PaymentArrears/Cargo.vue';
+
 export default {
   name: 'DialogNotDeliveredCargo',
   components: {
-    Cargo: () => import('components/PaymentArrears/Cargo.vue'),
+    Cargo,
   },
   props: {
     show: {
