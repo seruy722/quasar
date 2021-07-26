@@ -16,23 +16,23 @@
     "build:android": "quasar build -m android"
   },
   "dependencies": {
-    "@quasar/extras": "^1.10.8",
-    "apexcharts": "^3.27.2",
+    "@quasar/extras": "^1.10.9",
+    "apexcharts": "^3.27.3",
     "axios": "^0.21.1",
-    "date-fns": "^2.22.1",
+    "date-fns": "^2.23.0",
     "lodash": "^4.17.21",
-    "quasar": "^2.0.2",
+    "quasar": "^2.0.3",
     "validator": "^13.6.0",
     "vue-i18n": "^9.1.7",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@quasar/app": "^3.0.2",
+    "@quasar/app": "^3.0.3",
     "@vue/eslint-config-airbnb": "^5.3.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.30.0",
+    "eslint": "^7.31.0",
     "eslint-loader": "^4.0.2",
-    "eslint-plugin-vue": "^7.13.0",
+    "eslint-plugin-vue": "^7.14.0",
     "quasar-app-extension-ide-helper": "^1.0.0",
     "stylus": "^0.54.8",
     "stylus-loader": "^3.0.2"

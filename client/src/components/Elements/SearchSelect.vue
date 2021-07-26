@@ -1,19 +1,20 @@
 <template>
   <q-select
+    v-model="modelValue"
     :options="duplicateOptions"
     :label="label"
     :error-message="viewError()"
     :error="isError"
-    :value="value"
     :dense="dense"
     :multiple="multiple"
     :clearable="clearable"
     use-input
+    input-debounce="0"
+    :behavior="$q.platform.is.ios ? 'dialog' : 'menu'"
     data-vue-component-name="SearchSelect"
     emit-value
     map-options
     @filter="filterFn"
-    @update:model-value="inputEvent"
   >
     <template #prepend>
       <slot name="prepend" />
@@ -77,11 +78,21 @@ export default {
       default: () => ({}),
     },
   },
-  emits: ['update:changeValue', 'input'],
+  emits: ['update:changeValue', 'input', 'update:value'],
   data() {
     return {
       duplicateOptions: [],
     };
+  },
+  computed: {
+    modelValue: {
+      get: function get() {
+        return this.value;
+      },
+      set: function set(val) {
+        this.$emit('update:value', val);
+      },
+    },
   },
   created() {
     this.duplicateOptions = this.options;
