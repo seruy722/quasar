@@ -398,7 +398,7 @@ const routes = [
           ],
           accessData: {
             roles: ['admin'],
-            permissions: [],
+            permissions: ['view statistics'],
           },
         },
         component: () => import('pages/Moder/Statistics.vue'),

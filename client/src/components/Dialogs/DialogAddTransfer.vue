@@ -176,8 +176,12 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    selected: {
+      type: Array,
+      default: () => [],
+    },
   },
-  emits: ['update:showDialog', 'update:localProps'],
+  emits: ['update:showDialog', 'update:localProps', 'update:selected'],
   data() {
     return {
       showCodeDialog: false,
@@ -254,7 +258,7 @@ export default {
             this.cancel(this.transferData);
             this.$q.loading.hide();
             this.show = false;
-            // this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно добавлена.`, 'center');
+            this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно добавлена.`);
           })
           .catch((errors) => {
             this.$q.loading.hide();
@@ -264,11 +268,12 @@ export default {
         // ОБНОВЛЕНИЕ ЗАПИСИ
         if (_.some(sendData, 'changeValue')) {
           this.$q.loading.show();
-          devlog.log('sendData_', sendData);
+          devlog.log('sзащитная endData_', sendData);
           const dataToSend = _.reduce(sendData, (result, {
             value,
             changeValue,
           }, index) => {
+            devlog.log('СРФТПУ', changeValue, value);
             if (changeValue && index === 'issued_by') {
               devlog.log('ISSUUE', value);
               if (value) {
@@ -293,7 +298,8 @@ export default {
               this.cancel(this.transferData);
               this.$q.loading.hide();
               this.show = false;
-              // this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно обновлена.`, 'center');
+              this.$emit('update:selected', []);
+              this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно обновлена.`);
             })
             .catch((errors) => {
               this.$q.loading.hide();

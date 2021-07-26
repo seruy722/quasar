@@ -12,7 +12,7 @@
       data-vue-component-name="BaseSelect"
       emit-value
       map-options
-      @input="inputEvent"
+      @update:model-value="inputEvent"
   >
     <template #prepend>
       <slot name="prepend" />
@@ -79,6 +79,7 @@ export default {
   emits: ['update:changeValue', 'input'],
   methods: {
     inputEvent($event) {
+      devlog.log('$event', $event);
       this.$emit('input', $event);
       this.changeErrors();
       if (!this.changeValue) {

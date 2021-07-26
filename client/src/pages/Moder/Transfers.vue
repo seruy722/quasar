@@ -258,6 +258,7 @@
     <DialogAddTransfer
       v-model:show-dialog="dialog"
       v-model:local-props="localProps"
+      v-model:selected="transferTableReactiveProperties.selected"
       :transfer-data="transferData"
     />
     <DialogAddCode v-model:show-dialog="showCodeDialog" />
