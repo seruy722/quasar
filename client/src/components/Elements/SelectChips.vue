@@ -1,9 +1,9 @@
 <template>
   <q-select
+    v-model="modelValue"
     use-input
     use-chips
     input-debounce="0"
-    :value="value"
     :dense="dense"
     :options="filterOptions"
     :label="label"
@@ -68,18 +68,28 @@ export default {
       default: () => ({}),
     },
   },
-  emits: ['update:changeValue', 'input'],
+  emits: ['update:changeValue', 'input', 'update:value'],
   data() {
     return {
       filterOptions: [],
     };
   },
+  computed: {
+    modelValue: {
+      get: function get() {
+        return this.value;
+      },
+      set: function set(val) {
+        this.$emit('update:value', val);
+        this.inputEvent();
+      },
+    },
+  },
   created() {
     this.filterOptions = this.options;
   },
   methods: {
-    inputEvent($event) {
-      this.$emit('input', $event);
+    inputEvent() {
       this.changeErrors();
       if (!this.changeValue) {
         this.$emit('update:changeValue', true);
