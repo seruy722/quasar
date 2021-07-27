@@ -48,16 +48,20 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
+import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Separator from 'src/components/Separator.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
 export default {
   name: 'DialogChooseDate',
   components: {
-    DateWithInputForCargo: defineAsyncComponent(() => import('src/components/DateWithInputForCargo.vue')),
-    Dialog: defineAsyncComponent(() => import('components/Dialogs/Dialog.vue')),
-    BaseBtn: defineAsyncComponent(() => import('src/components/Buttons/BaseBtn.vue')),
-    Separator: defineAsyncComponent(() => import('components/Separator.vue')),
-    IconBtn: defineAsyncComponent(() => import('components/Buttons/IconBtn.vue')),
+    DateWithInputForCargo,
+    Dialog,
+    BaseBtn,
+    Separator,
+    IconBtn,
   },
   props: {
     showDialog: {
@@ -100,6 +104,7 @@ export default {
   },
   methods: {
     setDate(date) {
+      devlog.log('setDate');
       this.$emit('update:date', date);
       this.$emit('set-date');
     },

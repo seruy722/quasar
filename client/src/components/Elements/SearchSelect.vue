@@ -91,6 +91,7 @@ export default {
       },
       set: function set(val) {
         this.$emit('update:value', val);
+        this.inputEvent();
       },
     },
   },
@@ -98,8 +99,7 @@ export default {
     this.duplicateOptions = this.options;
   },
   methods: {
-    inputEvent($event) {
-      this.$emit('input', $event);
+    inputEvent() {
       this.changeErrors();
       if (!this.changeValue) {
         this.$emit('update:changeValue', true);

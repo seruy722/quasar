@@ -22,7 +22,7 @@
     data-vue-component="BaseInput"
     @update:model-value="inputEvent"
     @keyup="$emit('on-key-up', $event)"
-    @focus="$event.target.select()"
+    @focus="focus"
   >
     <template #append>
       <slot name="append" />
@@ -115,6 +115,11 @@ export default {
     },
   },
   methods: {
+    focus(event) {
+      if (_.isFunction(_.get(event, 'target.select'))) {
+        event.target.select();
+      }
+    },
     inputEvent($event) {
       this.$emit('input', $event);
       devlog.log('INNNNN', $event);

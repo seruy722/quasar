@@ -311,8 +311,8 @@
       </q-card>
     </Dialog>
     <DialogChooseDate
-      :show-dialog="showDialogChooseDate"
-      :date="dialogChooseDateData"
+      v-model:show-dialog="showDialogChooseDate"
+      v-model:date="dialogChooseDateData"
     />
   </q-page>
 </template>
