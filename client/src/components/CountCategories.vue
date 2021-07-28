@@ -84,6 +84,7 @@
 import { setCategoriesStoreHouseData } from 'src/utils/FrequentlyCalledFunctions';
 import { getUrl } from 'src/tools/url';
 import { numberFormat } from 'src/utils';
+import showNotif from 'src/mixins/showNotif';
 import List from 'src/components/Elements/List/List.vue';
 import ItemSection from 'src/components/Elements/List/ItemSection.vue';
 import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
@@ -103,6 +104,7 @@ export default {
     PopupEdit,
     BaseBtn,
   },
+  mixins: [showNotif],
   props: {
     list: {
       type: Array,
@@ -148,10 +150,10 @@ export default {
           this.arrayToSave = [];
           this.setLocalList(this.list, transporterPriceData);
           this.$q.loading.hide();
-          this.showNotif('success', 'Категории успешно обновлены', 'center');
+          this.showNotif('success', 'Категории успешно обновлены');
         })
         .catch((errors) => {
-          this.showNotif('success', 'Ошибка обновления категорий. Перегрузите пожалйста страницу.', 'center');
+          this.showNotif('success', 'Ошибка обновления категорий. Перегрузите пожалйста страницу.');
           devlog.log('errors', errors);
         });
     },
@@ -164,6 +166,8 @@ export default {
       this.footer = footer;
     },
     addToSaveArray(item) {
+      devlog.log('addToSaveArray', item);
+      devlog.log('addToSaveArray', item.for_kg);
       const obj = {
         uid: item.uid,
         category_id: item.category_id,
