@@ -217,14 +217,8 @@ export default {
 };
 </script>
 
-<style lang="stylus" scoped>
+<style lang="sass" scoped>
 .my-card
-width
-
-100
-%
-max-width
-
-350
-px
+  width: 100%
+  max-width: 350px
 </style>

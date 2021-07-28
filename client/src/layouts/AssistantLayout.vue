@@ -135,8 +135,8 @@ export default {
 };
 </script>
 
-<style lang="stylus">
-  .my-menu-link
-    color white
-    background $orange_bg
+<style lang="sass">
+.my-menu-link
+  color: white
+  background: $orange_bg
 </style>

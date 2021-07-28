@@ -713,25 +713,19 @@ export default {
 };
 </script>
 
-<style lang="stylus">
-.border_red {
-  border-color $ red !important
-}
+<style lang="sass">
+.border_red
+  border-color: $red !important
 
-.border_positive {
-  border-color $ positive !important
-}
+.border_positive
+  border-color: $positive !important
 
-.border_warning {
-  border-color $ warning !important
-}
+.border_warning
+  border-color: $warning !important
 
-.border_grey {
-  border-color $ grey !important
-}
+.border_grey
+  border-color: $grey !important
 
-.border_info {
-  border-color $ info !important
-}
-
+.border_info
+  border-color: $info !important
 </style>

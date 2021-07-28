@@ -33,9 +33,7 @@
     "eslint": "^7.31.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-vue": "^7.14.0",
-    "quasar-app-extension-ide-helper": "^1.0.0",
-    "stylus": "^0.54.8",
-    "stylus-loader": "^3.0.2"
+    "quasar-app-extension-ide-helper": "^1.0.0"
   },
   "engines": {
     "node": ">= 14.17.3",
