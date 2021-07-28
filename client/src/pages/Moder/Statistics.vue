@@ -75,16 +75,24 @@
               </q-item-section>
 
               <q-item-section>
+                <!--                <q-item-label>-->
+                <!--                  {{ props.row.start_sum }}-->
+                <!--                </q-item-label>-->
                 <q-item-label>
-                  {{ props.row.start_sum }}
+                  <q-badge color="positive">
+                    {{ sumProfit(props.row.end_sum, props.row.start_sum) }}
+                  </q-badge>
                 </q-item-label>
               </q-item-section>
 
-              <q-item-section
-                side
-              >
+              <q-item-section>
+                <!--                <q-item-label>-->
+                <!--                  {{ props.row.end_sum }}-->
+                <!--                </q-item-label>-->
                 <q-item-label>
-                  {{ props.row.end_sum }}
+                  <q-badge color="negative">
+                    {{ sumExpenses(props.row.data) }}
+                  </q-badge>
                 </q-item-label>
               </q-item-section>
             </template>
@@ -172,14 +180,18 @@
             key="start_sum"
             :props="props"
           >
-            {{ props.row.start_sum }}
+            <q-badge color="positive">
+              {{ sumProfit(props.row.end_sum, props.row.start_sum) }}
+            </q-badge>
           </q-td>
 
           <q-td
             key="end_sum"
             :props="props"
           >
-            {{ props.row.end_sum }}
+            <q-badge color="negative">
+              {{ sumExpenses(props.row.data) }}
+            </q-badge>
           </q-td>
         </q-tr>
         <q-tr
@@ -231,7 +243,7 @@
 
                 <q-item-section>
                   <q-item-label>
-                    {{ item.created_at }}
+                    {{ formatToDotDate(item.created_at) }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -265,7 +277,7 @@ export default {
       options: {
         chart: {
           type: 'bar',
-          height: '100%',
+          height: '400px',
         },
         colors: ['#06F30CFF', '#F80319FF'],
         series: [
@@ -293,14 +305,14 @@ export default {
           },
           {
             name: 'start_sum',
-            label: 'Начало месяца',
+            label: 'Доход',
             align: 'center',
             field: 'start_sum',
             sortable: true,
           },
           {
             name: 'end_sum',
-            label: 'Конец месяца',
+            label: 'Затраты',
             align: 'center',
             field: 'end_sum',
             sortable: true,
@@ -338,6 +350,12 @@ export default {
     this.fillData(this.tasks);
   },
   methods: {
+    sumExpenses(data) {
+      return _.sumBy(data, 'sum') * -1;
+    },
+    sumProfit(end, start) {
+      return start && end ? end - start : 0;
+    },
     formatToDotDate,
     fillData(val) {
       if (!_.isEmpty(val)) {
@@ -345,9 +363,9 @@ export default {
         this.options.series[1].data = [];
         _.forEach(val, (item) => {
           if (item.start_sum && item.end_sum) {
-            this.options.series[0].data.push(item.end_sum - item.start_sum);
+            this.options.series[0].data.push(this.sumProfit(item.end_sum, item.start_sum));
           }
-          this.options.series[1].data.push(_.sumBy(item.data, 'sum') * -1);
+          this.options.series[1].data.push(this.sumExpenses(item.data));
         });
         const size0 = _.size(this.options.series[0].data);
         const size1 = _.size(this.options.series[1].data);
