@@ -33,30 +33,31 @@
 </template>
 
 <script>
-    export default {
-        name: 'DateWithInput',
-        props: {
-            value: {
-                type: String,
-                default: '',
-            },
-            changeValue: {
-                type: Boolean,
-                default: false,
-            },
-        },
-        computed: {
-            valueData: {
-                get: function get() {
-                    devlog.log('this.value', this.value);
-                    return this.value;
-                },
-                set: function set(val) {
-                    devlog.log('this.value_ЫУЕ', val);
-                    this.$emit('update:value', val);
-                    this.$emit('update:changeValue', true);
-                },
-            },
-        },
-    };
+export default {
+  name: 'DateWithInput',
+  props: {
+    value: {
+      type: String,
+      default: '',
+    },
+    changeValue: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['update:changeValue', 'update:value'],
+  computed: {
+    valueData: {
+      get: function get() {
+        devlog.log('this.value', this.value);
+        return this.value;
+      },
+      set: function set(val) {
+        devlog.log('this.value_ЫУЕ', val);
+        this.$emit('update:value', val);
+        this.$emit('update:changeValue', true);
+      },
+    },
+  },
+};
 </script>

@@ -12,42 +12,42 @@
         <q-space />
 
         <q-btn
-dense
-flat
-icon="minimize"
-:disable="!maximizedToggle"
-@click="maximizedToggle = false"
->
+          dense
+          flat
+          icon="minimize"
+          :disable="!maximizedToggle"
+          @click="maximizedToggle = false"
+        >
           <q-tooltip
-v-if="maximizedToggle"
-content-class="bg-white text-primary"
->
-Minimize
-</q-tooltip>
+            v-if="maximizedToggle"
+            content-class="bg-white text-primary"
+          >
+            Minimize
+          </q-tooltip>
         </q-btn>
         <q-btn
-dense
-flat
-icon="crop_square"
-:disable="maximizedToggle"
-@click="maximizedToggle = true"
->
+          dense
+          flat
+          icon="crop_square"
+          :disable="maximizedToggle"
+          @click="maximizedToggle = true"
+        >
           <q-tooltip
-v-if="!maximizedToggle"
-content-class="bg-white text-primary"
->
-Maximize
-</q-tooltip>
+            v-if="!maximizedToggle"
+            content-class="bg-white text-primary"
+          >
+            Maximize
+          </q-tooltip>
         </q-btn>
         <q-btn
-v-close-popup
-dense
-flat
-icon="close"
->
+          v-close-popup
+          dense
+          flat
+          icon="close"
+        >
           <q-tooltip content-class="bg-white text-primary">
-Close
-</q-tooltip>
+            Close
+          </q-tooltip>
         </q-btn>
       </q-bar>
 
@@ -115,12 +115,12 @@ Close
                         v-if="col.field === 'things'"
                         :lines="10"
                       >
-                        {{ col.value | thingsFilter }}
+                        {{ thingsFilter(col.value) }}
                       </q-item-label>
                       <q-item-label
                         v-else-if="col.field === 'kg'"
                       >
-                        {{ col.value | numberFormatFilter }}
+                        {{ numberFormat(col.value) }}
                       </q-item-label>
                       <q-item-label
                         v-else-if="col.field === 'notation'"
@@ -164,20 +164,6 @@ Close
                 :props="props"
               >
                 {{ props.row.code_client_name }}
-                <!--                <PopupEdit-->
-                <!--                  v-if="combineTableData"-->
-                <!--                  :value.sync="props.row.code_client_id"-->
-                <!--                  type="number"-->
-                <!--                  :title="props.row.code_client_name"-->
-                <!--                  @add-to-save="addToAddSaveArray(props.row, 'code_client_id')"-->
-                <!--                >-->
-                <!--                  <SearchSelect-->
-                <!--                    v-model="props.row.code_client_id"-->
-                <!--                    label="Клиент"-->
-                <!--                    :dense="$q.screen.xs || $q.screen.sm"-->
-                <!--                    :options="clientCodes"-->
-                <!--                  />-->
-                <!--                </PopupEdit>-->
               </q-td>
 
               <q-td
@@ -191,7 +177,7 @@ Close
                 key="kg"
                 :props="props"
               >
-                {{ props.row.kg | numberFormatFilter }}
+                {{ numberFormat(props.row.kg) }}
               </q-td>
 
               <q-td
@@ -199,26 +185,7 @@ Close
                 class="text-bold text-red"
                 :props="props"
               >
-                {{ props.row.for_kg | numberFormatFilter }}
-                <!--                <PopupEdit-->
-                <!--                  v-if="combineTableData"-->
-                <!--                  :value.sync="props.row.for_kg"-->
-                <!--                  type="number"-->
-                <!--                  :title="props.row.code_client_name"-->
-                <!--                  @add-to-save="addToAddSaveArray(props.row, 'for_kg')"-->
-                <!--                >-->
-                <!--                  <q-input-->
-                <!--                    v-model.number="props.row.for_kg"-->
-                <!--                    type="number"-->
-                <!--                    autofocus-->
-                <!--                    dense-->
-                <!--                  />-->
-                <!--                  <q-checkbox-->
-                <!--                    v-model="props.row.replacePrice"-->
-                <!--                    label="Заменить"-->
-                <!--                    dense-->
-                <!--                  />-->
-                <!--                </PopupEdit>-->
+                {{ numberFormat(props.row.for_kg) }}
               </q-td>
 
               <q-td
@@ -226,14 +193,7 @@ Close
                 class="text-bold text-red"
                 :props="props"
               >
-                {{ props.row.for_place | numberFormatFilter }}
-                <!--                <PopupEdit-->
-                <!--                  v-if="combineTableData"-->
-                <!--                  :value.sync="props.row.for_place"-->
-                <!--                  type="number"-->
-                <!--                  :title="props.row.code_client_name"-->
-                <!--                  @add-to-save="addToAddSaveArray(props.row, 'for_place')"-->
-                <!--                />-->
+                {{ numberFormat(props.row.for_place) }}
               </q-td>
 
               <q-td
@@ -249,20 +209,6 @@ Close
                 :props="props"
               >
                 {{ props.row.category_name }}
-                <!--                <PopupEdit-->
-                <!--                  v-if="combineTableData"-->
-                <!--                  :value.sync="props.row.category_id"-->
-                <!--                  type="number"-->
-                <!--                  :title="props.row.code_client_name"-->
-                <!--                  @add-to-save="addToAddSaveArray(props.row, 'category_id')"-->
-                <!--                >-->
-                <!--                  <SearchSelect-->
-                <!--                    v-model="props.row.category_id"-->
-                <!--                    label="Категория"-->
-                <!--                    :dense="$q.screen.xs || $q.screen.sm"-->
-                <!--                    :options="categories"-->
-                <!--                  />-->
-                <!--                </PopupEdit>-->
               </q-td>
 
               <q-td
@@ -327,13 +273,17 @@ Close
 
 <script>
 import { getUrl } from 'src/tools/url';
+import { thingsFilter, numberFormat } from 'src/utils';
+import Table from 'components/Elements/Table/Table.vue';
+import IconBtn from 'components/Buttons/IconBtn.vue';
+import BaseBtn from 'components/Buttons/BaseBtn.vue';
 
 export default {
   name: 'DialogSendSms',
   components: {
-    Table: () => import('components/Elements/Table/Table.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
-    BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
+    Table,
+    IconBtn,
+    BaseBtn,
   },
   props: {
     show: {
@@ -349,6 +299,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:show'],
   data() {
     return {
       rate: 0.35,
@@ -391,28 +342,28 @@ export default {
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_kg',
-            label: this.$t('forKg'),
+            label: 'За кг',
             field: 'for_kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_place',
-            label: this.$t('forPlace'),
+            label: 'За место',
             field: 'for_place',
             align: 'center',
             sortable: true,
@@ -426,7 +377,7 @@ export default {
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
@@ -480,6 +431,8 @@ export default {
       });
   },
   methods: {
+    thingsFilter,
+    numberFormat,
     sendSms(values) {
       // const phone = parseInt(this.phone.replace(/[^\d]/g, ''), 10);
       // const sendData = [

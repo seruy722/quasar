@@ -10,22 +10,23 @@
 </template>
 
 <script>
-    export default {
-        name: 'PullRefresh',
-        props: {
-            color: {
-                type: String,
-                default: 'yellow-9',
-            },
-            icon: {
-                type: String,
-                default: 'lightbulb',
-            },
-        },
-        methods: {
-            refresh(done) {
-                this.$emit('refresh', done);
-            },
-        },
-    };
+export default {
+  name: 'PullRefresh',
+  props: {
+    color: {
+      type: String,
+      default: 'yellow-9',
+    },
+    icon: {
+      type: String,
+      default: 'lightbulb',
+    },
+  },
+  emits: ['refresh'],
+  methods: {
+    refresh(done) {
+      this.$emit('refresh', done);
+    },
+  },
+};
 </script>

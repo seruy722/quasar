@@ -18,7 +18,7 @@ export const UPDATE_TRANSFERS = ((state, data) => {
 });
 
 export const ADD_TRANSFER = ((state, elem) => {
-  state.transfers.unshift(elem);
+  state.transfers.push(elem);
 });
 
 export const ADD_TRANSFER_CLIENT = ((state, [elem]) => {

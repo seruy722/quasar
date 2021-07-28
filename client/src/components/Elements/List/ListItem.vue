@@ -10,17 +10,18 @@
 </template>
 
 <script>
-    export default {
-        name: 'ListItem',
-        props: {
-            clickable: {
-                type: Boolean,
-                default: false,
-            },
-            dense: {
-                type: Boolean,
-                default: false,
-            },
-        },
-    };
+export default {
+  name: 'ListItem',
+  props: {
+    clickable: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['list-item-click'],
+};
 </script>

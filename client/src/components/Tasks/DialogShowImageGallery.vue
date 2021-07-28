@@ -41,42 +41,43 @@
 </template>
 
 <script>
-    import filesMixin from 'src/mixins/files';
+import filesMixin from 'src/mixins/files';
 
-    export default {
-        name: 'DialogShowImageGallery',
-        mixins: [filesMixin],
-        props: {
-            showDialog: {
-                type: Boolean,
-                default: false,
-            },
-            slide: {
-                type: Number,
-                default: 1,
-            },
-            files: {
-                type: Array,
-                default: () => ([]),
-            },
-        },
-        computed: {
-            show: {
-                get: function get() {
-                    return this.showDialog;
-                },
-                set: function set(val) {
-                    this.$emit('update:showDialog', val);
-                },
-            },
-            slider: {
-                get: function get() {
-                    return this.slide;
-                },
-                set: function set(val) {
-                    this.$emit('update:slide', val);
-                },
-            },
-        },
-    };
+export default {
+  name: 'DialogShowImageGallery',
+  mixins: [filesMixin],
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    slide: {
+      type: Number,
+      default: 1,
+    },
+    files: {
+      type: Array,
+      default: () => ([]),
+    },
+  },
+  emits: ['update:slide', 'update:showDialog'],
+  computed: {
+    show: {
+      get: function get() {
+        return this.showDialog;
+      },
+      set: function set(val) {
+        this.$emit('update:showDialog', val);
+      },
+    },
+    slider: {
+      get: function get() {
+        return this.slide;
+      },
+      set: function set(val) {
+        this.$emit('update:slide', val);
+      },
+    },
+  },
+};
 </script>

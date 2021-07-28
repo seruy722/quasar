@@ -82,23 +82,23 @@
                     v-if="col.field === 'things'"
                     :lines="10"
                   >
-                    {{ col.value | thingsFilter }}
+                    {{ thingsFilter(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'kg'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'sum'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'paid'"
                   >
                     <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{
+                      {{
                         props.row.paid ? 'Да' :
                           props.row.type ? null : 'Нет'
                       }}
@@ -181,27 +181,11 @@
             {{ props.row.type ? null : props.row.kg }}
           </q-td>
 
-          <!--          <q-td-->
-          <!--            key="for_kg"-->
-          <!--            class="text-bold cursor-pointer"-->
-          <!--            :props="props"-->
-          <!--          >-->
-          <!--            {{ props.row.type ? null : props.row.for_kg }}-->
-          <!--          </q-td>-->
-
-          <!--          <q-td-->
-          <!--            key="for_place"-->
-          <!--            class="text-bold cursor-pointer"-->
-          <!--            :props="props"-->
-          <!--          >-->
-          <!--            {{ props.row.type ? null : props.row.for_place }}-->
-          <!--          </q-td>-->
-
           <q-td
             key="sum"
             :props="props"
           >
-            {{ props.row.sum | numberFormatFilter }}
+            {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
             key="sale"
@@ -214,7 +198,7 @@
             :props="props"
           >
             <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{
+              {{
                 props.row.paid ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}
@@ -228,26 +212,12 @@
             {{ props.row.category_name }}
           </q-td>
 
-          <!--          <q-td-->
-          <!--            key="notation"-->
-          <!--            :props="props"-->
-          <!--          >-->
-          <!--            {{ props.row.notation }}-->
-          <!--          </q-td>-->
-
-          <!--          <q-td-->
-          <!--            key="shop"-->
-          <!--            :props="props"-->
-          <!--          >-->
-          <!--            {{ props.row.shop }}-->
-          <!--          </q-td>-->
-
           <q-td
             key="in_cargo"
             :props="props"
           >
             <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
-{{
+              {{
                 props.row.in_cargo ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}
@@ -265,22 +235,8 @@
             key="things"
             :props="props"
           >
-            {{ props.row.things | thingsFilter }}
+            {{ thingsFilter(props.row.things) }}
           </q-td>
-
-          <!--          <q-td-->
-          <!--            key="delivery_method_name"-->
-          <!--            :props="props"-->
-          <!--          >-->
-          <!--            {{ props.row.delivery_method_name }}-->
-          <!--          </q-td>-->
-
-          <!--          <q-td-->
-          <!--            key="department"-->
-          <!--            :props="props"-->
-          <!--          >-->
-          <!--            {{ props.row.department }}-->
-          <!--          </q-td>-->
         </q-tr>
       </template>
     </Table>
@@ -293,14 +249,19 @@
 
 <script>
 import ExportDataMixin from 'src/mixins/ExportData';
+import { numberFormat, thingsFilter } from 'src/utils';
+import Table from 'src/components/Elements/Table/Table.vue';
+import CountCargoCategories from 'src/components/CargoDebts/CountCargoCategories.vue';
+import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
 
 export default {
   name: 'Cargo',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    CountCargoCategories: () => import('src/components/CargoDebts/CountCargoCategories.vue'),
-    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
+    Table,
+    CountCargoCategories,
+    ExportBtn,
+    UpdateBtn,
   },
   mixins: [ExportDataMixin],
   props: {
@@ -337,28 +298,28 @@ export default {
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           // {
           //   name: 'for_kg',
-          //   label: this.$t('forKg'),
+          //   label: 'За кг',
           //   field: 'for_kg',
           //   align: 'center',
           //   sortable: true,
           // },
           // {
           //   name: 'for_place',
-          //   label: this.$t('forPlace'),
+          //   label: 'За место',
           //   field: 'for_place',
           //   align: 'center',
           //   sortable: true,
@@ -386,14 +347,14 @@ export default {
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
           },
           // {
           //   name: 'notation',
-          //   label: this.$t('notation'),
+          //   label: 'Примечания',
           //   field: 'notation',
           //   align: 'center',
           //   sortable: true,
@@ -414,7 +375,7 @@ export default {
           },
           {
             name: 'things',
-            label: this.$t('things'),
+            label: 'Опись',
             field: 'things',
             align: 'center',
             sortable: true,
@@ -451,6 +412,8 @@ export default {
     },
   },
   methods: {
+    numberFormat,
+    thingsFilter,
     async exportFaxData(selected) {
       const data = !_.isEmpty(selected) ? selected : this.cargo;
       if (!_.isEmpty(data)) {

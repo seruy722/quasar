@@ -19,7 +19,7 @@
             tooltip="Excel"
             icon="explicit"
             class="q-ml-sm"
-            @icon-btn-click="exportTransfers"
+            @icon-btn-click="exportTransfers(allTransfers, transferTableReactiveProperties.selected)"
           />
           <IconBtn
             color="orange"
@@ -102,7 +102,7 @@
                       </q-badge>
                     </q-item-label>
                     <q-item-label v-else-if="col.field === 'receiver_phone'">
-                      {{ col.value | phoneNumberFilter }}
+                      {{ phoneNumberFilter(col.value) }}
                     </q-item-label>
                     <q-item-label v-else-if="col.field === 'receiver_name'">
                       {{ col.value }}
@@ -143,7 +143,7 @@
           <q-tr
             :props="props"
             class="text-bold cursor-pointer"
-            @click.stop="viewEditDialog(props, $event)"
+            @click="viewEditDialog(props, $event)"
           >
             <q-td
               auto-width
@@ -173,14 +173,14 @@
               key="receiver_phone"
               :props="props"
             >
-              {{ props.row.receiver_phone | phoneNumberFilter }}
+              {{ phoneNumberFilter(props.row.receiver_phone) }}
             </q-td>
 
             <q-td
               key="sum"
               :props="props"
             >
-              {{ props.row.sum | numberFormatFilter }}
+              {{ numberFormat(props.row.sum) }}
             </q-td>
 
             <q-td
@@ -255,130 +255,13 @@
         </PageScroller>
       </Fab>
     </PageSticky>
-    <Dialog
-      :dialog="dialog"
-      :persistent="true"
-    >
-      <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
-        <q-card-section class="row justify-between bg-grey q-mb-sm">
-          <span class="text-h6">{{ dialogTitle }}</span>
-          <div>
-            <IconBtn
-              v-if="localProps.row"
-              dense
-              icon="history"
-              tooltip="История"
-              @icon-btn-click="getTransfersHistory(localProps.row.id, localProps.cols)"
-            />
-
-            <IconBtn
-              dense
-              icon="save"
-              tooltip="Сохранить"
-              color="positive"
-              @icon-btn-click="checkErrors(transferData, updateData)"
-            />
-
-            <IconBtn
-              dense
-              icon="clear"
-              tooltip="Закрыть"
-              color="negative"
-              @icon-btn-click="confirm"
-            />
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <div
-            v-for="(item, index) in transferData"
-            :key="index"
-          >
-            <BaseInput
-              v-if="item.type === 'text'"
-              v-model.trim="item.value"
-              :label="item.label"
-              :type="item.type"
-              :mask="item.mask"
-              :unmasked-value="item.unmaskedValue"
-              :change-value.sync="item.changeValue"
-              dense
-              :field="item.field"
-              :errors="errorsData"
-            />
-
-            <BaseInput
-              v-else-if="item.type === 'number'"
-              v-model.number="item.value"
-              :label="item.label"
-              :type="item.type"
-              :mask="item.mask"
-              :unmasked-value="item.unmaskedValue"
-              :change-value.sync="item.changeValue"
-              dense
-              :field="item.field"
-              :errors="errorsData"
-            />
-
-            <SearchSelect
-              v-else-if="item.type === 'searchSelect'"
-              v-model="item.value"
-              dense
-              :options="item.options"
-              :label="item.label"
-              :field="item.field"
-              :func-load-data="item.funcLoadData"
-              :change-value.sync="item.changeValue"
-              :errors="errorsData"
-            />
-
-            <BaseSelect
-              v-else-if="item.type === 'select'"
-              v-model="item.value"
-              :label="item.label"
-              :dense="true"
-              :options="item.options"
-              :field="item.field"
-              :change-value.sync="item.changeValue"
-              :errors="errorsData"
-            />
-
-            <BaseInput
-              v-else-if="item.type === 'date'"
-              v-model="item.value"
-              :label="item.label"
-              :errors="errorsData"
-              :field="item.field"
-              :readonly="item.readonly"
-              :mask="item.mask"
-              :change-value.sync="item.changeValue"
-              dense
-            >
-              <template #append>
-                <Date
-                  :value.sync="item.value"
-                  :change-value.sync="item.changeValue"
-                />
-              </template>
-            </BaseInput>
-          </div>
-        </q-card-section>
-
-        <Separator />
-        <q-card-actions>
-          <BaseBtn
-            label="Отмена"
-            color="negative"
-            @click-base-btn="cancel(transferData)"
-          />
-          <BaseBtn
-            label="Сохранить"
-            color="positive"
-            @click-base-btn="checkErrors(transferData, updateData)"
-          />
-        </q-card-actions>
-      </q-card>
-    </Dialog>
-    <DialogAddCode :show-dialog.sync="showCodeDialog" />
+    <DialogAddTransfer
+      v-model:show-dialog="dialog"
+      v-model:local-props="localProps"
+      v-model:selected="transferTableReactiveProperties.selected"
+      :transfer-data="transferData"
+    />
+    <DialogAddCode v-model:show-dialog="showCodeDialog" />
     <Dialog
       :dialog="dialogHistory"
       :persistent="true"
@@ -428,8 +311,8 @@
       </q-card>
     </Dialog>
     <DialogChooseDate
-      :show-dialog.sync="showDialogChooseDate"
-      :date.sync="dialogChooseDateData"
+      v-model:show-dialog="showDialogChooseDate"
+      v-model:date="dialogChooseDateData"
     />
   </q-page>
 </template>
@@ -439,48 +322,51 @@ import { getUrl } from 'src/tools/url';
 import getFromSettings from 'src/tools/settings';
 import {
   formatToDotDate,
-  reverseDate,
   addTime,
 } from 'src/utils/formatDate';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
-import { callFunction } from 'src/utils/index';
+import { callFunction, numberFormat, phoneNumberFilter } from 'src/utils';
 import TransferMixin from 'src/mixins/Transfer';
 import {
   setMethodLabel,
   setStatusLabel,
   setFormatedDate,
-  prepareHistoryData,
-  setChangeValue,
   setDefaultData,
   getClientCodes,
 } from 'src/utils/FrequentlyCalledFunctions';
-import { formatISO } from 'date-fns';
+import { defineAsyncComponent } from 'vue';
+import Table from 'components/Elements/Table/Table.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import CountTransfersData from 'src/components/Transfers/CountTransfersData.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import PageSticky from 'src/components/PageSticky.vue';
+import Fab from 'src/components/Elements/Fab.vue';
+import FabAction from 'src/components/Elements/FabAction.vue';
+import PageScroller from 'src/components/PageScroller.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 
 export default {
   name: 'Transfers',
   components: {
-    Table: () => import('components/Elements/Table/Table.vue'),
-    Dialog: () => import('components/Dialogs/Dialog.vue'),
-    Date: () => import('components/Date.vue'),
-    BaseInput: () => import('components/Elements/BaseInput.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
-    BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-    Separator: () => import('components/Separator.vue'),
-    SearchSelect: () => import('components/Elements/SearchSelect.vue'),
-    BaseSelect: () => import('components/Elements/BaseSelect.vue'),
-    DialogAddCode: () => import('components/Dialogs/DialogAddCode.vue'),
-    PageSticky: () => import('components/PageSticky.vue'),
-    Fab: () => import('components/Elements/Fab.vue'),
-    FabAction: () => import('components/Elements/FabAction.vue'),
-    PageScroller: () => import('components/PageScroller.vue'),
-    PullRefresh: () => import('components/PullRefresh.vue'),
-    TransferHistory: () => import('components/History/TransferHistory.vue'),
-    CountTransfersData: () => import('components/Transfers/CountTransfersData.vue'),
-    TransfersStatistics: () => import('components/Transfers/TransfersStatistics.vue'),
-    UpdateBtn: () => import('components/Buttons/UpdateBtn.vue'),
-    DialogChooseDate: () => import('components/Dialogs/DialogChooseDate.vue'),
+    Table,
+    BaseBtn,
+    IconBtn,
+    PageSticky,
+    PullRefresh,
+    CountTransfersData,
+    UpdateBtn,
+    Fab,
+    FabAction,
+    PageScroller,
+    Dialog: defineAsyncComponent(() => import('src/components/Dialogs/Dialog.vue')),
+    DialogAddCode: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddCode.vue')),
+    DialogAddTransfer: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddTransfer.vue')),
+    TransferHistory: defineAsyncComponent(() => import('src/components/History/TransferHistory.vue')),
+    TransfersStatistics: defineAsyncComponent(() => import('components/Transfers/TransfersStatistics.vue')),
+    DialogChooseDate: defineAsyncComponent(() => import('components/Dialogs/DialogChooseDate.vue')),
   },
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
   data() {
@@ -627,7 +513,7 @@ export default {
           },
           {
             name: 'sum',
-            label: this.$t('sum'),
+            label: 'Сумма',
             field: 'sum',
             align: 'center',
             sortable: true,
@@ -676,7 +562,7 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
@@ -695,9 +581,6 @@ export default {
   computed: {
     allTransfers() {
       return this.$store.getters['transfers/getTransfers'];
-    },
-    dialogTitle() {
-      return _.get(this.localProps, 'row.client_name') || 'Новый перевод';
     },
     clientCodes() {
       return this.$store.getters['codes/getCodes'];
@@ -740,97 +623,10 @@ export default {
     this.getTransfers();
   },
   methods: {
-    confirm() {
-      this.$q.dialog({
-        title: 'Предупреждение!',
-        message: 'Закрыть окно?',
-        ok: {
-          push: true,
-          label: 'Закрыть',
-        },
-        cancel: {
-          push: true,
-          color: 'negative',
-        },
-        persistent: true,
-      })
-        .onOk(() => {
-          this.cancel(this.transferData);
-        })
-        .onCancel(() => {
-          // console.log('>>>> Cancel')
-        });
-    },
-    updateData(data) {
-      const sendData = _.cloneDeep(data);
-      devlog.log('DATA_N0', sendData);
-      if (!sendData.client_id.value) {
-        devlog.log('NEW_');
-        this.showCodeDialog = true;
-      } else if (_.isEmpty(this.localProps)) {
-        // ДОБАВЛЕНИЕ ЗАПИСИ
-        this.$q.loading.show();
-        const values = _.mapValues(sendData, 'value');
-        values.receiver_name = _.startCase(_.toLower(values.receiver_name));
-        if (_.trim(values.issued_by)) {
-          const date = reverseDate(values.issued_by);
-          values.issued_by = formatISO(addTime(date));
-        }
-        this.$axios.post(getUrl('storeTransfers'), values)
-          .then(({ data: { transfer } }) => {
-            devlog.log('DDFR', transfer);
-            this.$store.dispatch('transfers/addTransfer', transfer);
-            this.cancel(this.transferData);
-            this.$q.loading.hide();
-            this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно добавлена.`, 'center');
-          })
-          .catch((errors) => {
-            this.$q.loading.hide();
-            this.errorsData.errors = _.get(errors, 'response.data.errors');
-          });
-      } else if (_.has(this.localProps, 'row.id')) {
-        // ОБНОВЛЕНИЕ ЗАПИСИ
-        if (_.some(sendData, 'changeValue')) {
-          this.$q.loading.show();
-          devlog.log('sendData_', sendData);
-          const dataToSend = _.reduce(sendData, (result, {
-            value,
-            changeValue,
-          }, index) => {
-            if (changeValue && index === 'issued_by') {
-              devlog.log('ISSUUE', value);
-              if (value) {
-                const date = reverseDate(value);
-                result[index] = formatISO(addTime(date));
-              } else {
-                result[index] = value;
-              }
-            } else if (changeValue && index === 'receiver_name' && value) {
-              result[index] = _.startCase(_.toLower(value));
-            } else if (changeValue) {
-              result[index] = value;
-            }
-            return result;
-          }, {});
-          _.assign(dataToSend, { id: _.get(this.localProps, 'row.id') });
-          devlog.log('dataToSend', dataToSend);
-          this.$axios.post(getUrl('updateTransfers'), dataToSend)
-            .then(({ data: { transfer } }) => {
-              devlog.log('DDFR', transfer);
-              this.$store.dispatch('transfers/updateTransfer', transfer);
-              this.cancel(this.transferData);
-              this.$q.loading.hide();
-              this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно обновлена.`, 'center');
-            })
-            .catch((errors) => {
-              this.$q.loading.hide();
-              this.errorsData.errors = _.get(errors, 'response.data.errors');
-            });
-        } else {
-          this.openCloseDialog(false);
-        }
-        devlog.log('item_DDD_FFF', data);
-      }
+    phoneNumberFilter,
+    numberFormat,
+    openCloseDialog(val) {
+      this.dialog = val;
     },
     viewEditDialog(val, event) {
       devlog.log('EVENT', event);
@@ -875,19 +671,11 @@ export default {
             this.$q.loading.hide();
           });
       } else {
-        this.$store.dispatch('transfers/fetchNewAndChangedTransfers');
+        await this.$store.dispatch('transfers/fetchNewAndChangedTransfers');
       }
     },
     setAdditionalData(data) {
       return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
-    },
-    openCloseDialog(val) {
-      this.dialog = val;
-    },
-    cancel(data) {
-      this.openCloseDialog(false);
-      this.localProps.selected = false;
-      setChangeValue(data);
     },
     async refresh(done) {
       if (!done) {
@@ -897,38 +685,18 @@ export default {
         .then(() => {
           callFunction(done);
           this.$q.loading.hide();
-          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+          this.showNotif('success', 'Данные успешно обновлены.');
         })
         .catch(() => {
           this.$q.loading.hide();
           callFunction(done);
         });
     },
-    exportTransfers() {
-      if (!_.isEmpty(this.allTransfers)) {
-        this.exportDataToExcel(getUrl('exportTransfers'), {
-          ids: _.map(this.transferTableReactiveProperties.selected, 'id'),
-        }, 'Переводы.xlsx');
-      }
-    },
-    async getTransfersHistory(transferID, cols) {
-      this.$q.loading.show();
-      await this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`)
-        .then(({ data: { transferHistory } }) => {
-          if (!_.isEmpty(transferHistory)) {
-            this.$q.loading.hide();
-            this.dialogHistory = true;
-            const historyData = prepareHistoryData(cols, transferHistory);
-            historyData.historyData = this.setAdditionalData(historyData.historyData);
-            this.transferHistoryData = historyData;
-          } else {
-            this.$q.loading.hide();
-            this.showNotif('info', 'По этому переводу нет истории.', 'center');
-          }
-        })
-        .catch(() => {
-          devlog.error('Ошибка при получении данных истории.');
-        });
+    exportTransfers(data, selectedData) {
+      const ids = _.isEmpty(selectedData) ? [] : _.uniq(_.map(selectedData, 'id'));
+      this.exportDataToExcel(getUrl('exportTransfers'), {
+        ids,
+      }, 'Переводы.xlsx');
     },
     addToDebtsTableFinish({
                             ids,

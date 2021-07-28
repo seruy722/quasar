@@ -3,7 +3,7 @@
     data-vue-component-name="DialogChangeThings"
   >
     <Dialog
-      :dialog.sync="thingsData.dialog"
+      v-model:dialog="thingsData.dialog"
       :persistent="true"
       title="Запись"
     >
@@ -96,115 +96,127 @@
 </template>
 
 <script>
-    export default {
-        name: 'DialogChangeThings',
-        components: {
-            BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-            SelectChips: () => import('src/components/Elements/SelectChips.vue'),
-            List: () => import('src/components/Elements/List/List.vue'),
-            ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-            // ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-            ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            Card: () => import('src/components/Elements/Card/Card.vue'),
-            CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-        },
-        props: {
-            title: {
-                type: String,
-                default: '',
-            },
-            thingsData: {
-                type: Object,
-                default: () => ({}),
-            },
-        },
-        data() {
-            this.$_changeData = false;
-            return {
-                localThings: [],
-            };
-        },
-        computed: {
-            thingsList() {
-                return this.$store.getters['thingsList/getThingsList'];
-            },
-        },
-        watch: {
-            'thingsData.things': {
-                handler: function set(val) {
-                    this.setLocalThings(val);
-                },
-                immediate: true,
-            },
-            'thingsData.dialog': {
-                handler: function set(val) {
-                    this.thingsData.edit = val;
-                },
-                immediate: true,
-            },
-            localThings: {
-                handler: function get() {
-                    this.$_changeData = true;
-                },
-                deep: true,
-                immediate: false,
-            },
-        },
-        methods: {
-            setLocalThings(value) {
-                if (_.isString(value) && _.trim(value)) {
-                    try {
-                        this.localThings = JSON.parse(value);
-                    } catch (e) {
-                        devlog.error(`Неправильный JSON формат строки - ${value}`);
-                    }
-                }
-            },
-            deleteLocalThing(index) {
-                this.localThings.splice(index, 1);
-            },
-            cancel(data) {
-                this.closeDialog(data);
-                this.setLocalThings(data.things);
-            },
-            save(values, data) {
-                if (this.$_changeData) {
-                    if (_.isEmpty(values)) {
-                        data.things = null;
-                    } else {
-                        // Удаление пустых обьектов
-                        _.remove(values, (item) => !item.label && !item.value);
-                        // Каждое слово с большой буквы
-                        _.forEach(values, (item) => {
-                            if (_.isString(item.label)) {
-                                item.label = _.join(_.map(_.split(item.label, ' '), (elem) => _.upperFirst(elem)), ' ');
-                            }
-                        });
-                        data.things = JSON.stringify(values);
-                    }
-                    this.$emit('add-to-save');
-                }
-                this.closeDialog(data);
-            },
-            closeDialog(data) {
-                data.dialog = false;
-            },
-            add() {
-                this.localThings.unshift({
-                    label: null,
-                    value: 0,
-                });
-            },
-            clear() {
-                if (!_.isEmpty(this.localThings)) {
-                    this.localThings = [];
-                }
-            },
-        },
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import Separator from 'src/components/Separator.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import SelectChips from 'src/components/Elements/SelectChips.vue';
+import List from 'src/components/Elements/List/List.vue';
+import ItemSection from 'src/components/Elements/List/ItemSection.vue';
+import ListItem from 'src/components/Elements/List/ListItem.vue';
+
+export default {
+  name: 'DialogChangeThings',
+  components: {
+    BaseInput,
+    SelectChips,
+    List,
+    ItemSection,
+    ListItem,
+    IconBtn,
+    Dialog,
+    Card,
+    CardActions,
+    CardSection,
+    BaseBtn,
+    Separator,
+  },
+  props: {
+    title: {
+      type: String,
+      default: '',
+    },
+    thingsData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    this.$_changeData = false;
+    return {
+      localThings: [],
     };
+  },
+  computed: {
+    thingsList() {
+      return this.$store.getters['thingsList/getThingsList'];
+    },
+  },
+  watch: {
+    'thingsData.things': {
+      handler: function set(val) {
+        this.setLocalThings(val);
+      },
+      immediate: true,
+    },
+    'thingsData.dialog': {
+      handler: function set(val) {
+        this.thingsData.edit = val;
+      },
+      immediate: true,
+    },
+    localThings: {
+      handler: function get() {
+        this.$_changeData = true;
+      },
+      deep: true,
+      immediate: false,
+    },
+  },
+  methods: {
+    setLocalThings(value) {
+      if (_.isString(value) && _.trim(value)) {
+        try {
+          this.localThings = JSON.parse(value);
+        } catch (e) {
+          devlog.error(`Неправильный JSON формат строки - ${value}`);
+        }
+      }
+    },
+    deleteLocalThing(index) {
+      this.localThings.splice(index, 1);
+    },
+    cancel(data) {
+      this.closeDialog(data);
+      this.setLocalThings(data.things);
+    },
+    save(values, data) {
+      if (this.$_changeData) {
+        if (_.isEmpty(values)) {
+          data.things = null;
+        } else {
+          // Удаление пустых обьектов
+          _.remove(values, (item) => !item.label && !item.value);
+          // Каждое слово с большой буквы
+          _.forEach(values, (item) => {
+            if (_.isString(item.label)) {
+              item.label = _.join(_.map(_.split(item.label, ' '), (elem) => _.upperFirst(elem)), ' ');
+            }
+          });
+          data.things = JSON.stringify(values);
+        }
+        this.$emit('add-to-save');
+      }
+      this.closeDialog(data);
+    },
+    closeDialog(data) {
+      data.dialog = false;
+    },
+    add() {
+      this.localThings.unshift({
+        label: null,
+        value: 0,
+      });
+    },
+    clear() {
+      if (!_.isEmpty(this.localThings)) {
+        this.localThings = [];
+      }
+    },
+  },
+};
 </script>

@@ -100,14 +100,14 @@
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label v-if="col.field === 'sum'">
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'commission'">
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'paid'">
                     <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{
+                      {{
                         props.row.paid ? 'Да' :
                           props.row.type ? null : 'Нет'
                       }}
@@ -175,7 +175,7 @@
             key="sum"
             :props="props"
           >
-            {{ props.row.sum | numberFormatFilter }}
+            {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
             key="commission"
@@ -188,7 +188,7 @@
             :props="props"
           >
             <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{
+              {{
                 props.row.paid ? 'Да' :
                   props.row.type ? null : 'Нет'
               }}
@@ -217,16 +217,16 @@
       style="max-width: 500px;margin:0 auto;"
     />
     <DialogAddDebtPaymentEntry
-      :entry-data.sync="dialogAddDebtPaymentEntryData"
-      :show-dialog.sync="showDialogAddDebtPaymentEntry"
+      v-model:entry-data="dialogAddDebtPaymentEntryData"
+      v-model:show-dialog="showDialogAddDebtPaymentEntry"
     />
     <DialogAddDebtPayEntry
-      :entry-data.sync="dialogAddDebtPayEntryData"
-      :show-dialog.sync="showDialogAddDebtPayEntry"
+      v-model:entry-data="dialogAddDebtPayEntryData"
+      v-model:show-dialog="showDialogAddDebtPayEntry"
     />
     <DialogAddDebEntry
-      :entry-data.sync="dialogAddDebtEntryData"
-      :show-dialog.sync="showDialogAddDebtEntry"
+      v-model:entry-data="dialogAddDebtEntryData"
+      v-model:show-dialog="showDialogAddDebtEntry"
     />
   </div>
 </template>
@@ -234,20 +234,29 @@
 <script>
 import ExportDataMixin from 'src/mixins/ExportData';
 import showNotif from 'src/mixins/showNotif';
+import { numberFormat } from 'src/utils';
+import Table from 'src/components/Elements/Table/Table.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import GeneralClientDebtsData from 'src/components/CargoDebts/GeneralClientDebtsData.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
+import DialogAddDebtPaymentEntry from 'src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue';
+import DialogAddDebEntry from 'src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue';
+import DialogAddDebtPayEntry from 'src/components/CargoDebts/Dialogs/DialogAddDebtPayEntry.vue';
+import MenuDebt from 'src/components/CargoDebts/MenuDebt.vue';
 
 export default {
   name: 'Debts',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    // BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    GeneralClientDebtsData: () => import('src/components/CargoDebts/GeneralClientDebtsData.vue'),
-    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-    DialogAddDebtPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue'),
-    DialogAddDebEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue'),
-    DialogAddDebtPayEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPayEntry.vue'),
-    MenuDebt: () => import('src/components/CargoDebts/MenuDebt.vue'),
+    Table,
+    IconBtn,
+    GeneralClientDebtsData,
+    UpdateBtn,
+    ExportBtn,
+    DialogAddDebtPaymentEntry,
+    DialogAddDebEntry,
+    DialogAddDebtPayEntry,
+    MenuDebt,
   },
   mixins: [ExportDataMixin, showNotif],
   props: {
@@ -312,7 +321,7 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
@@ -345,6 +354,7 @@ export default {
     },
   },
   methods: {
+    numberFormat,
     viewDebtEditDialog(data, event) {
       if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
         devlog.log('data', data, event);

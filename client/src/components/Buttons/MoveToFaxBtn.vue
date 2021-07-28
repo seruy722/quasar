@@ -7,17 +7,18 @@
     @click="$emit('move-to-fax-click')"
   >
     <q-tooltip
-anchor="bottom middle"
-self="top middle"
-:offset="[10, 10]"
->
+      anchor="bottom middle"
+      self="top middle"
+      :offset="[10, 10]"
+    >
       Переместить
     </q-tooltip>
   </q-btn>
 </template>
 
 <script>
-    export default {
-        name: 'MoveToFaxBtn',
-    };
+export default {
+  name: 'MoveToFaxBtn',
+  emits: ['move-to-fax-click'],
+};
 </script>

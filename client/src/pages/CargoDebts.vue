@@ -14,7 +14,7 @@
           :options="clientCodes"
           style="max-width: 320px;"
         />
-        <CargoDebtsSearch :settings.sync="settings" />
+        <CargoDebtsSearch v-model:settings="settings" />
       </div>
       <div class="q-gutter-y-md">
         <q-card>
@@ -86,28 +86,28 @@
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalCargoData.kg | numberFormatFilter }}
+                            {{ numberFormat(generalCargoData.kg) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalCargoData.place | numberFormatFilter }}
+                            {{ numberFormat(generalCargoData.place) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalCargoData.sale | numberFormatFilter }}
+                            {{ numberFormat(generalCargoData.sale) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalCargoData.sum | numberFormatFilter }}
+                            {{ numberFormat(generalCargoData.sum) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
@@ -124,9 +124,9 @@
                 </q-card-section>
                 <q-inner-loading :showing="generalCargoData.visible">
                   <q-spinner-gears
-size="50px"
-color="primary"
-/>
+                    size="50px"
+                    color="primary"
+                  />
                 </q-inner-loading>
               </q-card>
 
@@ -153,14 +153,14 @@ color="primary"
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalDebtsData.commission | numberFormatFilter }}
+                            {{ numberFormat(generalDebtsData.commission) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
                           <q-badge>
-                            {{ generalDebtsData.sum |numberFormatFilter }}
+                            {{ numberFormat(generalDebtsData.sum) }}
                           </q-badge>
                         </q-item-label>
                       </q-item-section>
@@ -212,16 +212,23 @@ color="primary"
 
 <script>
 import showNotif from 'src/mixins/showNotif';
+import { numberFormat } from 'src/utils';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import Cargo from 'src/components/CargoDebts/Cargo.vue';
+import Debts from 'src/components/CargoDebts/Debts.vue';
+import CargoDebtsSearch from 'src/components/CargoDebts/CargoDebtsSearch.vue';
+import ExportMenuGeneralCargo from 'src/components/CargoDebts/ExportMenuGeneralCargo.vue';
 
 export default {
   name: 'CargoDebts',
   components: {
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    PullRefresh: () => import('src/components/PullRefresh.vue'),
-    Cargo: () => import('src/components/CargoDebts/Cargo.vue'),
-    Debts: () => import('src/components/CargoDebts/Debts.vue'),
-    CargoDebtsSearch: () => import('src/components/CargoDebts/CargoDebtsSearch.vue'),
-    ExportMenuGeneralCargo: () => import('src/components/CargoDebts/ExportMenuGeneralCargo.vue'),
+    SearchSelect,
+    PullRefresh,
+    Cargo,
+    Debts,
+    CargoDebtsSearch,
+    ExportMenuGeneralCargo,
   },
   mixins: [showNotif],
   data() {
@@ -278,6 +285,7 @@ export default {
     this.$store.dispatch('cargoDebts/getGeneralData');
   },
   methods: {
+    numberFormat,
     getClientData(clientId) {
       this.$q.loading.show();
       this.$store.dispatch('cargoDebts/getCargoDebts', clientId)

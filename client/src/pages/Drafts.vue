@@ -6,19 +6,19 @@
     <div>
       <div>Кода без информации о клиенте</div>
       <q-btn
-unelevated
-rounded
-color="primary"
-label="Export"
-@click="getCodesWithoutInfo"
-/>
+        unelevated
+        rounded
+        color="primary"
+        label="Export"
+        @click="getCodesWithoutInfo"
+      />
     </div>
 
     <div>
       <div>Загрузка карго на сервер</div>
       <UploadFileToServer :upload-data="uploadData" />
-      <Dialog :dialog.sync="dialogUploadCargoData">
-<q-separator />
+      <Dialog v-model:dialog="dialogUploadCargoData">
+        <q-separator />
 
         <q-card-actions align="right">
           <OutlineBtn
@@ -31,7 +31,7 @@ label="Export"
 
     <div>
       <div>Загрузка долгов на сервер</div>
-      <Dialog :dialog.sync="dialogUploadDebtsData">
+      <Dialog v-model:dialog="dialogUploadDebtsData">
         <template #body>
           <q-card-section>
             <UploadFileToServer :upload-data="uploadDebtsData" />
@@ -51,7 +51,7 @@ label="Export"
 
     <div>
       <div>Загрузка склада на сервер</div>
-      <Dialog :dialog.sync="dialogUploadSkladData">
+      <Dialog v-model:dialog="dialogUploadSkladData">
         <template #body>
           <q-card-section>
             <UploadFileToServer :upload-data="uploadSkladData" />
@@ -77,21 +77,21 @@ label="Export"
     <div>
       Загрузка данных факсов
       <input
-type="file"
-multiple
-@change="upFiles"
->
+        type="file"
+        multiple
+        @change="upFiles"
+      >
 
       <div>
         <q-input
-v-model.trim="search"
-type="text"
-label="Search"
-/>
+          v-model.trim="search"
+          type="text"
+          label="Search"
+        />
         <q-btn
-label="Test"
-@click="searchData"
-/>
+          label="Test"
+          @click="searchData"
+        />
         <div class="q-pa-md">
           <q-table
             title="Treats"
@@ -106,24 +106,24 @@ label="Test"
     <div style="border: 1px solid blue;">
       Клиенты которые получают бренд
       <q-btn
-label="GET"
-@click="getBrandClients"
-/>
+        label="GET"
+        @click="getBrandClients"
+      />
     </div>
     <div style="border: 1px solid blue;">
       Клиенты которые не получали товар больше месяца
       <q-btn
-label="GET"
-@click="exportCustomersWhoLeft"
-/>
+        label="GET"
+        @click="exportCustomersWhoLeft"
+      />
     </div>
 
     <div style="border: 1px solid blue;">
       Клиенты в нотации которых написано оплачено
       <q-btn
-label="GET"
-@click="getEntriesWithPayNotation"
-/>
+        label="GET"
+        @click="getEntriesWithPayNotation"
+      />
     </div>
 
     <div style="border: 1px solid blue;">
@@ -136,47 +136,51 @@ label="GET"
         />
       </div>
       <q-btn
-label="GET"
-@click="exportReportOdessaData(date)"
-/>
+        label="GET"
+        @click="exportReportOdessaData(date)"
+      />
     </div>
 
     <div>
       Загрузка факсов
       <input
-type="file"
-multiple
-@change="upFaxDataFiles"
->
+        type="file"
+        multiple
+        @change="upFaxDataFiles"
+      >
     </div>
 
     <div>
       Загрузка кодов
       <input
-type="file"
-multiple
-@change="upCodes"
->
+        type="file"
+        multiple
+        @change="upCodes"
+      >
     </div>
 
-<!--    <div>-->
-<!--      Reg-->
-<!--      <q-btn @click="reg" label="REGIST" />-->
-<!--    </div>-->
-</div>
+    <!--    <div>-->
+    <!--      Reg-->
+    <!--      <q-btn @click="reg" label="REGIST" />-->
+    <!--    </div>-->
+  </div>
 </template>
 
 <script>
 import { getUrl } from 'src/tools/url';
 import showNotif from 'src/mixins/showNotif';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import AddCode from 'src/components/Dialogs/AddCode.vue';
+import UploadFileToServer from 'src/components/Upload/UploadFileToServer.vue';
+import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 
 export default {
   name: 'Drafts',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    AddCode: () => import('src/components/Dialogs/AddCode.vue'),
-    UploadFileToServer: () => import('src/components/Upload/UploadFileToServer.vue'),
-    OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
+    Dialog,
+    AddCode,
+    UploadFileToServer,
+    OutlineBtn,
   },
   mixins: [showNotif],
   data() {

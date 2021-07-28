@@ -75,6 +75,9 @@
               </q-item-section>
 
               <q-item-section>
+                <!--                <q-item-label>-->
+                <!--                  {{ props.row.start_sum }}-->
+                <!--                </q-item-label>-->
                 <q-item-label>
                   <q-badge color="positive">
                     {{ sumProfit(props.row.end_sum, props.row.start_sum) }}
@@ -83,6 +86,9 @@
               </q-item-section>
 
               <q-item-section>
+                <!--                <q-item-label>-->
+                <!--                  {{ props.row.end_sum }}-->
+                <!--                </q-item-label>-->
                 <q-item-label>
                   <q-badge color="negative">
                     {{ sumExpenses(props.row.data) }}
@@ -135,7 +141,7 @@
 
                 <q-item-section>
                   <q-item-label>
-                    {{ item.created_at | formatToDotDate }}
+                    {{ formatToDotDate(item.created_at) }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -174,7 +180,7 @@
             key="start_sum"
             :props="props"
           >
-            <q-badge :color="sumProfit(props.row.end_sum, props.row.start_sum) > 0 ? 'positive' : 'negative'">
+            <q-badge color="positive">
               {{ sumProfit(props.row.end_sum, props.row.start_sum) }}
             </q-badge>
           </q-td>
@@ -246,7 +252,7 @@
         </q-tr>
       </template>
     </Table>
-    <DialogAddExpense :show-dialog.sync="showDialogAddExpense" />
+    <DialogAddExpense v-model:show-dialog="showDialogAddExpense" />
   </div>
 </template>
 
@@ -254,13 +260,16 @@
 import showNotif from 'src/mixins/showNotif';
 import ApexCharts from 'apexcharts';
 import { formatToDotDate } from 'src/utils/formatDate';
+import Table from 'src/components/Elements/Table/Table.vue';
+import MenuBtn from 'src/components/Buttons/MenuBtn.vue';
+import DialogAddExpense from 'src/components/Dialogs/DialogAddExpense.vue';
 
 export default {
   name: 'Statistics',
   components: {
-    DialogAddExpense: () => import('src/components/Dialogs/DialogAddExpense.vue'),
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
+    DialogAddExpense,
+    Table,
+    MenuBtn,
   },
   mixins: [showNotif],
   data() {

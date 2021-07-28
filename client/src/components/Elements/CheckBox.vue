@@ -9,17 +9,18 @@
 </template>
 
 <script>
-    export default {
-        name: 'CheckBox',
-        props: {
-            value: {
-                type: Boolean,
-                default: false,
-            },
-            label: {
-                type: String,
-                default: '',
-            },
-        },
-    };
+export default {
+  name: 'CheckBox',
+  props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
+    label: {
+      type: String,
+      default: '',
+    },
+  },
+  emits: ['input'],
+};
 </script>

@@ -78,6 +78,7 @@ import showNotif from 'src/mixins/showNotif';
 export default {
   name: 'PasswordRecovery',
   mixins: [showNotif],
+  emits: ['change-tab'],
   data() {
     return {
       phone: null,

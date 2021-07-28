@@ -31,66 +31,70 @@
     </IconBtn>
 
     <DialogAddDebtPaymentEntry
-      :show-dialog.sync="showDialogAddDebtPaymentEntry"
+      v-model:show-dialog="showDialogAddDebtPaymentEntry"
     />
     <DialogAddDebEntry
-      :show-dialog.sync="showDialogAddDebtEntry"
+      v-model:show-dialog="showDialogAddDebtEntry"
     />
   </div>
 </template>
 
 <script>
-    const listItems = [
-        {
-            title: 'Оплата',
-            click: 'showDialogAddDebtPaymentEntry',
-        },
-        {
-            title: 'Долг',
-            click: 'showDialogAddDebtEntry',
-        },
-    ];
-    export default {
-        name: 'MenuDebt',
-        components: {
-            DialogAddDebtPaymentEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            DialogAddDebEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue'),
-        },
-        props: {
-            items: {
-                type: Array,
-                default: () => [],
-            },
-        },
-        data() {
-            return {
-                listItems: [],
-                showDialogAddDebtPaymentEntry: false,
-                showDialogAddDebtEntry: false,
-            };
-        },
-        watch: {
-            items: {
-                handler: function set(val) {
-                    if (!_.isEmpty(val)) {
-                        this.listItems = _.reduce(listItems, (result, item) => {
-                            if (val.includes(item.title)) {
-                                result.push(item);
-                            }
-                            return result;
-                        }, []);
-                    } else {
-                        this.listItems = listItems;
-                    }
-                },
-                immediate: true,
-            },
-        },
-        methods: {
-            onClick(value) {
-                this[value] = true;
-            },
-        },
+import DialogAddDebtPaymentEntry from 'src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import DialogAddDebEntry from 'src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue';
+
+const listItems = [
+  {
+    title: 'Оплата',
+    click: 'showDialogAddDebtPaymentEntry',
+  },
+  {
+    title: 'Долг',
+    click: 'showDialogAddDebtEntry',
+  },
+];
+export default {
+  name: 'MenuDebt',
+  components: {
+    DialogAddDebtPaymentEntry,
+    IconBtn,
+    DialogAddDebEntry,
+  },
+  props: {
+    items: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  data() {
+    return {
+      listItems: [],
+      showDialogAddDebtPaymentEntry: false,
+      showDialogAddDebtEntry: false,
     };
+  },
+  watch: {
+    items: {
+      handler: function set(val) {
+        if (!_.isEmpty(val)) {
+          this.listItems = _.reduce(listItems, (result, item) => {
+            if (val.includes(item.title)) {
+              result.push(item);
+            }
+            return result;
+          }, []);
+        } else {
+          this.listItems = listItems;
+        }
+      },
+      immediate: true,
+    },
+  },
+  methods: {
+    onClick(value) {
+      this[value] = true;
+    },
+  },
+};
 </script>

@@ -20,9 +20,9 @@
     bottom-slots
     :input-style="{fontWeight: 'bold'}"
     data-vue-component="BaseInput"
-    @input="inputEvent"
+    @update:model-value="inputEvent"
     @keyup="$emit('on-key-up', $event)"
-    @focus="$event.target.select()"
+    @focus="focus"
   >
     <template #append>
       <slot name="append" />
@@ -106,6 +106,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:changeValue', 'input', 'on-key-up'],
   watch: {
     value(val) {
       if (val) {
@@ -114,8 +115,14 @@ export default {
     },
   },
   methods: {
+    focus(event) {
+      if (_.isFunction(_.get(event, 'target.select'))) {
+        event.target.select();
+      }
+    },
     inputEvent($event) {
       this.$emit('input', $event);
+      devlog.log('INNNNN', $event);
       this.changeErrors();
       if (!this.changeValue) {
         this.$emit('update:changeValue', true);

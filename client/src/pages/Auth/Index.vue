@@ -14,22 +14,22 @@
         narrow-indicator
       >
         <q-tab
-name="login"
-label="Вход"
-/>
+          name="login"
+          label="Вход"
+        />
         <q-tab
-name="register"
-label="Регистрация"
-/>
+          name="register"
+          label="Регистрация"
+        />
         <!--        <q-tab name="recover" label="Восстановление пароля" />-->
       </q-tabs>
 
       <q-separator />
 
       <q-tab-panels
-v-model="tab"
-animated
->
+        v-model="tab"
+        animated
+      >
         <q-tab-panel name="login">
           <Login />
         </q-tab-panel>
@@ -46,11 +46,17 @@ animated
         v-show="tab === 'login'"
         align="center"
       >
-        <q-btn
-          dense
-          flat
-          text-color="primary"
+        <!--        <q-btn-->
+        <!--          dense-->
+        <!--          flat-->
+        <!--          text-color="primary"-->
+        <!--          label="Забыли пароль?"-->
+        <!--          @click="tab = 'recover'"-->
+        <!--        />-->
+        <BaseBtn
           label="Забыли пароль?"
+          color="primary"
+          flat
           @click="tab = 'recover'"
         />
       </q-card-actions>
@@ -60,13 +66,15 @@ animated
 
 <script>
 import { getLSKey } from 'src/tools/lsKeys';
+import { defineAsyncComponent } from 'vue';
 
 export default {
   name: 'Index',
   components: {
-    Login: () => import('src/pages/Auth/Login.vue'),
-    RegisterClient: () => import('src/pages/Auth/RegisterClient.vue'),
-    PasswordRecovery: () => import('src/pages/Auth/PasswordRecovery.vue'),
+    Login: defineAsyncComponent(() => import('src/pages/Auth/Login.vue')),
+    BaseBtn: defineAsyncComponent(() => import('src/components/Buttons/BaseBtn.vue')),
+    RegisterClient: defineAsyncComponent(() => import('src/pages/Auth/RegisterClient.vue')),
+    PasswordRecovery: defineAsyncComponent(() => import('src/pages/Auth/PasswordRecovery.vue')),
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {

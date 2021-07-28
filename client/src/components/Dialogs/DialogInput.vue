@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    :dialog="show"
     title="Удаление доступов"
     :persistent="true"
     data-vue-component-name="DialogInput"
@@ -37,49 +37,52 @@
 </template>
 
 <script>
-    export default {
-        name: 'DialogInput',
-        components: {
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-        },
-        props: {
-            showDialog: {
-                type: Boolean,
-                default: false,
-            },
-            keyData: {
-                type: String,
-                default: null,
-            },
-        },
-        data() {
-            return {
-                key: null,
-            };
-        },
-        computed: {
-            show: {
-                get: function getShow() {
-                    return this.showDialog;
-                },
-                set: function setSHow(val) {
-                    this.$emit('update:showDialog', val);
-                },
-            },
-        },
-        methods: {
-            close() {
-                this.$emit('update:keyData', null);
-                this.key = null;
-                this.show = false;
-            },
-            save(val) {
-                this.$emit('update:keyData', val);
-                this.key = null;
-                this.show = false;
-            },
-        },
+import { defineAsyncComponent } from 'vue';
+
+export default {
+  name: 'DialogInput',
+  components: {
+    Dialog: defineAsyncComponent(() => import('src/components/Dialogs/Dialog.vue')),
+    BaseBtn: defineAsyncComponent(() => import('src/components/Buttons/BaseBtn.vue')),
+    Separator: defineAsyncComponent(() => import('src/components/Separator.vue')),
+  },
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    keyData: {
+      type: String,
+      default: null,
+    },
+  },
+  emits: ['update:keyData', 'update:showDialog'],
+  data() {
+    return {
+      key: null,
     };
+  },
+  computed: {
+    show: {
+      get: function getShow() {
+        return this.showDialog;
+      },
+      set: function setSHow(val) {
+        this.$emit('update:showDialog', val);
+      },
+    },
+  },
+  methods: {
+    close() {
+      this.$emit('update:keyData', null);
+      this.key = null;
+      this.show = false;
+    },
+    save(val) {
+      this.$emit('update:keyData', val);
+      this.key = null;
+      this.show = false;
+    },
+  },
+};
 </script>

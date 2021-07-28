@@ -61,7 +61,7 @@
                     <q-item-label>За кг</q-item-label>
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>За место</q-item-label>
+                    <q-item-label>'За кг'</q-item-label>
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>Комиссия</q-item-label>
@@ -82,8 +82,8 @@
                   <q-item-section>
                     <q-item-label :lines="3">
                       <q-badge color="positive">
-{{ elem.category_name }}
-</q-badge>
+                        {{ elem.category_name }}
+                      </q-badge>
                     </q-item-label>
                   </q-item-section>
 
@@ -168,12 +168,12 @@
         </template>
       </Table>
       <DialogAddCodePrice
-        :show-dialog.sync="showDialogAddCodePrice"
-        :code-id.sync="codeId"
-        :entry-data.sync="entryData"
+        v-model:show-dialog="showDialogAddCodePrice"
+        v-model:code-id="codeId"
+        v-model:entry-data="entryData"
       />
       <DialogAddNewCodePrice
-        :show-dialog.sync="showDialogAddNewCodePrice"
+        v-model:show-dialog="showDialogAddNewCodePrice"
       />
 
       <Dialog
@@ -232,7 +232,7 @@
                 <q-item-label>За кг</q-item-label>
               </q-item-section>
               <q-item-section>
-                <q-item-label>За место</q-item-label>
+                <q-item-label>'За кг'</q-item-label>
               </q-item-section>
               <q-item-section>
                 <q-item-label>Комиссия</q-item-label>
@@ -254,8 +254,8 @@
               <q-item-section>
                 <q-item-label :lines="3">
                   <q-badge color="positive">
-{{ elem.category_name }}
-</q-badge>
+                    {{ elem.category_name }}
+                  </q-badge>
                 </q-item-label>
               </q-item-section>
 
@@ -311,212 +311,220 @@
 </template>
 
 <script>
-    import { getUrl } from 'src/tools/url';
-    import showNotif from 'src/mixins/showNotif';
-    import {
-        setMethodLabel,
-        setStatusLabel,
-        setFormatedDate,
-        prepareHistoryData,
-    } from 'src/utils/FrequentlyCalledFunctions';
-    import { callFunction } from 'src/utils/index';
+import { getUrl } from 'src/tools/url';
+import showNotif from 'src/mixins/showNotif';
+import {
+  setMethodLabel,
+  setStatusLabel,
+  setFormatedDate,
+  prepareHistoryData,
+} from 'src/utils/FrequentlyCalledFunctions';
+import { callFunction } from 'src/utils';
+import Table from 'components/Elements/Table/Table.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import DialogAddCodePrice from 'src/components/Dialogs/DialogAddCodePrice.vue';
+import CodePriceHistory from 'src/components/History/CodePriceHistory.vue';
+import DialogAddNewCodePrice from 'src/components/Dialogs/DialogAddNewCodePrice.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
 
-    export default {
-        name: 'CodePrice',
-        components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            DialogAddCodePrice: () => import('src/components/Dialogs/DialogAddCodePrice.vue'),
-            CodePriceHistory: () => import('src/components/History/CodePriceHistory.vue'),
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            DialogAddNewCodePrice: () => import('src/components/Dialogs/DialogAddNewCodePrice.vue'),
-            PullRefresh: () => import('src/components/PullRefresh.vue'),
-        },
-        mixins: [showNotif],
-        data() {
-            return {
-                showDialogAddCodePrice: false,
-                showDialogAddNewCodePrice: false,
-                codeId: 0,
-                entryData: {},
-                codePriceHistoryData: {},
-                dialogHistory: false,
-                search: null,
-                codesPricesData: [],
-                transferTableProperties: {
-                    columns: [
-                        {
-                            name: 'code',
-                            label: 'Код',
-                            align: 'center',
-                            field: 'code',
-                            sortable: true,
-                            // sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-                        },
-                        // {
-                        //     name: 'actions',
-                        //     label: 'Действия',
-                        //     field: 'actions',
-                        //     align: 'center',
-                        //     sortable: true,
-                        // },
-                    ],
-                },
-                transferTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['code'],
-                },
-                dialogViewCodeData: false,
-                codeData: [],
-                codeName: null,
-            };
-        },
-        computed: {
-            codesPriceData() {
-                return this.$store.getters['codesPrices/getCodesPrices'];
-            },
-        },
-        watch: {
-            codesPriceData(val) {
-                this.codesPricesData = val;
-            },
-            search: {
-                handler: function set(val) {
-                    if (!val) {
-                        this.codesPricesData = this.codesPriceData;
-                    } else {
-                        this.codesPricesData = _.reduce(this.codesPriceData, (result, item, index) => {
-                            if (_.includes(_.toLower(index), _.toLower(val))) {
-                                result[index] = item;
-                            }
-                            return result;
-                        }, {});
-                    }
-                },
-                immediate: true,
-            },
-        },
-        created() {
-            this.getCodesPrices();
-        },
-        methods: {
-            addCodeWithCategory() {
-                this.showDialogAddNewCodePrice = true;
-            },
-            getCodesPrices() {
-                this.$q.loading.show();
-                return this.$axios.get(getUrl('getCodesPrices'))
-                  .then(({ data: { codesPrice } }) => {
-                      _.forEach(codesPrice, (price) => {
-                          setFormatedDate(price, ['updated_at']);
-                      });
-                      this.$store.dispatch('codesPrices/setCodesPrices', codesPrice);
-                      this.$q.loading.hide();
-                  })
-                  .catch((errors) => {
-                      devlog.error('Ошибка запроса getClientsPrices', errors);
-                      this.$q.loading.hide();
-                  });
-            },
-            openDialogAddCodePrice(id) {
-                this.showDialogAddCodePrice = true;
-                this.codeId = id;
-            },
-            openDialogAddCodePriceForUpdate(data) {
-                this.showDialogAddCodePrice = true;
-                this.codeId = data.code_id;
-                this.entryData = data;
-            },
-            deleteCodePrice(elem) {
-                this.showNotif('warning', `Удалить категорию - ${elem.category_name}?`, 'center', [
-                    {
-                        label: 'Отмена',
-                        color: 'white',
-                        handler: () => {
-                        },
-                    },
-                    {
-                        label: 'Удалить',
-                        color: 'white',
-                        handler: () => {
-                            this.$q.loading.show();
-                            this.$axios.delete(`${getUrl('deleteCodePrice')}/${elem.id}`)
-                              .then(({ data: { status } }) => {
-                                  devlog.log('DEL_DATA', status);
-                                  this.$store.dispatch('codesPrices/deleteCodePrice', elem);
-                                  this.$q.loading.hide();
-                              })
-                              .catch((errors) => {
-                                  devlog.error('Ошибка запроса deleteCodePrice', errors);
-                                  this.$q.loading.hide();
-                              });
-                        },
-                    },
-                ]);
-            },
-            setAdditionalData(data) {
-                return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
-            },
-            async getCodePriceHistory(id) {
-                this.$q.loading.show();
-                await this.$axios.get(`${getUrl('getCodePriceHistory')}/${id}`)
-                  .then(({ data: { codePriceHistory } }) => {
-                      if (!_.isEmpty(codePriceHistory)) {
-                          this.$q.loading.hide();
-                          this.dialogHistory = true;
-                          const historyData = prepareHistoryData([
-                              {
-                                  label: 'Категория',
-                                  name: 'category_name',
-                              },
-                              {
-                                  label: 'За кг',
-                                  name: 'for_kg',
-                              },
-                              {
-                                  label: 'За место',
-                                  name: 'for_place',
-                              },
-                              {
-                                  label: 'Пользователь',
-                                  name: 'user_name',
-                              },
-                          ], codePriceHistory);
-                          devlog.log('historyData', historyData);
-                          historyData.historyData = this.setAdditionalData(historyData.historyData);
-                          this.codePriceHistoryData = historyData;
-                      } else {
-                          this.$q.loading.hide();
-                          this.showNotif('info', 'По этому коду нет истории.', 'center');
-                      }
-                  })
-                  .catch(() => {
-                      devlog.error('Ошибка при получении данных истории - getCodePriceHistory');
-                  });
-            },
-            async refresh(done) {
-                if (!done) {
-                    this.$q.loading.show();
-                }
-                this.getCodesPrices()
-                  .then(() => {
-                      callFunction(done);
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      callFunction(done);
-                  });
-            },
-            viewEditDialog(elem, event) {
-                if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
-                    this.dialogViewCodeData = true;
-                    this.codeName = elem.row.code;
-                    this.codeData = elem.row.data;
-                }
-            },
-        },
+export default {
+  name: 'CodePrice',
+  components: {
+    Table,
+    UpdateBtn,
+    IconBtn,
+    DialogAddCodePrice,
+    CodePriceHistory,
+    Dialog,
+    DialogAddNewCodePrice,
+    PullRefresh,
+  },
+  mixins: [showNotif],
+  data() {
+    return {
+      showDialogAddCodePrice: false,
+      showDialogAddNewCodePrice: false,
+      codeId: 0,
+      entryData: {},
+      codePriceHistoryData: {},
+      dialogHistory: false,
+      search: null,
+      codesPricesData: [],
+      transferTableProperties: {
+        columns: [
+          {
+            name: 'code',
+            label: 'Код',
+            align: 'center',
+            field: 'code',
+            sortable: true,
+            // sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+          },
+          // {
+          //     name: 'actions',
+          //     label: 'Действия',
+          //     field: 'actions',
+          //     align: 'center',
+          //     sortable: true,
+          // },
+        ],
+      },
+      transferTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['code'],
+      },
+      dialogViewCodeData: false,
+      codeData: [],
+      codeName: null,
     };
+  },
+  computed: {
+    codesPriceData() {
+      return this.$store.getters['codesPrices/getCodesPrices'];
+    },
+  },
+  watch: {
+    codesPriceData(val) {
+      this.codesPricesData = val;
+    },
+    search: {
+      handler: function set(val) {
+        if (!val) {
+          this.codesPricesData = this.codesPriceData;
+        } else {
+          this.codesPricesData = _.reduce(this.codesPriceData, (result, item, index) => {
+            if (_.includes(_.toLower(index), _.toLower(val))) {
+              result[index] = item;
+            }
+            return result;
+          }, {});
+        }
+      },
+      immediate: true,
+    },
+  },
+  created() {
+    this.getCodesPrices();
+  },
+  methods: {
+    addCodeWithCategory() {
+      this.showDialogAddNewCodePrice = true;
+    },
+    getCodesPrices() {
+      this.$q.loading.show();
+      return this.$axios.get(getUrl('getCodesPrices'))
+        .then(({ data: { codesPrice } }) => {
+          _.forEach(codesPrice, (price) => {
+            setFormatedDate(price, ['updated_at']);
+          });
+          this.$store.dispatch('codesPrices/setCodesPrices', codesPrice);
+          this.$q.loading.hide();
+        })
+        .catch((errors) => {
+          devlog.error('Ошибка запроса getClientsPrices', errors);
+          this.$q.loading.hide();
+        });
+    },
+    openDialogAddCodePrice(id) {
+      this.showDialogAddCodePrice = true;
+      this.codeId = id;
+    },
+    openDialogAddCodePriceForUpdate(data) {
+      this.showDialogAddCodePrice = true;
+      this.codeId = data.code_id;
+      this.entryData = data;
+    },
+    deleteCodePrice(elem) {
+      this.showNotif('warning', `Удалить категорию - ${elem.category_name}?`, 'center', [
+        {
+          label: 'Отмена',
+          color: 'white',
+          handler: () => {
+          },
+        },
+        {
+          label: 'Удалить',
+          color: 'white',
+          handler: () => {
+            this.$q.loading.show();
+            this.$axios.delete(`${getUrl('deleteCodePrice')}/${elem.id}`)
+              .then(({ data: { status } }) => {
+                devlog.log('DEL_DATA', status);
+                this.$store.dispatch('codesPrices/deleteCodePrice', elem);
+                this.$q.loading.hide();
+              })
+              .catch((errors) => {
+                devlog.error('Ошибка запроса deleteCodePrice', errors);
+                this.$q.loading.hide();
+              });
+          },
+        },
+      ]);
+    },
+    setAdditionalData(data) {
+      return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
+    },
+    async getCodePriceHistory(id) {
+      this.$q.loading.show();
+      await this.$axios.get(`${getUrl('getCodePriceHistory')}/${id}`)
+        .then(({ data: { codePriceHistory } }) => {
+          if (!_.isEmpty(codePriceHistory)) {
+            this.$q.loading.hide();
+            this.dialogHistory = true;
+            const historyData = prepareHistoryData([
+              {
+                label: 'Категория',
+                name: 'category_name',
+              },
+              {
+                label: 'За кг',
+                name: 'for_kg',
+              },
+              {
+                label: 'За кг',
+                name: 'for_place',
+              },
+              {
+                label: 'Пользователь',
+                name: 'user_name',
+              },
+            ], codePriceHistory);
+            devlog.log('historyData', historyData);
+            historyData.historyData = this.setAdditionalData(historyData.historyData);
+            this.codePriceHistoryData = historyData;
+          } else {
+            this.$q.loading.hide();
+            this.showNotif('info', 'По этому коду нет истории.', 'center');
+          }
+        })
+        .catch(() => {
+          devlog.error('Ошибка при получении данных истории - getCodePriceHistory');
+        });
+    },
+    async refresh(done) {
+      if (!done) {
+        this.$q.loading.show();
+      }
+      this.getCodesPrices()
+        .then(() => {
+          callFunction(done);
+          this.$q.loading.hide();
+          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          callFunction(done);
+        });
+    },
+    viewEditDialog(elem, event) {
+      if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
+        this.dialogViewCodeData = true;
+        this.codeName = elem.row.code;
+        this.codeData = elem.row.data;
+      }
+    },
+  },
+};
 </script>

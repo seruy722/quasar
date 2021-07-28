@@ -9,17 +9,18 @@
   >
     <slot />
     <q-tooltip
-anchor="bottom middle"
-self="top middle"
-:offset="[10, 10]"
->
+      anchor="bottom middle"
+      self="top middle"
+      :offset="[10, 10]"
+    >
       Меню
     </q-tooltip>
   </q-btn>
 </template>
 
 <script>
-    export default {
-        name: 'MenuBtn',
-    };
+export default {
+  name: 'MenuBtn',
+  emits: ['menu-btn-click'],
+};
 </script>

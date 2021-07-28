@@ -13,13 +13,6 @@
           <UpdateBtn
             @update-btn-click="refresh"
           />
-<!--          <IconBtn-->
-<!--            color="positive"-->
-<!--            tooltip="Excel"-->
-<!--            icon="explicit"-->
-<!--            class="q-ml-sm"-->
-<!--            @icon-btn-click="exportTransfers"-->
-<!--          />-->
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
         <template #inner-item="{props}">
@@ -74,7 +67,7 @@
                       </q-badge>
                     </q-item-label>
                     <q-item-label v-else-if="col.field === 'receiver_phone'">
-                      {{ col.value | phoneNumberFilter }}
+                      {{ phoneNumberFilter(col.value) }}
                     </q-item-label>
                     <q-item-label v-else-if="col.field === 'receiver_name'">
                       {{ col.value }}
@@ -128,14 +121,14 @@
               key="receiver_phone"
               :props="props"
             >
-              {{ props.row.receiver_phone | phoneNumberFilter }}
+              {{ phoneNumberFilter(props.row.receiver_phone) }}
             </q-td>
 
             <q-td
               key="sum"
               :props="props"
             >
-              {{ props.row.sum | numberFormatFilter }}
+              {{ numberFormat(props.row.sum) }}
             </q-td>
 
             <q-td
@@ -214,11 +207,11 @@
             <BaseInput
               v-if="item.type === 'text'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"
               :unmasked-value="item.unmaskedValue"
-              :change-value.sync="item.changeValue"
               dense
               :field="item.field"
               :errors="errorsData"
@@ -227,11 +220,11 @@
             <BaseInput
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"
               :unmasked-value="item.unmaskedValue"
-              :change-value.sync="item.changeValue"
               dense
               :field="item.field"
               :errors="errorsData"
@@ -240,41 +233,41 @@
             <SearchSelect
               v-else-if="item.type === 'searchSelect'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               dense
               :options="item.options"
               :label="item.label"
               :field="item.field"
               :func-load-data="item.funcLoadData"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <BaseSelect
               v-else-if="item.type === 'select'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :dense="true"
               :options="item.options"
               :field="item.field"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <BaseInput
               v-else-if="item.type === 'date'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :errors="errorsData"
               :field="item.field"
               :readonly="item.readonly"
               :mask="item.mask"
-              :change-value.sync="item.changeValue"
               dense
             >
               <template #append>
                 <Date
-                  :value.sync="item.value"
-                  :change-value.sync="item.changeValue"
+                  v-model:value="item.value"
+                  v-model:change-value="item.changeValue"
                 />
               </template>
             </BaseInput>
@@ -309,7 +302,7 @@ import {
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
-import { callFunction } from 'src/utils/index';
+import { callFunction, phoneNumberFilter, numberFormat } from 'src/utils';
 import TransferMixin from 'src/mixins/Transfer';
 import {
   setMethodLabel,
@@ -319,26 +312,40 @@ import {
   setDefaultData,
 } from 'src/utils/FrequentlyCalledFunctions';
 import { formatISO } from 'date-fns';
+import Table from 'components/Elements/Table/Table.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import PageSticky from 'src/components/PageSticky.vue';
+import Fab from 'src/components/Elements/Fab.vue';
+import FabAction from 'src/components/Elements/FabAction.vue';
+import PageScroller from 'src/components/PageScroller.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import Date from 'src/components/Date.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import Separator from 'src/components/Separator.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import BaseSelect from 'src/components/Elements/BaseSelect.vue';
 
 export default {
   name: 'TransfersClient',
   components: {
-    Table: () => import('components/Elements/Table/Table.vue'),
-    Dialog: () => import('components/Dialogs/Dialog.vue'),
-    Date: () => import('components/Date.vue'),
-    BaseInput: () => import('components/Elements/BaseInput.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
-    BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-    Separator: () => import('components/Separator.vue'),
-    SearchSelect: () => import('components/Elements/SearchSelect.vue'),
-    BaseSelect: () => import('components/Elements/BaseSelect.vue'),
-    PageSticky: () => import('components/PageSticky.vue'),
-    Fab: () => import('components/Elements/Fab.vue'),
-    FabAction: () => import('components/Elements/FabAction.vue'),
-    PageScroller: () => import('components/PageScroller.vue'),
-    PullRefresh: () => import('components/PullRefresh.vue'),
-    CountTransfersDataClient: () => import('components/Transfers/CountTransfersDataClient.vue'),
-    UpdateBtn: () => import('components/Buttons/UpdateBtn.vue'),
+    Table,
+    Dialog,
+    Date,
+    BaseInput,
+    IconBtn,
+    BaseBtn,
+    Separator,
+    SearchSelect,
+    BaseSelect,
+    PageSticky,
+    Fab,
+    FabAction,
+    PageScroller,
+    PullRefresh,
+    UpdateBtn,
   },
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
   data() {
@@ -447,7 +454,7 @@ export default {
           },
           {
             name: 'sum',
-            label: this.$t('sum'),
+            label: 'Сумма',
             field: 'sum',
             align: 'center',
             sortable: true,
@@ -482,7 +489,7 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
@@ -513,6 +520,8 @@ export default {
     this.getTransfers();
   },
   methods: {
+    phoneNumberFilter,
+    numberFormat,
     updateData(data) {
       const sendData = _.cloneDeep(data);
       devlog.log('DATA_N0', sendData);
@@ -665,28 +674,23 @@ export default {
 };
 </script>
 
-<style lang="stylus">
-.border_red {
-  border-color $red !important
-}
+<style lang="sass">
+.border_red
+  border-color: $red !important
 
-.border_positive {
-  border-color $positive !important
-}
+.border_positive
+  border-color: $positive !important
 
-.border_warning {
-  border-color $warning !important
-}
+.border_warning
+  border-color: $warning !important
 
-.border_grey {
-  border-color $grey !important
-}
+.border_grey
+  border-color: $grey !important
 
-.border_info {
-  border-color $info !important
-}
+.border_info
+  border-color: $info !important
 
 .statistics_title
-  background-color lightgrey
-  text-align center
+  background-color: lightgrey
+  text-align: center
 </style>

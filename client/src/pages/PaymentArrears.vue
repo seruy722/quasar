@@ -61,43 +61,51 @@
 </template>
 
 <script>
-    export default {
-        name: 'PaymentArrears',
-        components: {
-            Cargo: () => import('components/PaymentArrears/Cargo.vue'),
-            Debts: () => import('components/PaymentArrears/Debts.vue'),
-        },
-        data() {
-            return {
-                tab: 'cargo',
-                debts: [],
-                cargo: [],
-            };
-        },
-        async created() {
-            this.getPaymentArrears();
-        },
-        methods: {
-            async getPaymentArrears() {
-                const { getUrl } = await import('src/tools/url');
-                this.$q.loading.show();
-                return this.$axios.get(getUrl('paymentArrears'))
-                  .then(async ({ data: { debts, cargo } }) => {
-                      const { fullDate } = await import('src/utils/formatDate');
-                      const { combineCargoData } = await import('src/utils/FrequentlyCalledFunctions');
-                      this.debts = _.map(_.orderBy(debts, (item) => new Date(item.created_at), 'asc'), (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
-                      const clientIds = _.uniq(_.map(cargo, 'code_client_id'));
-                      const cargoArr = [];
-                      _.forEach(clientIds, (id) => {
-                          cargoArr.push(...combineCargoData(_.filter(cargo, { code_client_id: id })));
-                      });
-                      this.cargo = _.map(_.orderBy(cargoArr, (item) => new Date(item.created_at), 'asc'), (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
-                      this.$q.loading.hide();
-                  })
-                  .catch(() => {
-                      devlog.error('PaymentArrear');
-                  });
-            },
-        },
+import Cargo from 'components/PaymentArrears/Cargo.vue';
+import Debts from 'components/PaymentArrears/Debts.vue';
+
+export default {
+  name: 'PaymentArrears',
+  components: {
+    Cargo,
+    Debts,
+  },
+  data() {
+    return {
+      tab: 'cargo',
+      debts: [],
+      cargo: [],
     };
+  },
+  async created() {
+    this.getPaymentArrears();
+  },
+  methods: {
+    async getPaymentArrears() {
+      const { getUrl } = await import('src/tools/url');
+      this.$q.loading.show();
+      return this.$axios.get(getUrl('paymentArrears'))
+        .then(async ({
+                       data: {
+                         debts,
+                         cargo,
+                       },
+                     }) => {
+          const { fullDate } = await import('src/utils/formatDate');
+          const { combineCargoData } = await import('src/utils/FrequentlyCalledFunctions');
+          this.debts = _.map(_.orderBy(debts, (item) => new Date(item.created_at), 'asc'), (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
+          const clientIds = _.uniq(_.map(cargo, 'code_client_id'));
+          const cargoArr = [];
+          _.forEach(clientIds, (id) => {
+            cargoArr.push(...combineCargoData(_.filter(cargo, { code_client_id: id })));
+          });
+          this.cargo = _.map(_.orderBy(cargoArr, (item) => new Date(item.created_at), 'asc'), (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          devlog.error('PaymentArrear');
+        });
+    },
+  },
+};
 </script>

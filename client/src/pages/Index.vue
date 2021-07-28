@@ -39,19 +39,20 @@
       </q-intersection>
     </div>
     <DialogInput
-      :show-dialog.sync="showDialogInput"
-      :key-data.sync="dialogDialogInputKey"
+      :show-dialog="showDialogInput"
+      :key-data="dialogDialogInputKey"
     />
   </q-page>
 </template>
 
 <script>
 import accessFunc from 'src/tools/access';
+import { defineAsyncComponent } from 'vue';
 
 export default {
   name: 'PageIndex',
   components: {
-    DialogInput: () => import('src/components/Dialogs/DialogInput.vue'),
+    DialogInput: defineAsyncComponent(() => import('src/components/Dialogs/DialogInput.vue')),
   },
   data() {
     return {

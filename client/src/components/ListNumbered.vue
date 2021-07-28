@@ -10,7 +10,7 @@
     >
       <q-item-section v-if="type==='phones'">
         {{ `${i + 1}. ` }}
-        {{ elem | phoneNumberFilter }}
+        {{ phoneNumberFilter(elem) }}
       </q-item-section>
       <q-item-section v-else>
         {{ `${i + 1}. ` }}
@@ -21,17 +21,22 @@
 </template>
 
 <script>
-    export default {
-        name: 'ListNumbered',
-        props: {
-            values: {
-                type: Array,
-                default: () => [],
-            },
-            type: {
-                type: String,
-                default: '',
-            },
-        },
-    };
+import { phoneNumberFilter } from 'src/utils';
+
+export default {
+  name: 'ListNumbered',
+  props: {
+    values: {
+      type: Array,
+      default: () => [],
+    },
+    type: {
+      type: String,
+      default: '',
+    },
+  },
+  methods: {
+    phoneNumberFilter,
+  },
+};
 </script>

@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     :persistent="true"
     title="Оплата"
     data-vue-component-name="DialogAddCargoPayEntry"
@@ -35,6 +35,7 @@
             <BaseInput
               v-if="item.type === 'text'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"
@@ -42,13 +43,13 @@
               :field="index"
               :readonly="item.readonly"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <BaseInput
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
+              v-model:change-value="item.changeValue"
               :autofocus="item.autofocus"
               :label="item.label"
               :type="item.type"
@@ -56,35 +57,34 @@
               :dense="$q.screen.xs || $q.screen.sm"
               :field="index"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <SelectChips
               v-else-if="item.type === 'select-chips'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
             <BaseInput
               v-else-if="item.type === 'date'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :mask="item.mask"
-              :change-value.sync="item.changeValue"
               :dense="$q.screen.xs || $q.screen.sm"
               :errors="errorsData"
             >
               <template #append>
-                <Date
-                  :value.sync="item.value"
-                  :change-value.sync="item.changeValue"
+                <DateComponent
+                  v-model:value="item.value"
+                  v-model:change-value="item.changeValue"
                 />
               </template>
             </BaseInput>
@@ -92,11 +92,11 @@
             <SearchSelect
               v-else
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
@@ -137,18 +137,26 @@
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Separator from 'src/components/Separator.vue';
+import SelectChips from 'src/components/Elements/SelectChips.vue';
+import DateComponent from 'src/components/Date.vue';
 
 export default {
   name: 'DialogAddCargoPayEntry',
   components: {
-    Dialog: () => import('components/Dialogs/Dialog.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
-    BaseInput: () => import('components/Elements/BaseInput.vue'),
-    SearchSelect: () => import('components/Elements/SearchSelect.vue'),
-    BaseBtn: () => import('components/Buttons/BaseBtn.vue'),
-    Separator: () => import('components/Separator.vue'),
-    SelectChips: () => import('components/Elements/SelectChips.vue'),
-    Date: () => import('components/Date.vue'),
+    Dialog,
+    IconBtn,
+    BaseInput,
+    SearchSelect,
+    BaseBtn,
+    Separator,
+    SelectChips,
+    DateComponent,
   },
   mixins: [CheckErrorsMixin, showNotif],
   props: {
@@ -161,6 +169,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:entryData', 'update:showDialog'],
   data() {
     return {
       show: false,
@@ -186,7 +195,7 @@ export default {
         code_client_id: {
           name: 'code_client_id',
           type: 'select',
-          label: this.$t('client'),
+          label: 'Клиент',
           options: [],
           require: true,
           requireError: 'Выберите значение.',
@@ -217,7 +226,7 @@ export default {
         notation: {
           name: 'notation',
           type: 'text',
-          label: this.$t('notation'),
+          label: 'Примечания',
           changeValue: false,
           default: '',
           value: '',
@@ -310,14 +319,20 @@ export default {
   },
   methods: {
     async saveData() {
-      const sendData = _.reduce(this.storehouseData, (result, { changeValue, value }, index) => {
+      const sendData = _.reduce(this.storehouseData, (result, {
+        changeValue,
+        value,
+      }, index) => {
         if (changeValue) {
           result[index] = value;
         }
         return result;
       }, {});
       if (_.has(sendData, 'created_at')) {
-        const { reverseDate, addTime } = await import('src/utils/formatDate');
+        const {
+          reverseDate,
+          addTime,
+        } = await import('src/utils/formatDate');
         sendData.created_at = addTime(reverseDate(sendData.created_at))
           .toISOString();
       }

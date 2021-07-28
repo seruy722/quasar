@@ -16,13 +16,6 @@
             tooltip="Обновить"
             @icon-btn-click="refresh"
           />
-          <!--          <IconBtn-->
-          <!--            color="positive"-->
-          <!--            tooltip="Excel"-->
-          <!--            icon="explicit"-->
-          <!--            class="q-ml-sm"-->
-          <!--            @icon-btn-click="exportTransfers"-->
-          <!--          />-->
           <Menu :items="['Код', 'Клиента']" />
           <IconBtn
             color="positive"
@@ -140,7 +133,7 @@
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>
-                      {{ item.phone | phoneNumberFilter }}
+                      {{ phoneNumberFilter(item.phone) }}
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
@@ -178,9 +171,9 @@
               class="select_checkbox"
             >
               <q-checkbox
-v-model="props.selected"
-dense
-/>
+                v-model="props.selected"
+                dense
+              />
             </q-td>
 
             <q-td
@@ -202,9 +195,9 @@ dense
               :props="props"
             >
               <ListNumbered
-:values="props.row.phones"
-type="phones"
-/>
+                :values="props.row.phones"
+                type="phones"
+              />
             </q-td>
 
             <!--            <q-td-->
@@ -271,9 +264,9 @@ type="phones"
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label
-v-if="col.name === 'code'"
-:lines="3"
->
+                    v-if="col.name === 'code'"
+                    :lines="3"
+                  >
                     <q-badge>{{ col.value }}</q-badge>
                   </q-item-label>
                   <q-item-label v-else-if="col.name === 'cities'">
@@ -281,32 +274,32 @@ v-if="col.name === 'code'"
                   </q-item-label>
                   <q-item-label v-else-if="col.name === 'phones'">
                     <ListNumbered
-:values="col.value"
-:type="col.name"
-/>
+                      :values="col.value"
+                      :type="col.name"
+                    />
                   </q-item-label>
                   <q-item-label
-v-else
-:lines="3"
->
+                    v-else
+                    :lines="3"
+                  >
                     {{ col.value }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
 
               <q-item
-class="text-bold text-center"
-style="border-bottom: 1px solid blue;border-top: 1px solid blue;"
->
+                class="text-bold text-center"
+                style="border-bottom: 1px solid blue;border-top: 1px solid blue;"
+              >
                 <q-item-section>
                   Клиенты
                 </q-item-section>
               </q-item>
 
               <q-item
-v-if="localProps.row.customers.length"
-class="text-bold"
->
+                v-if="localProps.row.customers.length"
+                class="text-bold"
+              >
                 <q-item-section>
                   <q-item-label>
                     Имя
@@ -337,7 +330,7 @@ class="text-bold"
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>
-                    {{ item.phone | phoneNumberFilter }}
+                    {{ phoneNumberFilter(item.phone) }}
                   </q-item-label>
                 </q-item-section>
                 <q-item-section side>
@@ -363,7 +356,7 @@ class="text-bold"
           <Separator />
         </q-card>
       </Dialog>
-      <DialogAddCode :show-dialog.sync="showCodeDialog" />
+      <DialogAddCode v-model:show-dialog="showCodeDialog" />
 
       <Dialog
         :dialog="dialogHistory"
@@ -391,9 +384,9 @@ class="text-bold"
       </Dialog>
     </PullRefresh>
     <DialogAddClient
-      :show-dialog.sync="showClientDialog"
-      :entry-data.sync="localClientEditData"
-      :code-id.sync="codeId"
+      v-model:show-dialog="showClientDialog"
+      v-model:entry-data="localClientEditData"
+      v-model:code-id="codeId"
     />
   </q-page>
 </template>
@@ -403,7 +396,7 @@ import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
-import { callFunction, createSpecialLink } from 'src/utils/index';
+import { callFunction, createSpecialLink, phoneNumberFilter } from 'src/utils';
 import TransferMixin from 'src/mixins/Transfer';
 import {
   setMethodLabel,
@@ -412,20 +405,30 @@ import {
   prepareHistoryData,
   getClientCodes,
 } from 'src/utils/FrequentlyCalledFunctions';
+import Table from 'components/Elements/Table/Table.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import Separator from 'src/components/Separator.vue';
+import DialogAddCode from 'src/components/Dialogs/DialogAddCode.vue';
+import DialogAddClient from 'src/components/Dialogs/DialogAddClient.vue';
+import Menu from 'src/components/Menu.vue';
+import CodeHistory from 'src/components/History/CodeHistory.vue';
+import ListNumbered from 'src/components/ListNumbered.vue';
 
 export default {
   name: 'Codes',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    DialogAddCode: () => import('src/components/Dialogs/DialogAddCode.vue'),
-    DialogAddClient: () => import('src/components/Dialogs/DialogAddClient.vue'),
-    Menu: () => import('src/components/Menu.vue'),
-    PullRefresh: () => import('src/components/PullRefresh.vue'),
-    CodeHistory: () => import('src/components/History/CodeHistory.vue'),
-    ListNumbered: () => import('src/components/ListNumbered.vue'),
+    Table,
+    Dialog,
+    IconBtn,
+    Separator,
+    DialogAddCode,
+    DialogAddClient,
+    Menu,
+    PullRefresh,
+    CodeHistory,
+    ListNumbered,
   },
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
   data() {
@@ -506,6 +509,7 @@ export default {
     this.getCodes();
   },
   methods: {
+    phoneNumberFilter,
     call(phone) {
       const link = createSpecialLink(phone, 'tel');
       link.click();
@@ -665,7 +669,11 @@ export default {
           devlog.error('Ошибка при получении данных истории.');
         });
     },
-    destroyCustomer({ id, name, code_id: codeId }) {
+    destroyCustomer({
+                      id,
+                      name,
+                      code_id: codeId,
+                    }) {
       this.showNotif('warning', `Удалить клиента - ${name} ?`, 'center', [
         {
           label: 'Отмена',
@@ -705,25 +713,19 @@ export default {
 };
 </script>
 
-<style lang="stylus">
-.border_red {
-  border-color $red !important
-}
+<style lang="sass">
+.border_red
+  border-color: $red !important
 
-.border_positive {
-  border-color $positive !important
-}
+.border_positive
+  border-color: $positive !important
 
-.border_warning {
-  border-color $warning !important
-}
+.border_warning
+  border-color: $warning !important
 
-.border_grey {
-  border-color $grey !important
-}
+.border_grey
+  border-color: $grey !important
 
-.border_info {
-  border-color $info !important
-}
-
+.border_info
+  border-color: $info !important
 </style>

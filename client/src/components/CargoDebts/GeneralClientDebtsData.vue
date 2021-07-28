@@ -29,10 +29,10 @@
         :key="index"
       >
         <q-item-section>
-          <q-item-label>{{ item.sum | numberFormatFilter }}</q-item-label>
+          <q-item-label>{{ numberFormat(item.sum) }}</q-item-label>
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ item.commission | numberFormatFilter }}</q-item-label>
+          <q-item-label>{{ numberFormat(item.commission) }}</q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
@@ -40,44 +40,47 @@
 </template>
 
 <script>
-    export default {
-        name: 'GeneralClientDebtsData',
-        props: {
-            list: {
-                type: Array,
-                default: () => [],
-            },
-            title: {
-                type: String,
-                default: 'Категории',
-            },
-        },
-        data() {
-            return {
-                localList: [],
-            };
-        },
-        watch: {
-            list: {
-                handler: function setList(val) {
-                    if (!_.isEmpty(val)) {
-                        this.setLocalList(val);
-                    } else {
-                        this.localList = [];
-                    }
-                },
-                immediate: true,
-            },
-        },
-        methods: {
-            setLocalList(list) {
-                this.localList = [
-                    {
-                        sum: _.sumBy(list, 'sum'),
-                        commission: _.sumBy(list, 'commission'),
-                    },
-                ];
-            },
-        },
+import { numberFormat } from 'src/utils';
+
+export default {
+  name: 'GeneralClientDebtsData',
+  props: {
+    list: {
+      type: Array,
+      default: () => [],
+    },
+    title: {
+      type: String,
+      default: 'Категории',
+    },
+  },
+  data() {
+    return {
+      localList: [],
     };
+  },
+  watch: {
+    list: {
+      handler: function setList(val) {
+        if (!_.isEmpty(val)) {
+          this.setLocalList(val);
+        } else {
+          this.localList = [];
+        }
+      },
+      immediate: true,
+    },
+  },
+  methods: {
+    numberFormat,
+    setLocalList(list) {
+      this.localList = [
+        {
+          sum: _.sumBy(list, 'sum'),
+          commission: _.sumBy(list, 'commission'),
+        },
+      ];
+    },
+  },
+};
 </script>

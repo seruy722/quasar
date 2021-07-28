@@ -28,13 +28,13 @@
             <div class="row items-center">
               <span>От:</span>
               <DateWithInputForCargo
-                :value.sync="period.from"
+                v-model:value="period.from"
               />
             </div>
             <div class="row items-center">
               <span>До:</span>
               <DateWithInputForCargo
-                :value.sync="period.to"
+                v-model:value="period.to"
               />
             </div>
           </div>
@@ -58,45 +58,51 @@
 </template>
 
 <script>
-    export default {
-        name: 'StorehouseInfo',
-        components: {
-            DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
-            OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            Cargo: () => import('components/Storehouse/Cargo.vue'),
-            CountStorehouseCategories: () => import('components/Storehouse/CountStorehouseCategories.vue'),
-        },
-        data() {
-            const date = new Date().toLocaleDateString()
-              .split('.')
-              .reverse()
-              .join('-');
-            return {
-                choosePeriodDialog: false,
-                viewPeriodDate: '',
-                period: {
-                    from: date,
-                    to: date,
-                },
-                cargo: [],
-            };
-        },
-        methods: {
-            async getStorehousePeriodData(data) {
-                this.choosePeriodDialog = false;
-                this.$q.loading.show();
-                const { getUrl } = await import('src/tools/url');
-                devlog.log(data);
-                this.$axios.post(getUrl('getStorehousePeriodData'), data)
-                  .then(({ data: { cargo } }) => {
-                      this.cargo = cargo;
-                      this.$q.loading.hide();
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                  });
-            },
-        },
+import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
+import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import Cargo from 'components/Storehouse/Cargo.vue';
+import CountStorehouseCategories from 'components/Storehouse/CountStorehouseCategories.vue';
+
+export default {
+  name: 'StorehouseInfo',
+  components: {
+    DateWithInputForCargo,
+    OutlineBtn,
+    Dialog,
+    Cargo,
+    CountStorehouseCategories,
+  },
+  data() {
+    const date = new Date().toLocaleDateString()
+      .split('.')
+      .reverse()
+      .join('-');
+    return {
+      choosePeriodDialog: false,
+      viewPeriodDate: '',
+      period: {
+        from: date,
+        to: date,
+      },
+      cargo: [],
     };
+  },
+  methods: {
+    async getStorehousePeriodData(data) {
+      this.choosePeriodDialog = false;
+      this.$q.loading.show();
+      const { getUrl } = await import('src/tools/url');
+      devlog.log(data);
+      this.$axios.post(getUrl('getStorehousePeriodData'), data)
+        .then(({ data: { cargo } }) => {
+          this.cargo = cargo;
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+        });
+    },
+  },
+};
 </script>

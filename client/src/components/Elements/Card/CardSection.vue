@@ -5,7 +5,7 @@
 </template>
 
 <script>
-    export default {
-        name: 'CardSection',
-    };
+export default {
+  name: 'CardSection',
+};
 </script>

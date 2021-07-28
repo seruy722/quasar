@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     title="Код"
     :persistent="true"
     data-vue-component-name="DialogAddStatisticForMonth"
@@ -22,38 +22,38 @@
         <div class="row justify-between">
           <SearchSelect
             v-model="codePriceData.category_id.value"
+            v-model:change-value="codePriceData.category_id.changeValue"
             :label="codePriceData.category_id.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="codePriceData.category_id.field"
-            :change-value.sync="codePriceData.category_id.changeValue"
             :options="categories"
             :errors="errorsData"
           />
           <BaseInput
             v-model="codePriceData.for_kg.value"
+            v-model:change-value="codePriceData.for_kg.changeValue"
             type="number"
             :label="codePriceData.for_kg.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="codePriceData.for_kg.field"
-            :change-value.sync="codePriceData.for_kg.changeValue"
             :errors="errorsData"
           />
           <BaseInput
             v-model="codePriceData.for_place.value"
+            v-model:change-value="codePriceData.for_place.changeValue"
             type="number"
             :label="codePriceData.for_place.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="codePriceData.for_place.field"
-            :change-value.sync="codePriceData.for_place.changeValue"
             :errors="errorsData"
           />
           <BaseInput
             v-model="codePriceData.commission.value"
+            v-model:change-value="codePriceData.commission.changeValue"
             type="number"
             :label="codePriceData.commission.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="codePriceData.commission.field"
-            :change-value.sync="codePriceData.commission.changeValue"
             :errors="errorsData"
           />
         </div>
@@ -85,19 +85,28 @@ import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import { setDefaultData, getCategories } from 'src/utils/FrequentlyCalledFunctions';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import Separator from 'src/components/Separator.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 
 export default {
   name: 'DialogAddStatisticForMonth',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    Card: () => import('src/components/Elements/Card/Card.vue'),
-    CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    Dialog,
+    BaseBtn,
+    BaseInput,
+    Separator,
+    Card,
+    CardActions,
+    CardSection,
+    IconBtn,
+    SearchSelect,
   },
   mixins: [showNotif, CheckErrorsMixin],
   props: {
@@ -138,7 +147,7 @@ export default {
         },
         for_place: {
           type: 'number',
-          label: 'За место',
+          label: 'За кг',
           field: 'for_place',
           changeValue: false,
           default: 0,

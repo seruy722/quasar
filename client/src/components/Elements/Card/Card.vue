@@ -8,7 +8,8 @@
 </template>
 
 <script>
-    export default {
-        name: 'Card',
-    };
+export default {
+  name: 'Card',
+  emits: ['click-card'],
+};
 </script>

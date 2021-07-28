@@ -17,9 +17,9 @@
               transition-hide="scale"
             >
               <q-list
-separator
-style="min-width: 100px"
->
+                separator
+                style="min-width: 100px"
+              >
                 <q-item
                   v-close-popup
                   clickable
@@ -27,23 +27,12 @@ style="min-width: 100px"
                 >
                   <q-item-section avatar>
                     <q-icon
-name="add"
-color="positive"
-/>
+                      name="add"
+                      color="positive"
+                    />
                   </q-item-section>
                   <q-item-section>Добавить</q-item-section>
                 </q-item>
-                <!--                <q-item-->
-                <!--                  v-show="cargoTableReactiveProperties.selected.length === 1"-->
-                <!--                  v-close-popup-->
-                <!--                  clickable-->
-                <!--                  @click="update"-->
-                <!--                >-->
-                <!--                  <q-item-section avatar>-->
-                <!--                    <q-icon name="edit" color="teal" />-->
-                <!--                  </q-item-section>-->
-                <!--                  <q-item-section>Редактировать</q-item-section>-->
-                <!--                </q-item>-->
                 <q-item
                   v-close-popup
                   clickable
@@ -51,33 +40,12 @@ color="positive"
                 >
                   <q-item-section avatar>
                     <q-icon
-name="sync"
-color="primary"
-/>
+                      name="sync"
+                      color="primary"
+                    />
                   </q-item-section>
                   <q-item-section>Обновить</q-item-section>
                 </q-item>
-                <!--                <q-item-->
-                <!--                  v-close-popup-->
-                <!--                  clickable-->
-                <!--                  @click="exportFaxData(cargoTableReactiveProperties.selected)"-->
-                <!--                >-->
-                <!--                  <q-item-section avatar>-->
-                <!--                    <q-icon name="explicit" color="positive" />-->
-                <!--                  </q-item-section>-->
-                <!--                  <q-item-section>Excel</q-item-section>-->
-                <!--                </q-item>-->
-                <!--                <q-item-->
-                <!--                  v-show="cargoTableReactiveProperties.selected.length"-->
-                <!--                  v-close-popup-->
-                <!--                  clickable-->
-                <!--                  @click="destroyEntry(cargoTableReactiveProperties.selected)"-->
-                <!--                >-->
-                <!--                  <q-item-section avatar>-->
-                <!--                    <q-icon name="delete" color="negative" />-->
-                <!--                  </q-item-section>-->
-                <!--                  <q-item-section>Удалить</q-item-section>-->
-                <!--                </q-item>-->
               </q-list>
             </q-menu>
           </MenuBtn>
@@ -169,192 +137,152 @@ color="primary"
       </Table>
     </PullRefresh>
     <DialogAddDocuments
-      :show-dialog.sync="showDialogAddDocuments"
+      v-model:show-dialog="showDialogAddDocuments"
     />
     <DialogShowImageGallery
-      :show-dialog.sync="showDialogImageGallery"
+      v-model:show-dialog="showDialogImageGallery"
+      v-model:slide="slide"
       :files="filesGallery"
-      :slide.sync="slide"
     />
   </q-page>
 </template>
 
 <script>
-    import showNotif from 'src/mixins/showNotif';
-    import filesMixin from 'src/mixins/files';
-    import CheckErrorsMixin from 'src/mixins/CheckErrors';
+import showNotif from 'src/mixins/showNotif';
+import filesMixin from 'src/mixins/files';
+import CheckErrorsMixin from 'src/mixins/CheckErrors';
+import Table from 'src/components/Elements/Table/Table.vue';
+import MenuBtn from 'src/components/Buttons/MenuBtn.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import DialogAddDocuments from 'src/components/Documents/DialogAddDocuments.vue';
+import DialogShowImageGallery from 'src/components/Tasks/DialogShowImageGallery.vue';
 
-    export default {
-        name: 'Documents',
-        components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            MenuBtn: () => import('src/components/Buttons/MenuBtn.vue'),
-            PullRefresh: () => import('src/components/PullRefresh.vue'),
-            DialogAddDocuments: () => import('src/components/Documents/DialogAddDocuments.vue'),
-            DialogShowImageGallery: () => import('src/components/Tasks/DialogShowImageGallery.vue'),
-        },
-        mixins: [showNotif, CheckErrorsMixin, filesMixin],
-        data() {
-            return {
-                cargoTableProperties: {
-                    columns: [
-                        {
-                            name: 'author_name',
-                            label: 'Автор',
-                            align: 'center',
-                            field: 'author_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'title',
-                            label: 'Описание',
-                            align: 'center',
-                            field: 'title',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_client_name',
-                            label: 'Клиент',
-                            align: 'center',
-                            field: 'code_client_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'formatDate',
-                            label: 'Дата',
-                            field: 'formatDate',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                cargoTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['author_name', 'title', 'code_client_name', 'formatDate'],
-                    title: '',
-                },
-                menuList: [],
-                showDialogAddTask: false,
-                entryData: {},
-                files: [],
-                showDialogAddDocuments: false,
-                showDialogImageGallery: false,
-                filesGallery: [],
-                slide: 1,
-                extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
-            };
-        },
-        computed: {
-            usersList() {
-                return this.$store.getters['auth/getUsersList'];
-            },
-            documents() {
-                return this.$store.getters['documents/getDocuments'];
-            },
-            userId() {
-                return _.get(this.$store.getters['auth/getUser'], 'id');
-            },
-        },
-        created() {
-            if (_.isEmpty(this.usersList)) {
-                this.$store.dispatch('auth/fetchUsersList');
-            }
-            if (_.isEmpty(this.documents)) {
-              this.$q.loading.show();
-                this.$store.dispatch('documents/fetchDocuments')
-                  .then(() => {
-                    this.$q.loading.hide();
-                  })
-                  .catch(() => {
-                    this.$q.loading.hide();
-                  });
-            }
-        },
-        methods: {
-            async refresh(done) {
-                if (!done) {
-                    this.$q.loading.show();
-                }
-                const { callFunction } = await import('src/utils/index');
-                await this.$store.dispatch('documents/fetchDocuments')
-                  .then(() => {
-                      callFunction(done);
-                      this.$q.loading.hide();
-                      this.showNotif('success', 'Данные успешно обновлены.', 'center');
-                  })
-                  .catch(() => {
-                      this.$q.loading.hide();
-                      callFunction(done);
-                  });
-            },
-            // destroyEntry(data) {
-            //     const ids = _.map(data, 'id');
-            //     this.showNotif('warning', _.size(ids) > 1 ? 'Удалить записи?' : 'Удалить запись?', 'center', [
-            //         {
-            //             label: 'Отмена',
-            //             color: 'white',
-            //             handler: () => {
-            //                 this.cargoTableReactiveProperties.selected = [];
-            //             },
-            //         },
-            //         {
-            //             label: 'Удалить',
-            //             color: 'white',
-            //             handler: async () => {
-            //                 const { getUrl } = await import('src/tools/url');
-            //                 this.$axios.post(getUrl('deleteTasks'), { ids })
-            //                   .then(() => {
-            //                       this.cargoTableReactiveProperties.selected = [];
-            //                       this.$store.dispatch('tasks/deleteTasks', ids);
-            //                       this.$q.loading.hide();
-            //                       this.showNotif('success', `${_.size(ids > 1) ? 'Записи успешно удалены' : 'Запись успешно удалена'}`, 'center');
-            //                   })
-            //                   .catch((error) => {
-            //                       devlog.error('Ошибка', error);
-            //                       this.$q.loading.hide();
-            //                   });
-            //             },
-            //         },
-            //     ]);
-            // },
-            // viewEditDialog(val, event) {
-            //     if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
-            //         this.entryData = val;
-            //         this.cargoTableReactiveProperties.selected = [];
-            //         devlog.log('VAL', val);
-            //         setTimeout(() => {
-            //             val.selected = !val.selected;
-            //         }, 100);
-            //         this.showDialogAddTask = true;
-            //     }
-            // },
-            // update() {
-            //     this.entryData = { row: _.first(this.cargoTableReactiveProperties.selected) };
-            //     this.showDialogAddTask = true;
-            // },
-            viewImageGallery(files, slide) {
-                const file = files[slide - 1];
-                if (_.includes(this.extensions, file.ext)) {
-                    this.downloadFromIndex(slide, files);
-                } else {
-                    this.filesGallery = _.filter(files, ({ ext }) => !_.includes(this.extensions, ext));
-                    const indexFile = _.findIndex(this.filesGallery, { id: file.id });
-                    this.slide = indexFile + 1;
-                    this.showDialogImageGallery = true;
-                }
-            },
-        },
+export default {
+  name: 'Documents',
+  components: {
+    Table,
+    MenuBtn,
+    PullRefresh,
+    DialogAddDocuments,
+    DialogShowImageGallery,
+  },
+  mixins: [showNotif, CheckErrorsMixin, filesMixin],
+  data() {
+    return {
+      cargoTableProperties: {
+        columns: [
+          {
+            name: 'author_name',
+            label: 'Автор',
+            align: 'center',
+            field: 'author_name',
+            sortable: true,
+          },
+          {
+            name: 'title',
+            label: 'Описание',
+            align: 'center',
+            field: 'title',
+            sortable: true,
+          },
+          {
+            name: 'code_client_name',
+            label: 'Клиент',
+            align: 'center',
+            field: 'code_client_name',
+            sortable: true,
+          },
+          {
+            name: 'formatDate',
+            label: 'Дата',
+            field: 'formatDate',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      cargoTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['author_name', 'title', 'code_client_name', 'formatDate'],
+        title: '',
+      },
+      menuList: [],
+      showDialogAddTask: false,
+      entryData: {},
+      files: [],
+      showDialogAddDocuments: false,
+      showDialogImageGallery: false,
+      filesGallery: [],
+      slide: 1,
+      extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
     };
+  },
+  computed: {
+    usersList() {
+      return this.$store.getters['auth/getUsersList'];
+    },
+    documents() {
+      return this.$store.getters['documents/getDocuments'];
+    },
+    userId() {
+      return _.get(this.$store.getters['auth/getUser'], 'id');
+    },
+  },
+  created() {
+    if (_.isEmpty(this.usersList)) {
+      this.$store.dispatch('auth/fetchUsersList');
+    }
+    if (_.isEmpty(this.documents)) {
+      this.$q.loading.show();
+      this.$store.dispatch('documents/fetchDocuments')
+        .then(() => {
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+        });
+    }
+  },
+  methods: {
+    async refresh(done) {
+      if (!done) {
+        this.$q.loading.show();
+      }
+      const { callFunction } = await import('src/utils/index');
+      await this.$store.dispatch('documents/fetchDocuments')
+        .then(() => {
+          callFunction(done);
+          this.$q.loading.hide();
+          this.showNotif('success', 'Данные успешно обновлены.', 'center');
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+          callFunction(done);
+        });
+    },
+    viewImageGallery(files, slide) {
+      const file = files[slide - 1];
+      if (_.includes(this.extensions, file.ext)) {
+        this.downloadFromIndex(slide, files);
+      } else {
+        this.filesGallery = _.filter(files, ({ ext }) => !_.includes(this.extensions, ext));
+        const indexFile = _.findIndex(this.filesGallery, { id: file.id });
+        this.slide = indexFile + 1;
+        this.showDialogImageGallery = true;
+      }
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .example-item {
-    width: 100px;
-    overflow: hidden;
-  }
+.example-item {
+  width: 100px;
+  overflow: hidden;
+}
 
-  .q-avatar {
-    margin: 0 5px;
-  }
+.q-avatar {
+  margin: 0 5px;
+}
 
 </style>

@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    :dialog="show"
     title="Записи"
     :persistent="true"
     data-vue-component-name="DialogViewCargoData"
@@ -103,12 +103,12 @@
                           v-if="col.field === 'things'"
                           :lines="10"
                         >
-                          {{ col.value | thingsFilter }}
+                          {{ thingsFilter(col.value) }}
                         </q-item-label>
                         <q-item-label
                           v-else-if="col.field === 'kg'"
                         >
-                          {{ col.value | numberFormatFilter }}
+                          {{ numberFormat(col.value) }}
                         </q-item-label>
                         <q-item-label v-else>
                           {{ col.value }}
@@ -138,9 +138,9 @@
                 @click.stop="viewEditDialog(props, $event)"
               >
                 <q-td
-auto-width
-class="select_checkbox"
->
+                  auto-width
+                  class="select_checkbox"
+                >
                   <q-checkbox
                     v-model="props.selected"
                     dense
@@ -186,7 +186,7 @@ class="select_checkbox"
                   key="kg"
                   :props="props"
                 >
-                  {{ props.row.kg | numberFormatFilter }}
+                  {{ numberFormat(props.row.kg) }}
                 </q-td>
 
                 <q-td
@@ -202,20 +202,20 @@ class="select_checkbox"
                   class="text-bold cursor-pointer"
                   :props="props"
                 >
-                  {{ props.row.for_place | numberFormatFilter }}
+                  {{ numberFormat(props.row.for_place) }}
                 </q-td>
 
                 <q-td
                   key="sum"
                   :props="props"
                 >
-                  {{ props.row.sum | numberFormatFilter }}
+                  {{ numberFormat(props.row.sum) }}
                 </q-td>
                 <q-td
                   key="paid"
                   :props="props"
                 >
-                  {{ props.row.paid ? 'Да':'Нет' }}
+                  {{ props.row.paid ? 'Да' : 'Нет' }}
                 </q-td>
 
                 <q-td
@@ -249,7 +249,7 @@ class="select_checkbox"
                   key="things"
                   :props="props"
                 >
-                  {{ props.row.things | thingsFilter }}
+                  {{ thingsFilter(props.row.things) }}
                 </q-td>
 
                 <q-td
@@ -278,201 +278,201 @@ class="select_checkbox"
       </q-card-section>
     </q-card>
     <DialogAddCargoDebtEntry
-      :entry-data.sync="dialogAddCargoDebtEntryData"
-      :show-dialog.sync="showDialogAddCargoDebtEntry"
+      v-model:entry-data="dialogAddCargoDebtEntryData"
+      v-model:show-dialog="showDialogAddCargoDebtEntry"
     />
   </Dialog>
 </template>
 
 <script>
-    // import {
-    //     combineCargoData,
-    //     // getCategories,
-    //     // getShopsList,
-    //     setFormatedDate,
-    //     // setChangeValue,
-    // } from 'src/utils/FrequentlyCalledFunctions';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import Table from 'src/components/Elements/Table/Table.vue';
+import CountCargoCategories from 'src/components/CargoDebts/CountCargoCategories.vue';
+import DialogAddCargoDebtEntry from 'src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue';
+import { thingsFilter, numberFormat } from 'src/utils';
 
-    export default {
-        name: 'DialogViewCargoData',
-        components: {
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            // Separator: () => import('src/components/Separator.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            CountCargoCategories: () => import('src/components/CargoDebts/CountCargoCategories.vue'),
-            DialogAddCargoDebtEntry: () => import('src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue'),
-            // IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            // PopupEdit: () => import('src/components/PopupEdit.vue'),
-        },
-        props: {
-            values: {
-                type: Array,
-                default: () => [],
-            },
-            show: {
-                type: Boolean,
-                default: false,
-            },
-        },
-        data() {
-            return {
-                dialogAddCargoDebtEntryData: {},
-                showDialogAddCargoDebtEntry: false,
-                clientCode: null,
-                tab: 'cargo',
-                faxTableProperties: {
-                    columns: [
-                        {
-                            name: 'created_at',
-                            label: 'Дата',
-                            align: 'center',
-                            field: 'created_at',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_place',
-                            label: 'Код',
-                            align: 'center',
-                            field: 'code_place',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_client_name',
-                            label: 'Клиент',
-                            align: 'center',
-                            field: 'code_client_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'type',
-                            label: 'Тип',
-                            align: 'center',
-                            field: 'type',
-                            sortable: true,
-                        },
-                        {
-                            name: 'place',
-                            label: this.$t('place'),
-                            field: 'place',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'kg',
-                            label: this.$t('kg'),
-                            field: 'kg',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'for_kg',
-                            label: this.$t('forKg'),
-                            field: 'for_kg',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'for_place',
-                            label: this.$t('forPlace'),
-                            field: 'for_place',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sum',
-                            label: 'Сумма',
-                            field: 'sum',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'paid',
-                            label: 'Оплачен',
-                            field: 'paid',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'category_name',
-                            label: this.$t('category'),
-                            field: 'category_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'fax_name',
-                            label: 'Факс',
-                            field: 'fax_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'shop',
-                            label: this.$t('shop'),
-                            field: 'shop',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'things',
-                            label: this.$t('things'),
-                            field: 'things',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'delivery_method_name',
-                            label: 'Способ доставки',
-                            field: 'delivery_method_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'department',
-                            label: 'Отделение',
-                            field: 'department',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                faxTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['code_place', 'code_client_name', 'paid', 'created_at', 'type', 'sum', 'place', 'kg', 'for_kg', 'for_place', 'shop', 'notation', 'category_name', 'things', 'delivery_method_name', 'department', 'fax_name'],
-                    title: '',
-                },
-            };
-        },
-        computed: {
-            clientCodes() {
-                return this.$store.getters['codes/getCodes'];
-            },
-        },
-        watch: {
-            showDialogAddCargoDebtEntry(val) {
-                if (!val) {
-                    this.close();
-                }
-            },
-        },
-        methods: {
-            close() {
-                this.$emit('update:show', false);
-                this.$emit('update:values', []);
-            },
-            viewEditDialog(data) {
-                this.dialogAddCargoDebtEntryData = data;
-                this.showDialogAddCargoDebtEntry = true;
-            },
-        },
+export default {
+  name: 'DialogViewCargoData',
+  components: {
+    BaseBtn,
+    Dialog,
+    IconBtn,
+    Table,
+    CountCargoCategories,
+    DialogAddCargoDebtEntry,
+  },
+  props: {
+    values: {
+      type: Array,
+      default: () => [],
+    },
+    show: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['update:values', 'update:show'],
+  data() {
+    return {
+      dialogAddCargoDebtEntryData: {},
+      showDialogAddCargoDebtEntry: false,
+      clientCode: null,
+      tab: 'cargo',
+      faxTableProperties: {
+        columns: [
+          {
+            name: 'created_at',
+            label: 'Дата',
+            align: 'center',
+            field: 'created_at',
+            sortable: true,
+          },
+          {
+            name: 'code_place',
+            label: 'Код',
+            align: 'center',
+            field: 'code_place',
+            sortable: true,
+          },
+          {
+            name: 'code_client_name',
+            label: 'Клиент',
+            align: 'center',
+            field: 'code_client_name',
+            sortable: true,
+          },
+          {
+            name: 'type',
+            label: 'Тип',
+            align: 'center',
+            field: 'type',
+            sortable: true,
+          },
+          {
+            name: 'place',
+            label: 'Мест',
+            field: 'place',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'kg',
+            label: 'Вес',
+            field: 'kg',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'for_kg',
+            label: 'За кг',
+            field: 'for_kg',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'for_place',
+            label: 'За место',
+            field: 'for_place',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'sum',
+            label: 'Сумма',
+            field: 'sum',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'paid',
+            label: 'Оплачен',
+            field: 'paid',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'category_name',
+            label: 'Категория',
+            field: 'category_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'fax_name',
+            label: 'Факс',
+            field: 'fax_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'notation',
+            label: 'Примечания',
+            field: 'notation',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'shop',
+            label: 'Магазин',
+            field: 'shop',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'things',
+            label: 'Опись',
+            field: 'things',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'delivery_method_name',
+            label: 'Способ доставки',
+            field: 'delivery_method_name',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'department',
+            label: 'Отделение',
+            field: 'department',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      faxTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['code_place', 'code_client_name', 'paid', 'created_at', 'type', 'sum', 'place', 'kg', 'for_kg', 'for_place', 'shop', 'notation', 'category_name', 'things', 'delivery_method_name', 'department', 'fax_name'],
+        title: '',
+      },
     };
+  },
+  computed: {
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+  },
+  watch: {
+    showDialogAddCargoDebtEntry(val) {
+      if (!val) {
+        this.close();
+      }
+    },
+  },
+  methods: {
+    thingsFilter,
+    numberFormat,
+    close() {
+      this.$emit('update:show', false);
+      this.$emit('update:values', []);
+    },
+    viewEditDialog(data) {
+      this.dialogAddCargoDebtEntryData = data;
+      this.showDialogAddCargoDebtEntry = true;
+    },
+  },
+};
 </script>

@@ -1,6 +1,4 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-
+import { createStore } from 'vuex';
 import auth from './auth';
 import faxes from './faxes';
 import category from './category';
@@ -23,15 +21,8 @@ import documents from './documents';
 import questions from './questions';
 import statistics from './statistics';
 
-Vue.use(Vuex);
-
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation
- */
-
 export default function initStore() {
-  const Store = new Vuex.Store({
+  const Store = createStore({
     modules: {
       auth,
       faxes,
@@ -56,9 +47,7 @@ export default function initStore() {
       statistics,
     },
 
-    // enable strict mode (adds overhead!)
-    // for dev mode only
-    strict: process.env.DEV,
+    strict: process.env.DEBUGGING,
   });
 
   return Store;

@@ -11,21 +11,22 @@
 </template>
 
 <script>
-    export default {
-        name: 'Fab',
-        props: {
-            color: {
-                type: String,
-                default: 'primary',
-            },
-            icon: {
-                type: String,
-                default: 'add',
-            },
-            direction: {
-                type: String,
-                default: 'up',
-            },
-        },
-    };
+export default {
+  name: 'Fab',
+  props: {
+    color: {
+      type: String,
+      default: 'primary',
+    },
+    icon: {
+      type: String,
+      default: 'add',
+    },
+    direction: {
+      type: String,
+      default: 'up',
+    },
+  },
+  emits: ['fab-click'],
+};
 </script>

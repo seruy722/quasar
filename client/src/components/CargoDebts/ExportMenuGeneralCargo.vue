@@ -10,7 +10,7 @@
     />
 
     <Dialog
-      :dialog.sync="show"
+      v-model:dialog="show"
       :persistent="true"
       title="Оплата"
     >
@@ -94,19 +94,19 @@
                   <div class="row items-center">
                     <span>От:</span>
                     <DateWithInputForCargo
-                      :value.sync="period.from"
+                      v-model:value="period.from"
                     />
                   </div>
                   <div class="row items-center">
                     <span>До:</span>
                     <DateWithInputForCargo
-                      :value.sync="period.to"
+                      v-model:value="period.to"
                     />
                   </div>
                 </div>
                 <div v-show="selectData.value === 3">
                   <DateWithInputForCargo
-                    :value.sync="period.day"
+                    v-model:value="period.day"
                   />
                 </div>
               </q-card-section>
@@ -143,17 +143,24 @@
 <script>
 import { format } from 'date-fns';
 import ExportDataMixin from 'src/mixins/ExportData';
+import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import Separator from 'src/components/Separator.vue';
+import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
 
 export default {
   name: 'ExportMenuGeneralCargo',
   components: {
-    ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
+    ExportBtn,
+    IconBtn,
+    BaseBtn,
+    OutlineBtn,
+    Dialog,
+    Separator,
+    DateWithInputForCargo,
   },
   mixins: [ExportDataMixin],
   props: {

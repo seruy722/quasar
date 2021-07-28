@@ -1,7 +1,7 @@
 <template>
   <div>
     <Dialog
-      :dialog.sync="show"
+      :dialog="show"
       title="Код"
       :persistent="true"
       data-vue-component-name="DialogChooseDate"
@@ -21,7 +21,7 @@
 
         <q-card-section>
           <DateWithInputForCargo
-            :value.sync="localDate"
+            v-model:value="localDate"
           />
         </q-card-section>
 
@@ -48,14 +48,20 @@
 </template>
 
 <script>
+import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Separator from 'src/components/Separator.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+
 export default {
   name: 'DialogChooseDate',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
+    DateWithInputForCargo,
+    Dialog,
+    BaseBtn,
+    Separator,
+    IconBtn,
   },
   props: {
     showDialog: {
@@ -70,6 +76,7 @@ export default {
         .join('-'),
     },
   },
+  emits: ['set-date', 'update:date', 'update:showDialog'],
   data() {
     return {
       localDate: new Date().toLocaleDateString()
@@ -97,6 +104,7 @@ export default {
   },
   methods: {
     setDate(date) {
+      devlog.log('setDate');
       this.$emit('update:date', date);
       this.$emit('set-date');
     },

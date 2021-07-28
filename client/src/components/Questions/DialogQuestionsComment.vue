@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     title="Клиент"
     :persistent="true"
     data-vue-component-name="DialogQuestionsComment"
@@ -94,112 +94,116 @@
 </template>
 
 <script>
-    import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
-    import showNotif from 'src/mixins/showNotif';
+import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
+import showNotif from 'src/mixins/showNotif';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 
-    export default {
-        name: 'DialogQuestionsComment',
-        components: {
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-        },
-        mixins: [showNotif],
-        props: {
-            showDialog: {
-                type: Boolean,
-                default: false,
-            },
-            questionId: {
-                type: Number,
-                default: 0,
-            },
-        },
-        data() {
-            return {
-                files: [],
-                extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
-                codeClientId: null,
-                text: null,
-            };
-        },
-        computed: {
-            show: {
-                get: function get() {
-                    return this.showDialog;
-                },
-                set: function set(val) {
-                    this.$emit('update:showDialog', val);
-                },
-            },
-            clientCodes() {
-                return this.$store.getters['codes/getCodes'];
-            },
-        },
-        created() {
-            getClientCodes(this.$store);
-        },
-        methods: {
-            selectedFiles(value) {
-                this.files = _.map(value, (file) => {
-                    file.url = URL.createObjectURL(file);
-                    return file;
-                });
-                if (_.isNull(value)) {
-                    this.files = [];
-                }
-            },
-            getFileExt({ name }) {
-                if (name) {
-                    return name.slice(name.lastIndexOf('.') + 1);
-                }
-                return name;
-            },
-            remove(index) {
-                this.files.splice(index, 1);
-            },
-            close() {
-                this.files = [];
-                this.show = false;
-            },
-            async save(files) {
-                const formData = new FormData();
-                _.forEach(files, (file, index) => {
-                    formData.set(`img${index}`, file);
-                });
-                if (this.codeClientId) {
-                    formData.set('code_client_id', this.codeClientId);
-                }
-                if (this.text) {
-                    formData.set('title', _.startCase(this.text));
-                }
-                if (this.questionId) {
-                    formData.set('question_id', this.questionId);
-                }
-                devlog.log('this.questionId', this.questionId);
-
-                if (this.text || files.length > 0) {
-                    this.$q.loading.show();
-                    const { getUrl } = await import('src/tools/url');
-                    this.$axios.post(getUrl('addQuestionComment'), formData)
-                      .then(({ data: { question } }) => {
-                          devlog.log('comment', question);
-                          this.$store.dispatch('questions/updateQuestion', question);
-                          this.text = '';
-                          this.files = [];
-                          this.codeClientId = null;
-                          this.$q.loading.hide();
-                          this.showNotif('success', 'Данные успешно сохранены', 'center');
-                      })
-                      .catch(() => {
-                          this.$q.loading.hide();
-                          this.showNotif('warning', 'Файлы из google диска не загружаются!', 'center');
-                          devlog.error('storeComment');
-                      });
-                } else {
-                    this.showNotif('warning', 'Введите сообщение или выберите файл!', 'center');
-                }
-            },
-        },
+export default {
+  name: 'DialogQuestionsComment',
+  components: {
+    Dialog,
+    BaseBtn,
+    SearchSelect,
+  },
+  mixins: [showNotif],
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    questionId: {
+      type: Number,
+      default: 0,
+    },
+  },
+  emits: ['update:showDialog'],
+  data() {
+    return {
+      files: [],
+      extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
+      codeClientId: null,
+      text: null,
     };
+  },
+  computed: {
+    show: {
+      get: function get() {
+        return this.showDialog;
+      },
+      set: function set(val) {
+        this.$emit('update:showDialog', val);
+      },
+    },
+    clientCodes() {
+      return this.$store.getters['codes/getCodes'];
+    },
+  },
+  created() {
+    getClientCodes(this.$store);
+  },
+  methods: {
+    selectedFiles(value) {
+      this.files = _.map(value, (file) => {
+        file.url = URL.createObjectURL(file);
+        return file;
+      });
+      if (_.isNull(value)) {
+        this.files = [];
+      }
+    },
+    getFileExt({ name }) {
+      if (name) {
+        return name.slice(name.lastIndexOf('.') + 1);
+      }
+      return name;
+    },
+    remove(index) {
+      this.files.splice(index, 1);
+    },
+    close() {
+      this.files = [];
+      this.show = false;
+    },
+    async save(files) {
+      const formData = new FormData();
+      _.forEach(files, (file, index) => {
+        formData.set(`img${index}`, file);
+      });
+      if (this.codeClientId) {
+        formData.set('code_client_id', this.codeClientId);
+      }
+      if (this.text) {
+        formData.set('title', _.startCase(this.text));
+      }
+      if (this.questionId) {
+        formData.set('question_id', this.questionId);
+      }
+      devlog.log('this.questionId', this.questionId);
+
+      if (this.text || files.length > 0) {
+        this.$q.loading.show();
+        const { getUrl } = await import('src/tools/url');
+        this.$axios.post(getUrl('addQuestionComment'), formData)
+          .then(({ data: { question } }) => {
+            devlog.log('comment', question);
+            this.$store.dispatch('questions/updateQuestion', question);
+            this.text = '';
+            this.files = [];
+            this.codeClientId = null;
+            this.$q.loading.hide();
+            this.showNotif('success', 'Данные успешно сохранены', 'center');
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            this.showNotif('warning', 'Файлы из google диска не загружаются!', 'center');
+            devlog.error('storeComment');
+          });
+      } else {
+        this.showNotif('warning', 'Введите сообщение или выберите файл!', 'center');
+      }
+    },
+  },
+};
 </script>

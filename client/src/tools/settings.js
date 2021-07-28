@@ -3,12 +3,12 @@ import { get } from 'lodash';
 
 const settings = {
   defaultSelectElement: {
-    label: i18n.t('notChosen'),
+    label: i18n.global.t('notChosen'),
     value: 0,
   },
   transportStatusOptions: [
     {
-      label: i18n.t('notChosen'),
+      label: i18n.global.t('notChosen'),
       value: 0,
       color: 'none',
     },
@@ -45,7 +45,7 @@ const settings = {
   ],
   sex: [
     {
-      label: i18n.t('notChosen'),
+      label: i18n.global.t('notChosen'),
       value: 0,
     },
     {

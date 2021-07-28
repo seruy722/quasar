@@ -13,13 +13,6 @@ export default {
       default: null,
     },
   },
-  // watch: {
-  //   /* eslint-disable */
-  //   chartdata() {
-  //     devlog.log('WWWWW', this.$data._chart.update);
-  //     this.$data._chart.update();
-  //   },
-  // },
   mounted() {
     this.setChart(this.chartdata, this.options);
   },

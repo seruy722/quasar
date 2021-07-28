@@ -9,11 +9,10 @@ module.exports = function (ctx) {
     boot: [
       'i18n',
       'axios',
-      'filters',
     ],
 
     css: [
-      'app.styl',
+      'app.sass',
     ],
 
     extras: [
@@ -25,10 +24,13 @@ module.exports = function (ctx) {
       // iconSet: 'ionicons-v4',
       lang: 'ru', // Quasar language
 
-      importStrategy: 'all', // --- includes everything; for dev only!
-
       // Quasar plugins
-      plugins: [],
+      plugins: [
+        'Loading',
+        'LocalStorage',
+        'Dialog',
+        'Notify',
+      ],
       config: {
         // loading: {
         //   spinner: 'QSpinnerFacebook',

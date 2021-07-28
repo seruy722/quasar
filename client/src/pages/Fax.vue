@@ -52,7 +52,7 @@
           v-show="faxTableReactiveProperties.selected.length"
           color="negative"
           icon="delete"
-          :tooltip="$t('delete')"
+          tooltip="Удалить"
           @icon-btn-click="destroyEntry(faxTableReactiveProperties.selected)"
         />
 
@@ -129,12 +129,12 @@
                     v-if="col.field === 'things'"
                     :lines="10"
                   >
-                    {{ col.value | thingsFilter }}
+                    {{ thingsFilter(col.value) }}
                   </ItemLabel>
                   <ItemLabel
                     v-else-if="col.field === 'kg'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </ItemLabel>
                   <ItemLabel v-else>
                     {{ col.value }}
@@ -163,9 +163,9 @@
           @click.stop="viewEditDialog(props, $event)"
         >
           <q-td
-auto-width
-class="select_checkbox"
->
+            auto-width
+            class="select_checkbox"
+          >
             <q-checkbox
               v-model="props.selected"
               dense
@@ -183,10 +183,10 @@ class="select_checkbox"
             class="cursor-pointer"
             :props="props"
           >
-            {{ props.row.code_client_id | optionsFilter(clientCodes) }}
+            {{ optionsFilter(props.row.code_client_id, clientCodes) }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.code_client_id"
+              v-model:value="props.row.code_client_id"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'code_client_id')"
@@ -211,7 +211,7 @@ class="select_checkbox"
             key="kg"
             :props="props"
           >
-            {{ props.row.kg | numberFormatFilter }}
+            {{ numberFormat(props.row.kg) }}
           </q-td>
 
           <q-td
@@ -219,10 +219,10 @@ class="select_checkbox"
             class="text-bold text-red cursor-pointer"
             :props="props"
           >
-            {{ props.row.for_kg | numberFormatFilter }}
+            {{ numberFormat(props.row.for_kg) }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.for_kg"
+              v-model:value="props.row.for_kg"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'for_kg')"
@@ -246,10 +246,10 @@ class="select_checkbox"
             class="text-bold text-red cursor-pointer"
             :props="props"
           >
-            {{ props.row.for_place | numberFormatFilter }}
+            {{ numberFormat(props.row.for_place) }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.for_place"
+              v-model:value="props.row.for_place"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'for_place')"
@@ -264,7 +264,7 @@ class="select_checkbox"
             {{ props.row.cube }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.cube"
+              v-model:value="props.row.cube"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'cube')"
@@ -283,10 +283,10 @@ class="select_checkbox"
             class="cursor-pointer"
             :props="props"
           >
-            {{ props.row.category_id | optionsFilter(categories) }}
+            {{ optionsFilter(props.row.category_id, categories) }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.category_id"
+              v-model:value="props.row.category_id"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'category_id')"
@@ -305,7 +305,7 @@ class="select_checkbox"
             :props="props"
           >
             <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
-{{ props.row.in_cargo ? 'Да' : 'Нет' }}
+              {{ props.row.in_cargo ? 'Да' : 'Нет' }}
             </q-badge>
           </q-td>
 
@@ -321,10 +321,10 @@ class="select_checkbox"
             class="cursor-pointer"
             :props="props"
           >
-            {{ props.row.delivery_method_id | optionsFilter(deliveryMethodsList) }}
+            {{ optionsFilter(props.row.delivery_method_id, deliveryMethodsList) }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.delivery_method_id"
+              v-model:value="props.row.delivery_method_id"
               type="number"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'delivery_method_id')"
@@ -346,7 +346,7 @@ class="select_checkbox"
             {{ props.row.department }}
             <PopupEdit
               v-if="combineTableData"
-              :value.sync="props.row.department"
+              v-model:value="props.row.department"
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'department')"
             />
@@ -363,7 +363,7 @@ class="select_checkbox"
             key="things"
             :props="props"
           >
-            {{ props.row.things | thingsFilter }}
+            {{ thingsFilter(props.row.things) }}
           </q-td>
         </q-tr>
       </template>
@@ -375,8 +375,8 @@ class="select_checkbox"
       style="max-width: 600px;margin:0 auto;"
     />
     <DialogFaxData
-      :show-dialog.sync="showFaxDataDialog"
-      :entry-data.sync="localFaxEditData"
+      v-model:show-dialog="showFaxDataDialog"
+      v-model:entry-data="localFaxEditData"
     />
     <Dialog
       :dialog="dialogHistory"
@@ -432,17 +432,17 @@ class="select_checkbox"
             <template #before>
               <div class="q-pa-md">
                 <div class="text-h6 q-mb-md">
-Факс
-</div>
+                  Факс
+                </div>
                 <!--                <Search v-model="search" />-->
                 <CountCategories
-:list="faxSideData"
-style="margin-bottom: 20px;"
-/>
+                  :list="faxSideData"
+                  style="margin-bottom: 20px;"
+                />
                 <q-list
-bordered
-separator
->
+                  bordered
+                  separator
+                >
                   <q-item>
                     <q-item-section>Код</q-item-section>
                     <q-item-section>Клиент</q-item-section>
@@ -466,7 +466,7 @@ separator
                       <q-item-section>{{ item.place }}</q-item-section>
                       <q-item-section>{{ item.kg }}</q-item-section>
                       <q-item-section>
-{{ item.category_name }}
+                        {{ item.category_name }}
                       </q-item-section>
                     </q-item>
                   </q-slide-item>
@@ -476,27 +476,27 @@ separator
 
             <template #separator>
               <q-avatar
-color="primary"
-text-color="white"
-size="40px"
-icon="drag_indicator"
-/>
+                color="primary"
+                text-color="white"
+                size="40px"
+                icon="drag_indicator"
+              />
             </template>
 
             <template #after>
               <div class="q-pa-md">
                 <div class="text-h6 q-mb-md">
-Склад
-</div>
+                  Склад
+                </div>
                 <!--                <Search v-model="searchStorehouseData" />-->
                 <CountCategories
-:list="storehouseSideData"
-style="margin-bottom: 20px;"
-/>
+                  :list="storehouseSideData"
+                  style="margin-bottom: 20px;"
+                />
                 <q-list
-bordered
-separator
->
+                  bordered
+                  separator
+                >
                   <q-item>
                     <q-item-section>Код</q-item-section>
                     <q-item-section>Клиент</q-item-section>
@@ -520,7 +520,7 @@ separator
                       <q-item-section>{{ item.place }}</q-item-section>
                       <q-item-section>{{ item.kg }}</q-item-section>
                       <q-item-section>
-{{ item.category_name }}
+                        {{ item.category_name }}
                       </q-item-section>
                     </q-item>
                   </q-slide-item>
@@ -532,12 +532,12 @@ separator
       </Card>
     </Dialog>
     <DialogMoveToFax
-      :show.sync="showMoveToFaxDialog"
-      :values.sync="faxTableReactiveProperties.selected"
+      v-model:show="showMoveToFaxDialog"
+      v-model:values="faxTableReactiveProperties.selected"
     />
     <DialogSendSms
-      :show.sync="showSendSmsDialog"
-      :values.sync="sendSmsDialogData"
+      v-model:show="showSendSmsDialog"
+      v-model:values="sendSmsDialogData"
       :fax="currentFaxItem"
     />
   </q-page>
@@ -556,46 +556,48 @@ import {
   setCategoriesStoreHouseData,
   combineStoreHouseData,
   getDeliveryMethodsList,
-  // getStorehouseTableData,
   getFaxes,
-  // setFormatedDate,
-  // prepareHistoryData,
 } from 'src/utils/FrequentlyCalledFunctions';
 import StorehouseDataMixin from 'src/mixins/StorehouseData';
+import { numberFormat, thingsFilter, optionsFilter } from 'src/utils';
+import Table from 'components/Elements/Table/Table.vue';
+import IconBtn from 'components/Buttons/IconBtn.vue';
+import BaseBtn from 'components/Buttons/BaseBtn.vue';
+import DialogFaxData from 'components/Dialogs/DialogFaxData.vue';
+import StorehouseDataHistory from 'components/History/StorehouseDataHistory.vue';
+import Dialog from 'components/Dialogs/Dialog.vue';
+import CountCategories from 'components/CountCategories.vue';
+import PopupEdit from 'components/PopupEdit.vue';
+import SearchSelect from 'components/Elements/SearchSelect.vue';
+import List from 'src/components/Elements/List/List.vue';
+import ItemSection from 'src/components/Elements/List/ItemSection.vue';
+import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
+import ListItem from 'src/components/Elements/List/ListItem.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import MoveToFaxBtn from 'src/components/Buttons/MoveToFaxBtn.vue';
+import DialogMoveToFax from 'src/components/Dialogs/DialogMoveToFax.vue';
 
 export default {
   name: 'Fax',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    // Icon: () => import('src/components/Buttons/Icons/Icon.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    List: () => import('src/components/Elements/List/List.vue'),
-    ItemSection: () => import('src/components/Elements/List/ItemSection.vue'),
-    ItemLabel: () => import('src/components/Elements/List/ItemLabel.vue'),
-    ListItem: () => import('src/components/Elements/List/ListItem.vue'),
-    // Badge: () => import('src/components/Elements/Badge.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    DialogFaxData: () => import('src/components/Dialogs/DialogFaxData.vue'),
-    DialogSendSms: () => import('src/components/Dialogs/DialogSendSms.vue'),
-    StorehouseDataHistory: () => import('src/components/History/StorehouseDataHistory.vue'),
-    Card: () => import('src/components/Elements/Card/Card.vue'),
-    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    CountCategories: () => import('src/components/CountCategories.vue'),
-    PopupEdit: () => import('src/components/PopupEdit.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    MoveToFaxBtn: () => import('src/components/Buttons/MoveToFaxBtn.vue'),
-    DialogMoveToFax: () => import('src/components/Dialogs/DialogMoveToFax.vue'),
-    // Search: () => import('src/components/Search.vue'),
-  },
-  filters: {
-    optionsFilter(id, categories) {
-      const find = _.find(categories, { value: id });
-      if (find) {
-        return find.label;
-      }
-      return id;
-    },
+    Table,
+    IconBtn,
+    List,
+    ItemSection,
+    ItemLabel,
+    ListItem,
+    BaseBtn,
+    DialogFaxData,
+    StorehouseDataHistory,
+    Card,
+    CardSection,
+    Dialog,
+    CountCategories,
+    PopupEdit,
+    SearchSelect,
+    MoveToFaxBtn,
+    DialogMoveToFax,
   },
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {
@@ -635,28 +637,28 @@ export default {
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_kg',
-            label: this.$t('forKg'),
+            label: 'За кг',
             field: 'for_kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'for_place',
-            label: this.$t('forPlace'),
+            label: 'За место',
             field: 'for_place',
             align: 'center',
             sortable: true,
@@ -670,7 +672,7 @@ export default {
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
@@ -684,7 +686,7 @@ export default {
           },
           {
             name: 'shop',
-            label: this.$t('shop'),
+            label: 'Магазин',
             field: 'shop',
             align: 'center',
             sortable: true,
@@ -705,14 +707,14 @@ export default {
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
           },
           {
             name: 'things',
-            label: this.$t('things'),
+            label: 'Опись',
             field: 'things',
             align: 'center',
             sortable: true,
@@ -796,10 +798,13 @@ export default {
         this.$q.loading.hide();
       });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearTimeout(this.timer);
   },
   methods: {
+    numberFormat,
+    thingsFilter,
+    optionsFilter,
     openDialogSendSms(allData, selected) {
       this.sendSmsDialogData = _.isEmpty(selected) ? allData : selected;
       this.showSendSmsDialog = true;

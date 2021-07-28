@@ -1,228 +1,200 @@
 <template>
-  <div
+  <q-table
+    v-model:pagination="pagination"
+    v-model:selected="selected"
+    :rows="tableData"
+    :columns="tableProperties.columns"
+    :visible-columns="tableReactiveProperties.visibleColumns"
+    :selection="tableProperties.selection || 'multiple'"
+    :grid="$q.screen.lt.sm || grid"
+    dense
+    row-key="id"
+    :filter="search"
+    :filter-method="filterMethod"
+    :rows-per-page-options="[10, 20, 50, 100, 0]"
+    :separator="tableProperties.separator || 'cell'"
+    :hide-bottom="tableProperties.hideBottom"
+    :virtual-scroll-sticky-start="48"
+    :sort-method="customSort"
+    class="my-sticky-virtscroll-table"
+    virtual-scroll
     data-vue-component-name="Table"
   >
-    <q-table
-      :data="tableData"
-      :columns="tableProperties.columns"
-      :visible-columns="tableReactiveProperties.visibleColumns"
-      :pagination.sync="pagination"
-      :selection="tableProperties.selection || 'multiple'"
-      :grid="$q.screen.lt.sm || grid"
-      dense
-      row-key="id"
-      :selected.sync="tableReactiveProperties.selected"
-      :filter="search"
-      :filter-method="filterMethod"
-      :rows-per-page-options="[10, 20, 50, 100, 0]"
-      :separator="tableProperties.separator || 'cell'"
-      :hide-bottom="tableProperties.hideBottom"
-      :virtual-scroll-sticky-start="48"
-      :sort-method="customSort"
-      class="my-sticky-virtscroll-table"
-      virtual-scroll
+    <template
+      v-if="!tableProperties.hideTop"
+      #top="props"
     >
-      <template
-        v-if="!tableProperties.hideTop"
-        #top="props"
-      >
-        <div class="col-4 q-mr-md text-bold">
-{{ title }}
-</div>
+      <div class="col-4 q-mr-md text-bold">
+        {{ title }}
+      </div>
 
-        <q-space />
+      <q-space />
 
-        <Search v-model="search" />
+      <Search v-model="search" />
 
-        <BaseSelect
-          v-model="searchField"
-          label="Поле"
-          style="min-width: 110px;padding-bottom: 0;"
-          dense
-          options-dense
-          :options="searchOptionsFields"
-        />
+      <BaseSelect
+        v-model="searchField"
+        label="Поле"
+        style="min-width: 110px;padding-bottom: 0;"
+        dense
+        options-dense
+        :options="searchOptionsFields"
+      />
 
-        <q-space />
-        <IconBtn
-          :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-          :tooltip="$t(props.inFullscreen ? 'hide' : 'reveal')"
-          @icon-btn-click="props.toggleFullscreen"
-        />
-        <slot name="top-buttons" />
-      </template>
+      <q-space />
+      <IconBtn
+        :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+        :tooltip="$t(props.inFullscreen ? 'hide' : 'reveal')"
+        @icon-btn-click="props.toggleFullscreen"
+      />
+      <slot name="top-buttons" />
+    </template>
 
-      <template #body="props">
-        <slot
-name="inner-body"
-:props="props"
-/>
-      </template>
+    <template #body="props">
+      <slot
+        name="inner-body"
+        :props="props"
+      />
+    </template>
 
-      <template #item="props">
-        <slot
-name="inner-item"
-:props="props"
-/>
-      </template>
+    <template #item="props">
+      <slot
+        name="inner-item"
+        :props="props"
+      />
+    </template>
 
-      <template #bottom-row>
-        <q-tr>
-          <q-td colspan="100%">
-            <slot name="inner-bottom-row" />
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
-  </div>
+    <template #bottom-row>
+      <q-tr>
+        <q-td colspan="100%">
+          <slot name="inner-bottom-row" />
+        </q-td>
+      </q-tr>
+    </template>
+  </q-table>
 </template>
 
 <script>
-    import { toDate } from 'src/utils/formatDate';
+import { defineAsyncComponent } from 'vue';
+import { sortSuper } from 'src/utils/sort.js';
 
-    export default {
-        name: 'Table',
-        components: {
-            Search: () => import('src/components/Search.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-            BaseSelect: () => import('src/components/Elements/BaseSelect.vue'),
-        },
-        props: {
-            title: {
-                type: String,
-                default: '',
-            },
-            tableProperties: {
-                type: Object,
-                default: () => ({}),
-            },
-            tableReactiveProperties: {
-                type: Object,
-                default: () => ({}),
-            },
-            tableData: {
-                type: Array,
-                default: () => [],
-            },
-            searchData: {
-                type: Array,
-                default: () => [],
-            },
-            grid: {
-                type: Boolean,
-                default: false,
-            },
-        },
-        data() {
-            return {
-                search: null,
-                pagination: {
-                    rowsPerPage: 20,
-                },
-                searchField: 'Все',
-                searchOptionsFields: [],
-            };
-        },
-        // computed: {
-        //     search: {
-        //         get: function get() {
-        //             return this.$store.getters['settings/getSearch'];
-        //         },
-        //         set: function set(val) {
-        //             this.$store.dispatch('settings/setSearch', val);
-        //         },
-        //     },
-        // },
-        // watch: {
-        //     search(val) {
-        //         if (!val) {
-        //             this.$emit('update:searchData', []);
-        //         }
-        //     },
-        // },
-        created() {
-            // const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
-            // el.setAttribute('style', `max-height: ${document.documentElement.clientHeight - 100}px`);
-            // devlog.log('el', el);
-            this.searchOptionsFields = _.map(_.get(this.tableProperties, 'columns'), ({ label, name }) => _.assign({}, {
-                label,
-                value: name,
-            }));
-            this.$nextTick(() => {
-                this.searchOptionsFields.unshift({
-                    label: 'Все',
-                    value: 'Все',
-                });
-            });
-        },
-        methods: {
-            filterMethod(rows, terms, cols, cellValue) {
-                // devlog.log('rows', rows);
-                // devlog.log('cols', cols);
-                // devlog.log('cellValue', cellValue);
-                // devlog.log('terms', terms);
-                // devlog.log('this.searchField', this.searchField === 'Все');
-                const newCols = this.searchField === 'Все' ? cols : _.filter(cols, { name: this.searchField });
-                devlog.log('newCols', newCols);
-                const lowerTerms = terms ? terms.toLowerCase() : '';
-                const result = rows.filter(
-                  (row) => newCols.some((col) => (`${cellValue(col, row)} `).toLowerCase()
-                    .indexOf(lowerTerms) !== -1),
-                );
-                devlog.log('resultSerarch', result);
-                // this.$emit('update:searchData', result);
-                return result;
-            },
-            customSort(rows, sortBy, descending) {
-                const data = [...rows];
-                devlog.log('sortBy', sortBy);
-
-                if (sortBy) {
-                    data.sort((a, b) => {
-                        const x = descending ? b : a;
-                        const y = descending ? a : b;
-                        devlog.log('A', !_.isNaN(_.toNumber(a[sortBy])));
-                        // devlog.log('B', b[sortBy]);
-                        // devlog.log('descending', descending);
-                        if (!_.isNaN(_.toNumber(a[sortBy])) && !_.isNaN(_.toNumber(b[sortBy]))) {
-                            devlog.log('STRING_SORT', _.toNumber(a[sortBy]));
-                            return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
-                        }
-                        if (sortBy === 'created_at' || sortBy === 'updated_at') {
-                            return new Date(toDate(x[sortBy])) - new Date(toDate(y[sortBy]));
-                        }
-                        let num = 0;
-                        if (x[sortBy] > y[sortBy]) {
-                            num = 1;
-                        } else if (x[sortBy] < y[sortBy]) {
-                            num = -1;
-                        }
-                        devlog.log('NUM', num);
-                        return num;
-                        // return x[sortBy] > y[sortBy] ? 1 : x[sortBy] < y[sortBy] ? -1 : 0;
-                    });
-                }
-                return data;
-            },
-        },
+export default {
+  name: 'Table',
+  components: {
+    Search: defineAsyncComponent(() => import('src/components/Search.vue')),
+    IconBtn: defineAsyncComponent(() => import('components/Buttons/IconBtn.vue')),
+    BaseSelect: defineAsyncComponent(() => import('src/components/Elements/BaseSelect.vue')),
+  },
+  props: {
+    title: {
+      type: String,
+      default: '',
+    },
+    tableProperties: {
+      type: Object,
+      default: () => ({}),
+    },
+    tableReactiveProperties: {
+      type: Object,
+      default: () => ({}),
+    },
+    tableData: {
+      type: Array,
+      default: () => [],
+    },
+    searchData: {
+      type: Array,
+      default: () => [],
+    },
+    grid: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      search: null,
+      pagination: {
+        rowsPerPage: 20,
+      },
+      searchField: 'Все',
+      searchOptionsFields: [],
     };
+  },
+  computed: {
+    selected: {
+      get: function get() {
+        return this.tableReactiveProperties.selected;
+      },
+      set: function set(val) {
+        _.set(this.tableReactiveProperties, 'selected', val);
+      },
+    },
+  },
+  watch: {
+    tableData(val) {
+      devlog.log('tableData', val);
+    },
+  },
+  created() {
+    // const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
+    // el.setAttribute('style', `max-height: ${document.documentElement.clientHeight - 100}px`);
+    // devlog.log('el', el);
+    this.searchOptionsFields = _.map(_.get(this.tableProperties, 'columns'), ({
+                                                                                label,
+                                                                                name,
+                                                                              }) => _.assign({}, {
+      label,
+      value: name,
+    }));
+    this.$nextTick(() => {
+      this.searchOptionsFields.unshift({
+        label: 'Все',
+        value: 'Все',
+      });
+    });
+  },
+  methods: {
+    filterMethod(rows, terms, cols, cellValue) {
+      const newCols = this.searchField === 'Все' ? cols : _.filter(cols, { name: this.searchField });
+      devlog.log('newCols', newCols);
+      const lowerTerms = terms ? terms.toLowerCase() : '';
+      const result = rows.filter(
+        (row) => newCols.some((col) => (`${cellValue(col, row)} `).toLowerCase()
+          .indexOf(lowerTerms) !== -1),
+      );
+      devlog.log('resultSerarch', result);
+      // this.$emit('update:searchData', result);
+      return result;
+    },
+    customSort(rows, sortBy, descending) {
+      const data = [...rows];
+      devlog.log('sortBy', sortBy);
+
+      if (sortBy) {
+        sortSuper(data, sortBy, descending);
+      }
+      return data;
+    },
+  },
+};
 </script>
 
-<style lang="stylus">
-  .my-sticky-virtscroll-table
-    .q-table__middle
-      max-height: 385px
+<style lang="scss">
+.my-sticky-virtscroll-table .q-table__middle {
+  max-height: 385px;
+}
 
-    .q-table__top,
-    .q-table__bottom,
-    thead tr:first-child th
-      background-color: #fff
+.q-table__top .q-table__bottom thead tr:first-child th {
+  background-color: #fff;
+}
 
-    thead tr:first-child th
-      position: sticky
-      top: 0
-      text-transform uppercase
-      font-weight: bold
-      opacity: 1
-      z-index: 1
+thead tr:first-child th {
+  position: sticky;
+  top: 0;
+  text-transform: uppercase;
+  font-weight: bold;
+  opacity: 1;
+  z-index: 1;
+}
 </style>

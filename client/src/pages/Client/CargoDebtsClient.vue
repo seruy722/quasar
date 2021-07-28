@@ -78,13 +78,16 @@
 
 <script>
 import showNotif from 'src/mixins/showNotif';
+import Cargo from 'src/components/Client/Cargo.vue';
+import Debts from 'src/components/Client/Debts.vue';
+import Storehouse from 'src/components/Storehouse.vue';
 
 export default {
   name: 'CargoDebtsClient',
   components: {
-    Cargo: () => import('src/components/Client/Cargo.vue'),
-    Debts: () => import('src/components/Client/Debts.vue'),
-    Storehouse: () => import('src/components/Storehouse.vue'),
+    Cargo,
+    Debts,
+    Storehouse,
   },
   mixins: [showNotif],
   data() {

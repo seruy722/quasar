@@ -52,7 +52,7 @@
               <q-item-section>
                 <q-item-label>
                   <q-badge>
-                    {{ props.row.status | statusFilter }}
+                    {{ statusFilter(props.row.status) }}
                   </q-badge>
                 </q-item-label>
               </q-item-section>
@@ -74,22 +74,22 @@
                     v-if="col.field === 'things'"
                     :lines="10"
                   >
-                    {{ col.value | thingsFilter }}
+                    {{ thingsFilter(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'kg'"
                   >
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'status'"
                   >
-                    <q-badge>{{ col.value | statusFilter }}</q-badge>
+                    <q-badge>{{ statusFilter(col.value) }}</q-badge>
                   </q-item-label>
                   <q-item-label
                     v-else-if="col.field === 'created_at'"
                   >
-                    {{ col.value | formatToDotDate }}
+                    {{ fullDate(col.value) }}
                   </q-item-label>
                   <q-item-label v-else>
                     {{ col.value }}
@@ -118,7 +118,7 @@
             key="status"
             :props="props"
           >
-            <q-badge>{{ props.row.status | statusFilter }}</q-badge>
+            <q-badge>{{ statusFilter(props.row.status) }}</q-badge>
           </q-td>
           <q-td
             key="code_place"
@@ -138,7 +138,7 @@
             key="kg"
             :props="props"
           >
-            {{ props.row.kg | numberFormatFilter }}
+            {{ numberFormat(props.row.kg) }}
           </q-td>
 
           <q-td
@@ -166,14 +166,14 @@
             key="things"
             :props="props"
           >
-            {{ props.row.things | thingsFilter }}
+            {{ thingsFilter(props.row.things) }}
           </q-td>
 
           <q-td
             key="created_at"
             :props="props"
           >
-            {{ props.row.created_at | formatToDotDate }}
+            {{ formatToDotDate(props.row.created_at) }}
           </q-td>
         </q-tr>
       </template>
@@ -189,23 +189,20 @@
 import { getUrl } from 'src/tools/url';
 import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
-import { callFunction } from 'src/utils/index';
-import getFromSettings from 'src/tools/settings';
+import { callFunction, thingsFilter, numberFormat } from 'src/utils';
+import { fullDate } from 'src/utils/formatDate';
+import Table from 'src/components/Elements/Table/Table.vue';
+import CountCategories from 'src/components/CountCategories.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
 export default {
   name: 'Storehouse',
   components: {
-    Table: () => import('src/components/Elements/Table/Table.vue'),
-    CountCategories: () => import('src/components/CountCategories.vue'),
-    UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-    IconBtn: () => import('components/Buttons/IconBtn.vue'),
-  },
-  filters: {
-    statusFilter(value) {
-      const options = getFromSettings('transportStatusOptions');
-      const val = _.get(_.find(options, { value }), 'label');
-      return val || 'На складе';
-    },
+    Table,
+    CountCategories,
+    UpdateBtn,
+    IconBtn,
   },
   mixins: [showNotif, ExportDataMixin],
   props: {
@@ -222,7 +219,7 @@ export default {
   data() {
     return {
       storehouseTableProperties: {
-        title: this.$t('storehouse'),
+        title: 'Склад',
         viewBody: true,
         viewTop: true,
         hideBottom: false,
@@ -236,49 +233,49 @@ export default {
           },
           {
             name: 'code_place',
-            label: this.$t('code'),
+            label: 'Код',
             align: 'center',
             field: 'code_place',
             sortable: true,
           },
           {
             name: 'place',
-            label: this.$t('place'),
+            label: 'Мест',
             field: 'place',
             align: 'center',
             sortable: true,
           },
           {
             name: 'kg',
-            label: this.$t('kg'),
+            label: 'Вес',
             field: 'kg',
             align: 'center',
             sortable: true,
           },
           {
             name: 'category_name',
-            label: this.$t('category'),
+            label: 'Категория',
             field: 'category_name',
             align: 'center',
             sortable: true,
           },
           {
             name: 'shop',
-            label: this.$t('shop'),
+            label: 'Магазин',
             field: 'shop',
             align: 'center',
             sortable: true,
           },
           {
             name: 'notation',
-            label: this.$t('notation'),
+            label: 'Примечания',
             field: 'notation',
             align: 'center',
             sortable: true,
           },
           {
             name: 'things',
-            label: this.$t('things'),
+            label: 'Опись',
             field: 'things',
             align: 'center',
             sortable: true,
@@ -299,6 +296,9 @@ export default {
     };
   },
   methods: {
+    numberFormat,
+    thingsFilter,
+    fullDate,
     exportStorehouseData() {
       const data = _.isEmpty(this.storehouseTableReactiveProperties.selected) ? this.storehouseData : this.storehouseTableReactiveProperties.selected;
       devlog.log('DATA', data);

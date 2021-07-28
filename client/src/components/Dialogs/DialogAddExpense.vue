@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     title="Код"
     :persistent="true"
     data-vue-component-name="DialogAddExpense"
@@ -22,26 +22,26 @@
         <div class="row justify-between">
           <SelectChips
             v-model="expenseData.expense.value"
+            v-model:change-value="expenseData.expense.changeValue"
             :label="expenseData.expense.label"
             :field="expenseData.expense.field"
             :dense="$q.screen.xs || $q.screen.sm"
             :options="expenseData.expense.options"
-            :change-value.sync="expenseData.expense.changeValue"
             :func-load-data="expenseData.expense.funcLoadData"
             :errors="errorsData"
           />
           <BaseInput
             v-model="expenseData.sum.value"
+            v-model:change-value="expenseData.sum.changeValue"
             type="number"
             :label="expenseData.sum.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="expenseData.sum.field"
-            :change-value.sync="expenseData.sum.changeValue"
             :errors="errorsData"
           />
           <DateWithInputForCargo
-            :value.sync="expenseData.date.value"
-            :change-value.sync="expenseData.date.changeValue"
+            v-model:value="expenseData.date.value"
+            v-model:change-value="expenseData.date.changeValue"
           />
         </div>
       </CardSection>
@@ -72,21 +72,30 @@ import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import { setDefaultData } from 'src/utils/FrequentlyCalledFunctions';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import Separator from 'src/components/Separator.vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import SelectChips from 'src/components/Elements/SelectChips.vue';
+import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
 
 export default {
   name: 'DialogAddExpense',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    Card: () => import('src/components/Elements/Card/Card.vue'),
-    CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-    CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    SelectChips: () => import('src/components/Elements/SelectChips.vue'),
-    DateWithInputForCargo: () => import('src/components/DateWithInputForCargo.vue'),
-    // SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
+    Dialog,
+    BaseBtn,
+    BaseInput,
+    Separator,
+    Card,
+    CardActions,
+    CardSection,
+    IconBtn,
+    SelectChips,
+    DateWithInputForCargo,
   },
   mixins: [showNotif, CheckErrorsMixin],
   props: {
@@ -99,6 +108,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:entryData', 'update:showDialog'],
   data() {
     return {
       show: false,

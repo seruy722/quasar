@@ -70,15 +70,17 @@
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label v-if="col.field === 'sum'">
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'commission'">
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'paid'">
                     <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{ props.row.paid ? 'Да':
-                      props.row.type ? null : 'Нет' }}
+                      {{
+                        props.row.paid ? 'Да' :
+                          props.row.type ? null : 'Нет'
+                      }}
                     </q-badge>
                   </q-item-label>
                   <q-item-label v-else>
@@ -86,16 +88,6 @@
                   </q-item-label>
                 </q-item-section>
               </q-item>
-              <!--              <q-item>-->
-              <!--                <q-item-section>-->
-              <!--                  <BaseBtn-->
-              <!--                    label="История"-->
-              <!--                    color="info"-->
-              <!--                    style="max-width: 100px;margin: 0 auto;"-->
-              <!--                    @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"-->
-              <!--                  />-->
-              <!--                </q-item-section>-->
-              <!--              </q-item>-->
             </q-list>
           </q-expansion-item>
         </div>
@@ -143,7 +135,7 @@
             key="sum"
             :props="props"
           >
-            {{ props.row.sum | numberFormatFilter }}
+            {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
             key="commission"
@@ -156,8 +148,10 @@
             :props="props"
           >
             <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{ props.row.paid ? 'Да':
-              props.row.type ? null : 'Нет' }}
+              {{
+                props.row.paid ? 'Да' :
+                  props.row.type ? null : 'Нет'
+              }}
             </q-badge>
           </q-td>
 
@@ -179,114 +173,120 @@
 </template>
 
 <script>
-    import ExportDataMixin from 'src/mixins/ExportData';
+import ExportDataMixin from 'src/mixins/ExportData';
+import { numberFormat } from 'src/utils';
+import Table from 'src/components/Elements/Table/Table.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
+import GeneralClientDebtsData from 'src/components/CargoDebts/GeneralClientDebtsData.vue';
 
-    export default {
-        name: 'Debts',
-        components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-            UpdateBtn: () => import('src/components/Buttons/UpdateBtn.vue'),
-            ExportBtn: () => import('src/components/Buttons/ExportBtn.vue'),
-            GeneralClientDebtsData: () => import('src/components/CargoDebts/GeneralClientDebtsData.vue'),
-        },
-        mixins: [ExportDataMixin],
-        props: {
-            refresh: {
-                type: Function,
-                default: () => {
-                },
-            },
-        },
-        data() {
-            return {
-                debtsTableProperties: {
-                    columns: [
-                        {
-                            name: 'created_at',
-                            label: 'Дата',
-                            align: 'center',
-                            field: 'created_at',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_client_name',
-                            label: 'Клиент',
-                            align: 'center',
-                            field: 'code_client_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'type',
-                            label: 'Тип',
-                            align: 'center',
-                            field: 'type',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sum',
-                            label: 'Сумма',
-                            field: 'sum',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'commission',
-                            label: 'Комиссия',
-                            field: 'commission',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'paid',
-                            label: 'Оплачен',
-                            field: 'paid',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                debtsTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission'],
-                    title: '',
-                },
-            };
-        },
-        computed: {
-            debts() {
-                return this.$store.getters['cargoDebts/getDebts'];
-            },
-            currentCodeClientId() {
-                return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
-            },
-        },
-        methods: {
-            async exportFaxData(selected) {
-                let data = selected;
-                if (_.isEmpty(data)) {
-                    data = this.debts;
-                } else {
-                    const searchData = this.$store.getters['cargoDebts/getDebtsForSearch'];
-                    const newArr = [];
-                    _.forEach(data, ({ id }) => {
-                        newArr.push(_.find(searchData, { id }));
-                    });
-                    data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
-                }
-                if (!_.isEmpty(data)) {
-                    const { getUrl } = await import('src/tools/url');
-                    this.exportDataToExcel(getUrl('exportDebtsData'), {
-                        data,
-                    }, 'Debts.xlsx');
-                }
-            },
-        },
+export default {
+  name: 'Debts',
+  components: {
+    Table,
+    UpdateBtn,
+    ExportBtn,
+    GeneralClientDebtsData,
+  },
+  mixins: [ExportDataMixin],
+  props: {
+    refresh: {
+      type: Function,
+      default: () => {
+      },
+    },
+  },
+  data() {
+    return {
+      debtsTableProperties: {
+        columns: [
+          {
+            name: 'created_at',
+            label: 'Дата',
+            align: 'center',
+            field: 'created_at',
+            sortable: true,
+          },
+          {
+            name: 'code_client_name',
+            label: 'Клиент',
+            align: 'center',
+            field: 'code_client_name',
+            sortable: true,
+          },
+          {
+            name: 'type',
+            label: 'Тип',
+            align: 'center',
+            field: 'type',
+            sortable: true,
+          },
+          {
+            name: 'sum',
+            label: 'Сумма',
+            field: 'sum',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'commission',
+            label: 'Комиссия',
+            field: 'commission',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'paid',
+            label: 'Оплачен',
+            field: 'paid',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'notation',
+            label: 'Примечания',
+            field: 'notation',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      debtsTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission'],
+        title: '',
+      },
     };
+  },
+  computed: {
+    debts() {
+      return this.$store.getters['cargoDebts/getDebts'];
+    },
+    currentCodeClientId() {
+      return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
+    },
+  },
+  methods: {
+    numberFormat,
+    async exportFaxData(selected) {
+      let data = selected;
+      if (_.isEmpty(data)) {
+        data = this.debts;
+      } else {
+        const searchData = this.$store.getters['cargoDebts/getDebtsForSearch'];
+        const newArr = [];
+        _.forEach(data, ({ id }) => {
+          newArr.push(_.find(searchData, { id }));
+        });
+        data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
+      }
+      if (!_.isEmpty(data)) {
+        const { getUrl } = await import('src/tools/url');
+        this.exportDataToExcel(getUrl('exportDebtsData'), {
+          data,
+        }, 'Debts.xlsx');
+      }
+    },
+  },
+};
 </script>

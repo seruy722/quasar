@@ -1,3 +1,5 @@
+import { toDate } from 'src/utils/formatDate';
+
 const checkValue = (array) => _.isArray(array) && !_.isEmpty(array);
 // СОРТИРОВКА МАССИВА ДАННЫХ КАК ЧИСЛА
 export const sortArray = ((array) => {
@@ -24,3 +26,23 @@ export const sortArrayCollection = ((array, field) => {
 });
 // СОРТИРУЕТ МАССИВ ИЛИ МАССИВ ОБЬЕКТОВ
 export const sortCollection = (collection, field, order = 'asc') => _.orderBy(collection, field, [order]);
+export const sortSuper = (data, sortBy, descending = false) => {
+  data.sort((a, b) => {
+    const x = descending ? b : a;
+    const y = descending ? a : b;
+    if (!_.isNaN(_.toNumber(a[sortBy])) && !_.isNaN(_.toNumber(b[sortBy]))) {
+      return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
+    }
+    if (sortBy === 'created_at' || sortBy === 'updated_at') {
+      return new Date(toDate(x[sortBy])) - new Date(toDate(y[sortBy]));
+    }
+    let num = 0;
+    if (b[sortBy] > a[sortBy]) {
+      num = 1;
+    } else if (x[sortBy] < y[sortBy]) {
+      num = -1;
+    }
+    return num;
+  });
+  return data;
+};

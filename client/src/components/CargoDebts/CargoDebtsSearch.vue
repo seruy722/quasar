@@ -52,19 +52,19 @@
             <div class="row items-center">
               <span>От:</span>
               <DateWithInputForCargo
-                :value.sync="period.from"
+                v-model:value="period.from"
               />
             </div>
             <div class="row items-center">
               <span>До:</span>
               <DateWithInputForCargo
-                :value.sync="period.to"
+                v-model:value="period.to"
               />
             </div>
           </div>
           <div v-show="statisticsSelectData.value === 3">
             <DateWithInputForCargo
-              :value.sync="period.day"
+              v-model:value="period.day"
             />
           </div>
         </q-card-section>
@@ -113,7 +113,7 @@
             <q-item>
               <q-item-section avatar>
                 <Date
-                  :value.sync="dialogChooseDateData"
+                  v-model:value="dialogChooseDateData"
                 />
               </q-item-section>
               <q-item-section>
@@ -138,14 +138,18 @@
 
 <script>
 import { format } from 'date-fns';
+import DateWithInputForCargo from 'components/DateWithInputForCargo.vue';
+import OutlineBtn from 'components/Buttons/OutlineBtn.vue';
+import Dialog from 'components/Dialogs/Dialog.vue';
+import Date from 'components/Date.vue';
 
 export default {
   name: 'CargoDebtsSearch',
   components: {
-    DateWithInputForCargo: () => import('components/DateWithInputForCargo.vue'),
-    OutlineBtn: () => import('components/Buttons/OutlineBtn.vue'),
-    Dialog: () => import('components/Dialogs/Dialog.vue'),
-    Date: () => import('components/Date.vue'),
+    DateWithInputForCargo,
+    OutlineBtn,
+    Dialog,
+    Date,
   },
   props: {
     enterData: {
@@ -233,7 +237,7 @@ export default {
       _.set(this, 'settings.date', val);
     },
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.$store.dispatch('cargoDebts/setCargo', this.cargoForSearch);
     this.$store.dispatch('cargoDebts/setDebts', this.debtsForSearch);
   },
@@ -259,7 +263,10 @@ export default {
       this.choosePeriodDialog = false;
     },
     async setStatisticsData(date) {
-      const { cargoForSearch, debtsForSearch } = this;
+      const {
+        cargoForSearch,
+        debtsForSearch,
+      } = this;
       const { getDateWithoutTime } = await import('src/utils/formatDate');
       devlog.log('DATE', date);
       const type = this.type.value;
@@ -282,7 +289,10 @@ export default {
           await this.$store.dispatch('cargoDebts/setDebts', _.filter(debtsForSearch, (item) => getDateWithoutTime(date.day) === getDateWithoutTime(item.created_at) && item.type === type));
         }
       } else if (_.isObject(date) && this.statisticsSelectData.value === 2) {
-        const { from, to } = date;
+        const {
+          from,
+          to,
+        } = date;
         this.viewPeriodDate = `${from} - ${to}`;
         if (type === -1) {
           await this.$store.dispatch('cargoDebts/setCargo', _.filter(cargoForSearch, (item) => getDateWithoutTime(item.created_at) >= getDateWithoutTime(from) && getDateWithoutTime(item.created_at) <= getDateWithoutTime(to)));

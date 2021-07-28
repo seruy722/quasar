@@ -1,7 +1,7 @@
 <template>
   <div>
     <Dialog
-      :dialog.sync="show"
+      v-model:dialog="show"
       title="Код"
       :persistent="true"
       data-vue-component-name="DialogAddCode"
@@ -43,6 +43,7 @@
           <BaseBtn
             label="Сохранить"
             color="positive"
+            :loading="loading"
             :dense="$q.screen.xs || $q.screen.sm"
             @click-base-btn="checkErrors(codeData, saveData)"
           />
@@ -51,111 +52,132 @@
     </Dialog>
 
     <DialogAddClient
-      :show-dialog.sync="showClientDialog"
+      v-model:show-dialog="showClientDialog"
       :code-id="codeId"
     />
   </div>
 </template>
 
 <script>
-    import { getUrl } from 'src/tools/url';
-    import CheckErrorsMixin from 'src/mixins/CheckErrors';
-    import showNotif from 'src/mixins/showNotif';
-    import {
-        getClientCodes,
-        setDefaultData,
-        setFormatedDate,
-    } from 'src/utils/FrequentlyCalledFunctions';
+import { getUrl } from 'src/tools/url';
+import CheckErrorsMixin from 'src/mixins/CheckErrors';
+import showNotif from 'src/mixins/showNotif';
+import {
+  setDefaultData,
+  setFormatedDate,
+} from 'src/utils/FrequentlyCalledFunctions';
+import { defineAsyncComponent } from 'vue';
+import Card from 'src/components/Elements/Card/Card.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import Separator from 'src/components/Separator.vue';
+import CardActions from 'src/components/Elements/Card/CardActions.vue';
+import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
-    export default {
-        name: 'DialogAddCode',
-        components: {
-            Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-            // OutlineBtn: () => import('src/components/Buttons/OutlineBtn.vue'),
-            BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-            BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-            DialogAddClient: () => import('src/components/Dialogs/DialogAddClient.vue'),
-            Separator: () => import('src/components/Separator.vue'),
-            Card: () => import('src/components/Elements/Card/Card.vue'),
-            CardActions: () => import('src/components/Elements/Card/CardActions.vue'),
-            CardSection: () => import('src/components/Elements/Card/CardSection.vue'),
-            IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-        },
-        mixins: [showNotif, CheckErrorsMixin],
-        props: {
-            showDialog: {
-                type: Boolean,
-                default: false,
+export default {
+  name: 'DialogAddCode',
+  components: {
+    Dialog,
+    BaseBtn,
+    BaseInput,
+    DialogAddClient: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddClient.vue')),
+    Separator,
+    Card,
+    CardActions,
+    CardSection,
+    IconBtn,
+  },
+  mixins: [showNotif, CheckErrorsMixin],
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+    newCodeData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  emits: ['update:showDialog', 'update:newCodeData'],
+  data() {
+    return {
+      loading: false,
+      codeData: {
+        code: {
+          type: 'text',
+          label: 'Код',
+          field: 'code',
+          autofocus: true,
+          rules: [
+            {
+              name: 'isLength',
+              error: 'Минимальное количество символов 2.',
+              options: {
+                min: 2,
+                max: 255,
+              },
             },
+          ],
+          require: true,
+          requireError: 'Поле обьзательное для заполнения.',
+          default: '',
+          value: '',
         },
-        data() {
-            return {
-                show: false,
-                codeData: {
-                    code: {
-                        type: 'text',
-                        label: 'Код',
-                        field: 'code',
-                        autofocus: true,
-                        rules: [
-                            {
-                                name: 'isLength',
-                                error: 'Минимальное количество символов 2.',
-                                options: {
-                                    min: 2,
-                                    max: 255,
-                                },
-                            },
-                        ],
-                        require: true,
-                        requireError: 'Поле обьзательное для заполнения.',
-                        default: '',
-                        value: '',
-                    },
-                },
-                showClientDialog: false,
-                codeId: 0,
-            };
-        },
-        watch: {
-            showDialog(val) {
-                if (val) {
-                    this.$q.loading.show();
-                    Promise.all([getClientCodes(this.$store)])
-                      .then(() => {
-                          this.show = val;
-                          this.$q.loading.hide();
-                      });
-                }
-            },
-            show(val) {
-                this.$emit('update:showDialog', val);
-            },
-        },
-        methods: {
-            saveData({ code: { value } }) {
-                devlog.log('S_VAL', value);
-                this.$q.loading.show();
-                this.$axios.post(getUrl('storeCode'), { code: _.startCase(value) })
-                  .then(({ data: { code: addedCode, codeWithCustomers } }) => {
-                      devlog.log('C_DATA', addedCode);
-                      this.$store.dispatch('codes/addCode', {
-                          code: addedCode,
-                          codeWithCustomers: _.first(setFormatedDate(codeWithCustomers, ['created_at'])),
-                      });
-                      this.codeId = addedCode.value;
-                      this.showClientDialog = true;
-                      this.$q.loading.hide();
-                  })
-                  .catch(({ response: { data: { errors } } }) => {
-                      this.errorsData.errors = errors;
-                      this.$q.loading.hide();
-                  });
-            },
-            close(data) {
-                this.show = false;
-                setDefaultData(data);
-            },
-        },
+      },
+      showClientDialog: false,
+      codeId: 0,
     };
+  },
+  computed: {
+    show: {
+      get: function get() {
+        return this.showDialog;
+      },
+      set: function set(val) {
+        this.$emit('update:showDialog', val);
+      },
+    },
+  },
+  methods: {
+    saveData({ code: { value } }) {
+      devlog.log('S_VAL', value);
+      // this.$q.loading.show();
+      this.loading = true;
+      this.$axios.post(getUrl('storeCode'), { code: _.startCase(value) })
+        .then(({
+                 data: {
+                   code: addedCode,
+                   codeWithCustomers,
+                 },
+               }) => {
+          devlog.log('C_DATA', addedCode);
+          if (!_.isEmpty(this.$store.getters['codes/getCodes'])) {
+            this.$store.dispatch('codes/addCode', {
+              code: addedCode,
+              codeWithCustomers: _.first(setFormatedDate(codeWithCustomers, ['created_at'])),
+            });
+          } else {
+            this.$store.dispatch('codes/setCodes');
+            this.$emit('update:newCodeData', addedCode);
+          }
+
+          this.codeId = addedCode.value;
+          this.showClientDialog = true;
+          // this.$q.loading.hide();
+          this.loading = false;
+        })
+        .catch(({ response: { data: { errors } } }) => {
+          this.errorsData.errors = errors;
+          // this.$q.loading.hide();
+          this.loading = false;
+        });
+    },
+    close(data) {
+      this.show = false;
+      setDefaultData(data);
+    },
+  },
+};
 </script>

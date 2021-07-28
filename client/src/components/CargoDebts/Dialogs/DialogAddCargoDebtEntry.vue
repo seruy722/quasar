@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :dialog.sync="show"
+    v-model:dialog="show"
     :persistent="true"
     title="Долг"
     data-vue-component-name="DialogAddCargoDebtEntry"
@@ -50,6 +50,7 @@
             <BaseInput
               v-if="item.type === 'text'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :type="item.type"
               :mask="item.mask"
@@ -57,13 +58,13 @@
               :field="index"
               :readonly="item.readonly"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <BaseInput
               v-else-if="item.type === 'number'"
               v-model.number="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :autofocus="item.autofocus"
               :type="item.type"
@@ -71,35 +72,34 @@
               :dense="$q.screen.xs || $q.screen.sm"
               :field="index"
               :disable="item.disable"
-              :change-value.sync="item.changeValue"
               :errors="errorsData"
             />
 
             <SelectChips
               v-else-if="item.type === 'select-chips'"
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
             <BaseInput
               v-else-if="item.type === 'date'"
               v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :mask="item.mask"
-              :change-value.sync="item.changeValue"
               :dense="$q.screen.xs || $q.screen.sm"
               :errors="errorsData"
             >
               <template #append>
-                <Date
-                  :value.sync="item.value"
-                  :change-value.sync="item.changeValue"
+                <DateComponent
+                  v-model:value="item.value"
+                  v-model:change-value="item.changeValue"
                 />
               </template>
             </BaseInput>
@@ -107,11 +107,11 @@
             <SearchSelect
               v-else
               v-model="item.value"
+              v-model:change-value="item.changeValue"
               :label="item.label"
               :field="index"
               :dense="$q.screen.xs || $q.screen.sm"
               :options="item.options"
-              :change-value.sync="item.changeValue"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
             />
@@ -156,19 +156,28 @@ import {
   getCategories,
   getFaxes,
 } from 'src/utils/FrequentlyCalledFunctions';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseInput from 'src/components/Elements/BaseInput.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Separator from 'src/components/Separator.vue';
+import SelectChips from 'src/components/Elements/SelectChips.vue';
+import Menu from 'src/components/Menu.vue';
+import DateComponent from 'src/components/Date.vue';
 
 export default {
   name: 'DialogAddCargoDebtEntry',
   components: {
-    Dialog: () => import('src/components/Dialogs/Dialog.vue'),
-    IconBtn: () => import('src/components/Buttons/IconBtn.vue'),
-    BaseInput: () => import('src/components/Elements/BaseInput.vue'),
-    SearchSelect: () => import('src/components/Elements/SearchSelect.vue'),
-    BaseBtn: () => import('src/components/Buttons/BaseBtn.vue'),
-    Separator: () => import('src/components/Separator.vue'),
-    SelectChips: () => import('src/components/Elements/SelectChips.vue'),
-    Menu: () => import('src/components/Menu.vue'),
-    Date: () => import('src/components/Date.vue'),
+    Dialog,
+    IconBtn,
+    BaseInput,
+    SearchSelect,
+    BaseBtn,
+    Separator,
+    SelectChips,
+    Menu,
+    DateComponent,
   },
   mixins: [CheckErrorsMixin, showNotif],
   props: {
@@ -181,6 +190,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:entryData', 'update:showDialog'],
   data() {
     return {
       show: false,
@@ -206,7 +216,7 @@ export default {
         code_client_id: {
           name: 'code_client_id',
           type: 'select',
-          label: this.$t('client'),
+          label: 'Клиент',
           options: [],
           require: true,
           requireError: 'Выберите значение.',
@@ -242,7 +252,7 @@ export default {
         for_place: {
           name: 'for_place',
           type: 'number',
-          label: 'За место',
+          label: 'За кг',
           changeValue: false,
           default: 0,
           value: 0,
@@ -301,7 +311,7 @@ export default {
         notation: {
           name: 'notation',
           type: 'text',
-          label: this.$t('notation'),
+          label: 'Примечания',
           changeValue: false,
           default: '',
           value: '',

@@ -10,21 +10,21 @@
 </template>
 
 <script>
-    export default {
-        name: 'PageScroller',
-        props: {
-            position: {
-                type: String,
-                default: 'bottom-right',
-            },
-            offset: {
-                type: Array,
-                default: () => [18, 18],
-            },
-            scrollOffset: {
-                type: Number,
-                default: 150,
-            },
-        },
-    };
+export default {
+  name: 'PageScroller',
+  props: {
+    position: {
+      type: String,
+      default: 'bottom-right',
+    },
+    offset: {
+      type: Array,
+      default: () => [18, 18],
+    },
+    scrollOffset: {
+      type: Number,
+      default: 150,
+    },
+  },
+};
 </script>

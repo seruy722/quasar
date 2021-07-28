@@ -53,15 +53,17 @@
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label v-if="col.field === 'sum'">
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'commission'">
-                    {{ col.value | numberFormatFilter }}
+                    {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'paid'">
                     <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{ props.row.paid ? 'Да':
-                      props.row.type ? null : 'Нет' }}
+                      {{
+                        props.row.paid ? 'Да' :
+                          props.row.type ? null : 'Нет'
+                      }}
                     </q-badge>
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'type'">
@@ -117,7 +119,7 @@
             key="sum"
             :props="props"
           >
-            {{ props.row.sum | numberFormatFilter }}
+            {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
             key="commission"
@@ -130,8 +132,10 @@
             :props="props"
           >
             <q-badge :color="props.row.paid ? 'positive' : 'negative'">
-{{ props.row.paid ? 'Да':
-              props.row.type ? null : 'Нет' }}
+              {{
+                props.row.paid ? 'Да' :
+                  props.row.type ? null : 'Нет'
+              }}
             </q-badge>
           </q-td>
 
@@ -152,9 +156,9 @@
       </template>
     </Table>
     <q-list
-separator
-bordered
->
+      separator
+      bordered
+    >
       <q-item
         v-for="(user, id) in countTransfersStatisticsData"
         :key="id"
@@ -163,10 +167,10 @@ bordered
           <q-item-label>{{ user.name }}</q-item-label>
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ user.all | numberFormatFilter }}</q-item-label>
+          <q-item-label>{{ numberFormat(user.all) }}</q-item-label>
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ user.allSum | numberFormatFilter }}</q-item-label>
+          <q-item-label>{{ numberFormat(user.allSum) }}</q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
@@ -174,106 +178,112 @@ bordered
 </template>
 
 <script>
-    export default {
-        name: 'Debts',
-        components: {
-            Table: () => import('src/components/Elements/Table/Table.vue'),
-        },
-        props: {
-            list: {
-                type: Array,
-                default: () => ([]),
-            },
-        },
-        data() {
-            return {
-                debtsTableProperties: {
-                    columns: [
-                        {
-                            name: 'created_at',
-                            label: 'Дата',
-                            align: 'center',
-                            field: 'created_at',
-                            sortable: true,
-                        },
-                        {
-                            name: 'code_client_name',
-                            label: 'Клиент',
-                            align: 'center',
-                            field: 'code_client_name',
-                            sortable: true,
-                        },
-                        {
-                            name: 'type',
-                            label: 'Тип',
-                            align: 'center',
-                            field: 'type',
-                            sortable: true,
-                        },
-                        {
-                            name: 'sum',
-                            label: 'Сумма',
-                            field: 'sum',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'commission',
-                            label: 'Комиссия',
-                            field: 'commission',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'paid',
-                            label: 'Оплачен',
-                            field: 'paid',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'notation',
-                            label: this.$t('notation'),
-                            field: 'notation',
-                            align: 'center',
-                            sortable: true,
-                        },
-                        {
-                            name: 'user_name',
-                            label: 'Пользователь',
-                            field: 'user_name',
-                            align: 'center',
-                            sortable: true,
-                        },
-                    ],
-                },
-                debtsTableReactiveProperties: {
-                    selected: [],
-                    visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission', 'user_name'],
-                    title: '',
-                },
-            };
-        },
-        computed: {
-            countTransfersStatisticsData() {
-                const userObj = {};
-                _.forEach(this.list, (item) => {
-                    const userData = userObj[item.user_name];
-                    if (userData) {
-                        userData.all += 1;
-                        userData.allSum += item.sum;
-                    } else {
-                        userObj[item.user_name] = {
-                            name: item.user_name,
-                            all: 1,
-                            allSum: item.sum,
-                        };
-                    }
-                });
-                const usersAr = _.values(userObj);
-                usersAr.sort((a, b) => a.allSum - b.allSum);
-                return usersAr;
-            },
-        },
+import { numberFormat } from 'src/utils';
+import Table from 'src/components/Elements/Table/Table.vue';
+
+export default {
+  name: 'Debts',
+  components: {
+    Table,
+  },
+  props: {
+    list: {
+      type: Array,
+      default: () => ([]),
+    },
+  },
+  data() {
+    return {
+      debtsTableProperties: {
+        columns: [
+          {
+            name: 'created_at',
+            label: 'Дата',
+            align: 'center',
+            field: 'created_at',
+            sortable: true,
+          },
+          {
+            name: 'code_client_name',
+            label: 'Клиент',
+            align: 'center',
+            field: 'code_client_name',
+            sortable: true,
+          },
+          {
+            name: 'type',
+            label: 'Тип',
+            align: 'center',
+            field: 'type',
+            sortable: true,
+          },
+          {
+            name: 'sum',
+            label: 'Сумма',
+            field: 'sum',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'commission',
+            label: 'Комиссия',
+            field: 'commission',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'paid',
+            label: 'Оплачен',
+            field: 'paid',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'notation',
+            label: 'Примечания',
+            field: 'notation',
+            align: 'center',
+            sortable: true,
+          },
+          {
+            name: 'user_name',
+            label: 'Пользователь',
+            field: 'user_name',
+            align: 'center',
+            sortable: true,
+          },
+        ],
+      },
+      debtsTableReactiveProperties: {
+        selected: [],
+        visibleColumns: ['code_client_name', 'paid', 'created_at', 'type', 'sum', 'notation', 'commission', 'user_name'],
+        title: '',
+      },
     };
+  },
+  computed: {
+    countTransfersStatisticsData() {
+      const userObj = {};
+      _.forEach(this.list, (item) => {
+        const userData = userObj[item.user_name];
+        if (userData) {
+          userData.all += 1;
+          userData.allSum += item.sum;
+        } else {
+          userObj[item.user_name] = {
+            name: item.user_name,
+            all: 1,
+            allSum: item.sum,
+          };
+        }
+      });
+      const usersAr = _.values(userObj);
+      usersAr.sort((a, b) => a.allSum - b.allSum);
+      return usersAr;
+    },
+  },
+  methods: {
+    numberFormat,
+  },
+};
 </script>

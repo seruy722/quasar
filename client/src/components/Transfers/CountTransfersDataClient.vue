@@ -32,10 +32,10 @@
         </q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.pending | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.pending) }}</q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.pendingSum | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.pendingSum) }}</q-item-label>
       </q-item-section>
     </q-item>
 
@@ -48,10 +48,10 @@
         </q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.notIssued | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.notIssued) }}</q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.notIssuedSum | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.notIssuedSum) }}</q-item-label>
       </q-item-section>
     </q-item>
 
@@ -64,10 +64,10 @@
         </q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.issued | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.issued) }}</q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.issuedSum | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.issuedSum) }}</q-item-label>
       </q-item-section>
     </q-item>
 
@@ -80,10 +80,10 @@
         </q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.question | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.question) }}</q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.questionSum | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.questionSum) }}</q-item-label>
       </q-item-section>
     </q-item>
 
@@ -96,10 +96,10 @@
         </q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.cancel | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.cancel) }}</q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.cancelSum | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.cancelSum) }}</q-item-label>
       </q-item-section>
     </q-item>
 
@@ -112,10 +112,10 @@
         </q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.returned | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.returned) }}</q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.returnedSum | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.returnedSum) }}</q-item-label>
       </q-item-section>
     </q-item>
 
@@ -128,10 +128,10 @@
         </q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.returnedClient | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.returnedClient) }}</q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.returnedSumClient | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.returnedSumClient) }}</q-item-label>
       </q-item-section>
     </q-item>
 
@@ -142,10 +142,10 @@
         </q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.all | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.all) }}</q-item-label>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{ countTransfersStatisticsData.allSum | numberFormatFilter }}</q-item-label>
+        <q-item-label>{{ numberFormat(countTransfersStatisticsData.allSum) }}</q-item-label>
       </q-item-section>
     </q-item>
   </q-list>
@@ -153,6 +153,7 @@
 
 <script>
 import TransferMixin from 'src/mixins/Transfer';
+import { numberFormat } from 'src/utils';
 
 export default {
   name: 'CountTransfersDataClient',
@@ -169,6 +170,7 @@ export default {
     },
   },
   methods: {
+    numberFormat,
     countedData(data) {
       const obj = {
         all: data.length,

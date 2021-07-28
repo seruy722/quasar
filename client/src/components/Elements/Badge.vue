@@ -10,17 +10,17 @@
 </template>
 
 <script>
-    export default {
-        name: 'Badge',
-        props: {
-            color: {
-                type: String,
-                default: 'primary',
-            },
-            floating: {
-                type: Boolean,
-                default: false,
-            },
-        },
-    };
+export default {
+  name: 'Badge',
+  props: {
+    color: {
+      type: String,
+      default: 'primary',
+    },
+    floating: {
+      type: Boolean,
+      default: false,
+    },
+  },
+};
 </script>
