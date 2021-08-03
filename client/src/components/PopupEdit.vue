@@ -12,7 +12,10 @@
     @update:model-value="$emit('add-to-save')"
   >
     <template #default="scope">
-      <slot name="inner-default" :scope="scope">
+      <slot
+        name="inner-default"
+        :scope="scope"
+      >
         <q-input
           v-if="type === 'number'"
           v-model.number="scope.value"
