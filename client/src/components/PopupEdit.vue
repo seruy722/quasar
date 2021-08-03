@@ -1,6 +1,5 @@
 <template>
   <q-popup-edit
-    v-slot="scope"
     v-model="modelData"
     data-vue-component-name="PopupEdit"
     :title="title"
@@ -12,24 +11,28 @@
     @hide="$emit('update:edit', false)"
     @update:model-value="$emit('add-to-save')"
   >
-    <q-input
-      v-if="type === 'number'"
-      v-model.number="scope.value"
-      :type="type"
-      :mask="mask"
-      dense
-      autofocus
-      @keyup.enter="scope.set"
-    />
-    <q-input
-      v-else
-      v-model.trim="scope.value"
-      :type="type"
-      :mask="mask"
-      dense
-      autofocus
-      @keyup.enter="scope.set"
-    />
+    <template #default="scope">
+      <slot name="inner-default" :scope="scope">
+        <q-input
+          v-if="type === 'number'"
+          v-model.number="scope.value"
+          :type="type"
+          :mask="mask"
+          dense
+          autofocus
+          @keyup.enter="scope.set"
+        />
+        <q-input
+          v-else
+          v-model.trim="scope.value"
+          :type="type"
+          :mask="mask"
+          dense
+          autofocus
+          @keyup.enter="scope.set"
+        />
+      </slot>
+    </template>
   </q-popup-edit>
 </template>
 

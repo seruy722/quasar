@@ -191,12 +191,14 @@
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'code_client_id')"
             >
-              <SearchSelect
-                v-model="props.row.code_client_id"
-                label="Клиент"
-                :dense="$q.screen.xs || $q.screen.sm"
-                :options="clientCodes"
-              />
+              <template #inner-default="{scope}">
+                <SearchSelect
+                  v-model="scope.value"
+                  label="Клиент"
+                  :dense="$q.screen.xs || $q.screen.sm"
+                  :options="clientCodes"
+                />
+              </template>
             </PopupEdit>
           </q-td>
 
@@ -227,17 +229,20 @@
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'for_kg')"
             >
-              <q-input
-                v-model.number="props.row.for_kg"
-                type="number"
-                dense
-                autofocus
-              />
-              <q-checkbox
-                v-model="props.row.replacePrice"
-                label="Заменить"
-                dense
-              />
+              <template #inner-default="{scope}">
+                <q-input
+                  v-model.number="scope.value"
+                  type="number"
+                  dense
+                  autofocus
+                  @keyup.enter="scope.set"
+                />
+                <q-checkbox
+                  v-model="props.row.replacePrice"
+                  label="Заменить"
+                  dense
+                />
+              </template>
             </PopupEdit>
           </q-td>
 
@@ -269,12 +274,15 @@
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'cube')"
             >
-              <q-input
-                v-model.number="props.row.cube"
-                type="number"
-                autofocus
-                dense
-              />
+              <template #inner-default="{scope}">
+                <q-input
+                  v-model.number="scope.value"
+                  type="number"
+                  autofocus
+                  dense
+                  @keyup.enter="scope.set"
+                />
+              </template>
             </PopupEdit>
           </q-td>
 
@@ -291,12 +299,14 @@
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'category_id')"
             >
-              <SearchSelect
-                v-model="props.row.category_id"
-                label="Категория"
-                :dense="$q.screen.xs || $q.screen.sm"
-                :options="categories"
-              />
+              <template #inner-default="{scope}">
+                <SearchSelect
+                  v-model="scope.value"
+                  label="Категория"
+                  :dense="$q.screen.xs || $q.screen.sm"
+                  :options="categories"
+                />
+              </template>
             </PopupEdit>
           </q-td>
 
@@ -329,12 +339,14 @@
               :title="props.row.code_client_name"
               @add-to-save="addToAddSaveArray(props.row, 'delivery_method_id')"
             >
-              <SearchSelect
-                v-model="props.row.delivery_method_id"
-                label="Способ доставки"
-                :dense="$q.screen.xs || $q.screen.sm"
-                :options="deliveryMethodsList"
-              />
+              <template #inner-default="{scope}">
+                <SearchSelect
+                  v-model="scope.value"
+                  label="Способ доставки"
+                  :dense="$q.screen.xs || $q.screen.sm"
+                  :options="deliveryMethodsList"
+                />
+              </template>
             </PopupEdit>
           </q-td>
 
