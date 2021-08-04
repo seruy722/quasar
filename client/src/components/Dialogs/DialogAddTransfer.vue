@@ -127,6 +127,30 @@
       v-model:show-dialog="showCodeDialog"
       v-model:new-code-data="newCodeData"
     />
+    <Dialog
+      :dialog="dialogHistory"
+      :persistent="true"
+      :maximized="true"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <q-card style="max-width: 600px;">
+        <q-bar>
+          <q-space />
+          <IconBtn
+            flat
+            dense
+            icon="close"
+            tooltip="Закрыть"
+            @icon-btn-click="dialogHistory = false"
+          />
+        </q-bar>
+
+        <q-card-section class="q-pt-none">
+          <TransferHistory :transfer-history-data="transferHistoryData" />
+        </q-card-section>
+      </q-card>
+    </Dialog>
   </div>
 </template>
 
@@ -136,7 +160,7 @@ import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import {
   prepareHistoryData,
-  setChangeValue,
+  setChangeValue, setFormatedDate, setMethodLabel, setStatusLabel,
 } from 'src/utils/FrequentlyCalledFunctions';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
@@ -159,8 +183,9 @@ export default {
     IconBtn,
     SearchSelect,
     BaseSelect,
-    Date: defineAsyncComponent(() => import('components/Date.vue')),
-    DialogAddCode: defineAsyncComponent(() => import('components/Dialogs/DialogAddCode.vue')),
+    Date: defineAsyncComponent(() => import('src/components/Date.vue')),
+    DialogAddCode: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddCode.vue')),
+    TransferHistory: defineAsyncComponent(() => import('src/components/History/TransferHistory.vue')),
   },
   mixins: [showNotif, CheckErrorsMixin],
   props: {
@@ -186,6 +211,11 @@ export default {
     return {
       showCodeDialog: false,
       newCodeData: {},
+      dialogHistory: false,
+      transferHistoryData: {
+        cols: {},
+        transferHistory: [],
+      },
     };
   },
   computed: {
@@ -310,6 +340,9 @@ export default {
         }
       }
     },
+    setAdditionalData(data) {
+      return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
+    },
     async getTransfersHistory(transferID, cols) {
       this.$q.loading.show();
       await this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`)
@@ -317,6 +350,7 @@ export default {
           if (!_.isEmpty(transferHistory)) {
             this.$q.loading.hide();
             this.dialogHistory = true;
+            devlog.log('transferHistory', transferHistory);
             const historyData = prepareHistoryData(cols, transferHistory);
             historyData.historyData = this.setAdditionalData(historyData.historyData);
             this.transferHistoryData = historyData;

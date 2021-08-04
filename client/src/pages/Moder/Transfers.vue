@@ -263,30 +263,6 @@
     />
     <DialogAddCode v-model:show-dialog="showCodeDialog" />
     <Dialog
-      :dialog="dialogHistory"
-      :persistent="true"
-      :maximized="true"
-      transition-show="slide-up"
-      transition-hide="slide-down"
-    >
-      <q-card style="max-width: 600px;">
-        <q-bar>
-          <q-space />
-          <IconBtn
-            flat
-            dense
-            icon="close"
-            tooltip="Закрыть"
-            @icon-btn-click="dialogHistory = false"
-          />
-        </q-bar>
-
-        <q-card-section class="q-pt-none">
-          <TransferHistory :transfer-history-data="transferHistoryData" />
-        </q-card-section>
-      </q-card>
-    </Dialog>
-    <Dialog
       :dialog="dialogStatistics"
       :persistent="true"
       :maximized="true"
@@ -330,9 +306,6 @@ import ExportDataMixin from 'src/mixins/ExportData';
 import { callFunction, numberFormat, phoneNumberFilter } from 'src/utils';
 import TransferMixin from 'src/mixins/Transfer';
 import {
-  setMethodLabel,
-  setStatusLabel,
-  setFormatedDate,
   setDefaultData,
   getClientCodes,
 } from 'src/utils/FrequentlyCalledFunctions';
@@ -364,7 +337,6 @@ export default {
     Dialog: defineAsyncComponent(() => import('src/components/Dialogs/Dialog.vue')),
     DialogAddCode: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddCode.vue')),
     DialogAddTransfer: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddTransfer.vue')),
-    TransferHistory: defineAsyncComponent(() => import('src/components/History/TransferHistory.vue')),
     TransfersStatistics: defineAsyncComponent(() => import('components/Transfers/TransfersStatistics.vue')),
     DialogChooseDate: defineAsyncComponent(() => import('components/Dialogs/DialogChooseDate.vue')),
   },
@@ -372,11 +344,6 @@ export default {
   data() {
     return {
       dialogStatistics: false,
-      dialogHistory: false,
-      transferHistoryData: {
-        cols: {},
-        transferHistory: [],
-      },
       localProps: {},
       showCodeDialog: false,
       dialog: false,
@@ -673,9 +640,6 @@ export default {
       } else {
         await this.$store.dispatch('transfers/fetchNewAndChangedTransfers');
       }
-    },
-    setAdditionalData(data) {
-      return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
     },
     async refresh(done) {
       if (!done) {
