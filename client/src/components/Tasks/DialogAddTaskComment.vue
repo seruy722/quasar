@@ -156,7 +156,7 @@ export default {
       showDialogChooseDate: false,
       dialogChooseDateData: null,
       files: [],
-      extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
+      extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf', 'xls'],
       codeClientId: null,
       text: null,
       localDate: null,

@@ -6,6 +6,16 @@
     data-vue-component-name="DialogAddDocuments"
   >
     <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
+      <q-card-section class="row justify-between bg-grey q-mb-sm">
+        <span class="text-h6">Добавление комментария</span>
+        <IconBtn
+          dense
+          icon="clear"
+          tooltip="Закрыть"
+          color="negative"
+          @icon-btn-click="close(files)"
+        />
+      </q-card-section>
       <q-card-section>
         <q-list
           separator
@@ -30,6 +40,11 @@
                 :src="file.url"
                 style="max-width: 100%"
               />
+            </q-item-section>
+            <q-item-section v-if="extensions.includes(getFileExt(file))">
+              <q-item-label>
+                {{ file.name }}
+              </q-item-label>
             </q-item-section>
             <q-item-section side>
               <q-btn
@@ -72,7 +87,7 @@
           clearable
           max-file-size="15728640"
           :value="files"
-          @input="selectedFiles"
+          @update:model-value="selectedFiles"
         />
       </q-card-section>
       <q-card-actions align="right">
@@ -99,6 +114,7 @@ import showNotif from 'src/mixins/showNotif';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
 export default {
   name: 'DialogAddDocuments',
@@ -106,6 +122,7 @@ export default {
     Dialog,
     BaseBtn,
     SearchSelect,
+    IconBtn,
   },
   mixins: [showNotif],
   props: {
@@ -118,7 +135,7 @@ export default {
   data() {
     return {
       files: [],
-      extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf'],
+      extensions: ['xlsx', 'txt', 'doc', 'docx', 'pdf', 'xls'],
       codeClientId: null,
       text: null,
     };
