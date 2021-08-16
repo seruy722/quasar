@@ -337,8 +337,8 @@ export default {
     Dialog: defineAsyncComponent(() => import('src/components/Dialogs/Dialog.vue')),
     DialogAddCode: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddCode.vue')),
     DialogAddTransfer: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddTransfer.vue')),
-    TransfersStatistics: defineAsyncComponent(() => import('components/Transfers/TransfersStatistics.vue')),
-    DialogChooseDate: defineAsyncComponent(() => import('components/Dialogs/DialogChooseDate.vue')),
+    TransfersStatistics: defineAsyncComponent(() => import('src/components/Transfers/TransfersStatistics.vue')),
+    DialogChooseDate: defineAsyncComponent(() => import('src/components/Dialogs/DialogChooseDate.vue')),
   },
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
   data() {
@@ -411,6 +411,16 @@ export default {
           changeValue: false,
           default: 0,
           value: 0,
+        },
+        transfer_commission: {
+          type: 'number',
+          label: 'Комиссия %',
+          field: 'transfer_commission',
+          require: false,
+          requireError: 'Поле обьязательное для заполнения.',
+          changeValue: false,
+          default: 1,
+          value: 1,
         },
         method: {
           type: 'select',

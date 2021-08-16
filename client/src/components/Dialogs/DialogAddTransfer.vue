@@ -3,6 +3,7 @@
     <Dialog
       v-model:dialog="show"
       :persistent="true"
+      @keyup.enter="checkErrors(transferData, updateData)"
     >
       <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
         <q-card-section class="row justify-between bg-grey q-mb-sm">
@@ -74,6 +75,7 @@
               :field="item.field"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
+              @change="changeValue"
             />
 
             <BaseSelect
@@ -241,6 +243,16 @@ export default {
     },
   },
   methods: {
+    changeValue(id) {
+      if (_.isEmpty(this.localProps)) {
+        this.$axios.get(`${getUrl('getTransferCodeCommission')}/${id}`)
+          .then(({ data: { transfer } }) => {
+            if (transfer) {
+              _.set(this.transferData, 'transfer_commission.value', transfer.transfer_commission || 1);
+            }
+          });
+      }
+    },
     cancel(data) {
       devlog.log('this.show', this.show);
       this.show = false;

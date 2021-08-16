@@ -15,6 +15,7 @@
     emit-value
     map-options
     @filter="filterFn"
+    @update:model-value="$emit('change', $event)"
   >
     <template #prepend>
       <slot name="prepend" />
@@ -78,7 +79,7 @@ export default {
       default: () => ({}),
     },
   },
-  emits: ['update:changeValue', 'input', 'update:value'],
+  emits: ['update:changeValue', 'input', 'update:value', 'change'],
   data() {
     return {
       duplicateOptions: [],

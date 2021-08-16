@@ -293,14 +293,14 @@ import { setFormatedDate, prepareHistoryData, getFaxes } from 'src/utils/Frequen
 import { callFunction, statusFilter, numberFormat } from 'src/utils';
 import showNotif from 'src/mixins/showNotif';
 import { addTime } from 'src/utils/formatDate';
-import Table from 'components/Elements/Table/Table.vue';
-import IconBtn from 'components/Buttons/IconBtn.vue';
-import BaseBtn from 'components/Buttons/BaseBtn.vue';
-import Dialog from 'components/Dialogs/Dialog.vue';
-import List from 'components/Elements/List/List.vue';
-import DialogAddFax from 'components/Dialogs/DialogAddFax.vue';
-import Menu from 'components/Menu.vue';
-import FaxesHistory from 'components/History/FaxesHistory.vue';
+import Table from 'src/components/Elements/Table/Table.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import List from 'src/components/Elements/List/List.vue';
+import DialogAddFax from 'src/components/Dialogs/DialogAddFax.vue';
+import Menu from 'src/components/Menu.vue';
+import FaxesHistory from 'src/components/History/FaxesHistory.vue';
 import PullRefresh from 'src/components/PullRefresh.vue';
 import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
 import DialogChooseDate from 'src/components/Dialogs/DialogChooseDate.vue';
@@ -369,7 +369,7 @@ export default {
           },
           {
             name: 'departure_date',
-            label: 'Дата прибытия',
+            label: 'Дата отправки',
             align: 'center',
             field: 'departure_date',
             sortable: true,

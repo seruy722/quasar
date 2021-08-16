@@ -201,6 +201,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/get-new-transfers', 'Api\TransferController@getNewTransfers')->name('get new transfers')->middleware(['role_or_permission:admin|transfers|get new transfers']);
     Route::post('/export-transfers', 'Api\TransferController@export')->name('export transfers')->middleware(['role_or_permission:admin|transfers|export transfers']);
     Route::post('/add-transfers-to-debts', 'Api\TransferController@addTransfersToDebts')->name('add transfers to debts')->middleware(['role_or_permission:admin|add transfers to debts']);
+    Route::get('/get-transfer-code-commission/{id}', 'Api\TransferController@getTransferCodeCommission')->name('get transfer code commission')->middleware(['role_or_permission:admin|transfers|get transfer code commission']);
     // TRANSFERS CLIENT
     Route::get('/transfers-client', 'Api\TransferController@indexCLient')->name('view transfers client list')->middleware(['role_or_permission:admin|client|view transfers client list']);
 //    Route::post('/update-transfers', 'Api\TransferController@update')->name('update transfers data')->middleware(['role_or_permission:admin|transfers|update transfers data']);

@@ -161,6 +161,7 @@ const urls = {
   sendSms: `${prefix}/send-sms`,
   getSmsBalance: `${prefix}/sms-balance`,
   serverUrl: 'https://servercargo007.net.ua',
+  getTransferCodeCommission: `${prefix}/get-transfer-code-commission`,
   axiosData: {
     baseURL: process.env.API,
   },

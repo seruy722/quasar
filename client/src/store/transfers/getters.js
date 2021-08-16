@@ -1,6 +1,6 @@
 import { fullDate } from 'src/utils/formatDate';
 import { setMethodLabel, setStatusLabel } from 'src/utils/FrequentlyCalledFunctions';
-import { sortSuper } from 'src/utils/sort.js';
+import { sortSuper } from 'src/utils/sort';
 
 export const getTransfersClient = (state) => state.transfersClient;
 

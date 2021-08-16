@@ -268,10 +268,10 @@ import getFromSettings from 'src/tools/settings';
 import { setFormatedDate, prepareHistoryData, getFaxes } from 'src/utils/FrequentlyCalledFunctions';
 import { callFunction, numberFormat } from 'src/utils';
 import showNotif from 'src/mixins/showNotif';
-import Table from 'components/Elements/Table/Table.vue';
-import IconBtn from 'components/Buttons/IconBtn.vue';
-import BaseBtn from 'components/Buttons/BaseBtn.vue';
-import Dialog from 'components/Dialogs/Dialog.vue';
+import Table from 'src/components/Elements/Table/Table.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
 import List from 'src/components/Elements/List/List.vue';
 import DialogAddFax from 'src/components/Dialogs/DialogAddFax.vue';
 import Menu from 'src/components/Menu.vue';
@@ -342,7 +342,7 @@ export default {
           },
           {
             name: 'departure_date',
-            label: 'Дата прибытия',
+            label: 'Дата отправки',
             align: 'center',
             field: 'departure_date',
             sortable: true,

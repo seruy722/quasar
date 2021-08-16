@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Code;
 use App\CodesPrices;
+use App\CodesSettings;
 use App\Debt;
 use App\Transfer;
 use App\User;
@@ -54,9 +55,10 @@ class TransferController extends Controller
 
     public function query()
     {
-        return Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name')
+        return Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name', 'codes_settings.transfer_commission as transfer_static_commission')
             ->join('codes', 'transfers.client_id', '=', 'codes.id')
             ->join('users', 'transfers.user_id', '=', 'users.id')
+            ->leftJoin('codes_settings', 'transfers.client_id', '=', 'codes_settings.code_client_id')
             ->orderBy('id', 'DESC');
     }
 
@@ -69,14 +71,22 @@ class TransferController extends Controller
     {
         $data = $this->stripData($request->except('id'));
         if (array_key_exists('issued_by', $data)) {
-//            $data['issued_by'] = date("Y-m-d H:i:s", strtotime($data['issued_by']));
-//            $data['issued_by'] = \Illuminate\Support\Carbon::parse(strtotime($data['issued_by']))->toDateTimeString();
             if ($data['issued_by']) {
                 $data['issued_by'] = date("Y-m-d H:i:s", strtotime($data['issued_by']));
             } else {
                 $data['issued_by'] = null;
             }
 
+        }
+
+        if ($request->has('transfer_commission')) {
+            $codeClientId = $request->client_id;
+            if (!$request->has('client_id')) {
+                $transfer = Transfer::find($request->id);
+                $codeClientId = $transfer->client_id;
+            }
+
+            CodesSettings::updateOrCreate(['code_client_id' => $codeClientId], ['transfer_commission' => $request->transfer_commission]);
         }
 
         $rul = [];
@@ -136,9 +146,14 @@ class TransferController extends Controller
             'sum' => $request->sum,
             'method' => $request['method'],
             'status' => $request->status,
+            'transfer_commission' => $request->transfer_commission,
             'issued_by' => null,
             'user_id' => auth()->user()->id,
         ];
+
+        if ($request->has('transfer_commission')) {
+            CodesSettings::updateOrCreate(['code_client_id' => $request->client_id], ['transfer_commission' => $request->transfer_commission]);
+        }
 
         if ($request->issued_by) {
             $transferArr['issued_by'] = date("Y-m-d H:i:s", strtotime($request->issued_by));
@@ -180,6 +195,11 @@ class TransferController extends Controller
             ->where('transfers.id', '>', $request->lastCreatedId)
             ->orWhere('transfers.updated_at', '>', $request->updatedAt)
             ->get()]);
+    }
+
+    public function getTransferCodeCommission($id)
+    {
+        return response(['transfer' => CodesSettings::where('code_client_id', $id)->first()]);
     }
 
     public function export(Request $request)
@@ -225,9 +245,9 @@ class TransferController extends Controller
                 $data['transfer_id'] = $data['id'];
                 $data['created_at'] = date("Y-m-d H:i:s", strtotime($date));
 
-                $codeCommission = CodesPrices::where('code_id', $data['client_id'])->first();
-                if ($codeCommission && $codeCommission->commission) {
-                    $data['commission'] = round(($data['sum'] / 100) * $codeCommission->commission);
+                $codeCommission = CodesSettings::where('code_client_id', $data['client_id'])->first();
+                if ($codeCommission) {
+                    $data['commission'] = round(($data['sum'] / 100) * $codeCommission->transfer_commission);
                 } else {
                     $data['commission'] = round(($data['sum'] / 100) * 1);
                 }
