@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Cargo;
 use App\Category;
+use App\CodePlace;
 use App\CodesPrices;
 use App\Fax;
 use App\FaxData;
@@ -14,6 +15,7 @@ use App\Thingslist;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\PushNotifications;
+use Illuminate\Validation\ValidationException;
 use function foo\func;
 
 class StorehouseDataController extends Controller
@@ -21,7 +23,7 @@ class StorehouseDataController extends Controller
     use PushNotifications;
 
     protected $rules = [
-        'code_place' => 'required|max:12|unique:code_places',
+        'code_place' => 'required|max:12',
         'code_client_id' => 'required|numeric',
         'kg' => 'required|numeric',
         'for_kg' => 'numeric',
@@ -116,10 +118,9 @@ class StorehouseDataController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'code_place' => 'required|max:12|unique:code_places',
+            'code_place' => 'required|max:12',
             'code_client_id' => 'required|numeric',
             'kg' => 'required|numeric',
-            'cube' => 'required|numeric',
             'for_kg' => 'numeric',
             'for_place' => 'numeric',
             'shop' => 'nullable|max:100',
@@ -131,191 +132,213 @@ class StorehouseDataController extends Controller
         ]);
 
         $data = $request->all();
+        $codePlaces = CodePlace::where('code_place', $data['code_place'])->whereYear('created_at', date('Y'))->first();
+        if (!$codePlaces) {
+            $category = Category::find($data['category_id']);
 
-        $category = Category::find($data['category_id']);
+            $saveData = [
+                'code_place' => $data['code_place'],
+                'code_client_id' => $data['code_client_id'],
+                'kg' => $data['kg'],
+                'category_id' => $data['category_id'],
+                'storehouse_id' => 1,
+                'brand' => $category->name === 'Бренд',
+            ];
 
-        $saveData = [
-            'code_place' => $data['code_place'],
-            'code_client_id' => $data['code_client_id'],
-            'kg' => $data['kg'],
-            'cube' => $data['cube'],
-            'category_id' => $data['category_id'],
-            'storehouse_id' => 1,
-            'brand' => $category->name === 'Бренд',
-        ];
-
-        $deliveryMethod = \App\CodeHasDeliveryMethod::where('code_id', $data['code_client_id'])->first();
-        if ($deliveryMethod) {
-            $saveData['delivery_method_id'] = $deliveryMethod->delivery_method_id;
-        } else {
-            \App\CodeHasDeliveryMethod::create(['code_id' => $data['code_client_id'], 'delivery_method_id' => 0]);
-        }
-
-        $department = \App\Department::where('code_id', $data['code_client_id'])->first();
-        if ($department) {
-            $saveData['department'] = $department->department;
-        } else {
-            \App\Department::create(['code_id' => $data['code_client_id'], 'department' => null]);
-        }
-
-
-        if (array_key_exists('things', $data)) {
-            $saveData['things'] = $data['things'];
-        }
-        if (array_key_exists('notation', $data)) {
-            $saveData['notation'] = $data['notation'];
-        }
-        if (array_key_exists('shop', $data)) {
-            $saveData['shop'] = $data['shop'];
-            Shop::firstOrCreate(['name' => $data['shop']]);
-        }
-        if (array_key_exists('things', $data) && $data['things']) {
-            $things = json_decode($data['things']);
-            foreach ($things as $item) {
-                Thingslist::firstOrCreate(['name' => $item->{'title'}]);
+            $deliveryMethod = \App\CodeHasDeliveryMethod::where('code_id', $data['code_client_id'])->first();
+            if ($deliveryMethod) {
+                $saveData['delivery_method_id'] = $deliveryMethod->delivery_method_id;
+            } else {
+                \App\CodeHasDeliveryMethod::create(['code_id' => $data['code_client_id'], 'delivery_method_id' => 0]);
             }
-        }
-        if (array_key_exists('for_kg', $data) && array_key_exists('for_place', $data)) {
-            $saveData['for_kg'] = $data['for_kg'];
-            $saveData['for_place'] = $data['for_place'];
-            $price = CodesPrices::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg'], 'for_place' => $data['for_place']]);
-            $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_kg' => $data['for_kg'], 'for_place' => $data['for_place']];
-            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodesPrices)->getTable());
-        } else if (array_key_exists('for_kg', $data)) {
-            $saveData['for_kg'] = $data['for_kg'];
-            $price = CodesPrices::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg']]);
-            $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_kg' => $data['for_kg']];
-            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodesPrices)->getTable());
-        } else if (array_key_exists('for_place', $data)) {
-            $saveData['for_place'] = $data['for_place'];
-            $price = CodesPrices::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_place' => $data['for_place']]);
-            $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_place' => $data['for_place']];
-            $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodesPrices)->getTable());
-        } else {
-            $price = CodesPrices::where('code_id', $data['code_client_id'])->where('category_id', $category->id)->first();
-            if ($price) {
-                $saveData['for_kg'] = $price->for_kg;
-                $saveData['for_place'] = $price->for_place;
+
+            $department = \App\Department::where('code_id', $data['code_client_id'])->first();
+            if ($department) {
+                $saveData['department'] = $department->department;
+            } else {
+                \App\Department::create(['code_id' => $data['code_client_id'], 'department' => null]);
             }
+
+
+            if (array_key_exists('things', $data)) {
+                $saveData['things'] = $data['things'];
+            }
+            if (array_key_exists('cube', $data)) {
+                $saveData['cube'] = $data['cube'];
+            }
+            if (array_key_exists('notation', $data)) {
+                $saveData['notation'] = $data['notation'];
+            }
+            if (array_key_exists('shop', $data)) {
+                $saveData['shop'] = $data['shop'];
+                Shop::firstOrCreate(['name' => $data['shop']]);
+            }
+            if (array_key_exists('things', $data) && $data['things']) {
+                $things = json_decode($data['things']);
+                foreach ($things as $item) {
+                    Thingslist::firstOrCreate(['name' => $item->{'title'}]);
+                }
+            }
+            if (array_key_exists('for_kg', $data) && array_key_exists('for_place', $data)) {
+                $saveData['for_kg'] = $data['for_kg'];
+                $saveData['for_place'] = $data['for_place'];
+                $price = CodesPrices::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg'], 'for_place' => $data['for_place']]);
+                $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_kg' => $data['for_kg'], 'for_place' => $data['for_place']];
+                $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodesPrices)->getTable());
+            } else if (array_key_exists('for_kg', $data)) {
+                $saveData['for_kg'] = $data['for_kg'];
+                $price = CodesPrices::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_kg' => $data['for_kg']]);
+                $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_kg' => $data['for_kg']];
+                $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodesPrices)->getTable());
+            } else if (array_key_exists('for_place', $data)) {
+                $saveData['for_place'] = $data['for_place'];
+                $price = CodesPrices::updateOrCreate(['code_id' => $data['code_client_id'], 'category_id' => $category->id], ['for_place' => $data['for_place']]);
+                $priceData = ['code_client_id' => $data['code_client_id'], 'category_id' => $category->id, 'for_place' => $data['for_place']];
+                $this->storehouseDataHistory($price->id, $priceData, 'updateOrCreate', (new CodesPrices)->getTable());
+            } else {
+                $price = CodesPrices::where('code_id', $data['code_client_id'])->where('category_id', $category->id)->first();
+                if ($price) {
+                    $saveData['for_kg'] = $price->for_kg;
+                    $saveData['for_place'] = $price->for_place;
+                }
+            }
+
+            $storehouse = StorehouseData::create($saveData);
+            \App\CodePlace::create(['code_place' => $saveData['code_place']]);
+            $saveDataForStorehouseDataHistory = [
+                'code_place' => $saveData['code_place'],
+                'storehouse_entry_id' => $storehouse->id,
+                'code_client_id' => $saveData['code_client_id'],
+                'kg' => $saveData['kg'],
+                'category_id' => $saveData['category_id'],
+                'place' => 1,
+            ];
+            StorehouseHistory::create($saveDataForStorehouseDataHistory);
+            $this->storehouseDataHistory($storehouse->id, $saveData, 'create', (new StorehouseData)->getTable());
+
+            $arrData = $this->storehouseDataList(1);
+
+            return response(['storehouseData' => $arrData->where('storehouse_data.id', $storehouse->id)->where('storehouse_data.fax_id', 0)->first(), 'shopNames' => $this->getShopNames('data'), 'thingsList' => $this->getThingsList('data')]);
+        } else {
+            $this->throwError();
         }
-
-        $storehouse = StorehouseData::create($saveData);
-        \App\CodePlace::create(['code_place' => $saveData['code_place']]);
-        $saveDataForStorehouseDataHistory = [
-            'code_place' => $saveData['code_place'],
-            'storehouse_entry_id' => $storehouse->id,
-            'code_client_id' => $saveData['code_client_id'],
-            'kg' => $saveData['kg'],
-            'cube' => $saveData['cube'],
-            'category_id' => $saveData['category_id'],
-            'place' => 1,
-        ];
-        StorehouseHistory::create($saveDataForStorehouseDataHistory);
-        $this->storehouseDataHistory($storehouse->id, $saveData, 'create', (new StorehouseData)->getTable());
-
-        $arrData = $this->storehouseDataList(1);
-
-        return response(['storehouseData' => $arrData->where('storehouse_data.id', $storehouse->id)->where('storehouse_data.fax_id', 0)->first(), 'shopNames' => $this->getShopNames('data'), 'thingsList' => $this->getThingsList('data')]);
     }
 
     public function update(Request $request)
     {
         $data = $this->stripData($request->except('id', 'replacePrice'));
-
-        if (array_key_exists('category_id', $data)) {
-            $category = Category::find($data['category_id']);
-            if ($category->name === 'Бренд' || $category->name === 'Авиа') {
-                $data['brand'] = true;
-            } else {
-                $data['brand'] = false;
-            }
-        }
-        if (array_key_exists('for_kg', $data) && is_null($data['for_kg'])) {
-            $data['for_kg'] = 0;
-        }
-
-        if (array_key_exists('for_place', $data) && is_null($data['for_place'])) {
-            $data['for_place'] = 0;
-        }
-        $entry = StorehouseData::find($request->id);
-        $price = CodesPrices::where('code_id', $entry->code_client_id)->where('category_id', $entry->category_id)->first();
-        if ($price) {
-            if ($request->replacePrice && array_key_exists('for_kg', $data)) {
-                $price->for_kg = $data['for_kg'];
-            } else if (array_key_exists('for_kg', $data) && !$price->for_kg) {
-                $price->for_kg = $data['for_kg'];
-            }
-            if ($request->replacePrice && array_key_exists('for_place', $data)) {
-                $price->for_place = $data['for_place'];
-            } else if (array_key_exists('for_place', $data) && !$price->for_place) {
-                $price->for_place = $data['for_place'];
-            }
-            $price->save();
-        } else {
-            $arrForCreateCodePrice = [
-                'code_id' => $entry->code_client_id,
-                'category_id' => $entry->category_id,
-            ];
-            if (array_key_exists('for_kg', $data)) {
-                $arrForCreateCodePrice['for_kg'] = $data['for_kg'];
-            }
-            if (array_key_exists('for_place', $data)) {
-                $arrForCreateCodePrice['for_place'] = $data['for_place'];
-            }
-            CodesPrices::create($arrForCreateCodePrice);
-        }
-
-        if (array_key_exists('delivery_method_id', $data)) {
-            $entry = StorehouseData::find($request->id);
-            if ($entry) {
-                \App\CodeHasDeliveryMethod::updateOrCreate(['code_id' => $entry->code_client_id], ['delivery_method_id' => $data['delivery_method_id']]);
-            }
-        }
-
-        if (array_key_exists('shop', $data) && $data['shop']) {
-            Shop::firstOrCreate(['name' => $data['shop']]);
-        } else if (array_key_exists('shop', $data) && !$data['shop']) {
-            $data['shop'] = null;
-        }
-
-
-        $rul = [];
-        foreach ($this->rules as $key => $value) {
-            if (array_key_exists($key, $data)) {
-                $rul[$key] = $value;
-            }
-        }
-
-        $this->validate($request, $rul);
-
+        $codePlaces = null;
         if (array_key_exists('code_place', $data)) {
+            $codePlaces = CodePlace::where('code_place', $data['code_place'])->whereYear('created_at', date('Y'))->first();
+        }
+
+        if (!$codePlaces) {
+
+
+            if (array_key_exists('category_id', $data)) {
+                $category = Category::find($data['category_id']);
+                if ($category->name === 'Бренд' || $category->name === 'Авиа') {
+                    $data['brand'] = true;
+                } else {
+                    $data['brand'] = false;
+                }
+            }
+            if (array_key_exists('for_kg', $data) && is_null($data['for_kg'])) {
+                $data['for_kg'] = 0;
+            }
+
+            if (array_key_exists('for_place', $data) && is_null($data['for_place'])) {
+                $data['for_place'] = 0;
+            }
             $entry = StorehouseData::find($request->id);
-            if ($entry) {
-                \App\CodePlace::where(['code_place' => $entry->code_place])->delete();
+            $price = CodesPrices::where('code_id', $entry->code_client_id)->where('category_id', $entry->category_id)->first();
+            if ($price) {
+                if ($request->replacePrice && array_key_exists('for_kg', $data)) {
+                    $price->for_kg = $data['for_kg'];
+                } else if (array_key_exists('for_kg', $data) && !$price->for_kg) {
+                    $price->for_kg = $data['for_kg'];
+                }
+                if ($request->replacePrice && array_key_exists('for_place', $data)) {
+                    $price->for_place = $data['for_place'];
+                } else if (array_key_exists('for_place', $data) && !$price->for_place) {
+                    $price->for_place = $data['for_place'];
+                }
+                $price->save();
+            } else {
+                $arrForCreateCodePrice = [
+                    'code_id' => $entry->code_client_id,
+                    'category_id' => $entry->category_id,
+                ];
+                if (array_key_exists('for_kg', $data)) {
+                    $arrForCreateCodePrice['for_kg'] = $data['for_kg'];
+                }
+                if (array_key_exists('for_place', $data)) {
+                    $arrForCreateCodePrice['for_place'] = $data['for_place'];
+                }
+                CodesPrices::create($arrForCreateCodePrice);
             }
 
-            \App\CodePlace::create(['code_place' => $data['code_place']]);
-        }
-
-        StorehouseData::where('id', $request->id)->update($data);
-        $storehouseHistoryData = [];
-        $storehouseHistoryUpdateKeys = ['code_place', 'code_client_id', 'place', 'kg', 'category_id'];
-        foreach ($storehouseHistoryUpdateKeys as $item) {
-            if (array_key_exists($item, $data)) {
-                $storehouseHistoryData[$item] = $data[$item];
+            if (array_key_exists('delivery_method_id', $data)) {
+                $entry = StorehouseData::find($request->id);
+                if ($entry) {
+                    \App\CodeHasDeliveryMethod::updateOrCreate(['code_id' => $entry->code_client_id], ['delivery_method_id' => $data['delivery_method_id']]);
+                }
             }
+
+            if (array_key_exists('shop', $data) && $data['shop']) {
+                Shop::firstOrCreate(['name' => $data['shop']]);
+            } else if (array_key_exists('shop', $data) && !$data['shop']) {
+                $data['shop'] = null;
+            }
+
+
+            $rul = [];
+            foreach ($this->rules as $key => $value) {
+                if (array_key_exists($key, $data)) {
+                    $rul[$key] = $value;
+                }
+            }
+
+            $this->validate($request, $rul);
+
+            if (array_key_exists('code_place', $data)) {
+                $entry = StorehouseData::find($request->id);
+                if ($entry) {
+                    \App\CodePlace::where(['code_place' => $entry->code_place])->delete();
+                }
+
+                \App\CodePlace::create(['code_place' => $data['code_place']]);
+            }
+
+            StorehouseData::where('id', $request->id)->update($data);
+            $storehouseHistoryData = [];
+            $storehouseHistoryUpdateKeys = ['code_place', 'code_client_id', 'place', 'kg', 'category_id'];
+            foreach ($storehouseHistoryUpdateKeys as $item) {
+                if (array_key_exists($item, $data)) {
+                    $storehouseHistoryData[$item] = $data[$item];
+                }
+            }
+            StorehouseHistory::where('storehouse_entry_id', $request->id)->update($storehouseHistoryData);
+            $this->storehouseDataHistory($request->id, $data, 'update', (new StorehouseData)->getTable());
+
+            $arrData = $this->storehouseDataList(1);
+
+            $entry = StorehouseData::find($request->id);
+            if ($entry && $entry->fax_id > 0) {
+                return response(['storehouseData' => $arrData->where('storehouse_data.id', $request->id)->first()]);
+            }
+
+            return response(['storehouseData' => $arrData->where('storehouse_data.id', $request->id)->first(), 'shopNames' => $this->getShopNames('data'), 'thingsList' => $this->getThingsList('data')]);
+        } else {
+            $this->throwError();
         }
-        StorehouseHistory::where('storehouse_entry_id', $request->id)->update($storehouseHistoryData);
-        $this->storehouseDataHistory($request->id, $data, 'update', (new StorehouseData)->getTable());
+    }
 
-        $arrData = $this->storehouseDataList(1);
-
-        $entry = StorehouseData::find($request->id);
-        if ($entry && $entry->fax_id > 0) {
-            return response(['storehouseData' => $arrData->where('storehouse_data.id', $request->id)->first()]);
-        }
-
-        return response(['storehouseData' => $arrData->where('storehouse_data.id', $request->id)->first(), 'shopNames' => $this->getShopNames('data'), 'thingsList' => $this->getThingsList('data')]);
+    public function throwError()
+    {
+        throw ValidationException::withMessages([
+            'code_place' => [trans('Этот код занят')],
+        ]);
     }
 
     public function getShopNames($value = null)

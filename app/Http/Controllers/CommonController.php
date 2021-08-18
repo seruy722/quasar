@@ -307,6 +307,37 @@ class CommonController extends Controller
         return response(['files' => $request->files]);
     }
 
+    public function upFilesCodesPlaces(Request $request)
+    {
+        $res = [];
+        foreach ($request->files as $file) {
+            $ImportedFaxArray = Excel::toArray(new ImportData, $file);
+
+            foreach ($ImportedFaxArray[0] as $key => $elem) {
+                $trimElem = array_map('trim', $elem);
+                // Обрезаем из имени клиента приставку 007/
+                if ($key === 0 || !$trimElem[0]) {
+                    continue;
+                }
+                $numbers = explode("/", $trimElem[0]);
+                $arrNumbers = [];
+                foreach ($numbers as $number) {
+                    $number = str_pad($number, 3, '0', STR_PAD_LEFT);
+                    array_push($arrNumbers, $number);
+                }
+                array_push($res, implode("/", $arrNumbers));
+            }
+        }
+
+
+        return response(['files' => StorehouseData::whereIn('code_place', $res)->pluck('id')]);
+    }
+
+    public function exportCodesPlaces(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxSheetsExport(0, $request->ids), 'storehouseData.xlsx');
+    }
+
     public function searchInFaxes(Request $request)
     {
         $s = $request->search;

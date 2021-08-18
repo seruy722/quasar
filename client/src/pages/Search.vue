@@ -26,6 +26,7 @@
             v-model="codePlace"
             mask="###/###/###"
             label="Введите код"
+            @keyup.enter="getClientData(clientId, codePlace)"
           />
           <q-btn
             label="Найти"

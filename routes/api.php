@@ -294,6 +294,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     });
 
     Route::post('/upload-faxes', 'CommonController@uploadFaxes');
+    Route::post('/upload-codes-places', 'CommonController@upFilesCodesPlaces');
+    Route::post('/export-codes-places', 'CommonController@exportCodesPlaces');
     Route::post('/search-in-faxes', 'CommonController@searchInFaxes');
     Route::get('/get-entries-with-pay-notation', 'Api\StorehouseDataController@getEntriesWithPayNotation');
     Route::get('/areas', function () {

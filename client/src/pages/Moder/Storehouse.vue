@@ -289,19 +289,19 @@ import {
   getStorehouseTableData,
 } from 'src/utils/FrequentlyCalledFunctions';
 import StorehouseDataMixin from 'src/mixins/StorehouseData';
-import Table from 'components/Elements/Table/Table.vue';
-import Dialog from 'components/Dialogs/Dialog.vue';
-import DialogAddEntryOnStorehouse from 'components/Dialogs/DialogAddEntryOnStorehouse.vue';
-import IconBtn from 'components/Buttons/IconBtn.vue';
-import Menu from 'components/Menu.vue';
-import BaseBtn from 'components/Buttons/BaseBtn.vue';
-import StorehouseDataHistory from 'components/History/StorehouseDataHistory.vue';
-import PullRefresh from 'components/PullRefresh.vue';
-import CountCategories from 'components/CountCategories.vue';
-import DialogMoveToFax from 'components/Dialogs/DialogMoveToFax.vue';
-import MoveToFaxBtn from 'components/Buttons/MoveToFaxBtn.vue';
-import UpdateBtn from 'components/Buttons/UpdateBtn.vue';
-import StorehouseInfo from 'components/Storehouse/StorehouseInfo.vue';
+import Table from 'src/components/Elements/Table/Table.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogAddEntryOnStorehouse from 'src/components/Dialogs/DialogAddEntryOnStorehouse.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import Menu from 'src/components/Menu.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import StorehouseDataHistory from 'src/components/History/StorehouseDataHistory.vue';
+import PullRefresh from 'src/components/PullRefresh.vue';
+import CountCategories from 'src/components/CountCategories.vue';
+import DialogMoveToFax from 'src/components/Dialogs/DialogMoveToFax.vue';
+import MoveToFaxBtn from 'src/components/Buttons/MoveToFaxBtn.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
+import StorehouseInfo from 'src/components/Storehouse/StorehouseInfo.vue';
 
 export default {
   name: 'Storehouse',

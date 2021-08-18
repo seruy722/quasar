@@ -102,6 +102,14 @@
         </div>
       </div>
     </div>
+    <div>
+      Загрузка данных кодов
+      <input
+        type="file"
+        multiple
+        @change="upFilesCodesPlaces"
+      >
+    </div>
 
     <div style="border: 1px solid blue;">
       Клиенты которые получают бренд
@@ -296,6 +304,33 @@ export default {
           }
         });
     },
+    exportCodesPlaces(ids) {
+      if (!_.isEmpty(ids)) {
+        this.$axios({
+          url: '/api/export-codes-places',
+          method: 'POST',
+          responseType: 'blob', // important
+          data: {
+            ids,
+          },
+        })
+          .then((response) => {
+            devlog.log('RES_BLOB', response);
+            if (!window.navigator.msSaveOrOpenBlob) {
+              // BLOB NAVIGATOR
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'codes.xlsx');
+              document.body.appendChild(link);
+              link.click();
+            } else {
+              // BLOB FOR EXPLORER 11
+              window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'codes.xlsx');
+            }
+          });
+      }
+    },
     upFiles({ target }) {
       devlog.log('dfdg', target.files);
       const formData = new FormData();
@@ -308,6 +343,24 @@ export default {
           target.value = '';
           devlog.log('UPLOADED', data);
           this.showNotif('success', 'Данные успешно добавлены.', 'center');
+        })
+        .catch(() => {
+          this.showNotif('error', 'Произошла ошибка.', 'center');
+        });
+    },
+    upFilesCodesPlaces({ target }) {
+      devlog.log('dfdg', target.files);
+      const formData = new FormData();
+      _.forEach(target.files, (file, index) => {
+        formData.append(`file${index}`, file);
+      });
+
+      this.$axios.post('/api/upload-codes-places', formData)
+        .then(({ data: { files } }) => {
+          target.value = '';
+          devlog.log('UPLOADED', files);
+          this.exportCodesPlaces(files);
+          this.showNotif('success', 'Данные успешно загружены.', 'center');
         })
         .catch(() => {
           this.showNotif('error', 'Произошла ошибка.', 'center');
