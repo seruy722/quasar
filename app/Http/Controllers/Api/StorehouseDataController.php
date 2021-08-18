@@ -418,6 +418,7 @@ class StorehouseDataController extends Controller
         $arrayData = $this->storehouseDataList(1)->whereIn('storehouse_data.id', $request->ids)->get();
         foreach ($arrayData as $entry) {
             if ($entry) {
+                CodePlace::where('code_place', $entry->code_place)->delete();
                 $entry->destroyed = true;
                 $entry->save();
                 $this->storehouseDataHistory($entry->id, $entry->toArray(), 'destroy', (new StorehouseData)->getTable());
