@@ -50,7 +50,6 @@ class OdessaUsersExport implements FromView, ShouldAutoSize, WithTitle
                 $this->query = Debt::select(
                     'debts.*',
                     'codes.code as code_client_name'
-
                 )
                     ->leftJoin('codes', 'codes.id', '=', 'debts.code_client_id');
                 $col = $this->query->where('code_client_id', $item->id)->get();
@@ -60,14 +59,6 @@ class OdessaUsersExport implements FromView, ShouldAutoSize, WithTitle
                 }
             }
         }
-
-//        usort($arr, function ($a, $b) {
-//            if ($a['code_client_name'] == $b['code_client_name']) {
-//                return 0;
-//            }
-//
-//            return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
-//        });
         return $arr;
     }
 

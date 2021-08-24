@@ -12,16 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class CustomersController extends Controller
 {
-//    public function index()
-//    {
-////        $codes = DB::table('codes')
-////            ->join('customers', 'codes.id', '=', 'customers.code_id')
-////            ->select('codes.*', 'customers.name')
-////            ->get();
-////        return response(['answ' => $codes->groupBy('code')]);
-//        return CodeResource::collection(Code::all());
-//    }
-
     protected $rules = [
         'phone' => 'required|max:20',
         'name' => 'required|max:255',
@@ -74,7 +64,6 @@ class CustomersController extends Controller
         $customer = Customer::create($data);
 
         $this->storeCustomerHistory($customer->id, $data, 'create');
-//        json_decode(json_encode($customer, JSON_NUMERIC_CHECK))
 
         return response(['customer' => $customer]);
     }
@@ -101,6 +90,7 @@ class CustomersController extends Controller
 
     public function destroy($id)
     {
+//        $data = $this->stripData($request->except('id'));
         Customer::where('id', $id)->delete();
         $this->storeCustomerHistory($id, [], 'destroy');
         return response(['status' => true]);
