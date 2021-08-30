@@ -318,7 +318,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('update-player-id', 'Api\NotificationController@updatePlayerId')->name('update player id');
 //    Route::post('create-notification', 'Api\NotificationController@createNotification')->name('create notification');
 });
-Route::group(['middleware' => 'throttle:500,10'], function () {
+Route::group(['middleware' => 'throttle'], function () {
     Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');
     Route::post('change-password-code', 'Api\AuthController@getCodeForChangePassword')->name('code for password');
     Route::post('change-password', 'Api\AuthController@changePassword')->name('change password');
@@ -334,3 +334,8 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'middle
 //    Route::post('/password/email', 'Api\ForgotPasswordController@sendResetLinkEmail');
 //    Route::post('/password/reset', 'Api\ResetPasswordController@reset');
 });
+Route::post('/subscribe', 'BotController@subscribeClient');
+Route::post('/send-confirmation-code', 'BotController@sendConfirmationCode');
+Route::post('/check-confirmation-code', 'BotController@checkConfirmationCode');
+Route::post('/check-is-customer-register-in-program', 'BotController@checkIsCustomerRegisterInProgram');
+Route::get('/test', 'BotController@test');

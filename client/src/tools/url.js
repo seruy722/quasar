@@ -160,6 +160,9 @@ const urls = {
   getStatistics: `${prefix}/get-statistics`,
   sendSms: `${prefix}/send-sms`,
   getSmsBalance: `${prefix}/sms-balance`,
+  subscribe: `${prefix}/subscribe`,
+  areas: `${prefix}/areas`,
+  test: `${prefix}/test`,
   serverUrl: 'https://servercargo007.net.ua',
   getTransferCodeCommission: `${prefix}/get-transfer-code-commission`,
   axiosData: {

@@ -144,7 +144,7 @@ class AuthController extends Controller
         $client = new Client();
         return $client->post("https://api.turbosms.ua/message/send.json", ['body' => json_encode($data), 'headers' => [
             'Content-Type' => 'application/json',
-            "Authorization" => 'Bearer 55090e130c778e25675c1580655da1d0c8e89f43',
+            "Authorization" => 'Bearer d4682d75313aaa3b83ac59cfdfdc4c6822610581',
         ]]);
     }
 }

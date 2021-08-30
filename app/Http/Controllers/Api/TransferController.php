@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Bot;
 use App\Code;
-use App\CodesPrices;
 use App\CodesSettings;
 use App\Debt;
+use App\Settings;
 use App\Transfer;
 use App\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\PushNotifications;
@@ -97,6 +99,15 @@ class TransferController extends Controller
         }
 
         $this->validate($request, $rul);
+        $notificationText = null;
+        $transfer = Transfer::find($request->id);
+        if ($request->sum && $request->status) {
+            $notificationText = 'Изменены данные перевода №' . $transfer->id . ' для ' . $transfer->receiver_name . ' сумма - <' . $request->sum . '>' . ' статус - <' . $this->transferStatus[$request->status] . '>';
+        } else if ($request->sum) {
+            $notificationText = 'Изменена сумма перевода №' . $transfer->id . ' для ' . $transfer->receiver_name . ' c ' . $transfer->sum . ' на  <' . $request->sum . '>';
+        } else if ($request->status) {
+            $notificationText = 'Изменен статус перевода №' . $transfer->id . ' для ' . $transfer->receiver_name . ' - <' . $this->transferStatus[$request->status] . '> на сумму ' . $transfer->sum;
+        }
 
         Transfer::where('id', $request->id)->update($data);
         $this->storeTransferHistory($request->id, $data, 'update');
@@ -110,30 +121,23 @@ class TransferController extends Controller
             $transfer = Transfer::find($request->id);
             $customer = Code::where('id', $transfer->client_id)->first();
             if ($customer) {
-                $notificationText = null;
+                $notificationTextCustomer = null;
                 if ($request->sum && $request->status) {
-                    $notificationText = 'Пользователь ' . auth()->user()->name . ' изменил сумму перевода на - <' . $request->sum . '>' . ' статус - <' . $this->transferStatus[$request->status] . '> для ' . $customer->code;
+                    $notificationTextCustomer = 'Пользователь ' . auth()->user()->name . ' изменил сумму перевода на - <' . $request->sum . '>' . ' статус - <' . $this->transferStatus[$request->status] . '> для ' . $customer->code;
                 } else if ($request->sum) {
-                    $notificationText = 'Пользователь ' . auth()->user()->name . ' изменил сумму перевода на - <' . $request->sum . '> для ' . $customer->code;
+                    $notificationTextCustomer = 'Пользователь ' . auth()->user()->name . ' изменил сумму перевода на - <' . $request->sum . '> для ' . $customer->code;
                 } else if ($request->status) {
-                    $notificationText = ' Пользователь ' . auth()->user()->name . ' изменил статус перевода на - <' . $this->transferStatus[$request->status] . '> для (' . $customer->code . ' - ' . $transfer->sum . ')';
+                    $notificationTextCustomer = ' Пользователь ' . auth()->user()->name . ' изменил статус перевода на - <' . $this->transferStatus[$request->status] . '> для (' . $customer->code . ' - ' . $transfer->sum . ')';
                 }
-                $notificationData = ['text' => $notificationText, 'player_ids' => $playersIds, 'url' => 'https://cargo007.net/#/moder/transfers'];
+                $notificationData = ['text' => $notificationTextCustomer, 'player_ids' => $playersIds, 'url' => 'https://cargo007.net/#/moder/transfers'];
                 $this->createNotification($notificationData);
             }
         } else if ((auth()->user()->player_id && auth()->user()->code_id)) {
-            $notificationText = null;
-            $transfer = Transfer::find($request->id);
-            if ($request->sum && $request->status) {
-                $notificationText = 'Изменены данные перевода для ' . $transfer->receiver_name . ' сумма - <' . $request->sum . '>' . ' статус - <' . $this->transferStatus[$request->status] . '>';
-            } else if ($request->sum) {
-                $notificationText = 'Изменена сумма перевода для ' . $transfer->receiver_name . ' на - <' . $request->sum . '>';
-            } else if ($request->status) {
-                $notificationText = 'Изменен статус перевода для ' . $transfer->receiver_name . ' - <' . $this->transferStatus[$request->status] . '> на сумму ' . $transfer->sum;
-            }
             $notificationData = ['text' => $notificationText, 'player_ids' => json_decode(auth()->user()->player_id), 'url' => 'https://cargo007.net/#/moder/client-transfers'];
             $this->createNotification($notificationData);
         }
+
+        $this->sendBotNotification($notificationText, $transfer->client_id);
         return response(['transfer' => $this->query()->where('transfers.id', $request->id)->first()]);
     }
 
@@ -181,8 +185,30 @@ class TransferController extends Controller
             $notificationData = ['text' => 'Добавлен перевод для <' . $request->receiver_name . '> на сумму - ' . $request->sum . ' статус - <' . $this->transferStatus[$request->status] . '>', 'player_ids' => json_decode(auth()->user()->player_id), 'url' => 'https://cargo007.net/#/moder/client-transfers'];
             $this->createNotification($notificationData);
         }
+        $message = 'Добавлен перевод' . ' №' . $transfer->id . ' для <' . $request->receiver_name . '> на сумму - ' . $request->sum . '. Статус - <' . $this->transferStatus[$request->status] . '>';
+
+        $this->sendBotNotification($message, $request->client_id);
 
         return response(['transfer' => $this->query()->where('transfers.id', $transfer->id)->first()]);
+    }
+
+    // Отправка сообщений ботам телеграмм и вотсап
+    public function sendBotNotification($message, $codeId)
+    {
+        $client = Bot::where('code_id', $codeId)->get();
+        $tokenData = Settings::where('bot_name', 'sendpulse')->first();
+        if ($tokenData && $message && $client) {
+            $client->each(function ($item) use ($message, $tokenData) {
+                $client = new Client();
+                $client->post("https://api.sendpulse.com/telegram/contacts/sendText", ['body' => json_encode([
+                    "contact_id" => $item->contact_id,
+                    "text" => $message,
+                ]), 'headers' => [
+                    'Content-Type' => 'application/json',
+                    "Authorization" => 'Bearer ' . $tokenData->token,
+                ]]);
+            });
+        }
     }
 
     public function getNewTransfers(Request $request)

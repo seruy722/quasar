@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Cargo;
 use App\Category;
 use App\Code;
 use App\Debt;
@@ -12,11 +11,10 @@ use App\Imports\ImportData;
 use App\Sklad;
 use App\StorehouseData;
 use App\Test;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
 
 class CommonController extends Controller
 {
@@ -346,7 +344,6 @@ class CommonController extends Controller
 
     public function sendSms(Request $request)
     {
-        $client = new Client();
         $arr = [];
         foreach ($request->all() as $item) {
             foreach ($item['selectedPhones'] as $phone) {
@@ -365,8 +362,7 @@ class CommonController extends Controller
 
     public function getSmsBalance()
     {
-        $client = new Client();
-        return $client->get("https://api.turbosms.ua/user/balance.json", ['headers' => [
+        return Http::get("https://api.turbosms.ua/user/balance.json", ['headers' => [
             'Content-Type' => 'application/json',
             "Authorization" => 'Bearer 55090e130c778e25675c1580655da1d0c8e89f43',
         ]]);

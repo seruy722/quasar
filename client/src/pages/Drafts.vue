@@ -167,10 +167,10 @@
       >
     </div>
 
-    <!--    <div>-->
-    <!--      Reg-->
-    <!--      <q-btn @click="reg" label="REGIST" />-->
-    <!--    </div>-->
+    <div>
+      Reg
+      <q-btn @click="reg" label="REGIST" />
+    </div>
   </div>
 </template>
 
@@ -521,13 +521,23 @@ export default {
       }
     },
     // reg() {
-    //   this.$axios.post(getUrl('register'), {
-    //     name: 'Вика',
-    //     email: 'vikas@ya.ru',
-    //     password: 'Gpc5rZ9H73',
-    //     password_confirmation: 'Gpc5rZ9H73',
+    //   /* eslint-disable */
+    //   this.$axios.post(getUrl('subscribe'), {
+    //     "contact_id": "61250d628a1c9c39227079dd‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌",
+    //     "name": "Serg‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌",
+    //     "full_name": "Serg‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌",
+    //     "last_name": null,
+    //     "bot_id": "61250d62b89d3a49981d48eb‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌",
+    //     "phone": null,
+    //     "bot_name": "cargo007‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌",
+    //     "channel": "telegram‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌‌",
+    //     "subscribe": false
     //   });
     // },
+    reg() {
+      /* eslint-disable */
+      this.$axios.get(getUrl('test'));
+    },
   },
 };
 </script>

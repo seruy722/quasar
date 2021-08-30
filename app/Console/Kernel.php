@@ -27,6 +27,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('select:payment:arrears');
         $schedule->command('destroy:tokens');
+        $schedule->command('get:bot:token');
+//        $schedule->command('update:phone');
     }
 
     /**
