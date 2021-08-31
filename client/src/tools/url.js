@@ -124,6 +124,7 @@ const urls = {
   removeCommentFile: `${prefix}/remove-comment-file`,
   deleteComments: `${prefix}/delete-comments`,
   exportCustomersWhoLeft: `${prefix}/export-customers-who-left`,
+  exportCustomersWhoLeftBrand: `${prefix}/export-customers-who-left-brand`,
   addFileToComment: `${prefix}/add-file-to-comment`,
   updateCommentData: `${prefix}/update-comment-data`,
   storeQuestion: `${prefix}/store-question`,

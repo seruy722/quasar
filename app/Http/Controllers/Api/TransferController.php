@@ -102,11 +102,11 @@ class TransferController extends Controller
         $notificationText = null;
         $transfer = Transfer::find($request->id);
         if ($request->sum && $request->status) {
-            $notificationText = 'Изменены данные перевода №' . $transfer->id . ' для ' . $transfer->receiver_name . ' сумма - <' . $request->sum . '>' . ' статус - <' . $this->transferStatus[$request->status] . '>';
+            $notificationText = 'Изменены данные перевода №<b>' . $transfer->id . '</b> для ' . $transfer->receiver_name . ' сумма - <<b>' . $request->sum . '</b>>' . ' статус - <' . $this->transferStatus[$request->status] . '>';
         } else if ($request->sum) {
-            $notificationText = 'Изменена сумма перевода №' . $transfer->id . ' для ' . $transfer->receiver_name . ' c ' . $transfer->sum . ' на  <' . $request->sum . '>';
+            $notificationText = 'Изменена сумма перевода №<b>' . $transfer->id . '</b> для ' . $transfer->receiver_name . ' c <b>' . $transfer->sum . '</b> на  <' . $request->sum . '>';
         } else if ($request->status) {
-            $notificationText = 'Изменен статус перевода №' . $transfer->id . ' для ' . $transfer->receiver_name . ' - <' . $this->transferStatus[$request->status] . '> на сумму ' . $transfer->sum;
+            $notificationText = 'Изменен статус перевода №<b>' . $transfer->id . '</b> для ' . $transfer->receiver_name . ' - <' . $this->transferStatus[$request->status] . '> на сумму <b>' . $transfer->sum . '</b>';
         }
 
         Transfer::where('id', $request->id)->update($data);
@@ -185,7 +185,7 @@ class TransferController extends Controller
             $notificationData = ['text' => 'Добавлен перевод для <' . $request->receiver_name . '> на сумму - ' . $request->sum . ' статус - <' . $this->transferStatus[$request->status] . '>', 'player_ids' => json_decode(auth()->user()->player_id), 'url' => 'https://cargo007.net/#/moder/client-transfers'];
             $this->createNotification($notificationData);
         }
-        $message = 'Добавлен перевод' . ' №' . $transfer->id . ' для <' . $request->receiver_name . '> на сумму - ' . $request->sum . '. Статус - <' . $this->transferStatus[$request->status] . '>';
+        $message = 'Добавлен перевод' . ' №<b>' . $transfer->id . '</b> для <' . $request->receiver_name . '> на сумму - <b>' . $request->sum . '</b>. Статус - <' . $this->transferStatus[$request->status] . '>';
 
         $this->sendBotNotification($message, $request->client_id);
 
@@ -195,19 +195,22 @@ class TransferController extends Controller
     // Отправка сообщений ботам телеграмм и вотсап
     public function sendBotNotification($message, $codeId)
     {
-        $client = Bot::where('code_id', $codeId)->get();
-        $tokenData = Settings::where('bot_name', 'sendpulse')->first();
-        if ($tokenData && $message && $client) {
-            $client->each(function ($item) use ($message, $tokenData) {
-                $client = new Client();
-                $client->post("https://api.sendpulse.com/telegram/contacts/sendText", ['body' => json_encode([
-                    "contact_id" => $item->contact_id,
-                    "text" => $message,
-                ]), 'headers' => [
-                    'Content-Type' => 'application/json',
-                    "Authorization" => 'Bearer ' . $tokenData->token,
-                ]]);
-            });
+        $hour = intval(\Illuminate\Support\Carbon::now()->format('H'));
+        if ($hour < 18 && $hour > 6) {
+            $client = Bot::where('code_id', $codeId)->get();
+            $tokenData = Settings::where('bot_name', 'sendpulse')->first();
+            if ($tokenData && $message && $client) {
+                $client->each(function ($item) use ($message, $tokenData) {
+                    $client = new Client();
+                    $client->post("https://api.sendpulse.com/telegram/contacts/sendText", ['body' => json_encode([
+                        "contact_id" => $item->contact_id,
+                        "text" => $message,
+                    ]), 'headers' => [
+                        'Content-Type' => 'application/json',
+                        "Authorization" => 'Bearer ' . $tokenData->token,
+                    ]]);
+                });
+            }
         }
     }
 

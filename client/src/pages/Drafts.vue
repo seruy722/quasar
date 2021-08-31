@@ -119,6 +119,13 @@
       />
     </div>
     <div style="border: 1px solid blue;">
+      Клиенты которые не получали брендовый товар больше месяца
+      <q-btn
+        label="GET"
+        @click="exportCustomersWhoLeftBrand"
+      />
+    </div>
+    <div style="border: 1px solid blue;">
       Клиенты которые не получали товар больше месяца
       <q-btn
         label="GET"
@@ -466,6 +473,31 @@ export default {
     exportCustomersWhoLeft() {
       this.$axios({
         url: getUrl('exportCustomersWhoLeft'),
+        method: 'GET',
+        responseType: 'blob', // important
+        // headers: {
+        //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        // },
+      })
+        .then((response) => {
+          devlog.log('RES_BLOB', response);
+          if (!window.navigator.msSaveOrOpenBlob) {
+            // BLOB NAVIGATOR
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'brands.xlsx');
+            document.body.appendChild(link);
+            link.click();
+          } else {
+            // BLOB FOR EXPLORER 11
+            window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
+          }
+        });
+    },
+    exportCustomersWhoLeftBrand() {
+      this.$axios({
+        url: getUrl('exportCustomersWhoLeftBrand'),
         method: 'GET',
         responseType: 'blob', // important
         // headers: {

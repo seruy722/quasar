@@ -210,4 +210,22 @@ class CodesController extends Controller
         }
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CustomerExport($ids), 'customers.xlsx');
     }
+    public function exportCustomersWhoLeftBrand()
+    {
+        $entries = Code::all('id');
+        $res = $entries->map(function ($entry) {
+            return $entry->id;
+        })->unique()->values()->all();
+        $ids = [];
+        foreach ($res as $id) {
+            $cargoEntry = Cargo::where('type', false)->where('code_client_id', $id)->where('brand', true)->orderBy('created_at', 'desc')->first();
+            if ($cargoEntry) {
+                $dt = Carbon::parse($cargoEntry->created_at);
+                if ($dt->diffInDays(Carbon::now()) >= 31) {
+                    array_push($ids, $id);
+                }
+            }
+        }
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CustomerExport($ids), 'customers.xlsx');
+    }
 }
