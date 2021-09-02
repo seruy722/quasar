@@ -328,7 +328,7 @@ class CommonController extends Controller
         }
 
 
-        return response(['files' => StorehouseData::whereIn('code_place', $res)->pluck('id')]);
+        return response(['files' => StorehouseData::whereIn('code_place', $res)->whereYear('created_at', date('Y'))->pluck('id')]);
     }
 
     public function exportCodesPlaces(Request $request)

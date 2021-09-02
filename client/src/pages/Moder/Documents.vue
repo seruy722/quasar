@@ -83,9 +83,9 @@
               <q-chat-message
                 :text="[props.row.title]"
                 :stamp="props.row.formatDate"
-                :sent="userId !== props.row.author_id"
                 bg-color="lightgrey"
               >
+                {{ props.row.title }}
                 <q-list
                   class="bg-white"
                   separator
