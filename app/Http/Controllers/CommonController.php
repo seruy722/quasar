@@ -311,12 +311,8 @@ class CommonController extends Controller
         foreach ($request->files as $file) {
             $ImportedFaxArray = Excel::toArray(new ImportData, $file);
 
-            foreach ($ImportedFaxArray[0] as $key => $elem) {
+            foreach ($ImportedFaxArray[0] as $elem) {
                 $trimElem = array_map('trim', $elem);
-                // Обрезаем из имени клиента приставку 007/
-                if ($key === 0 || !$trimElem[0]) {
-                    continue;
-                }
                 $numbers = explode("/", $trimElem[0]);
                 $arrNumbers = [];
                 foreach ($numbers as $number) {

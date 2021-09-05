@@ -6,15 +6,12 @@ use App\Cargo;
 use App\City;
 use App\Code;
 use App\Customer;
-use App\Http\Resources\CodeResource;
 use App\Imports\ImportData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
-use function foo\func;
 
 class CodesController extends Controller
 {
@@ -22,7 +19,7 @@ class CodesController extends Controller
     {
         if ($request->hasFile('upload')) {
             $ImportedFaxArray = Excel::toArray(new ImportData, $request->file('upload'));
-            Customer::truncate();
+//            Customer::truncate();
             foreach ($ImportedFaxArray as $item) {
 //                return response(['answ' => $item[0]]);
 //                Customer::create([
