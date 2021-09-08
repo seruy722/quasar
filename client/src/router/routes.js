@@ -3,7 +3,7 @@ import auth from './middleware/auth';
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/AuthLayout.vue'),
+    component: () => import('src/layouts/AuthLayout.vue'),
     children: [
       {
         path: '',
@@ -11,7 +11,7 @@ const routes = [
         meta: {
           title: 'Авторизация',
         },
-        component: () => import('pages/Auth/Index.vue'),
+        component: () => import('src/pages/Auth/Index.vue'),
       },
       {
         path: '/register-client',
@@ -20,7 +20,7 @@ const routes = [
         meta: {
           title: 'Регистрация клиента',
         },
-        component: () => import('pages/Auth/RegisterClient.vue'),
+        component: () => import('src/pages/Auth/RegisterClient.vue'),
       },
       {
         path: '/password-recovery',
@@ -29,13 +29,13 @@ const routes = [
         meta: {
           title: 'Восстановление доступа',
         },
-        component: () => import('pages/Auth/PasswordRecovery'),
+        component: () => import('src/pages/Auth/PasswordRecovery'),
       },
     ],
   },
   {
     path: '/index',
-    component: () => import('layouts/StartLayout.vue'),
+    component: () => import('src/layouts/StartLayout.vue'),
     children: [
       {
         path: '',
@@ -402,6 +402,21 @@ const routes = [
           },
         },
         component: () => import('pages/Moder/Statistics.vue'),
+      },
+      {
+        path: 'info',
+        name: 'info',
+        meta: {
+          title: 'Инфо',
+          middleware: [
+            auth,
+          ],
+          accessData: {
+            roles: ['admin'],
+            permissions: ['view info'],
+          },
+        },
+        component: () => import('src/pages/Moder/Info.vue'),
       },
       {
         path: 'client-cargo-debts',

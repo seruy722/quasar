@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Cargo;
 use App\City;
 use App\Code;
+use App\CodesComments;
+use App\CodesStatistics;
 use App\Customer;
+use App\Debt;
 use App\Imports\ImportData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -187,14 +190,12 @@ class CodesController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CustomerExport($res), 'customers.xlsx');
     }
 
+    // Клиенты которые не получали товар больше месяца
     public function exportCustomersWhoLeft()
     {
-        $entries = Code::all('id');
-        $res = $entries->map(function ($entry) {
-            return $entry->id;
-        })->unique()->values()->all();
+        $codesIds = Code::pluck('id');
         $ids = [];
-        foreach ($res as $id) {
+        foreach ($codesIds as $id) {
             $cargoEntry = Cargo::where('type', false)->where('code_client_id', $id)->orderBy('created_at', 'desc')->first();
             if ($cargoEntry) {
                 $dt = Carbon::parse($cargoEntry->created_at);
@@ -207,14 +208,12 @@ class CodesController extends Controller
         }
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CustomerExport($ids), 'customers.xlsx');
     }
+
     public function exportCustomersWhoLeftBrand()
     {
-        $entries = Code::all('id');
-        $res = $entries->map(function ($entry) {
-            return $entry->id;
-        })->unique()->values()->all();
+        $codesIds = Code::pluck('id');
         $ids = [];
-        foreach ($res as $id) {
+        foreach ($codesIds as $id) {
             $cargoEntry = Cargo::where('type', false)->where('code_client_id', $id)->where('brand', true)->orderBy('created_at', 'desc')->first();
             if ($cargoEntry) {
                 $dt = Carbon::parse($cargoEntry->created_at);
@@ -224,5 +223,22 @@ class CodesController extends Controller
             }
         }
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CustomerExport($ids), 'customers.xlsx');
+    }
+
+    public function statisticsForCodes()
+    {
+        return response(['general' => CodesStatistics::with('comments')->get()]);
+    }
+
+    public function removeCodesComments($id)
+    {
+        CodesComments::where('id', $id)->delete();
+        return response(['status' => true]);
+    }
+
+    public function addCodesComments(Request $request)
+    {
+        $res = CodesComments::create($request->all());
+        return response(['comment' => $res]);
     }
 }

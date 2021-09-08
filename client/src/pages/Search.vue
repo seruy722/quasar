@@ -267,6 +267,15 @@
                             </q-badge>
                           </q-item-label>
                           <q-item-label
+                            v-else-if="col.field === 'fax_name'"
+                            :lines="2"
+                            caption
+                          >
+                            <router-link :to="{ name: 'fax', params: { id: props.row.fax_id }}">
+                              {{ col.value }}
+                            </router-link>
+                          </q-item-label>
+                          <q-item-label
                             v-else
                             caption
                           >

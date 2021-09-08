@@ -176,7 +176,10 @@
 
     <div>
       Reg
-      <q-btn @click="reg" label="REGIST" />
+      <q-btn
+        label="REGIST"
+        @click="reg"
+      />
     </div>
   </div>
 </template>

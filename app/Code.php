@@ -13,6 +13,11 @@ class Code extends Model
         return $this->hasMany('App\Customer', 'code_id', 'id')->leftJoin('cities', 'cities.id', '=', 'customers.city_id')->select('customers.*', 'cities.name AS city_name');
     }
 
+    public function comments()
+    {
+        return $this->hasMany('App\CodesComments', 'code_id', 'id')->orderBy('created_at', 'desc');
+    }
+
     public function user()
     {
         return $this->hasOne('App\User', 'id', 'user_id');

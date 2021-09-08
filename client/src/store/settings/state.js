@@ -174,6 +174,15 @@ export default {
       },
     },
     {
+      title: 'Инфо',
+      field: 'info',
+      icon: 'info',
+      access: {
+        roles: ['admin'],
+        permissions: ['view info'],
+      },
+    },
+    {
       title: 'Выход',
       field: 'exit',
       icon: 'logout',
@@ -184,4 +193,5 @@ export default {
     },
   ],
   search: null,
+  searchData: {},
 };

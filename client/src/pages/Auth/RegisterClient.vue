@@ -29,7 +29,7 @@
       </q-form>
       <q-form
         v-show="yesPhoneInDB"
-        class="q-gutter-md"
+        class="q-gutter-md`"
         @submit="onSubmitRegister"
       >
         <q-input

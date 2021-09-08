@@ -64,9 +64,12 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 //    });
     Route::post('/upload-codes', 'Api\CodesController@uploadCodesData');
     Route::get('/check-code-exist/{code}', 'Api\CodesController@checkCodeExist');
+    Route::get('/remove-codes-comments/{id}', 'Api\CodesController@removeCodesComments');
+    Route::post('/add-codes-comments', 'Api\CodesController@addCodesComments');
     Route::post('/store-code', 'Api\CodesController@storeCode');
     Route::get('/codes-list', 'Api\CodesController@index');
     Route::get('/codes-assistant', 'Api\CodesController@codesAssistantList');
+    Route::get('/statistics-for-codes', 'Api\CodesController@statisticsForCodes');
 
     // STOREHOUSE
     Route::get('/store-house-data/{id}', 'Api\StorehouseDataController@getStorehouseData')->name('view storehouse data')->middleware(['role_or_permission:admin|storehouse|view storehouse data']);
