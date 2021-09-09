@@ -75,8 +75,6 @@
                       >
                         <q-badge>{{ col.value }}</q-badge>
                       </q-item-label>
-                      <q-item-label v-else-if="col.name === 'cities'">
-                      </q-item-label>
                       <q-item-label
                         v-else
                         lines="5"

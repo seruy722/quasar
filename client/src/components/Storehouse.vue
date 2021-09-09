@@ -189,8 +189,13 @@
 import { getUrl } from 'src/tools/url';
 import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
-import { callFunction, thingsFilter, numberFormat } from 'src/utils';
-import { fullDate } from 'src/utils/formatDate';
+import {
+  callFunction,
+  thingsFilter,
+  numberFormat,
+  statusFilter,
+} from 'src/utils';
+import { fullDate, formatToDotDate } from 'src/utils/formatDate';
 import Table from 'src/components/Elements/Table/Table.vue';
 import CountCategories from 'src/components/CountCategories.vue';
 import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
@@ -296,9 +301,11 @@ export default {
     };
   },
   methods: {
+    statusFilter,
     numberFormat,
     thingsFilter,
     fullDate,
+    formatToDotDate,
     exportStorehouseData() {
       const data = _.isEmpty(this.storehouseTableReactiveProperties.selected) ? this.storehouseData : this.storehouseTableReactiveProperties.selected;
       devlog.log('DATA', data);
