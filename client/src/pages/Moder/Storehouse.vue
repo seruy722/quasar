@@ -45,6 +45,8 @@
             tooltip="Инфо по складу"
             @icon-btn-click="dialogStorehouseInfo = true"
           />
+
+          <UploadExcelFileForCodesPlaces />
         </template>
 
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -302,6 +304,7 @@ import DialogMoveToFax from 'src/components/Dialogs/DialogMoveToFax.vue';
 import MoveToFaxBtn from 'src/components/Buttons/MoveToFaxBtn.vue';
 import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
 import StorehouseInfo from 'src/components/Storehouse/StorehouseInfo.vue';
+import UploadExcelFileForCodesPlaces from 'src/components/Storehouse/UploadExcelFileForCodesPlaces.vue';
 
 export default {
   name: 'Storehouse',
@@ -319,6 +322,7 @@ export default {
     MoveToFaxBtn,
     UpdateBtn,
     StorehouseInfo,
+    UploadExcelFileForCodesPlaces,
   },
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {
