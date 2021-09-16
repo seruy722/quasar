@@ -9,7 +9,7 @@
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0",
     "dev:pwa": "quasar dev -m pwa",
-    "build:pwa": "quasar build",
+    "build:pwa": "quasar build --modern",
     "dev:web": "quasar dev",
     "dev:android": "quasar dev -m cordova -T android",
     "build:web": "quasar build",

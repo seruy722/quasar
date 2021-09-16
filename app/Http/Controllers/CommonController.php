@@ -327,9 +327,43 @@ class CommonController extends Controller
         return response(['files' => StorehouseData::whereIn('code_place', $res)->whereYear('created_at', date('Y'))->pluck('id')]);
     }
 
+    public function upFilesCodesAnotherPlaces(Request $request)
+    {
+        $res = [];
+        $faxId = 0;
+        foreach ($request->files as $file) {
+            $ImportedFaxArray = Excel::toArray(new ImportData, $file);
+            foreach ($ImportedFaxArray[0] as $elem) {
+                $trimElem = array_map('trim', $elem);
+                $numbers = explode("/", $trimElem[0]);
+                $arrNumbers = [];
+                foreach ($numbers as $number) {
+                    $number = str_pad($number, 3, '0', STR_PAD_LEFT);
+                    array_push($arrNumbers, $number);
+                }
+                $resNumber = implode("/", $arrNumbers);
+                array_push($res, $resNumber);
+                if (!$faxId && strlen($resNumber) === 11) {
+                    $entry = StorehouseData::where('code_place', $resNumber)->whereYear('created_at', date('Y'))->first();
+                    if ($entry) {
+                        $faxId = $entry->fax_id;
+                    }
+                }
+            }
+        }
+
+
+        return response(['files' => StorehouseData::whereNotIn('code_place', $res)->where('fax_id', $faxId)->whereYear('created_at', date('Y'))->pluck('id')]);
+    }
+
     public function exportCodesPlaces(Request $request)
     {
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxSheetsExport(0, $request->ids), 'storehouseData.xlsx');
+    }
+
+    public function exportCodesPlacesWithPost(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Fax\FaxSheetsExportWithPost(0, $request->ids), 'storehouseData.xlsx');
     }
 
     public function searchInFaxes(Request $request)

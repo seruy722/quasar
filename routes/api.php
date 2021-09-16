@@ -299,7 +299,9 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 
     Route::post('/upload-faxes', 'CommonController@uploadFaxes');
     Route::post('/upload-codes-places', 'CommonController@upFilesCodesPlaces');
+    Route::post('/upload-codes-another-places', 'CommonController@upFilesCodesAnotherPlaces');
     Route::post('/export-codes-places', 'CommonController@exportCodesPlaces');
+    Route::post('/export-codes-places-with-post', 'CommonController@exportCodesPlacesWithPost');
     Route::post('/search-in-faxes', 'CommonController@searchInFaxes');
     Route::get('/get-entries-with-pay-notation', 'Api\StorehouseDataController@getEntriesWithPayNotation');
     Route::get('/areas', function () {

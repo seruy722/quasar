@@ -47,6 +47,11 @@
           />
 
           <UploadExcelFileForCodesPlaces />
+          <UploadExcelFileForCodesPlaces
+            icon="file_upload"
+            tooltip="Выгрузка данных по кодам которых нет в этом списке"
+            url="/api/upload-codes-another-places"
+          />
         </template>
 
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->

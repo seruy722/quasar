@@ -2,8 +2,8 @@
   <div data-vue-component-name="UploadExcelFileForCodesPlaces">
     <IconBtn
       color="accent"
-      icon="file_present"
-      tooltip="Выгрузить данные по кодам"
+      :icon="icon"
+      :tooltip="tooltip"
       @icon-btn-click="$refs.input.click()"
     />
 
@@ -26,11 +26,25 @@ export default {
     IconBtn,
   },
   mixins: [showNotif],
+  props: {
+    url: {
+      type: String,
+      default: '/api/upload-codes-places',
+    },
+    icon: {
+      type: String,
+      default: 'file_download',
+    },
+    tooltip: {
+      type: String,
+      default: 'Выгрузить данные по кодам',
+    },
+  },
   methods: {
     exportCodesPlaces(ids) {
       if (!_.isEmpty(ids)) {
         this.$axios({
-          url: '/api/export-codes-places',
+          url: '/api/export-codes-places-with-post',
           method: 'POST',
           responseType: 'blob', // important
           data: {
@@ -61,7 +75,7 @@ export default {
         formData.append(`file${index}`, file);
       });
 
-      this.$axios.post('/api/upload-codes-places', formData)
+      this.$axios.post(this.url, formData)
         .then(({ data: { files } }) => {
           target.value = '';
           devlog.log('UPLOADED', files);
