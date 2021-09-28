@@ -16,12 +16,12 @@
     "build:android": "quasar build -m android"
   },
   "dependencies": {
-    "@quasar/extras": "^1.10.12",
-    "apexcharts": "^3.28.1",
+    "@quasar/extras": "^1.11.0",
+    "apexcharts": "^3.28.3",
     "axios": "^0.21.4",
-    "date-fns": "^2.23.0",
+    "date-fns": "^2.24.0",
     "lodash": "^4.17.21",
-    "quasar": "^2.0.4",
+    "quasar": "^2.1.0",
     "validator": "^13.6.0",
     "vue-i18n": "^9.1.7",
     "vuex": "^4.0.2"
@@ -32,7 +32,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-loader": "^4.0.2",
-    "eslint-plugin-vue": "^7.17.0",
+    "eslint-plugin-vue": "^7.18.0",
     "quasar-app-extension-ide-helper": "^1.0.0"
   },
   "engines": {
