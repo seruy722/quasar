@@ -16,7 +16,7 @@
     "build:android": "quasar build -m android"
   },
   "dependencies": {
-    "@quasar/extras": "^1.11.0",
+    "@quasar/extras": "^1.11.1",
     "apexcharts": "^3.28.3",
     "axios": "^0.21.4",
     "date-fns": "^2.24.0",
