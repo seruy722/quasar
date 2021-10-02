@@ -410,7 +410,7 @@ export default {
       return _.sumBy(data, 'sum') * -1;
     },
     sumProfit(end, start) {
-      return start && end ? end - start : 0;
+      return (start && end) && end > start ? end - start : 0;
     },
     formatToDotDate,
     fillData(val) {
