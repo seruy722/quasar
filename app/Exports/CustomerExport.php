@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Cargo;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -38,6 +39,7 @@ class CustomerExport implements FromView, WithTitle, ShouldAutoSize
         $this->data = $this->data->map(function ($elem) use ($codeHasDeliveryMethods, $departments) {
             $deliveryMethod = $codeHasDeliveryMethods->firstWhere('code_id', $elem['code_id']);
             $department = $departments->firstWhere('code_id', $elem['code_id']);
+            $elem['count'] = Cargo::where('code_client_id', $elem['code_id'])->sum('kg');
 
             if ($deliveryMethod) {
                 $elem['delivery_method_name'] = $deliveryMethod->name;
