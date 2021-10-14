@@ -52,18 +52,18 @@ module.exports = function (ctx) {
       // analyze: true,
       // extractCSS: false,
       extendWebpack(cfg) {
-        cfg.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /node_modules/,
-          options: {
-            /* eslint-disable-next-line */
-            formatter: require('eslint')
-              .CLIEngine
-              .getFormatter('stylish'),
-          },
-        });
+        // cfg.module.rules.push({
+        //   enforce: 'pre',
+        //   test: /\.(js|vue)$/,
+        //   loader: 'eslint-loadnner',
+        //   exclude: /node_modules/,
+        //   options: {
+        //     /* eslint-disable-next-line */
+        //     // formatter: require('eslint')
+        //     //   .CLIEngine
+        //     //   .getFormatter('stylish'),
+        //   },
+        // });
         cfg.plugins.push(
           new webpack.ProvidePlugin({
             devlog: 'src/tools/devlog',
