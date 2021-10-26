@@ -310,7 +310,7 @@ import {
   getClientCodes,
 } from 'src/utils/FrequentlyCalledFunctions';
 import { defineAsyncComponent } from 'vue';
-import Table from 'components/Elements/Table/Table.vue';
+import Table from 'src/components/Elements/Table/Table.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
 import CountTransfersData from 'src/components/Transfers/CountTransfersData.vue';
@@ -320,6 +320,7 @@ import Fab from 'src/components/Elements/Fab.vue';
 import FabAction from 'src/components/Elements/FabAction.vue';
 import PageScroller from 'src/components/PageScroller.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import Pusher from 'pusher-js';
 
 export default {
   name: 'Transfers',
@@ -598,6 +599,18 @@ export default {
   },
   mounted() {
     this.getTransfers();
+    const pusher = new Pusher('47b7c9db3b44606e887f', {
+      cluster: 'eu'
+    });
+
+    const channel = pusher.subscribe('transfer');
+    channel.bind('Transfers', ({ transferData }) => {
+        if (transferData.type === 'store') {
+          this.$store.dispatch('transfers/addTransfer', transferData.transfer);
+        } else {
+          this.$store.dispatch('transfers/updateTransfer', transferData.transfer);
+        }
+    });
   },
   methods: {
     phoneNumberFilter,

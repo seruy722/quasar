@@ -138,7 +138,9 @@ class TransferController extends Controller
         }
 
         $this->sendBotNotification($notificationText, $transfer->client_id);
-        return response(['transfer' => $this->query()->where('transfers.id', $request->id)->first()]);
+        $transferData = $this->query()->where('transfers.id', $request->id)->first();
+        event(new \App\Events\Transfers(['transfer' => $transferData, 'type' => 'update']));
+        return response(['transfer' => $transferData]);
     }
 
     public function store(Request $request)
@@ -188,8 +190,11 @@ class TransferController extends Controller
         $message = 'Добавлен перевод' . ' №<b>' . $transfer->id . '</b> для <' . $request->receiver_name . '> на сумму - <b>' . $request->sum . '</b>. Статус - <' . $this->transferStatus[$request->status] . '>';
 
         $this->sendBotNotification($message, $request->client_id);
+        $transferData = $this->query()->where('transfers.id', $transfer->id)->first();
 
-        return response(['transfer' => $this->query()->where('transfers.id', $transfer->id)->first()]);
+        event(new \App\Events\Transfers(['transfer' => $transferData, 'type' => 'store']));
+
+        return response(['transfer' => $transferData]);
     }
 
     // Отправка сообщений ботам телеграмм и вотсап

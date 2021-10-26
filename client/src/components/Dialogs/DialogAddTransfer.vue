@@ -296,7 +296,7 @@ export default {
           .then(({ data: { transfer } }) => {
             devlog.log('DDFR', transfer);
             devlog.log('this.$store', this.$store.dispatch);
-            this.$store.dispatch('transfers/addTransfer', transfer);
+            // this.$store.dispatch('transfers/addTransfer', transfer);
             this.cancel(this.transferData);
             this.$q.loading.hide();
             this.show = false;
@@ -336,7 +336,7 @@ export default {
           this.$axios.post(getUrl('updateTransfers'), dataToSend)
             .then(({ data: { transfer } }) => {
               devlog.log('DDFR', transfer);
-              this.$store.dispatch('transfers/updateTransfer', transfer);
+              // this.$store.dispatch('transfers/updateTransfer', transfer);
               this.cancel(this.transferData);
               this.$q.loading.hide();
               this.show = false;
