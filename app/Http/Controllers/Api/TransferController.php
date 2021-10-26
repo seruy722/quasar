@@ -294,7 +294,7 @@ class TransferController extends Controller
 
     public function indexClient()
     {
-        return response(['transfers' => $this->query()->where('transfers.client_id', auth()->user()->id)->get()]);
+        return response(['transfers' => $this->query()->where('transfers.client_id', auth()->user()->code_id)->get()]);
     }
 
     public function storeClient(Request $request)
