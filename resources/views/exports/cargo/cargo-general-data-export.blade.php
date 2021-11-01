@@ -14,6 +14,7 @@
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Кат</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Фак</th>
         <th style="font-weight:bold;border: 1px solid black;text-align: center;">Прим</th>
+        <th style="font-weight:bold;border: 1px solid black;text-align: center;">Пол</th>
     </tr>
     </thead>
     <tbody>
@@ -32,6 +33,7 @@
             <td style="border: 1px solid black;text-align: center;">{{ $elem->category_name }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem->fax_name }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem->notation }}</td>
+            <td style="border: 1px solid black;text-align: center;">{{ $elem->user_name }}</td>
         </tr>
     @endforeach
 

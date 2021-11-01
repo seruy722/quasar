@@ -9,12 +9,13 @@ use App\debtsTable;
 use App\History;
 use App\Imports\ImportData;
 use App\Sklad;
+use App\SmsArchive;
 use App\StorehouseData;
 use App\Test;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Http;
 
 class CommonController extends Controller
 {
@@ -374,27 +375,40 @@ class CommonController extends Controller
 
     public function sendSms(Request $request)
     {
-        $arr = [];
-        foreach ($request->all() as $item) {
-            foreach ($item['selectedPhones'] as $phone) {
-                if ($phone) {
-                    $dd = ['recipients' => [$phone], 'sms' => ['sender' => 'Cargo007', 'text' => $item['text']]];
-//            $answ = $client->post("https://api.turbosms.ua/message/send.json", ['body' => json_encode($dd), 'headers' => [
-//                'Content-Type' => 'application/json',
-//                "Authorization" => 'Bearer 55090e130c778e25675c1580655da1d0c8e89f43',
-//            ]]);
-                    array_push($arr, $dd);
-                }
-            }
+        $res = [];
+
+        foreach ($request->sendData as $sendDatum) {
+            $client = new Client();
+            $response = $client->post("https://api.turbosms.ua/message/send.json", ['body' => json_encode($sendDatum), 'headers' => [
+                'Content-Type' => 'application/json',
+                "Authorization" => 'Bearer d4682d75313aaa3b83ac59cfdfdc4c6822610581',
+            ]]);
+
+            $content = $response->getBody()->getContents();
+            array_push($res, ['req' => $sendDatum, 'res' => json_decode($content)]);
+
+            SmsArchive::create(['uid' => $request->uid, 'fax_id' => $request->faxId, 'result' => json_encode(['req' => $sendDatum, 'res' => json_decode($content)]), 'user_id' => auth()->user()->id, 'type' => 'sms']);
         }
-        return response(['answ' => $arr]);
+
+        return $res;
+    }
+
+    public function getArchiveSms($id)
+    {
+        $data = SmsArchive::select(
+            'sms_archives.*',
+            'users.name as user_name'
+        )->leftJoin('users', 'users.id', '=', 'sms_archives.user_id')
+            ->where('fax_id', $id)->get();
+        return response(['archives' => $data->groupBy('uid')]);
     }
 
     public function getSmsBalance()
     {
-        return Http::get("https://api.turbosms.ua/user/balance.json", ['headers' => [
+        $client = new Client();
+        return $client->get("https://api.turbosms.ua/user/balance.json", ['headers' => [
             'Content-Type' => 'application/json',
-            "Authorization" => 'Bearer 55090e130c778e25675c1580655da1d0c8e89f43',
+            "Authorization" => 'Bearer d4682d75313aaa3b83ac59cfdfdc4c6822610581',
         ]]);
     }
 }

@@ -18,7 +18,10 @@ export const UPDATE_TRANSFERS = ((state, data) => {
 });
 
 export const ADD_TRANSFER = ((state, elem) => {
-  state.transfers.push(elem);
+  const index = _.findIndex(state.transfers, { id: elem.id });
+  if (index === -1) {
+    state.transfers.push(elem);
+  }
 });
 
 export const ADD_TRANSFER_CLIENT = ((state, [elem]) => {

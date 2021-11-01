@@ -160,6 +160,7 @@ const urls = {
   addExpense: `${prefix}/add-expense`,
   getStatistics: `${prefix}/get-statistics`,
   sendSms: `${prefix}/send-sms`,
+  getArchiveSms: `${prefix}/get-archive-sms`,
   getSmsBalance: `${prefix}/sms-balance`,
   statisticsForCodes: `${prefix}/statistics-for-codes`,
   removeCodesComments: `${prefix}/remove-codes-comments`,

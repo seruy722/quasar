@@ -572,15 +572,15 @@ import {
 } from 'src/utils/FrequentlyCalledFunctions';
 import StorehouseDataMixin from 'src/mixins/StorehouseData';
 import { numberFormat, thingsFilter, optionsFilter } from 'src/utils';
-import Table from 'components/Elements/Table/Table.vue';
-import IconBtn from 'components/Buttons/IconBtn.vue';
-import BaseBtn from 'components/Buttons/BaseBtn.vue';
-import DialogFaxData from 'components/Dialogs/DialogFaxData.vue';
-import StorehouseDataHistory from 'components/History/StorehouseDataHistory.vue';
-import Dialog from 'components/Dialogs/Dialog.vue';
-import CountCategories from 'components/CountCategories.vue';
-import PopupEdit from 'components/PopupEdit.vue';
-import SearchSelect from 'components/Elements/SearchSelect.vue';
+import Table from 'src/components/Elements/Table/Table.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import DialogFaxData from 'src/components/Dialogs/DialogFaxData.vue';
+import StorehouseDataHistory from 'src/components/History/StorehouseDataHistory.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import CountCategories from 'src/components/CountCategories.vue';
+import PopupEdit from 'src/components/PopupEdit.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 import List from 'src/components/Elements/List/List.vue';
 import ItemSection from 'src/components/Elements/List/ItemSection.vue';
 import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
@@ -589,6 +589,7 @@ import Card from 'src/components/Elements/Card/Card.vue';
 import CardSection from 'src/components/Elements/Card/CardSection.vue';
 import MoveToFaxBtn from 'src/components/Buttons/MoveToFaxBtn.vue';
 import DialogMoveToFax from 'src/components/Dialogs/DialogMoveToFax.vue';
+import DialogSendSms from 'src/components/Dialogs/DialogSendSms.vue';
 
 export default {
   name: 'Fax',
@@ -610,6 +611,7 @@ export default {
     SearchSelect,
     MoveToFaxBtn,
     DialogMoveToFax,
+    DialogSendSms,
   },
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {

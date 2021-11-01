@@ -261,6 +261,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     // SMS
 //    Route::post('/send-sms', 'CommonController@sendSms')->name('send-sms')->middleware(['role_or_permission:admin|sms|send-sms']);
     Route::post('/send-sms', 'CommonController@sendSms')->name('send-sms')->middleware(['role_or_permission:admin|sms|send-sms']);
+    Route::get('/get-archive-sms/{id}', 'CommonController@getArchiveSms')->name('get-archive-sms')->middleware(['role_or_permission:admin|sms|get-archive-sms']);
     Route::get('/sms-balance', 'CommonController@getSmsBalance')->name('sms-balance')->middleware(['role_or_permission:admin|sms|sms-balance']);
 
 

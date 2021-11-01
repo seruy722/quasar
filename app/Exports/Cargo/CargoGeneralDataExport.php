@@ -15,7 +15,7 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 {
     protected $data;
     protected $enterData;
-    protected $headers = ['Дата', 'Тип', 'Деберц', 'М', 'В', 'За к', 'За м', 'Очки', 'Скд', 'Опл', 'Кат', 'Фак', 'Прим'];
+    protected $headers = ['Дата', 'Тип', 'Деберц', 'М', 'В', 'За к', 'За м', 'Очки', 'Скд', 'Опл', 'Кат', 'Фак', 'Прим', 'Пол'];
 
     public function __construct($enterData)
     {
@@ -29,11 +29,13 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
             'codes.code as code_client_name',
             'categories.name as category_name',
             'delivery_methods.name as delivery_method_name',
+            'users.name as user_name',
             'faxes.name as fax_name'
         )
             ->leftJoin('codes', 'codes.id', '=', 'cargos.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'cargos.category_id')
             ->leftJoin('delivery_methods', 'delivery_methods.id', '=', 'cargos.delivery_method_id')
+            ->leftJoin('users', 'users.id', '=', 'cargos.get_pay_user_id')
             ->leftJoin('faxes', 'faxes.id', '=', 'cargos.fax_id');
 
         $codes = $data->pluck('code_client_id')->unique()->toArray();
@@ -111,7 +113,7 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 //
 //            return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
         $this->data = $res->map(function ($item) {
-            return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'place' => $item->place, 'kg' => $item->kg, 'for_kg' => $item->for_kg, 'for_place' => $item->for_place, 'sum' => $item->sum, 'sale' => $item->sale, 'paid' => $item->paid ? 'Да' : 'Нет', 'category_name' => $item->category_name, 'fax_name' => $item->fax_name, 'notation' => $item->notation];
+            return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'place' => $item->place, 'kg' => $item->kg, 'for_kg' => $item->for_kg, 'for_place' => $item->for_place, 'sum' => $item->sum, 'sale' => $item->sale, 'paid' => $item->paid ? 'Да' : 'Нет', 'category_name' => $item->category_name, 'fax_name' => $item->fax_name, 'notation' => $item->notation, 'user_name'=>$item->user_name];
         })->all();
         return $this->data;
     }
@@ -135,8 +137,8 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $header = 'A1:M1';
-                $cellRange = 'A1:M' . (count($this->data) + 1);
+                $header = 'A1:N1';
+                $cellRange = 'A1:N' . (count($this->data) + 1);
 
                 $event->sheet->getDelegate()->getStyle($header)->getFont()->setBold(500);
                 $event->sheet->getDelegate()->getStyle($cellRange)->getAlignment()->applyFromArray(array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
