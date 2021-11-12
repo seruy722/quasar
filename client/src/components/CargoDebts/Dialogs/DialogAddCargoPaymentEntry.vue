@@ -356,6 +356,7 @@ export default {
         } = await import('src/utils/formatDate');
         sendData.created_at = addTime(reverseDate(sendData.created_at))
           .toISOString();
+        devlog.log('created_at_AS', sendData.created_at);
       }
       const { getUrl } = await import('src/tools/url');
       const { setChangeValue } = await import('src/utils/FrequentlyCalledFunctions');

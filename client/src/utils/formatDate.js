@@ -3,9 +3,6 @@ import {
   isDate,
   format,
   set,
-  getMinutes,
-  getHours,
-  getSeconds,
 } from 'date-fns';
 
 /**
@@ -191,11 +188,10 @@ export const isoDate = ((str) => {
  */
 export const addTime = ((date) => {
   if (date) {
-    const dateNow = new Date();
     return set(new Date(date), {
-      hours: getHours(dateNow),
-      minutes: getMinutes(dateNow),
-      seconds: getSeconds(dateNow),
+      hours: '12',
+      minutes: '00',
+      seconds: '00',
     });
   }
   return date;
