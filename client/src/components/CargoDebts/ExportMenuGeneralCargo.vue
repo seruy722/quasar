@@ -263,17 +263,7 @@ export default {
       ],
     };
   },
-  // watch: {
-  //   city(val) {
-  //     if (!_.isEmpty(val)) {
-  //       this.exportGeneralDataByClientsOdessa(this.model, val);
-  //     }
-  //   },
-  // },
   methods: {
-    viewCity(city) {
-      devlog.log('CCCCC', city);
-    },
     filterFn(val, update) {
       if (this.options !== null) {
         // already loaded
@@ -319,10 +309,7 @@ export default {
         this.viewPeriodDate = '';
       }
     },
-    async exportFaxData(select, type, period, {
-      label,
-      value
-    }) {
+    async exportFaxData(select, type, period, city) {
       const { getTimeZone } = await import('src/utils/formatDate');
       const sendData = {
         type: type.value,
@@ -354,8 +341,8 @@ export default {
       devlog.log(sendData);
       this.exportDataToExcel(getUrl(this.urlName), {
         data: sendData,
-        cityId: value,
-      }, `${this.model}_${label}.xlsx`);
+        cityId: _.get(city, 'value'),
+      }, `${this.model}_${city ? _.get(city, 'label') : 'все'}.xlsx`);
       this.show = false;
     },
     async exportGeneralDataByClients(model) {
@@ -363,15 +350,12 @@ export default {
         model,
       }, `${model}.xlsx`);
     },
-    async exportGeneralDataByClientsOdessa(model, {
-      label,
-      value
-    }) {
+    async exportGeneralDataByClientsOdessa(model, city) {
       this.exportDataToExcel(getUrl('exportClientsGeneralDataOdessa'), {
         model,
-        cityId: value,
-        cityName: label,
-      }, `${label}.xlsx`);
+        cityId: _.get(city, 'value'),
+        cityName: _.get(city, 'label'),
+      }, `${this.model}_${city ? _.get(city, 'label') : 'все'}.xlsx`);
     },
   },
 };
