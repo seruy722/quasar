@@ -39,8 +39,7 @@ class DebtsGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 
         if ($this->cityId) {
             $codeIds = Customer::where('city_id', $this->cityId)->pluck('code_id')->unique()->toArray();
-            $clientsIds = Code::whereIn('id', $codeIds)->pluck('id')->unique()->toArray();
-            $data = $data->whereIn('debts.code_client_id', $clientsIds);
+            $data = $data->whereIn('debts.code_client_id', $codeIds);
         }
 
         $query = null;
