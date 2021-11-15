@@ -2,9 +2,10 @@
 
 namespace App\Exports\Debts;
 
+use App\Code;
+use App\Customer;
 use App\Debt;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -16,11 +17,13 @@ class DebtsGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 {
     protected $data;
     protected $enterData;
+    protected $cityId;
     protected $headers = ['Дата', 'Тип', 'Деберц', 'Очки', 'Ком', 'Опл', 'Прим', 'Пол'];
 
-    public function __construct($data)
+    public function __construct($data, $cityId)
     {
         $this->enterData = $data;
+        $this->cityId = $cityId;
     }
 
     public function getArray()
@@ -33,6 +36,13 @@ class DebtsGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
         )
             ->leftJoin('codes', 'codes.id', '=', 'debts.code_client_id')
             ->leftJoin('users', 'users.id', '=', 'debts.user_id');
+
+        if ($this->cityId) {
+            $codeIds = Customer::where('city_id', $this->cityId)->pluck('code_id')->unique()->toArray();
+            $clientsIds = Code::whereIn('id', $codeIds)->pluck('id')->unique()->toArray();
+            $data = $data->whereIn('debts.code_client_id', $clientsIds);
+        }
+
         $query = null;
         if ($this->enterData['type'] === 1 && $this->enterData['day']) {
             $query = $data->where('debts.type', true)->whereDate('debts.created_at', $this->getDateWithTimeZone($this->enterData['day'], 'Y-m-d'))->get();

@@ -14,11 +14,15 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 class OdessaUsersExport implements FromView, ShouldAutoSize, WithTitle
 {
     protected $model;
+    protected $cityId;
+    protected $cityName;
     protected $query;
 
-    public function __construct(string $model)
+    public function __construct(string $model, int $cityId, string $cityName)
     {
         $this->model = $model;
+        $this->cityId = $cityId;
+        $this->cityName = $cityName;
     }
 
     public function view(): View
@@ -31,8 +35,8 @@ class OdessaUsersExport implements FromView, ShouldAutoSize, WithTitle
     public function getCollection()
     {
         $arr = [];
-        $odessaId = Customer::where('city_id', 380)->pluck('code_id')->unique()->toArray();
-        $clientsIds = Code::whereIn('id', $odessaId)->get();
+        $cityId = Customer::where('city_id', $this->cityId)->pluck('code_id')->unique()->toArray();
+        $clientsIds = Code::whereIn('id', $cityId)->get();
 
         foreach ($clientsIds as $item) {
             if ($this->model === 'cargo') {
@@ -64,6 +68,6 @@ class OdessaUsersExport implements FromView, ShouldAutoSize, WithTitle
 
     public function title(): string
     {
-        return 'Одесса';
+        return $this->cityName;
     }
 }

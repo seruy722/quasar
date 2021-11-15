@@ -68,11 +68,36 @@
               color="orange"
               @click="exportGeneralDataByClients(model)"
             />
+            <div class="q-gutter-md row items-start">
+              <q-select
+                filled
+                v-model="city"
+                use-chips
+                label="Сводка по городу"
+                :options="options"
+                @filter="filterFn"
+                style="width: 250px"
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+              <q-btn
+                v-if="city"
+                label="Выгрузить"
+                color="primary"
+                @click="exportGeneralDataByClientsOdessa(model, city)"
+              />
+            </div>
             <q-btn
               label="сводка по клиентам одесса"
               style="margin: 10px auto;"
               color="orange"
-              @click="exportGeneralDataByClientsOdessa(model)"
+              @click="exportGeneralDataByClientsOdessa(model, `одесса ${model === 'debts' ? 'долги': 'карго'}`)"
             />
             <q-btn
               v-show="model === 'debts'"
@@ -132,7 +157,7 @@
             label="Выгрузить"
             color="positive"
             icon="save"
-            @click-base-btn="exportFaxData(selectData,type, period)"
+            @click-base-btn="exportFaxData(selectData,type, period, city)"
           />
         </q-card-actions>
       </q-card>
@@ -150,6 +175,7 @@ import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
 import Separator from 'src/components/Separator.vue';
 import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
+import { getUrl } from 'src/tools/url';
 
 export default {
   name: 'ExportMenuGeneralCargo',
@@ -183,6 +209,8 @@ export default {
   },
   data() {
     return {
+      city: null,
+      options: null,
       show: false,
       showDialogAddCargoPaymentEntry: false,
       selectData: {
@@ -235,7 +263,30 @@ export default {
       ],
     };
   },
+  // watch: {
+  //   city(val) {
+  //     if (!_.isEmpty(val)) {
+  //       this.exportGeneralDataByClientsOdessa(this.model, val);
+  //     }
+  //   },
+  // },
   methods: {
+    viewCity(city) {
+      devlog.log('CCCCC', city);
+    },
+    filterFn(val, update) {
+      if (this.options !== null) {
+        // already loaded
+        update();
+        return;
+      }
+      this.$axios.get(getUrl('cities'))
+        .then(({ data }) => {
+          update(() => {
+            this.options = data;
+          });
+        });
+    },
     onClick(value) {
       this[value] = true;
     },
@@ -268,7 +319,10 @@ export default {
         this.viewPeriodDate = '';
       }
     },
-    async exportFaxData(select, type, period) {
+    async exportFaxData(select, type, period, {
+      label,
+      value
+    }) {
       const { getTimeZone } = await import('src/utils/formatDate');
       const sendData = {
         type: type.value,
@@ -298,23 +352,26 @@ export default {
           .toISOString();
       }
       devlog.log(sendData);
-      const { getUrl } = await import('src/tools/url');
       this.exportDataToExcel(getUrl(this.urlName), {
         data: sendData,
-      }, `${this.model}.xlsx`);
+        cityId: value,
+      }, `${this.model}_${label}.xlsx`);
       this.show = false;
     },
     async exportGeneralDataByClients(model) {
-      const { getUrl } = await import('src/tools/url');
       this.exportDataToExcel(getUrl(this.urlNameClients), {
         model,
       }, `${model}.xlsx`);
     },
-    async exportGeneralDataByClientsOdessa(model) {
-      const { getUrl } = await import('src/tools/url');
+    async exportGeneralDataByClientsOdessa(model, {
+      label,
+      value
+    }) {
       this.exportDataToExcel(getUrl('exportClientsGeneralDataOdessa'), {
         model,
-      }, `${model}.xlsx`);
+        cityId: value,
+        cityName: label,
+      }, `${label}.xlsx`);
     },
   },
 };

@@ -504,12 +504,12 @@ class CargoController extends Controller
 
     public function exportGeneralCargoData(Request $request)
     {
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoGeneralDataExport($request->data), 'transfers.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoGeneralDataExport($request->data, $request->cityId), 'transfers.xlsx');
     }
 
     public function exportGeneralDebtsData(Request $request)
     {
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Debts\DebtsGeneralDataExport($request->data), 'transfers.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Debts\DebtsGeneralDataExport($request->data, $request->cityId), 'transfers.xlsx');
     }
 
     public function exportGeneralDataByClients(Request $request)
@@ -519,7 +519,7 @@ class CargoController extends Controller
 
     public function exportGeneralDataByClientsOdessa(Request $request)
     {
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\OdessaUsersExport($request->model), 'transfers.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\OdessaUsersExport($request->model, $request->cityId, $request->cityName), 'transfers.xlsx');
     }
 
     public function exportReportOdessaData(Request $request)

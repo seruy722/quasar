@@ -3,6 +3,8 @@
 namespace App\Exports\Cargo;
 
 use App\Cargo;
+use App\Code;
+use App\Customer;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -15,11 +17,13 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 {
     protected $data;
     protected $enterData;
+    protected $cityId;
     protected $headers = ['Дата', 'Тип', 'Деберц', 'М', 'В', 'За к', 'За м', 'Очки', 'Скд', 'Опл', 'Кат', 'Фак', 'Прим', 'Пол'];
 
-    public function __construct($enterData)
+    public function __construct($enterData, $cityId)
     {
         $this->enterData = $enterData;
+        $this->cityId = $cityId;
     }
 
     public function getArray()
@@ -37,6 +41,13 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
             ->leftJoin('delivery_methods', 'delivery_methods.id', '=', 'cargos.delivery_method_id')
             ->leftJoin('users', 'users.id', '=', 'cargos.get_pay_user_id')
             ->leftJoin('faxes', 'faxes.id', '=', 'cargos.fax_id');
+
+
+        if ($this->cityId) {
+            $codeIds = Customer::where('city_id', $this->cityId)->pluck('code_id')->unique()->toArray();
+            $clientsIds = Code::whereIn('id', $codeIds)->pluck('id')->unique()->toArray();
+            $data = $data->whereIn('cargos.code_client_id', $clientsIds);
+        }
 
         $codes = $data->pluck('code_client_id')->unique()->toArray();
         $newCodes = [];
@@ -113,7 +124,7 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 //
 //            return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
         $this->data = $res->map(function ($item) {
-            return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'place' => $item->place, 'kg' => $item->kg, 'for_kg' => $item->for_kg, 'for_place' => $item->for_place, 'sum' => $item->sum, 'sale' => $item->sale, 'paid' => $item->paid ? 'Да' : 'Нет', 'category_name' => $item->category_name, 'fax_name' => $item->fax_name, 'notation' => $item->notation, 'user_name'=>$item->user_name];
+            return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'place' => $item->place, 'kg' => $item->kg, 'for_kg' => $item->for_kg, 'for_place' => $item->for_place, 'sum' => $item->sum, 'sale' => $item->sale, 'paid' => $item->paid ? 'Да' : 'Нет', 'category_name' => $item->category_name, 'fax_name' => $item->fax_name, 'notation' => $item->notation, 'user_name' => $item->user_name];
         })->all();
         return $this->data;
     }
