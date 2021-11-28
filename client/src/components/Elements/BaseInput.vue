@@ -9,8 +9,6 @@
     :error-message="viewError()"
     :error="isError"
     :no-error-icon="noErrorIcon"
-    clearable
-    clear-icon="clear"
     :color="color"
     :filled="filled"
     :mask="mask"

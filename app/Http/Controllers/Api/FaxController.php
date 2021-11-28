@@ -204,7 +204,7 @@ class FaxController extends Controller
             $codePlaces = $storeUpdateData->map(function ($item) {
                 return $item->code_place;
             });
-            Cargo::whereIn('code_place', $codePlaces)->delete();
+            Cargo::whereIn('code_place', $codePlaces)->where('fax_id', $faxId)->delete();
         }
         StorehouseData::where('fax_id', $faxId)->update(['in_cargo' => $value]);
 

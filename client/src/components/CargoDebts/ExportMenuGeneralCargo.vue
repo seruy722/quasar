@@ -62,50 +62,22 @@
             <div style="margin-left: 40px;">
               {{ viewPeriodDate }}
             </div>
-            <q-btn
-              label="сводка по клиентам"
-              style="margin: 10px auto;"
-              color="orange"
-              @click="exportGeneralDataByClients(model)"
-            />
             <div class="q-gutter-md row items-start">
-              <q-select
-                filled
+              <SearchSelect
                 v-model="city"
-                use-chips
                 label="Сводка по городу"
-                :options="options"
-                @filter="filterFn"
-                style="width: 250px"
-              >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      No results
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
+                clearable
+                :dense="$q.screen.xs || $q.screen.sm"
+                :func-load-data="getCities"
+                :options="cities"
+              />
               <q-btn
                 v-if="city"
                 label="Выгрузить"
-                color="primary"
-                @click="exportGeneralDataByClientsOdessa(model, city)"
+                color="positive"
+                @click="exportGeneralDataByClientsCity(model, city)"
               />
             </div>
-            <q-btn
-              label="сводка по клиентам одесса"
-              style="margin: 10px auto;"
-              color="orange"
-              @click="exportGeneralDataByClientsOdessa(model, `одесса ${model === 'debts' ? 'долги': 'карго'}`)"
-            />
-            <q-btn
-              v-show="model === 'debts'"
-              label="сводка по комиссии"
-              style="margin: 10px auto;"
-              color="orange"
-              @click="exportGeneralDataByClients('commission')"
-            />
           </div>
           <Dialog
             :dialog="choosePeriodDialog"
@@ -154,9 +126,19 @@
         <Separator />
         <q-card-actions align="right">
           <BaseBtn
-            label="Выгрузить"
+            label="Сводка по клиентам"
+            color="orange"
+            @click-base-btn="exportGeneralDataByClients(model)"
+          />
+          <BaseBtn
+            v-show="model === 'debts'"
+            label="сводка по комиссии"
+            color="orange"
+            @click-base-btn="exportGeneralDataByClients('commission')"
+          />
+          <BaseBtn
+            label="Общее"
             color="positive"
-            icon="save"
             @click-base-btn="exportFaxData(selectData,type, period, city)"
           />
         </q-card-actions>
@@ -175,6 +157,8 @@ import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
 import Separator from 'src/components/Separator.vue';
 import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import { getCities } from 'src/utils/FrequentlyCalledFunctions';
 import { getUrl } from 'src/tools/url';
 
 export default {
@@ -187,6 +171,7 @@ export default {
     Dialog,
     Separator,
     DateWithInputForCargo,
+    SearchSelect,
   },
   mixins: [ExportDataMixin],
   props: {
@@ -263,20 +248,18 @@ export default {
       ],
     };
   },
-  methods: {
-    filterFn(val, update) {
-      if (this.options !== null) {
-        // already loaded
-        update();
-        return;
-      }
-      this.$axios.get(getUrl('cities'))
-        .then(({ data }) => {
-          update(() => {
-            this.options = data;
-          });
-        });
+  computed: {
+    cities() {
+      return this.$store.getters['cities/getCities'];
     },
+  },
+  watch: {
+    city(val) {
+      devlog.log('VAL_CITY', val);
+    },
+  },
+  methods: {
+    getCities,
     onClick(value) {
       this[value] = true;
     },
@@ -350,7 +333,7 @@ export default {
         model,
       }, `${model}.xlsx`);
     },
-    async exportGeneralDataByClientsOdessa(model, city) {
+    async exportGeneralDataByClientsCity(model, city) {
       this.exportDataToExcel(getUrl('exportClientsGeneralDataOdessa'), {
         model,
         cityId: _.get(city, 'value'),
