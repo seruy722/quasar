@@ -333,12 +333,13 @@ export default {
         model,
       }, `${model}.xlsx`);
     },
-    async exportGeneralDataByClientsCity(model, city) {
+    async exportGeneralDataByClientsCity(model, cityId) {
+      const findCity = _.find(this.cities, {value: cityId});
       this.exportDataToExcel(getUrl('exportClientsGeneralDataOdessa'), {
         model,
-        cityId: _.get(city, 'value'),
-        cityName: _.get(city, 'label'),
-      }, `${this.model}_${city ? _.get(city, 'label') : 'все'}.xlsx`);
+        cityId,
+        cityName: _.get(findCity, 'label'),
+      }, `${model}_${findCity ? _.get(findCity, 'label') : 'все'}.xlsx`);
     },
   },
 };
