@@ -1,49 +1,49 @@
 <template>
   <q-dialog
-    v-model="dialog"
-    persistent
-    :maximized="maximizedToggle"
-    transition-show="slide-up"
-    transition-hide="slide-down"
-    data-vue-component-name="DialogSendSms"
+      v-model="dialog"
+      persistent
+      :maximized="maximizedToggle"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+      data-vue-component-name="DialogSendSms"
   >
     <q-card>
       <q-bar>
         <q-space />
 
         <q-btn
-          dense
-          flat
-          icon="minimize"
-          :disable="!maximizedToggle"
-          @click="maximizedToggle = false"
+            dense
+            flat
+            icon="minimize"
+            :disable="!maximizedToggle"
+            @click="maximizedToggle = false"
         >
           <q-tooltip
-            v-if="maximizedToggle"
-            content-class="bg-white text-primary"
+              v-if="maximizedToggle"
+              content-class="bg-white text-primary"
           >
             Minimize
           </q-tooltip>
         </q-btn>
         <q-btn
-          dense
-          flat
-          icon="crop_square"
-          :disable="maximizedToggle"
-          @click="maximizedToggle = true"
+            dense
+            flat
+            icon="crop_square"
+            :disable="maximizedToggle"
+            @click="maximizedToggle = true"
         >
           <q-tooltip
-            v-if="!maximizedToggle"
-            content-class="bg-white text-primary"
+              v-if="!maximizedToggle"
+              content-class="bg-white text-primary"
           >
             Maximize
           </q-tooltip>
         </q-btn>
         <q-btn
-          v-close-popup
-          dense
-          flat
-          icon="close"
+            v-close-popup
+            dense
+            flat
+            icon="close"
         >
           <q-tooltip content-class="bg-white text-primary">
             Close
@@ -60,10 +60,10 @@
 
       <q-card-section>
         <Table
-          :table-properties="faxTableProperties"
-          :table-data="faxTableData"
-          :table-reactive-properties="faxTableReactiveProperties"
-          :title="fax.name"
+            :table-properties="faxTableProperties"
+            :table-data="faxTableData"
+            :table-reactive-properties="faxTableReactiveProperties"
+            :title="fax.name"
         >
           <!--          <template #top-buttons>-->
           <!--            <IconBtn-->
@@ -152,106 +152,106 @@
 
           <template #inner-body="{props}">
             <q-tr
-              :props="props"
-              :class="{table__tr_bold_text: props.row.brand}"
+                :props="props"
+                :class="{table__tr_bold_text: props.row.brand}"
             >
               <q-td auto-width>
                 <q-checkbox
-                  v-model="props.selected"
-                  dense
+                    v-model="props.selected"
+                    dense
                 />
               </q-td>
 
               <q-td
-                key="code_client_name"
-                :props="props"
+                  key="code_client_name"
+                  :props="props"
               >
                 {{ props.row.code_client_name }}
               </q-td>
 
               <q-td
-                key="place"
-                :props="props"
+                  key="place"
+                  :props="props"
               >
                 {{ props.row.place }}
               </q-td>
 
               <q-td
-                key="kg"
-                :props="props"
+                  key="kg"
+                  :props="props"
               >
                 {{ numberFormat(props.row.kg) }}
               </q-td>
 
               <q-td
-                key="for_kg"
-                class="text-bold text-red"
-                :props="props"
+                  key="for_kg"
+                  class="text-bold text-red"
+                  :props="props"
               >
                 {{ numberFormat(props.row.for_kg) }}
               </q-td>
 
               <q-td
-                key="for_place"
-                class="text-bold text-red"
-                :props="props"
+                  key="for_place"
+                  class="text-bold text-red"
+                  :props="props"
               >
                 {{ numberFormat(props.row.for_place) }}
               </q-td>
 
               <q-td
-                key="sum"
-                class="text-bold"
-                :props="props"
+                  key="sum"
+                  class="text-bold"
+                  :props="props"
               >
                 {{ props.row.sum }}
               </q-td>
 
               <q-td
-                key="category_name"
-                :props="props"
+                  key="category_name"
+                  :props="props"
               >
                 {{ props.row.category_name }}
               </q-td>
 
               <q-td
-                key="text"
-                :props="props"
+                  key="text"
+                  :props="props"
               >
                 <q-input v-model="props.row.text" :maxlength="maxLength" counter dense></q-input>
               </q-td>
 
               <q-td
-                key="status"
-                :props="props"
+                  key="status"
+                  :props="props"
               >
                 <q-badge
-                  v-show="props.row.status"
-                  :color="props.row.status === 'OK' ? 'positive' : 'negative'"
+                    v-show="props.row.status"
+                    :color="props.row.status === 'OK' ? 'positive' : 'negative'"
                 >
                   {{ props.row.status }}
                 </q-badge>
               </q-td>
 
               <q-td
-                key="phones"
-                :props="props"
+                  key="phones"
+                  :props="props"
               >
                 <q-input
-                  v-if="!Array.isArray(props.row.selectedPhones)"
-                  v-model="props.row.selectedPhones"
-                  type="tel"
-                  lazy-rules
-                  mask="+38 (###)-###-##-##"
-                  filled
-                  label="Номер телефона"
-                  :rules="[ val => val && val.length > 0 || 'Введите номер телефона', val => val && val.length === 19 || 'Некоректный номер телефона']"
+                    v-if="!Array.isArray(props.row.selectedPhones)"
+                    v-model="props.row.selectedPhones"
+                    type="tel"
+                    lazy-rules
+                    mask="+38 (###)-###-##-##"
+                    filled
+                    label="Номер телефона"
+                    :rules="[ val => val && val.length > 0 || 'Введите номер телефона', val => val && val.length === 19 || 'Некоректный номер телефона']"
                 />
                 <q-option-group
-                  v-model="props.row.selectedPhones"
-                  :options="props.row.phones"
-                  color="green"
-                  type="checkbox"
+                    v-model="props.row.selectedPhones"
+                    :options="props.row.phones"
+                    color="green"
+                    type="checkbox"
                 />
               </q-td>
             </q-tr>
@@ -261,75 +261,114 @@
       <q-card-section v-if="faxTableData.length">
         <q-btn-group outline spread>
           <q-btn
-            v-for="(item,index) in options"
-            :key="index"
-            outline
-            :color="item.color"
-            :label="item.label"
-            @click="addText(item.value)"
+              v-for="(item,index) in options"
+              :key="index"
+              outline
+              :color="item.color"
+              :label="item.label"
+              @click="addText(item.value)"
           />
         </q-btn-group>
         <q-input
-          v-model="text"
-          filled
-          counter
-          label="Сообщение"
-          type="textarea"
-          :maxlength="maxLength"
-          :hint="`Максимальное количество символов ${maxLength}`"
+            v-model="text"
+            filled
+            counter
+            label="Сообщение"
+            type="textarea"
+            :maxlength="maxLength"
+            :hint="`Максимальное количество символов ${maxLength}`"
         />
       </q-card-section>
 
       <q-card-actions
-        v-if="faxTableData.length"
-        align="right"
+          v-if="faxTableData.length"
+          align="right"
       >
         <q-btn
-          :disable="!text"
-          label="Установить"
-          color="primary"
-          @click="viewSms(text, faxTableData, sendSmsDialogData, options)"
+            :disable="!text"
+            label="Просмотр"
+            color="primary"
+            @click="viewSms(text, faxTableData, sendSmsDialogData, options)"
         />
 
         <q-btn
-          :disable="!text"
-          label="Отправить"
-          color="positive"
-          @click="confirmDialog('Отправки сообщений','Отправить сообщение клиентам?')"
+            :disable="!text"
+            label="Отправить"
+            color="positive"
+            @click="confirmDialog('Отправки сообщений','Отправить сообщение клиентам?')"
         />
       </q-card-actions>
       <q-card-section>
         <q-btn
-          label="Отчет"
-          color="primary"
-          @click="getArchiveSms(fax.id)"
+            label="Отчет"
+            color="primary"
+            @click="getArchiveSms(fax.id)"
         />
       </q-card-section>
       <q-card-section>
-        <q-list bordered class="rounded-borders">
+        <q-list bordered separator class="rounded-borders">
+          <q-item>
+            <q-item-section>
+              <q-item-label>Дата отправки</q-item-label>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Количество смс</q-item-label>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Отправитель</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-expansion-item
-            v-for="(item, index) in archive"
-            :key="index"
+              v-for="(item, index) in archive"
+              :key="index"
           >
-            <template v-slot:header>
-              <q-item-section avatar>
-                {{ item[0].created_at }}
+            <template #header>
+              <q-item-section>
+                {{ fullDate(item[0].created_at) }}
               </q-item-section>
 
               <q-item-section>
-                {{ index }}
+                {{ item.length }}
+              </q-item-section>
+              <q-item-section>
+                {{ item[0].user_name }}
               </q-item-section>
             </template>
 
             <q-card>
               <q-card-section>
                 <q-list bordered separator>
-                  <q-item
-                    v-for="(elem, i) in item"
-                    :key="i"
-                    clickable v-ripple>
+                  <q-item>
                     <q-item-section>
-                      <q-item-label>{{ elem.result.req }}</q-item-label>
+                      <q-item-label>Клиент</q-item-label>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>Телефон</q-item-label>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>СМС</q-item-label>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>Статус</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                      v-for="(elem, i) in item"
+                      :key="i"
+                  >
+                    <q-item-section>
+                      <q-item-label>{{ elem.result.req.clientData.code_client_name }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ elem.result.req.recipients[0] }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ elem.result.req.sms.text }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>
+                        {{ elem.result.res.response_code === 801 ? 'Отправлено' : 'Не отправлено' }}
+                      </q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -344,6 +383,7 @@
 
 <script>
 import { getUrl } from 'src/tools/url';
+import { fullDate } from 'src/utils/formatDate';
 import { thingsFilter, numberFormat } from 'src/utils';
 import Table from 'src/components/Elements/Table/Table.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
@@ -376,6 +416,7 @@ export default {
   emits: ['update:show'],
   data() {
     return {
+      status: false,
       archive: {},
       maxLength: 70,
       rate: 0.35,
@@ -514,17 +555,18 @@ export default {
     },
   },
   methods: {
+    fullDate,
     getArchiveSms(id) {
       this.$axios.get(`${getUrl('getArchiveSms')}/${id}`)
-        .then(({ data: { archives } }) => {
-          devlog.log('archives', archives);
-          _.forEach(archives, (item) => {
-            _.forEach(item, (elem) => {
-              elem.result = JSON.parse(elem.result);
+          .then(({ data: { archives } }) => {
+            devlog.log('archives', archives);
+            _.forEach(archives, (item) => {
+              _.forEach(item, (elem) => {
+                elem.result = JSON.parse(elem.result);
+              });
             });
+            this.archive = archives;
           });
-          this.archive = archives;
-        });
     },
     addText(value) {
       const textLength = this.text.length;
@@ -535,11 +577,11 @@ export default {
     },
     async getBalance() {
       return await this.$axios.get(getUrl('getSmsBalance'))
-        .then(({ data: { response_result: { balance } } }) => {
-          devlog.log('balance', balance);
-          this.balance = balance;
-          return balance;
-        });
+          .then(({ data: { response_result: { balance } } }) => {
+            devlog.log('balance', balance);
+            this.balance = balance;
+            return balance;
+          });
     },
     thingsFilter,
     numberFormat,
@@ -579,33 +621,33 @@ export default {
       devlog.log('sendData', sendData);
 
       this.getBalance()
-        .then((balance) => {
-          if (balance > _.sum(_.map(sendData, (elem) => _.size(elem.recipients))) * this.rate) {
-            this.$axios.post(getUrl('sendSms'), {
-              sendData,
-              faxId: this.fax.id,
-              uid: uid(),
-            })
-              .then(({ data }) => {
-                this.text = '';
-                _.forEach(this.faxTableData, (elem) => {
-                  elem.text = '';
-                });
-                this.getBalance();
-                devlog.log('data.response_result', data);
-                _.forEach(data.response_result, (elem) => {
-                  const find = _.find(this.faxTableData, (item) => _.includes(item.selectedPhones, _.first(elem.req.recipients)));
-                  if (find) {
-                    find.status = elem.res.response_status;
-                  }
-                  devlog.log('find', find);
-                });
-                this.showNotif('success', 'Сообщения успешно отправлены!', 'center');
-              });
-          } else {
-            this.showNotif('info', 'Недостаточно средств', 'center');
-          }
-        });
+          .then((balance) => {
+            if (balance > _.sum(_.map(sendData, (elem) => _.size(elem.recipients))) * this.rate) {
+              this.$axios.post(getUrl('sendSms'), {
+                sendData,
+                faxId: this.fax.id,
+                uid: uid(),
+              })
+                  .then(({ data }) => {
+                    this.text = '';
+                    _.forEach(this.faxTableData, (elem) => {
+                      elem.text = '';
+                    });
+                    this.getBalance();
+                    devlog.log('data.response_result', data);
+                    _.forEach(data.response_result, (elem) => {
+                      const find = _.find(this.faxTableData, (item) => _.includes(item.selectedPhones, _.first(elem.req.recipients)));
+                      if (find) {
+                        find.status = elem.res.response_status;
+                      }
+                      devlog.log('find', find);
+                    });
+                    this.showNotif('success', 'Сообщения успешно отправлены!', 'center');
+                  });
+            } else {
+              this.showNotif('info', 'Недостаточно средств', 'center');
+            }
+          });
     },
     confirmDialog(title, message) {
       this.$q.dialog({
@@ -614,15 +656,16 @@ export default {
         cancel: true,
         persistent: true
       })
-        .onOk(() => {
-          this.sendSms(this.faxTableReactiveProperties.selected.length ? this.faxTableReactiveProperties.selected : this.faxTableData);
-        })
-        .onCancel(() => {
-          // console.log('>>>> Cancel')
-        })
-        .onDismiss(() => {
-          // console.log('I am triggered on both OK and Cancel')
-        });
+          .onOk(() => {
+            this.viewSms(this.text, this.faxTableData, this.sendSmsDialogData, this.options);
+            this.sendSms(this.faxTableReactiveProperties.selected.length ? this.faxTableReactiveProperties.selected : this.faxTableData);
+          })
+          .onCancel(() => {
+            // console.log('>>>> Cancel')
+          })
+          .onDismiss(() => {
+            // console.log('I am triggered on both OK and Cancel')
+          });
     },
     sum(data) {
       return _.round((_.get(data, 'for_kg') * _.get(data, 'kg')) + (_.get(data, 'for_place') * _.get(data, 'place')));
@@ -632,11 +675,11 @@ export default {
       const codeIds = _.uniq(_.map(list, 'code_client_id'));
       devlog.log('codeIds', codeIds);
       this.$axios.post(getUrl('codesIds'), { ids: codeIds })
-        .then(({ data: { codesData } }) => {
-          this.sendSmsDialogData = codesData;
-          this.faxTableData = _.cloneDeep(this.values);
-          this.setSmsObj(this.faxTableData, codesData);
-        });
+          .then(({ data: { codesData } }) => {
+            this.sendSmsDialogData = codesData;
+            this.faxTableData = _.cloneDeep(this.values);
+            this.setSmsObj(this.faxTableData, codesData);
+          });
     },
     viewSms(text, data, phonesData, options) {
       const cloneData = _.cloneDeep(data);

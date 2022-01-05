@@ -10,6 +10,7 @@ use App\CodesStatistics;
 use App\Customer;
 use App\Debt;
 use App\Imports\ImportData;
+use App\StorehouseData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
@@ -218,7 +219,10 @@ class CodesController extends Controller
             if ($cargoEntry) {
                 $dt = Carbon::parse($cargoEntry->created_at);
                 if ($dt->diffInDays(Carbon::now()) >= 31) {
-                    array_push($ids, $id);
+                    $entry = StorehouseData::where('code_client_id', $id)->where('fax_id', '>', 0)->where('in_cargo', false)->whereYear('created_at', date('Y'))->first();
+                    if (!$entry) {
+                        array_push($ids, $id);
+                    }
                 }
             }
         }

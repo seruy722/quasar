@@ -131,11 +131,6 @@ export default {
       },
     },
   },
-  watch: {
-    tableData(val) {
-      devlog.log('tableData', val);
-    },
-  },
   created() {
     // const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
     // el.setAttribute('style', `max-height: ${document.documentElement.clientHeight - 100}px`);

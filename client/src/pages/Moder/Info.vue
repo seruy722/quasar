@@ -1,6 +1,6 @@
 <template>
   <q-page
-    data-vue-component-name="Info"
+      data-vue-component-name="InfoCodesActivity"
   >
     <q-card>
       <q-card-section>
@@ -10,22 +10,22 @@
       </q-card-section>
       <q-card-section>
         <q-table
-          dense
-          row-key="id"
-          :rows="infoTableData.data"
-          :columns="infoTableData.columns"
-          :loading="loading"
-          :rows-per-page-options="[20, 50, 100]"
-          :filter="filter"
-          :grid="$q.screen.lt.sm"
+            dense
+            row-key="id"
+            :rows="infoTableData.data"
+            :columns="infoTableData.columns"
+            :loading="loading"
+            :rows-per-page-options="[20, 50, 100]"
+            :filter="filter"
+            :grid="$q.screen.lt.sm"
         >
           <template #header="props">
             <q-tr :props="props">
               <q-th auto-width />
               <q-th
-                v-for="col in props.cols"
-                :key="col.name"
-                :props="props"
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
               >
                 {{ col.label }}
               </q-th>
@@ -34,50 +34,56 @@
 
           <template #item="props">
             <div
-              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+                class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
             >
               <q-expansion-item
-                expand-separator
-                class="shadow-1 overflow-hidden"
-                style="border-radius: 30px;border: 1px solid #26A69A;"
-                :class="`border_${props.row.id ? 'secondary':'grey'}`"
-                :header-class="`bg-${props.row.id ? 'secondary':'grey'} text-white`"
+                  expand-separator
+                  class="shadow-1 overflow-hidden"
+                  style="border-radius: 30px;border: 1px solid #26A69A;"
+                  :class="`border_${props.row.id ? 'secondary':'grey'}`"
+                  :header-class="`bg-${props.row.id ? 'secondary':'grey'} text-white`"
               >
                 <template #header>
                   <q-item-section>
                     <q-item-label lines="5">
-                      {{ props.row.code_place }}
+                      {{ props.row.code_name }}
                     </q-item-label>
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label lines="5">
+                    <q-item-label>
                       {{ props.row.last_active_cargo }}
+                    </q-item-label>
+                  </q-item-section>
+
+                  <q-item-section>
+                    <q-item-label>
+                      {{ props.row.city_name }}
                     </q-item-label>
                   </q-item-section>
                 </template>
 
                 <q-list
-                  separator
-                  dense
+                    separator
+                    dense
                 >
                   <q-item
-                    v-for="col in props.cols.filter(col => col.name !== 'desc' && col.name !== 'phones')"
-                    :key="col.name"
+                      v-for="col in props.cols.filter(col => col.name !== 'desc' && col.name !== 'phones')"
+                      :key="col.name"
                   >
                     <q-item-section>
                       <q-item-label>{{ `${col.label}:` }}</q-item-label>
                     </q-item-section>
                     <q-item-section side>
                       <q-item-label
-                        v-if="col.name === 'code'"
-                        :lines="3"
+                          v-if="col.name === 'code'"
+                          :lines="3"
                       >
                         <q-badge>{{ col.value }}</q-badge>
                       </q-item-label>
                       <q-item-label
-                        v-else
-                        lines="5"
+                          v-else
+                          lines="5"
                       >
                         {{ col.value }}
                       </q-item-label>
@@ -87,15 +93,32 @@
                 <div class="text-center text-bold">
                   Все комментарии
                 </div>
-
+                <q-input
+                    v-model="comment"
+                    placeholder="Комментарий"
+                    filled
+                    autofocus
+                    autogrow
+                    clearable
+                    dense
+                    style="max-width: 500px"
+                />
+                <q-btn
+                    v-show="comment"
+                    label="Добавить"
+                    color="positive"
+                    class="mr-3"
+                    dense
+                    @click="addComment(props.row.id, comment, props.row.comments)"
+                />
                 <q-list
-                  bordered
-                  separator
-                  dense
+                    bordered
+                    separator
+                    dense
                 >
                   <q-item
-                    v-for="(item, index) in props.row.comments"
-                    :key="index"
+                      v-for="(item, index) in props.row.comments"
+                      :key="index"
                   >
                     <q-item-section avatar>
                       {{ formatToDotDate(item.created_at) }}
@@ -113,11 +136,13 @@
 
           <template #top-right>
             <q-input
-              v-model="filter"
-              borderless
-              dense
-              debounce="300"
-              placeholder="Поиск"
+                v-model="filter"
+                borderless
+                dense
+                filled
+                clearable
+                debounce="300"
+                placeholder="Поиск"
             >
               <template #append>
                 <q-icon name="search" />
@@ -129,58 +154,58 @@
             <q-tr :props="props">
               <q-td auto-width>
                 <q-btn
-                  size="sm"
-                  color="accent"
-                  round
-                  dense
-                  :icon="props.expand ? 'expand_less' : 'expand_more'"
-                  @click="props.expand = !props.expand"
+                    size="sm"
+                    color="accent"
+                    round
+                    dense
+                    :icon="props.expand ? 'expand_less' : 'expand_more'"
+                    @click="props.expand = !props.expand"
                 />
               </q-td>
               <q-td
-                v-for="col in props.cols"
-                :key="col.name"
-                :props="props"
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
               >
                 {{ col.value }}
               </q-td>
             </q-tr>
             <q-tr
-              v-show="props.expand"
-              :props="props"
+                v-show="props.expand"
+                :props="props"
             >
               <q-td colspan="100%">
                 <div
-                  class="q-mb-lg"
+                    class="q-mb-lg"
                 >
                   <q-input
-                    v-model="comment"
-                    placeholder="Комментарий"
-                    filled
-                    autofocus
-                    autogrow
-                    clearable
-                    dense
-                    style="max-width: 500px"
+                      v-model="comment"
+                      placeholder="Комментарий"
+                      filled
+                      autofocus
+                      autogrow
+                      clearable
+                      dense
+                      style="max-width: 500px"
                   />
                   <q-btn
-                    v-show="comment"
-                    label="Добавить"
-                    color="positive"
-                    class="mr-3"
-                    dense
-                    @click="addComment(props.row.id, comment, props.row.comments)"
+                      v-show="comment"
+                      label="Добавить"
+                      color="positive"
+                      class="mr-3"
+                      dense
+                      @click="addComment(props.row.id, comment, props.row.comments)"
                   />
                 </div>
 
                 <q-list
-                  bordered
-                  separator
-                  dense
+                    bordered
+                    separator
+                    dense
                 >
                   <q-item
-                    v-for="(item, index) in props.row.comments"
-                    :key="index"
+                      v-for="(item, index) in props.row.comments"
+                      :key="index"
                   >
                     <q-item-section avatar>
                       {{ formatToDotDate(item.created_at) }}
@@ -188,23 +213,16 @@
                     <q-item-section>{{ item.comment }}</q-item-section>
                     <q-item-section side>
                       <q-btn
-                        label="Удалить"
-                        color="negative"
-                        dense
-                        @click="removeCodesComments(item.id, props.row.comments)"
+                          label="Удалить"
+                          color="negative"
+                          dense
+                          @click="removeCodesComments(item.id, props.row.comments)"
                       />
                     </q-item-section>
                   </q-item>
                 </q-list>
               </q-td>
             </q-tr>
-          </template>
-
-          <template #loading>
-            <q-inner-loading
-              showing
-              color="primary"
-            />
           </template>
         </q-table>
       </q-card-section>
@@ -217,7 +235,7 @@ import { formatToDotDate } from 'src/utils/formatDate';
 import { getUrl } from 'src/tools/url';
 
 export default {
-  name: 'Info',
+  name: 'InfoCodesActivity',
   data() {
     return {
       showAddCommentDialog: false,
@@ -303,39 +321,39 @@ export default {
   methods: {
     removeCodesComments(id, comments) {
       this.$axios.get(`${getUrl('removeCodesComments')}/${id}`)
-        .then(() => {
-          devlog.log('comments', comments);
-          const index = _.findIndex(comments, { id });
-          if (index !== -1) {
-            comments.splice(index, 1);
-          }
-        });
+          .then(() => {
+            devlog.log('comments', comments);
+            const index = _.findIndex(comments, { id });
+            if (index !== -1) {
+              comments.splice(index, 1);
+            }
+          });
     },
     addComment(codeId, comment, comments) {
       this.$axios.post(getUrl('addCodesComments'), {
         code_id: codeId,
         comment,
       })
-        .then(({ data: { comment: newComment } }) => {
-          this.comment = '';
-          comments.unshift(newComment);
-        });
+          .then(({ data: { comment: newComment } }) => {
+            this.comment = '';
+            comments.unshift(newComment);
+          });
     },
     fetch() {
       this.loading = true;
       this.$axios.get(getUrl('statisticsForCodes'))
-        .then(({ data: { general } }) => {
-          devlog.log('RESPON', general);
-          const arr = _.map(general, (item) => {
-            item.last_comment = _.get(_.first(item.comments), 'comment');
-            return item;
+          .then(({ data: { general } }) => {
+            devlog.log('RESPON', general);
+            const arr = _.map(general, (item) => {
+              item.last_comment = _.get(_.first(item.comments), 'comment');
+              return item;
+            });
+            this.infoTableData.data = _.orderBy(arr, ['index'], ['asc']);
+            this.loading = false;
+          })
+          .catch(() => {
+            this.loading = false;
           });
-          this.infoTableData.data = _.orderBy(arr, ['index'], ['asc']);
-          this.loading = false;
-        })
-        .catch(() => {
-          this.loading = false;
-        });
     },
     formatToDotDate,
   },

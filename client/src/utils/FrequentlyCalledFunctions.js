@@ -136,7 +136,7 @@ export const setCargoCategoriesData = (data) => {
       name: null,
       place: countSumCollection(dt, ({ place }) => place),
       kg: countSumCollection(dt, ({ kg }) => kg),
-      sum: countSumCollection(data, ({ sum }) => sum),
+      sum: countSumCollection(data, ({ sum }) => sum) || null,
     },
   };
 };

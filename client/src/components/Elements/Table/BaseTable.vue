@@ -8,6 +8,7 @@
     :filter="search"
     :rows-per-page-options="[10, 20, 50, 100, 0]"
     separator="cell"
+    :hide-header="hideHeader"
     dense
     data-vue-component-name="BaseTable"
   >
@@ -47,6 +48,10 @@ export default {
     title: {
       type: String,
       default: 'Таблица',
+    },
+    hideHeader: {
+      type: Boolean,
+      default: false,
     },
     entryData: {
       type: Array,

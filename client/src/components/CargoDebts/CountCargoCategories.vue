@@ -56,7 +56,7 @@
         <q-item-section v-if="footer.for_kg > -1">
           <q-item-label />
         </q-item-section>
-        <q-item-section>
+        <q-item-section v-if="footer.sum !== null">
           <q-item-label class="text-bold">
             <q-badge>{{ numberFormat(footer.sum) }}</q-badge>
           </q-item-label>

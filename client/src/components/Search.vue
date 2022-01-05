@@ -5,7 +5,7 @@
     clearable
     clear-icon="close"
     :value="value"
-    :placeholder="$t('search')"
+    placeholder="Поиск"
     data-vue-component-name="Search"
     @input="$emit('input', $event)"
     @focus="focusInput"
