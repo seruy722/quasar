@@ -77,7 +77,7 @@
             </q-list>
             <div v-else>
               <q-list
-                  v-for="(elem, index) in item.children"
+                  v-for="(itemm, index) in item.children"
                   :key="index"
                   bordered
                   separator
@@ -93,13 +93,13 @@
                   </q-item-section>
                   <q-item-section side>
                     <q-item-label v-if="el.field === 'things'">
-                      {{ thingsFilter(item[el.field]) }}
+                      {{ thingsFilter(itemm[el.field]) }}
                     </q-item-label>
                     <q-item-label v-else-if="el.field === 'created_at'">
-                      {{ formatToDotDate(item[el.field]) }}
+                      {{ formatToDotDate(itemm[el.field]) }}
                     </q-item-label>
                     <q-item-label v-else>
-                      {{ item[el.field] }}
+                      {{ itemm[el.field] }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
