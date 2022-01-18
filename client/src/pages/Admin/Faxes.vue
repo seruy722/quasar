@@ -1,61 +1,62 @@
 <template>
   <q-page
-    data-vue-component-name="Faxes"
+      data-vue-component-name="AdminFaxesComponent"
   >
     <PullRefresh @refresh="refresh">
       <Table
-        :table-properties="faxesTableProperties"
-        :table-data="faxes"
-        :table-reactive-properties="faxesTableReactiveProperties"
-        title="Факсы"
+          :table-properties="faxesTableProperties"
+          :table-data="faxes"
+          :table-reactive-properties="faxesTableReactiveProperties"
+          :loading="loading"
+          title="Факсы"
       >
         <template #top-buttons>
           <IconBtn
-            v-show="faxesTableReactiveProperties.selected.length"
-            color="negative"
-            icon="delete"
-            tooltip="Удалить"
-            class="q-ml-md"
-            @icon-btn-click="deleteFaxItems(faxesTableReactiveProperties.selected)"
+              v-show="faxesTableReactiveProperties.selected.length"
+              color="negative"
+              icon="delete"
+              tooltip="Удалить"
+              class="q-ml-md"
+              @icon-btn-click="deleteFaxItems(faxesTableReactiveProperties.selected)"
           />
 
           <UpdateBtn
-            @update-btn-click="refresh"
+              @update-btn-click="refresh"
           />
           <IconBtn
-            v-show="faxesTableReactiveProperties.selected.length > 1"
-            color="orange"
-            icon="gamepad"
-            tooltip="Обьеденить"
-            @icon-btn-click="combineFaxes(faxesTableReactiveProperties.selected)"
+              v-show="faxesTableReactiveProperties.selected.length > 1"
+              color="orange"
+              icon="gamepad"
+              tooltip="Обьеденить"
+              @icon-btn-click="combineFaxes(faxesTableReactiveProperties.selected)"
           />
           <IconBtn
-            dense
-            icon="flight_land"
-            color="accent"
-            tooltip="Не доставленные места"
-            @icon-btn-click="showDialogNotDeliveredCargo = true"
+              dense
+              icon="flight_land"
+              color="accent"
+              tooltip="Не доставленные места"
+              @icon-btn-click="showDialogNotDeliveredCargo = true"
           />
           <Menu :items="['Факс', 'Перевожчика']" />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
         <template #inner-item="{props}">
           <div
-            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-            :style="props.selected ? 'transform: scale(0.95);' : ''"
+              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+              :style="props.selected ? 'transform: scale(0.95);' : ''"
           >
             <q-expansion-item
-              expand-separator
-              class="shadow-1 overflow-hidden"
-              :header-class="`${props.row.uploaded_to_cargo ? 'bg-green' : 'bg-red'} text-white`"
-              :style="`border-radius: 30px;border: 1px solid ${props.row.uploaded_to_cargo ? 'green' : 'red'};`"
-              expand-icon-class="text-white"
+                expand-separator
+                class="shadow-1 overflow-hidden"
+                :header-class="`${props.row.uploaded_to_cargo ? 'bg-green' : 'bg-red'} text-white`"
+                :style="`border-radius: 30px;border: 1px solid ${props.row.uploaded_to_cargo ? 'green' : 'red'};`"
+                expand-icon-class="text-white"
             >
               <template #header>
                 <q-item-section avatar>
                   <q-checkbox
-                    v-model="props.selected"
-                    dense
+                      v-model="props.selected"
+                      dense
                   />
                 </q-item-section>
 
@@ -67,27 +68,27 @@
               </template>
 
               <List
-                separator
-                dense
-                @click-list="viewEditDialog(props)"
+                  separator
+                  dense
+                  @click-list="viewEditDialog(props)"
               >
                 <q-item
-                  v-for="col in props.cols.filter(col => col.name !== 'desc')"
-                  :key="col.name"
+                    v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                    :key="col.name"
                 >
                   <q-item-section>
                     <q-item-label>{{ `${col.label}:` }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-item-label
-                      v-if="col.field === 'status'"
+                        v-if="col.field === 'status'"
                     >
                       {{ statusFilter(col.value) }}
                     </q-item-label>
 
                     <q-item-label
-                      v-else-if="col.field === 'notation'"
-                      :lines="4"
+                        v-else-if="col.field === 'notation'"
+                        :lines="4"
                     >
                       {{ col.value }}
                     </q-item-label>
@@ -100,16 +101,16 @@
                   <q-item-section>
                     <div class="row justify-around">
                       <BaseBtn
-                        label="История"
-                        color="info"
-                        style="max-width: 100px;"
-                        @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"
+                          label="История"
+                          color="info"
+                          style="max-width: 100px;"
+                          @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"
                       />
                       <BaseBtn
-                        label="Перейти"
-                        color="info"
-                        style="max-width: 100px;"
-                        @click-base-btn="goToFaxData(props.row)"
+                          label="Перейти"
+                          color="info"
+                          style="max-width: 100px;"
+                          @click-base-btn="goToFaxData(props.row)"
                       />
                     </div>
                   </q-item-section>
@@ -120,32 +121,32 @@
         </template>
         <template #inner-body="{props}">
           <q-tr
-            :props="props"
-            :class="[props.row.uploaded_to_cargo ? 'table__tr_green_bg' : 'table__tr_red_bg']"
-            class="cursor-pointer"
-            @click.stop="viewEditDialog(props, $event)"
+              :props="props"
+              :class="[props.row.uploaded_to_cargo ? 'table__tr_green_bg' : 'table__tr_red_bg']"
+              class="cursor-pointer"
+              @click.stop="viewEditDialog(props, $event)"
           >
             <q-td
-              auto-width
-              class="select_checkbox"
+                auto-width
+                class="select_checkbox"
             >
               <q-checkbox
-                v-model="props.selected"
-                dense
+                  v-model="props.selected"
+                  dense
               />
             </q-td>
             <q-td
-              key="name"
-              class="fax_name"
-              :props="props"
-              @click.stop="goToFaxData(props.row)"
+                key="name"
+                class="fax_name"
+                :props="props"
+                @click.stop="goToFaxData(props.row)"
             >
               {{ props.row.name }}
             </q-td>
 
             <q-td
-              key="status"
-              :props="props"
+                key="status"
+                :props="props"
             >
               <q-badge>
                 {{ statusFilter(props.row.status) }}
@@ -153,57 +154,57 @@
             </q-td>
 
             <q-td
-              key="transporter_name"
-              :props="props"
+                key="transporter_name"
+                :props="props"
             >
               {{ props.row.transporter_name }}
             </q-td>
 
             <q-td
-              key="transport_name"
-              :props="props"
+                key="transport_name"
+                :props="props"
             >
               {{ props.row.transport_name }}
             </q-td>
 
             <q-td
-              key="departure_date"
-              :props="props"
+                key="departure_date"
+                :props="props"
             >
               {{ props.row.departure_date }}
             </q-td>
 
             <q-td
-              key="arrival_date"
-              :props="props"
+                key="arrival_date"
+                :props="props"
             >
               {{ props.row.arrival_date }}
             </q-td>
 
             <q-td
-              key="user_name"
-              :props="props"
+                key="user_name"
+                :props="props"
             >
               {{ props.row.user_name }}
             </q-td>
 
             <q-td
-              key="notation"
-              :props="props"
+                key="notation"
+                :props="props"
             >
               {{ props.row.notation }}
             </q-td>
 
             <q-td
-              key="up_to_cargo"
-              :props="props"
-              class="upload_to_cargo"
-              @click.stop="uploadToCargo(props.row)"
+                key="up_to_cargo"
+                :props="props"
+                class="upload_to_cargo"
+                @click.stop="uploadToCargo(props.row)"
             >
               <q-icon
-                dense
-                :name="!props.row.uploaded_to_cargo ? 'vertical_align_bottom':'vertical_align_top'"
-                @click.stop="uploadToCargo(props.row)"
+                  dense
+                  :name="!props.row.uploaded_to_cargo ? 'vertical_align_bottom':'vertical_align_top'"
+                  @click.stop="uploadToCargo(props.row)"
               />
             </q-td>
           </q-tr>
@@ -211,16 +212,16 @@
       </Table>
     </PullRefresh>
     <q-list
-      separator
-      bordered
-      dense
-      style="max-width: 450px;margin: 20px auto;"
+        separator
+        bordered
+        dense
+        style="max-width: 450px;margin: 20px auto;"
     >
       <q-expansion-item
-        v-for="({status, count, data}, index) in faxesStatusData"
-        :key="index"
-        expand-separator
-        class="shadow-1 overflow-hidden"
+          v-for="({status, count, data}, index) in faxesStatusData"
+          :key="index"
+          expand-separator
+          class="shadow-1 overflow-hidden"
       >
         <template #header>
           <q-item-section>
@@ -234,13 +235,13 @@
         </template>
 
         <q-list
-          separator
-          bordered
-          dense
+            separator
+            bordered
+            dense
         >
           <q-item
-            v-for="(elem, i) in data"
-            :key="i"
+              v-for="(elem, i) in data"
+              :key="i"
           >
             <q-item-section>
               <q-item-label>{{ `${i + 1}. ${elem.name}` }}</q-item-label>
@@ -253,23 +254,23 @@
       </q-expansion-item>
     </q-list>
     <DialogAddFax
-      v-model:show-dialog="showFaxDialog"
-      v-model:entry-data="localFaxesEditData"
+        v-model:show-dialog="showFaxDialog"
+        v-model:entry-data="localFaxesEditData"
     />
     <Dialog
-      :dialog="dialogHistory"
-      :persistent="true"
-      :maximized="true"
+        :dialog="dialogHistory"
+        :persistent="true"
+        :maximized="true"
     >
       <q-card style="max-width: 600px;">
         <q-bar>
           <q-space />
           <IconBtn
-            flat
-            dense
-            icon="close"
-            tooltip="Закрыть"
-            @icon-btn-click="dialogHistory = false"
+              flat
+              dense
+              icon="close"
+              tooltip="Закрыть"
+              @icon-btn-click="dialogHistory = false"
           />
         </q-bar>
 
@@ -279,9 +280,9 @@
       </q-card>
     </Dialog>
     <DialogChooseDate
-      v-model:show-dialog="showDialogChooseDate"
-      v-model:date="dialogChooseDateData"
-      @set-date="setDateFromDialog(dialogChooseDateData)"
+        v-model:show-dialog="showDialogChooseDate"
+        v-model:date="dialogChooseDateData"
+        @set-date="setDateFromDialog(dialogChooseDateData)"
     />
     <DialogNotDeliveredCargo v-model:show="showDialogNotDeliveredCargo" />
   </q-page>
@@ -307,7 +308,7 @@ import DialogChooseDate from 'src/components/Dialogs/DialogChooseDate.vue';
 import DialogNotDeliveredCargo from 'src/components/CargoDebts/Dialogs/DialogNotDeliveredCargo.vue';
 
 export default {
-  name: 'Faxes',
+  name: 'AdminFaxesComponent',
   components: {
     Table,
     List,
@@ -325,6 +326,7 @@ export default {
   mixins: [showNotif],
   data() {
     return {
+      loading: false,
       showDialogNotDeliveredCargo: false,
       dialogHistory: false,
       showFaxDialog: false,
@@ -444,11 +446,11 @@ export default {
     },
   },
   mounted() {
-    this.$q.loading.show();
+    this.loading = true;
     Promise.all([getFaxes(this.$store)])
-      .finally(() => {
-        this.$q.loading.hide();
-      });
+        .finally(() => {
+          this.loading = false;
+        });
   },
   methods: {
     numberFormat,
@@ -457,7 +459,7 @@ export default {
       devlog.log('setDateFromDialog', date);
       if (date) {
         this.dialogChooseDataForSend.date = addTime(date)
-          .toISOString();
+            .toISOString();
         this.uploadToCargoFinish(this.dialogChooseDataForSend);
       }
     },
@@ -486,18 +488,18 @@ export default {
           handler: () => {
             this.$q.loading.show();
             this.$axios.post(getUrl('deleteFax'), { ids: selectedIds })
-              .then(({ data }) => {
-                if (data.status) {
-                  this.faxesTableReactiveProperties.selected = [];
-                  this.$store.dispatch('faxes/deleteFaxes', selectedIds);
+                .then(({ data }) => {
+                  if (data.status) {
+                    this.faxesTableReactiveProperties.selected = [];
+                    this.$store.dispatch('faxes/deleteFaxes', selectedIds);
+                    this.$q.loading.hide();
+                    this.showNotif('success', 'Данные успешно удалены.', 'center');
+                  }
+                })
+                .catch((errors) => {
                   this.$q.loading.hide();
-                  this.showNotif('success', 'Данные успешно удалены.', 'center');
-                }
-              })
-              .catch((errors) => {
-                this.$q.loading.hide();
-                devlog.log(errors);
-              });
+                  devlog.log(errors);
+                });
           },
         },
       ]);
@@ -525,16 +527,16 @@ export default {
         value,
         date,
       })
-        .then(({ data: { fax } }) => {
-          this.$q.loading.hide();
-          this.$store.dispatch('faxes/updateFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
-          this.showDialogChooseDate = false;
-          this.showNotif('success', fax.uploaded_to_cargo ? 'Данные успешно загружены' : 'Данные успешно выгружены', 'center');
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          devlog.error('Ошибка загрузки факса в карго');
-        });
+          .then(({ data: { fax } }) => {
+            this.$q.loading.hide();
+            this.$store.dispatch('faxes/updateFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
+            this.showDialogChooseDate = false;
+            this.showNotif('success', fax.uploaded_to_cargo ? 'Данные успешно загружены' : 'Данные успешно выгружены', 'center');
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            devlog.error('Ошибка загрузки факса в карго');
+          });
     },
     uploadToCargo({
                     id,
@@ -587,38 +589,38 @@ export default {
     async getFaxesHistory(id, cols) {
       this.$q.loading.show();
       await this.$axios.get(`${getUrl('faxHistory')}/${id}`)
-        .then(({ data: { faxHistory } }) => {
-          if (!_.isEmpty(faxHistory)) {
+          .then(({ data: { faxHistory } }) => {
+            if (!_.isEmpty(faxHistory)) {
+              this.$q.loading.hide();
+              this.dialogHistory = true;
+              this.faxHistoryData = prepareHistoryData(cols, faxHistory);
+              this.faxHistoryData.cols.uploaded_to_cargo = 'Загрузка';
+              this.faxHistoryData.historyData = setFormatedDate(this.faxHistoryData.historyData, ['created_at', 'arrival_date', 'departure_date']);
+              devlog.log('storehouseDataHistory', faxHistory);
+            } else {
+              this.$q.loading.hide();
+              this.showNotif('info', 'По этой записи нет истории.', 'center');
+            }
+          })
+          .catch(() => {
             this.$q.loading.hide();
-            this.dialogHistory = true;
-            this.faxHistoryData = prepareHistoryData(cols, faxHistory);
-            this.faxHistoryData.cols.uploaded_to_cargo = 'Загрузка';
-            this.faxHistoryData.historyData = setFormatedDate(this.faxHistoryData.historyData, ['created_at', 'arrival_date', 'departure_date']);
-            devlog.log('storehouseDataHistory', faxHistory);
-          } else {
-            this.$q.loading.hide();
-            this.showNotif('info', 'По этой записи нет истории.', 'center');
-          }
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          devlog.error('Ошибка при получении данных истории.');
-        });
+            devlog.error('Ошибка при получении данных истории.');
+          });
     },
     async refresh(done) {
       if (!done) {
         this.$q.loading.show();
       }
       this.$store.dispatch('faxes/fetchFaxes')
-        .then(() => {
-          callFunction(done);
-          this.$q.loading.hide();
-          this.showNotif('success', 'Данные успешно обновлены.', 'center');
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          callFunction(done);
-        });
+          .then(() => {
+            callFunction(done);
+            this.$q.loading.hide();
+            this.showNotif('success', 'Данные успешно обновлены.', 'center');
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            callFunction(done);
+          });
     },
     combineFaxes(selectedFaxes) {
       const faxNames = _.map(selectedFaxes, 'name');
@@ -638,19 +640,19 @@ export default {
             handler: () => {
               this.$q.loading.show();
               this.$axios.post(getUrl('combineFaxes'), selectedFaxes)
-                .then(({ data: { fax } }) => {
-                  devlog.log('COM_DATA', fax);
-                  this.$store.dispatch('faxes/addFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
-                  this.faxesTableReactiveProperties.selected = [];
-                  this.$q.loading.hide();
-                  this.showNotif('success', 'Факсы успешно обьеденены.', 'center');
-                })
-                .catch((errors) => {
-                  devlog.error('Ошибка запроса combineFaxes', errors);
-                  this.showNotif('error', 'Произошла ошибка при обьеденении факсов. Обновите страницу пожалуйста.', 'center');
-                  this.faxesTableReactiveProperties.selected = [];
-                  this.$q.loading.hide();
-                });
+                  .then(({ data: { fax } }) => {
+                    devlog.log('COM_DATA', fax);
+                    this.$store.dispatch('faxes/addFax', setFormatedDate(fax, ['departure_date', 'arrival_date']));
+                    this.faxesTableReactiveProperties.selected = [];
+                    this.$q.loading.hide();
+                    this.showNotif('success', 'Факсы успешно обьеденены.', 'center');
+                  })
+                  .catch((errors) => {
+                    devlog.error('Ошибка запроса combineFaxes', errors);
+                    this.showNotif('error', 'Произошла ошибка при обьеденении факсов. Обновите страницу пожалуйста.', 'center');
+                    this.faxesTableReactiveProperties.selected = [];
+                    this.$q.loading.hide();
+                  });
             },
           },
         ]);

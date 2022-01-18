@@ -8,6 +8,7 @@
         :table-properties="transferTableProperties"
         :table-data="allTransfers"
         :table-reactive-properties="transferTableReactiveProperties"
+        :loading="loading"
         title="Переводы"
       >
         <template #top-buttons>
@@ -344,6 +345,7 @@ export default {
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
   data() {
     return {
+      loading: false,
       dialogStatistics: false,
       localProps: {},
       showCodeDialog: false,
@@ -600,7 +602,7 @@ export default {
   mounted() {
     this.getTransfers();
     const pusher = new Pusher('47b7c9db3b44606e887f', {
-      cluster: 'eu'
+      cluster: 'eu',
     });
 
     const channel = pusher.subscribe('transfer');
@@ -653,15 +655,15 @@ export default {
         }
       }
     },
-    async getTransfers() {
+    getTransfers() {
       if (_.isEmpty(this.allTransfers)) {
-        this.$q.loading.show();
-        await this.$store.dispatch('transfers/fetchTransfers')
-          .finally(() => {
-            this.$q.loading.hide();
-          });
+        this.loading = true;
+        this.$store.dispatch('transfers/fetchTransfers')
+            .finally(() => {
+              this.loading = false;
+            });
       } else {
-        await this.$store.dispatch('transfers/fetchNewAndChangedTransfers');
+        this.$store.dispatch('transfers/fetchNewAndChangedTransfers');
       }
     },
     async refresh(done) {

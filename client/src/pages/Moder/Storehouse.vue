@@ -1,12 +1,13 @@
 <template>
   <q-page
-    data-vue-component-name="Storehouse"
+    data-vue-component-name="StorehouseComponent"
   >
     <PullRefresh @refresh="refresh">
       <Table
         :table-properties="storehouseTableProperties"
         :table-data="storehouseData"
         :table-reactive-properties="storehouseTableReactiveProperties"
+        :loading="loading"
         title="Склад"
       >
         <template #top-buttons>
@@ -312,7 +313,7 @@ import StorehouseInfo from 'src/components/Storehouse/StorehouseInfo.vue';
 import UploadExcelFileForCodesPlaces from 'src/components/Storehouse/UploadExcelFileForCodesPlaces.vue';
 
 export default {
-  name: 'Storehouse',
+  name: 'StorehouseComponent',
   components: {
     Table,
     Dialog,
@@ -332,6 +333,7 @@ export default {
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {
     return {
+      loading: false,
       dialogStorehouseInfo: false,
       showMoveToFaxDialog: false,
       localStorehouseEditData: {},
@@ -429,10 +431,10 @@ export default {
     },
   },
   mounted() {
-    this.$q.loading.show();
+    this.loading = true;
     Promise.all([getStorehouseTableData(this.$store)])
       .then(() => {
-        this.$q.loading.hide();
+        this.loading = false;
       });
   },
   methods: {

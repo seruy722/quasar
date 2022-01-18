@@ -227,7 +227,7 @@ export const combineStoreHouseData = ((data) => {
     _.forEach(elem, (el) => {
       _.forEach(_.values(el), (arr) => {
         _.forEach((arr), (arr2) => {
-          devlog.log('ARR_EKL', arr2);
+          // devlog.log('ARR_EKL', arr2);
           result.push(_.assign({}, _.first(arr2), {
             kg: _.sumBy(arr2, 'kg'),
             place: _.sumBy(arr2, 'place'),
@@ -275,7 +275,7 @@ export const combineCargoData = ((data) => {
     _.forEach(elem, (el) => {
       _.forEach(_.values(el), (arr) => {
         _.forEach((arr), (arr2) => {
-          devlog.log('ARR_EKL', arr2);
+          // devlog.log('ARR_EKL', arr2);
           result.push(_.assign({}, _.first(arr2), {
             kg: _.sumBy(arr2, 'kg'),
             place: _.sumBy(arr2, 'place'),

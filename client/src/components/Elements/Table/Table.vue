@@ -1,28 +1,29 @@
 <template>
   <q-table
-    v-model:pagination="pagination"
-    v-model:selected="selected"
-    :rows="tableData"
-    :columns="tableProperties.columns"
-    :visible-columns="tableReactiveProperties.visibleColumns"
-    :selection="tableProperties.selection || 'multiple'"
-    :grid="$q.screen.lt.sm || grid"
-    dense
-    row-key="id"
-    :filter="search"
-    :filter-method="filterMethod"
-    :rows-per-page-options="[10, 20, 50, 100, 0]"
-    :separator="tableProperties.separator || 'cell'"
-    :hide-bottom="tableProperties.hideBottom"
-    :virtual-scroll-sticky-start="48"
-    :sort-method="customSort"
-    class="my-sticky-virtscroll-table"
-    virtual-scroll
-    data-vue-component-name="Table"
+      v-model:pagination="pagination"
+      v-model:selected="selected"
+      :rows="tableData"
+      :columns="tableProperties.columns"
+      :visible-columns="tableReactiveProperties.visibleColumns"
+      :selection="tableProperties.selection || 'multiple'"
+      :grid="$q.screen.lt.sm || grid"
+      :loading="loading"
+      dense
+      row-key="id"
+      :filter="search"
+      :filter-method="filterMethod"
+      :rows-per-page-options="[10, 20, 50, 100, 0]"
+      :separator="tableProperties.separator || 'cell'"
+      :hide-bottom="tableProperties.hideBottom"
+      :virtual-scroll-sticky-start="48"
+      :sort-method="customSort"
+      class="my-sticky-virtscroll-table"
+      virtual-scroll
+      data-vue-component-name="Table"
   >
     <template
-      v-if="!tableProperties.hideTop"
-      #top="props"
+        v-if="!tableProperties.hideTop"
+        #top="props"
     >
       <div class="col-4 q-mr-md text-bold">
         {{ title }}
@@ -33,34 +34,34 @@
       <Search v-model="search" />
 
       <BaseSelect
-        v-model="searchField"
-        label="Поле"
-        style="min-width: 110px;padding-bottom: 0;"
-        dense
-        options-dense
-        :options="searchOptionsFields"
+          v-model="searchField"
+          label="Поле"
+          style="min-width: 110px;padding-bottom: 0;"
+          dense
+          options-dense
+          :options="searchOptionsFields"
       />
 
       <q-space />
       <IconBtn
-        :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-        :tooltip="$t(props.inFullscreen ? 'hide' : 'reveal')"
-        @icon-btn-click="props.toggleFullscreen"
+          :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+          :tooltip="$t(props.inFullscreen ? 'hide' : 'reveal')"
+          @icon-btn-click="props.toggleFullscreen"
       />
       <slot name="top-buttons" />
     </template>
 
     <template #body="props">
       <slot
-        name="inner-body"
-        :props="props"
+          name="inner-body"
+          :props="props"
       />
     </template>
 
     <template #item="props">
       <slot
-        name="inner-item"
-        :props="props"
+          name="inner-item"
+          :props="props"
       />
     </template>
 
@@ -82,7 +83,7 @@ export default {
   name: 'Table',
   components: {
     Search: defineAsyncComponent(() => import('src/components/Search.vue')),
-    IconBtn: defineAsyncComponent(() => import('components/Buttons/IconBtn.vue')),
+    IconBtn: defineAsyncComponent(() => import('src/components/Buttons/IconBtn.vue')),
     BaseSelect: defineAsyncComponent(() => import('src/components/Elements/BaseSelect.vue')),
   },
   props: {
@@ -110,6 +111,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    dataSearch: {
+      type: Object,
+      default: () => ({}),
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -132,6 +141,11 @@ export default {
     },
   },
   created() {
+    devlog.log('dataSearch', this.dataSearch);
+    if (!_.isEmpty(this.dataSearch)) {
+      this.search = this.dataSearch.value;
+      this.searchField = this.dataSearch.field;
+    }
     // const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
     // el.setAttribute('style', `max-height: ${document.documentElement.clientHeight - 100}px`);
     // devlog.log('el', el);
@@ -155,8 +169,8 @@ export default {
       devlog.log('newCols', newCols);
       const lowerTerms = terms ? terms.toLowerCase() : '';
       const result = rows.filter(
-        (row) => newCols.some((col) => (`${cellValue(col, row)} `).toLowerCase()
-          .indexOf(lowerTerms) !== -1),
+          (row) => newCols.some((col) => (`${cellValue(col, row)} `).toLowerCase()
+              .indexOf(lowerTerms) !== -1),
       );
       devlog.log('resultSerarch', result);
       // this.$emit('update:searchData', result);

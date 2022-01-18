@@ -30,7 +30,7 @@
                   <q-icon
                       name="link"
                       size="sm"
-                      @click.stop="$router.push({})"
+                      @click.stop="$router.push({ name: 'fax', params: { id: item.fax_id, searchField: 'code_client_name', searchValue: item.code_client_name }})"
                   />
                 </q-item-label>
               </q-item-section>

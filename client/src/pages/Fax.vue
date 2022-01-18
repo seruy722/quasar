@@ -1,12 +1,14 @@
 <template>
   <q-page
-    data-vue-component-name="Fax"
+    data-vue-component-name="FaxComponent"
   >
     <Table
       :table-properties="faxTableProperties"
       :table-data="faxTableData"
       :table-reactive-properties="faxTableReactiveProperties"
       :title="currentFaxItem.name"
+      :data-search="dataSearchFax"
+      :loading="loading"
     >
       <template #top-buttons>
         <IconBtn
@@ -592,7 +594,7 @@ import DialogMoveToFax from 'src/components/Dialogs/DialogMoveToFax.vue';
 import DialogSendSms from 'src/components/Dialogs/DialogSendSms.vue';
 
 export default {
-  name: 'Fax',
+  name: 'FaxComponent',
   components: {
     Table,
     IconBtn,
@@ -616,6 +618,8 @@ export default {
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {
     return {
+      loading: false,
+      dataSearchFax: {},
       showSendSmsDialog: false,
       sendSmsDialogData: [],
       isTransfer: false,
@@ -805,11 +809,17 @@ export default {
       immediate: true,
     },
   },
+  created() {
+    if (this.$route.params.searchField) {
+      devlog.log('this.$route.params.search', this.$route.params);
+      this.dataSearchFax = { field: this.$route.params.searchField, value: this.$route.params.searchValue };
+    }
+  },
   mounted() {
-    this.$q.loading.show();
+    this.loading = true;
     Promise.all([this.getFax(this.$route.params.id), this.getFaxData(this.$route.params.id), getCategories(this.$store), getClientCodes(this.$store), getDeliveryMethodsList(this.$store)])
       .then(() => {
-        this.$q.loading.hide();
+        this.loading = false;
       });
   },
   beforeUnmount() {

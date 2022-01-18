@@ -1,28 +1,30 @@
 <template>
   <q-input
-    dense
-    debounce="500"
-    clearable
-    clear-icon="close"
-    :value="value"
-    placeholder="Поиск"
-    data-vue-component-name="Search"
-    @input="$emit('input', $event)"
-    @focus="focusInput"
-    @blur="blurInput"
+      dense
+      debounce="500"
+      clearable
+      clear-icon="close"
+      :value="value"
+      placeholder="Поиск"
+      data-vue-component-name="SearchComponent"
+      @input="$emit('input', $event)"
+      @focus="focusInput"
+      @blur="blurInput"
   >
     <template #append>
       <q-icon
-        name="search"
-        :color="iconColor"
+          name="search"
+          :color="iconColor"
       />
     </template>
   </q-input>
 </template>
 
 <script>
+import { ref } from 'vue';
+
 export default {
-  name: 'Search',
+  name: 'SearchComponent',
   props: {
     value: {
       type: String,
@@ -30,18 +32,22 @@ export default {
     },
   },
   emits: ['input'],
-  data() {
+  setup() {
+    const iconColor = ref('');
+
+    const focusInput = (() => {
+      iconColor.value = 'primary';
+    });
+    const blurInput = (() => {
+      iconColor.value = '';
+    });
+
     return {
-      iconColor: '',
+      text: ref(''),
+      iconColor,
+      focusInput,
+      blurInput,
     };
-  },
-  methods: {
-    focusInput() {
-      this.iconColor = 'primary';
-    },
-    blurInput() {
-      this.iconColor = '';
-    },
   },
 };
 </script>
