@@ -1,6 +1,6 @@
 <template>
   <div
-    data-vue-component-name="Drafts"
+    data-vue-component-name="DraftsComponent"
     class="q-pa-md"
   >
     <div>
@@ -166,13 +166,13 @@
       >
     </div>
 
-    <div>
-      Reg
-      <q-btn
-        label="REGIST"
-        @click="reg"
-      />
-    </div>
+<!--    <div>-->
+<!--      Reg-->
+<!--      <q-btn-->
+<!--        label="REGIST"-->
+<!--        @click="reg"-->
+<!--      />-->
+<!--    </div>-->
   </div>
 </template>
 
@@ -185,7 +185,7 @@ import UploadFileToServer from 'src/components/Upload/UploadFileToServer.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 
 export default {
-  name: 'Drafts',
+  name: 'DraftsComponent',
   components: {
     Dialog,
     AddCode,
