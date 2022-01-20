@@ -1,12 +1,13 @@
 <template>
   <div
-    data-vue-component-name="Cargo"
+    data-vue-component-name="CargoComponent"
   >
     <Table
       :table-properties="cargoTableProperties"
       :table-data="cargo"
       :table-reactive-properties="cargoTableReactiveProperties"
       :title="titleTable"
+      :loading="loading"
     >
       <template #top-buttons>
         <MenuCargo
@@ -424,7 +425,7 @@ import CalculateClient from 'src/components/CargoDebts/CalculateClient.vue';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
 
 export default {
-  name: 'Cargo',
+  name: 'CargoComponent',
   components: {
     Table,
     CountCargoCategories,
@@ -445,6 +446,10 @@ export default {
       type: Function,
       default: () => {
       },
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

@@ -191,6 +191,7 @@
               <Cargo
                 :refresh="refresh"
                 :settings="settings"
+                :loading="loading"
               />
             </q-tab-panel>
 
@@ -201,6 +202,7 @@
               <Debts
                 :refresh="refresh"
                 :settings="settings"
+                :loading="loading"
               />
             </q-tab-panel>
           </q-tab-panels>
@@ -233,6 +235,7 @@ export default {
   mixins: [showNotif],
   data() {
     return {
+      loading: false,
       tab: 'general',
       settings: {},
     };
@@ -287,13 +290,13 @@ export default {
   methods: {
     numberFormat,
     getClientData(clientId) {
-      this.$q.loading.show();
+      this.loading = true;
       this.$store.dispatch('cargoDebts/getCargoDebts', clientId)
         .then(() => {
-          this.$q.loading.hide();
+          this.loading = false;
         })
         .catch(() => {
-          this.$q.loading.hide();
+          this.loading = false;
           this.showNotif('error', 'Произошла ошибка при получении данных', 'center');
         });
     },

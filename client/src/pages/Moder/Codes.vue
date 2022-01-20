@@ -7,6 +7,7 @@
         :table-properties="transferTableProperties"
         :table-data="allCodes"
         :table-reactive-properties="customerTableReactiveProperties"
+        :loading="loading"
         title="Клиенты"
       >
         <template #top-buttons>
@@ -433,6 +434,7 @@ export default {
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
   data() {
     return {
+      loading: false,
       codeId: 0,
       localClientEditData: {},
       showClientDialog: false,
@@ -554,15 +556,15 @@ export default {
         }
       }
     },
-    async getCodes() {
+    getCodes() {
       if (_.isEmpty(this.allCodes)) {
-        this.$q.loading.show();
-        await this.$store.dispatch('codes/setCodesWithCustomers')
+        this.loading = true;
+        this.$store.dispatch('codes/setCodesWithCustomers')
           .catch((errors) => {
             devlog.error('Ошибка', errors);
           })
           .finally(() => {
-            this.$q.loading.hide();
+            this.loading = false;
           });
       }
     },

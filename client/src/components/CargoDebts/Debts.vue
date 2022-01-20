@@ -1,12 +1,13 @@
 <template>
   <div
-    data-vue-component-name="Debts"
+    data-vue-component-name="DebtsComponent"
   >
     <Table
       :table-properties="debtsTableProperties"
       :table-data="debts"
       :table-reactive-properties="debtsTableReactiveProperties"
       :title="titleTable"
+      :loading="loading"
     >
       <template #top-buttons>
         <MenuDebt
@@ -246,7 +247,7 @@ import DialogAddDebtPayEntry from 'src/components/CargoDebts/Dialogs/DialogAddDe
 import MenuDebt from 'src/components/CargoDebts/MenuDebt.vue';
 
 export default {
-  name: 'Debts',
+  name: 'DebtsComponent',
   components: {
     Table,
     IconBtn,
@@ -264,6 +265,10 @@ export default {
       type: Function,
       default: () => {
       },
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

@@ -8,6 +8,7 @@
         :table-properties="transferTableProperties"
         :table-data="codesPriceData"
         :table-reactive-properties="transferTableReactiveProperties"
+        :loading="loading"
         title="Цены"
       >
         <template #top-buttons>
@@ -344,6 +345,7 @@ export default {
   mixins: [showNotif],
   data() {
     return {
+      loading: false,
       showDialogAddCodePrice: false,
       showDialogAddNewCodePrice: false,
       codeId: 0,
@@ -413,18 +415,18 @@ export default {
       this.showDialogAddNewCodePrice = true;
     },
     getCodesPrices() {
-      this.$q.loading.show();
+      this.loading = true;
       return this.$axios.get(getUrl('getCodesPrices'))
         .then(({ data: { codesPrice } }) => {
           _.forEach(codesPrice, (price) => {
             setFormatedDate(price, ['updated_at']);
           });
           this.$store.dispatch('codesPrices/setCodesPrices', codesPrice);
-          this.$q.loading.hide();
+          this.loading = false;
         })
         .catch((errors) => {
           devlog.error('Ошибка запроса getClientsPrices', errors);
-          this.$q.loading.hide();
+          this.loading = false;
         });
     },
     openDialogAddCodePrice(id) {
