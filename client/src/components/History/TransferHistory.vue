@@ -1,72 +1,93 @@
 <template>
-  <q-timeline
-    data-vue-component-name="TransferHistory"
-    color="secondary"
+  <Dialog
+      :dialog="showDialog"
+      :maximized="true"
+      transition-show="slide-up"
+      transition-hide="slide-down"
   >
-    <TimelineEntry
-      heading
-      tag="h6"
-    >
-      История изменения данных
-    </TimelineEntry>
-
-    <TimelineEntry
-      v-for="(transfer, index) in transferHistoryData.historyData"
-      :key="index"
-      :subtitle="transfer.created_at"
-      :icon="$action[transfer.action]"
-    >
-      <List
-        separator
-        dense
-      >
-        <div
-          v-for="(history, i) in transfer"
-          :key="i"
-        >
-          <ListItem
-            v-if="transferHistoryData.cols[i] && i !== 'created_at'"
-            dense
-          >
-            <ItemSection>
-              <ItemLabel v-if="transfer.action !== 'create' && i !== 'created_at' && i !== 'user_name'">
-                <Badge color="warning">
-                  {{ transferHistoryData.cols[i] }}
-                </Badge>
-              </ItemLabel>
-              <ItemLabel v-else>
-                {{ transferHistoryData.cols[i] }}
-              </ItemLabel>
-            </ItemSection>
-            <ItemSection side>
-              <ItemLabel
-                v-if="i === 'notation'"
-                :lines="3"
-              >
-                {{ history }}
-              </ItemLabel>
-              <ItemLabel
-                v-else-if="i === 'status_label'"
-              >
-                <Badge :color="statusColor(history)">
-                  {{ history }}
-                </Badge>
-              </ItemLabel>
-              <ItemLabel
-                v-else-if="i === 'receiver_phone'"
-              >
-                {{ phoneNumberFilter(history) }}
-              </ItemLabel>
-              <ItemLabel v-else>
-                {{ history }}
-              </ItemLabel>
-            </ItemSection>
-          </ListItem>
-          <Separator v-if="transferHistoryData.cols[i]" />
+    <q-card style="max-width: 600px;">
+      <q-card-section class="row justify-between bg-grey q-mb-sm">
+        <span class="text-h6">История изменения данных</span>
+        <div>
+          <IconBtn
+              dense
+              icon="clear"
+              tooltip="Закрыть"
+              color="negative"
+              @icon-btn-click="close"
+          />
         </div>
-      </List>
-    </TimelineEntry>
-  </q-timeline>
+      </q-card-section>
+      <q-card-section class="q-pt-none">
+        <q-linear-progress
+            v-show="loading"
+            indeterminate
+        />
+        <q-timeline
+            data-vue-component-name="TransferHistory"
+            color="secondary"
+        >
+
+          <TimelineEntry
+              v-for="(transfer, index) in transferHistoryData.historyData"
+              :key="index"
+              :subtitle="transfer.created_at"
+              :icon="$action[transfer.action]"
+          >
+            <List
+                separator
+                dense
+            >
+              <div
+                  v-for="(history, i) in transfer"
+                  :key="i"
+              >
+                <ListItem
+                    v-if="transferHistoryData.cols[i] && i !== 'created_at'"
+                    dense
+                >
+                  <ItemSection>
+                    <ItemLabel v-if="transfer.action !== 'create' && i !== 'created_at' && i !== 'user_name'">
+                      <Badge color="warning">
+                        {{ transferHistoryData.cols[i] }}
+                      </Badge>
+                    </ItemLabel>
+                    <ItemLabel v-else>
+                      {{ transferHistoryData.cols[i] }}
+                    </ItemLabel>
+                  </ItemSection>
+                  <ItemSection side>
+                    <ItemLabel
+                        v-if="i === 'notation'"
+                        :lines="3"
+                    >
+                      {{ history }}
+                    </ItemLabel>
+                    <ItemLabel
+                        v-else-if="i === 'status_label'"
+                    >
+                      <Badge :color="statusColor(history)">
+                        {{ history }}
+                      </Badge>
+                    </ItemLabel>
+                    <ItemLabel
+                        v-else-if="i === 'receiver_phone'"
+                    >
+                      {{ phoneNumberFilter(history) }}
+                    </ItemLabel>
+                    <ItemLabel v-else>
+                      {{ history }}
+                    </ItemLabel>
+                  </ItemSection>
+                </ListItem>
+                <Separator v-if="transferHistoryData.cols[i]" />
+              </div>
+            </List>
+          </TimelineEntry>
+        </q-timeline>
+      </q-card-section>
+    </q-card>
+  </Dialog>
 </template>
 
 <script>
@@ -80,6 +101,15 @@ import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
 import ListItem from 'src/components/Elements/List/ListItem.vue';
 import Badge from 'src/components/Elements/Badge.vue';
 import Separator from 'src/components/Separator.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import { getUrl } from 'src/tools/url';
+import {
+  prepareHistoryData,
+  setFormatedDate,
+  setMethodLabel,
+  setStatusLabel,
+} from 'src/utils/FrequentlyCalledFunctions';
 
 export default {
   name: 'TransferHistory',
@@ -91,20 +121,66 @@ export default {
     ListItem,
     Badge,
     Separator,
+    Dialog,
+    IconBtn,
   },
   mixins: [TransferMixin],
   props: {
-    transferHistoryData: {
-      type: Object,
-      default: () => ({}),
+    show: {
+      type: Boolean,
+      default: false,
     },
   },
+  emits: ['update:show'],
   data() {
     this.$action = getFromSettings('historyActionForIcon');
-    return {};
+    return {
+      loading: false,
+      transferHistoryData: {
+        cols: {},
+        transferHistory: [],
+      },
+    };
+  },
+  computed: {
+    showDialog: {
+      get: function get() {
+        return this.show;
+      },
+      set: function set(val) {
+        this.$emit('update:show', val);
+      },
+    },
   },
   methods: {
+    setAdditionalData(data) {
+      return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
+    },
     phoneNumberFilter,
+    getTransfersHistory(transferID, cols) {
+      this.loading = true;
+      this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`)
+          .then(({ data: { transferHistory } }) => {
+            if (!_.isEmpty(transferHistory)) {
+              devlog.log('transferHistory', transferHistory);
+              const historyData = prepareHistoryData(cols, transferHistory);
+              historyData.historyData = this.setAdditionalData(historyData.historyData);
+              this.transferHistoryData = historyData;
+            }
+            this.loading = false;
+          })
+          .catch(() => {
+            this.loading = false;
+            devlog.error('Ошибка при получении данных истории.');
+          });
+    },
+    close() {
+      this.transferHistoryData = {
+        cols: {},
+        transferHistory: [],
+      };
+      this.showDialog = false;
+    },
   },
 };
 </script>

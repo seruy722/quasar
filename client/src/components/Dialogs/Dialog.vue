@@ -5,7 +5,7 @@
     :maximized="maximized"
     :transition-show="transitionShow"
     :transition-hide="transitionHide"
-    data-vue-component-name="Dialog"
+    data-vue-component-name="DialogComponent"
   >
     <slot />
   </q-dialog>
@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: 'Dialog',
+  name: 'DialogComponent',
   props: {
     dialog: {
       type: Boolean,

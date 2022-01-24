@@ -1,17 +1,17 @@
 <template>
   <q-icon
-    data-vue-component-name="Icon"
+    data-vue-component-name="IconComponent"
     :size="size"
     :name="name"
     @click.stop="$emit('icon-click')"
   >
-    <q-tooltip>{{ $t(tooltip) }}</q-tooltip>
+    <q-tooltip>{{ tooltip }}</q-tooltip>
   </q-icon>
 </template>
 
 <script>
 export default {
-  name: 'Icon',
+  name: 'IconComponent',
   props: {
     name: {
       type: String,

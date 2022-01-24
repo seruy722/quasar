@@ -1,4 +1,6 @@
 export default {
-  transfers: [],
-  transfersClient: [],
+    transfers: [],
+    transfersClient: [],
+    transfersData: {},
+    searchData: [],
 };

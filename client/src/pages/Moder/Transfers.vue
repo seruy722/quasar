@@ -1,56 +1,56 @@
 <template>
   <q-page
-    data-vue-component-name="Transfers"
+      data-vue-component-name="TransfersPage"
   >
     <PullRefresh @refresh="refresh">
       <!--    <TransfersListSkeleton v-if="viewSkeleton" />-->
-      <Table
-        :table-properties="transferTableProperties"
-        :table-data="allTransfers"
-        :table-reactive-properties="transferTableReactiveProperties"
-        :loading="loading"
-        title="Переводы"
+      <TableVirtualScrolling
+          :table-properties="transferTableProperties"
+          :table-data="allTransfers"
+          :table-reactive-properties="transferTableReactiveProperties"
+          :loading="loading"
+          title="Переводы"
       >
         <template #top-buttons>
           <UpdateBtn
-            @update-btn-click="refresh"
+              @update-btn-click="refresh"
           />
           <IconBtn
-            color="positive"
-            tooltip="Excel"
-            icon="explicit"
-            class="q-ml-sm"
-            @icon-btn-click="exportTransfers(allTransfers, transferTableReactiveProperties.selected)"
+              color="positive"
+              tooltip="Excel"
+              icon="explicit"
+              class="q-ml-sm"
+              @icon-btn-click="exportTransfers(allTransfers, transferTableReactiveProperties.selected)"
           />
           <IconBtn
-            color="orange"
-            tooltip="Статистика"
-            icon="trending_up"
-            class="q-ml-sm"
-            @icon-btn-click="dialogStatistics = true"
+              color="orange"
+              tooltip="Статистика"
+              icon="trending_up"
+              class="q-ml-sm"
+              @icon-btn-click="dialogStatistics = true"
           />
           <IconBtn
-            v-show="transferTableReactiveProperties.selected.length"
-            color="teal"
-            tooltip="Добавить в долги"
-            icon="move_to_inbox"
-            class="q-ml-sm"
-            @icon-btn-click="addToDebtsTable(transferTableReactiveProperties.selected)"
+              v-show="transferTableReactiveProperties.selected.length"
+              color="teal"
+              tooltip="Добавить в долги"
+              icon="move_to_inbox"
+              class="q-ml-sm"
+              @icon-btn-click="addToDebtsTable(transferTableReactiveProperties.selected)"
           />
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
         <template #inner-item="{props}">
           <div
-            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-            :style="props.selected ? 'transform: scale(0.95);' : ''"
+              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+              :style="props.selected ? 'transform: scale(0.95);' : ''"
           >
             <q-expansion-item
-              expand-separator
-              class="shadow-1 overflow-hidden"
-              style="border-radius: 30px;border: 1px solid;"
-              :class="`border_${statusColor(props.row.status_label)}`"
-              :header-class="`bg-${statusColor(props.row.status_label)} text-white`"
-              expand-icon-class="text-white"
+                expand-separator
+                class="shadow-1 overflow-hidden"
+                style="border-radius: 30px;border: 1px solid;"
+                :class="`border_${statusColor(props.row.status_label)}`"
+                :header-class="`bg-${statusColor(props.row.status_label)} text-white`"
+                expand-icon-class="text-white"
             >
               <template #header>
                 <q-item-section>
@@ -67,31 +67,31 @@
 
                 <q-item-section>
                   <q-item-label>
-                    {{ props.row.created_at.slice(0, 5) }}
+                    {{ props.row.created_at_date.slice(0, 5) }}
                   </q-item-label>
                 </q-item-section>
 
                 <q-item-section
-                  avatar
-                  side
+                    avatar
+                    side
                 >
                   <q-icon
-                    v-if="props.row.paid"
-                    name="money"
-                    size="md"
-                    color="white"
+                      v-if="props.row.paid"
+                      name="money"
+                      size="md"
+                      color="white"
                   />
                 </q-item-section>
               </template>
 
               <q-list
-                separator
-                dense
-                @click="viewEditDialog(props)"
+                  separator
+                  dense
+                  @click="viewEditDialog(props)"
               >
                 <q-item
-                  v-for="col in props.cols.filter(col => col.name !== 'desc')"
-                  :key="col.name"
+                    v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                    :key="col.name"
                 >
                   <q-item-section>
                     <q-item-label>{{ `${col.label}:` }}</q-item-label>
@@ -109,14 +109,14 @@
                       {{ col.value }}
                     </q-item-label>
                     <q-item-label
-                      v-else-if="col.field === 'notation'"
-                      :lines="3"
+                        v-else-if="col.field === 'notation'"
+                        :lines="3"
                     >
                       {{ col.value }}
                     </q-item-label>
                     <q-item-label
-                      v-else-if="col.field === 'paid'"
-                      :lines="3"
+                        v-else-if="col.field === 'paid'"
+                        :lines="3"
                     >
                       {{ col.value ? 'Да' : 'Нет' }}
                     </q-item-label>
@@ -128,10 +128,10 @@
                 <q-item>
                   <q-item-section>
                     <BaseBtn
-                      label="История"
-                      color="info"
-                      style="max-width: 100px;margin: 0 auto;"
-                      @click-base-btn="getTransfersHistory(props.row.id, props.cols)"
+                        label="История"
+                        color="info"
+                        style="max-width: 100px;margin: 0 auto;"
+                        @click-base-btn="getTransfersHistory(props.row.id, props.cols)"
                     />
                   </q-item-section>
                 </q-item>
@@ -142,51 +142,51 @@
 
         <template #inner-body="{props}">
           <q-tr
-            :props="props"
-            class="text-bold cursor-pointer"
-            @click="viewEditDialog(props, $event)"
+              :props="props"
+              class="text-bold cursor-pointer"
+              @click="viewEditDialog(props, $event)"
           >
             <q-td
-              auto-width
-              class="select_checkbox"
+                auto-width
+                class="select_checkbox"
             >
               <q-checkbox
-                v-model="props.selected"
-                dense
+                  v-model="props.selected"
+                  dense
               />
             </q-td>
 
             <q-td
-              key="client_name"
-              :props="props"
+                key="client_name"
+                :props="props"
             >
               {{ props.row.client_name }}
             </q-td>
 
             <q-td
-              key="receiver_name"
-              :props="props"
+                key="receiver_name"
+                :props="props"
             >
               {{ props.row.receiver_name }}
             </q-td>
 
             <q-td
-              key="receiver_phone"
-              :props="props"
+                key="receiver_phone"
+                :props="props"
             >
               {{ phoneNumberFilter(props.row.receiver_phone) }}
             </q-td>
 
             <q-td
-              key="sum"
-              :props="props"
+                key="sum"
+                :props="props"
             >
               {{ numberFormat(props.row.sum) }}
             </q-td>
 
             <q-td
-              key="paid"
-              :props="props"
+                key="paid"
+                :props="props"
             >
               <q-badge :color="props.row.paid ? 'positive': 'negative'">
                 {{ props.row.paid ? 'Да' : 'Нет' }}
@@ -194,15 +194,15 @@
             </q-td>
 
             <q-td
-              key="method_label"
-              :props="props"
+                key="method_label"
+                :props="props"
             >
               {{ props.row.method_label }}
             </q-td>
 
             <q-td
-              key="status_label"
-              :props="props"
+                key="status_label"
+                :props="props"
             >
               <q-badge :color="statusColor(props.row.status)">
                 {{ props.row.status_label }}
@@ -210,46 +210,46 @@
             </q-td>
 
             <q-td
-              key="user_name"
-              :props="props"
+                key="user_name"
+                :props="props"
             >
               {{ props.row.user_name }}
             </q-td>
 
             <q-td
-              key="created_at"
-              :props="props"
+                key="created_at_date"
+                :props="props"
             >
-              {{ props.row.created_at }}
+              {{ props.row.created_at_date }}
             </q-td>
 
             <q-td
-              key="issued_by"
-              :props="props"
+                key="issued_by_date"
+                :props="props"
             >
-              {{ props.row.issued_by }}
+              {{ props.row.issued_by_date }}
             </q-td>
 
             <q-td
-              key="notation"
-              :props="props"
+                key="notation"
+                :props="props"
             >
               {{ props.row.notation }}
             </q-td>
           </q-tr>
         </template>
-      </Table>
+      </TableVirtualScrolling>
       <CountTransfersData :enter-data="allTransfers" />
     </PullRefresh>
     <PageSticky :offset="[18, 200]">
       <Fab color="accent">
         <FabAction
-          color="positive"
-          @fab-action-click="viewEditDialog"
+            color="positive"
+            @fab-action-click="viewEditDialog"
         />
         <FabAction
-          icon="person"
-          @fab-action-click="showCodeDialog = true"
+            icon="person"
+            @fab-action-click="showCodeDialog = true"
         />
         <PageScroller :offset="[4, 100]">
           <FabAction icon="keyboard_arrow_up" />
@@ -257,28 +257,28 @@
       </Fab>
     </PageSticky>
     <DialogAddTransfer
-      v-model:show-dialog="dialog"
-      v-model:local-props="localProps"
-      v-model:selected="transferTableReactiveProperties.selected"
-      :transfer-data="transferData"
+        v-model:show-dialog="dialog"
+        v-model:local-props="localProps"
+        v-model:selected="transferTableReactiveProperties.selected"
+        :transfer-data="transferData"
     />
     <DialogAddCode v-model:show-dialog="showCodeDialog" />
     <Dialog
-      :dialog="dialogStatistics"
-      :persistent="true"
-      :maximized="true"
-      transition-show="slide-up"
-      transition-hide="slide-down"
+        :dialog="dialogStatistics"
+        :persistent="true"
+        :maximized="true"
+        transition-show="slide-up"
+        transition-hide="slide-down"
     >
       <q-card style="max-width: 600px;">
         <q-bar>
           <q-space />
           <IconBtn
-            flat
-            dense
-            icon="close"
-            tooltip="Закрыть"
-            @icon-btn-click="dialogStatistics = false"
+              flat
+              dense
+              icon="close"
+              tooltip="Закрыть"
+              @icon-btn-click="dialogStatistics = false"
           />
         </q-bar>
 
@@ -288,8 +288,12 @@
       </q-card>
     </Dialog>
     <DialogChooseDate
-      v-model:show-dialog="showDialogChooseDate"
-      v-model:date="dialogChooseDateData"
+        v-model:show-dialog="showDialogChooseDate"
+        v-model:date="dialogChooseDateData"
+    />
+    <TransferHistory
+        ref="transferHistoryComponent"
+        v-model:show="dialogHistory"
     />
   </q-page>
 </template>
@@ -306,12 +310,9 @@ import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
 import { callFunction, numberFormat, phoneNumberFilter } from 'src/utils';
 import TransferMixin from 'src/mixins/Transfer';
-import {
-  setDefaultData,
-  getClientCodes,
-} from 'src/utils/FrequentlyCalledFunctions';
+import { setDefaultData, getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
 import { defineAsyncComponent } from 'vue';
-import Table from 'src/components/Elements/Table/Table.vue';
+import TableVirtualScrolling from 'src/components/Elements/Table/TableVirtualScrolling.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
 import CountTransfersData from 'src/components/Transfers/CountTransfersData.vue';
@@ -324,9 +325,9 @@ import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import Pusher from 'pusher-js';
 
 export default {
-  name: 'Transfers',
+  name: 'TransfersPage',
   components: {
-    Table,
+    TableVirtualScrolling,
     BaseBtn,
     IconBtn,
     PageSticky,
@@ -341,10 +342,12 @@ export default {
     DialogAddTransfer: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddTransfer.vue')),
     TransfersStatistics: defineAsyncComponent(() => import('src/components/Transfers/TransfersStatistics.vue')),
     DialogChooseDate: defineAsyncComponent(() => import('src/components/Dialogs/DialogChooseDate.vue')),
+    TransferHistory: defineAsyncComponent(() => import('src/components/History/TransferHistory.vue')),
   },
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
   data() {
     return {
+      dialogHistory: false,
       loading: false,
       dialogStatistics: false,
       localProps: {},
@@ -527,15 +530,15 @@ export default {
             sortable: true,
           },
           {
-            name: 'created_at',
+            name: 'created_at_date',
             label: 'Добавлено',
-            field: 'created_at',
+            field: 'created_at_date',
             align: 'center',
             sortable: true,
           },
           {
-            name: 'issued_by',
-            field: 'issued_by',
+            name: 'issued_by_date',
+            field: 'issued_by_date',
             label: 'Выдано',
             align: 'center',
             sortable: true,
@@ -551,7 +554,7 @@ export default {
       },
       transferTableReactiveProperties: {
         selected: [],
-        visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at', 'issued_by', 'paid'],
+        visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at_date', 'issued_by_date', 'paid'],
       },
       showDialogChooseDate: false,
       dialogChooseDateData: null,
@@ -594,27 +597,33 @@ export default {
     dialogChooseDateData(val) {
       if (val) {
         this.dialogChooseDataForSend.date = addTime(val)
-          .toISOString();
+            .toISOString();
         this.addToDebtsTableFinish(this.dialogChooseDataForSend);
       }
     },
   },
   mounted() {
-    this.getTransfers();
+    if (_.isEmpty(this.allTransfers)) {
+      this.getTransfers();
+    }
     const pusher = new Pusher('47b7c9db3b44606e887f', {
       cluster: 'eu',
     });
 
     const channel = pusher.subscribe('transfer');
     channel.bind('Transfers', ({ transferData }) => {
-        if (transferData.type === 'store') {
-          this.$store.dispatch('transfers/addTransfer', transferData.transfer);
-        } else {
-          this.$store.dispatch('transfers/updateTransfer', transferData.transfer);
-        }
+      if (transferData.type === 'store') {
+        this.$store.dispatch('transfers/addTransfer', transferData.transfer);
+      } else {
+        this.$store.dispatch('transfers/updateTransfer', transferData.transfer);
+      }
     });
   },
   methods: {
+    getTransfersHistory(transferID, cols) {
+      this.dialogHistory = true;
+      this.$refs.transferHistoryComponent.getTransfersHistory(transferID, cols);
+    },
     phoneNumberFilter,
     numberFormat,
     openCloseDialog(val) {
@@ -634,10 +643,10 @@ export default {
           devlog.log('SEL', val);
           this.$q.loading.show();
           Promise.all([getClientCodes(this.$store)])
-            .then(() => {
-              this.openCloseDialog(true);
-              this.$q.loading.hide();
-            });
+              .then(() => {
+                this.openCloseDialog(true);
+                this.$q.loading.hide();
+              });
 
           _.forEach(this.transferData, (item) => {
             if (_.has(val.row, item.field)) {
@@ -656,30 +665,21 @@ export default {
       }
     },
     getTransfers() {
-      if (_.isEmpty(this.allTransfers)) {
-        this.loading = true;
-        this.$store.dispatch('transfers/fetchTransfers')
-            .finally(() => {
-              this.loading = false;
-            });
-      } else {
-        this.$store.dispatch('transfers/fetchNewAndChangedTransfers');
-      }
+      this.loading = true;
+      return this.$store.dispatch('transfers/fetchTransfers')
+          .finally(() => {
+            this.loading = false;
+          });
     },
-    async refresh(done) {
+    refresh(done) {
       if (!done) {
-        this.$q.loading.show();
+        this.loading = true;
       }
-      this.$store.dispatch('transfers/fetchNewAndChangedTransfers')
-        .then(() => {
-          callFunction(done);
-          this.$q.loading.hide();
-          this.showNotif('success', 'Данные успешно обновлены.');
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          callFunction(done);
-        });
+      this.getTransfers()
+          .finally(() => {
+            callFunction(done);
+            this.loading = false;
+          });
     },
     exportTransfers(data, selectedData) {
       const ids = _.isEmpty(selectedData) ? [] : _.uniq(_.map(selectedData, 'id'));
@@ -696,17 +696,17 @@ export default {
         ids,
         date,
       })
-        .then(() => {
-          this.transferTableReactiveProperties.selected = [];
-          this.showDialogChooseDate = false;
-          this.$q.loading.hide();
-          this.showNotif('success', 'Данные успешно добавлены в таблицу долгов', 'center');
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          this.showNotif('error', 'Произошла ошибка при добавлении данных', 'center');
-          devlog.error('Ошибка запроса - addTransfersToDebts');
-        });
+          .then(() => {
+            this.transferTableReactiveProperties.selected = [];
+            this.showDialogChooseDate = false;
+            this.$q.loading.hide();
+            this.showNotif('success', 'Данные успешно добавлены в таблицу долгов', 'center');
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            this.showNotif('error', 'Произошла ошибка при добавлении данных', 'center');
+            devlog.error('Ошибка запроса - addTransfersToDebts');
+          });
     },
     addToDebtsTable(data) {
       devlog.log('DATAAAA', data);

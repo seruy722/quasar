@@ -66,7 +66,77 @@ class TransferController extends Controller
 
     public function index()
     {
-        return response(['transfers' => $this->query()->get()]);
+        return response(['transfers' => $this->query()->paginate(50)]);
+    }
+
+    public function search(Request $request)
+    {
+        if ($request->field === 'client_name') {
+            $clientIds = Code::where('code', 'like', '%' . $request->value . '%')->pluck('id')->unique()->toArray();
+            return response(['transfers' => $this->query()->whereIn('transfers.client_id', $clientIds)->get()]);
+        }
+
+        if ($request->field === 'receiver_name') {
+            return response(['transfers' => $this->query()->where('transfers.receiver_name', 'like', '%' . $request->value . '%')->get()]);
+        }
+
+        if ($request->field === 'receiver_phone') {
+            return response(['transfers' => $this->query()->where('transfers.receiver_phone', 'like', '%' . $request->value . '%')->get()]);
+        }
+
+        if ($request->field === 'sum') {
+            return response(['transfers' => $this->query()->where('transfers.sum', $request->value)->get()]);
+        }
+
+        if ($request->field === 'paid') {
+            $flag = 0;
+            if ($request->value === 'да') {
+                $flag = 1;
+            }
+            return response(['transfers' => $this->query()->where('transfers.paid', $flag)->get()]);
+        }
+
+        if ($request->field === 'method_label') {
+            $flag = 1;
+            if ($request->value === 'товар деньги') {
+                $flag = 2;
+            }
+            return response(['transfers' => $this->query()->where('transfers.method', $flag)->get()]);
+        }
+
+        if ($request->field === 'status_label') {
+            $flag = 2;
+            if ($request->value === 'выдано') {
+                $flag = 3;
+            } else if ($request->value === 'отменен') {
+                $flag = 4;
+            } else if ($request->value === 'вопрос') {
+                $flag = 1;
+            } else if ($request->value === 'возврат') {
+                $flag = 5;
+            } else if ($request->value === 'обработка') {
+                $flag = 6;
+            } else if ($request->value === 'отменен клиентом') {
+                $flag = 7;
+            }
+            return response(['transfers' => $this->query()->where('transfers.status', $flag)->get()]);
+        }
+
+        if ($request->field === 'created_at_date') {
+            $date = date("Y-m-d", strtotime($request->value));
+            return response(['transfers' => $this->query()->whereDate('transfers.created_at', $date)->get()]);
+        }
+
+        if ($request->field === 'issued_by_date') {
+            $date = date("Y-m-d", strtotime($request->value));
+            return response(['transfers' => $this->query()->whereDate('transfers.issued_by', $date)->get()]);
+        }
+
+        if ($request->field === 'notation') {
+            return response(['transfers' => $this->query()->where('transfers.notation', 'like', '%' . $request->value . '%')->get()]);
+        }
+
+        return response(['transfers' => $this->query()->orWhere('transfers.codes.code', 'like', '%' . $request->value . '%')->orWhere('transfers.sum', 'like', '%' . $request->value . '%')->get()]);
     }
 
     public function update(Request $request)

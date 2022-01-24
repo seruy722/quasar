@@ -1,109 +1,109 @@
 <template>
   <div>
     <Dialog
-      v-model:dialog="show"
-      :persistent="true"
-      @keyup.enter="checkErrors(transferData, updateData)"
+        v-model:dialog="show"
+        :persistent="true"
+        @keyup.enter="checkErrors(transferData, updateData)"
     >
       <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
         <q-card-section class="row justify-between bg-grey q-mb-sm">
           <span class="text-h6">{{ dialogTitle }}</span>
           <div>
             <IconBtn
-              v-if="localProps.row"
-              dense
-              icon="history"
-              tooltip="История"
-              @icon-btn-click="getTransfersHistory(localProps.row.id, localProps.cols)"
+                v-if="localProps.row"
+                dense
+                icon="history"
+                tooltip="История"
+                @icon-btn-click="getTransfersHistory(localProps.row.id, localProps.cols)"
             />
 
             <IconBtn
-              dense
-              icon="save"
-              tooltip="Сохранить"
-              color="positive"
-              @icon-btn-click="checkErrors(transferData, updateData)"
+                dense
+                icon="save"
+                tooltip="Сохранить"
+                color="positive"
+                @icon-btn-click="checkErrors(transferData, updateData)"
             />
 
             <IconBtn
-              dense
-              icon="clear"
-              tooltip="Закрыть"
-              color="negative"
-              @icon-btn-click="confirm(cancel, transferData)"
+                dense
+                icon="clear"
+                tooltip="Закрыть"
+                color="negative"
+                @icon-btn-click="confirm(cancel, transferData)"
             />
           </div>
         </q-card-section>
         <q-card-section>
           <div
-            v-for="(item, index) in transferData"
-            :key="index"
+              v-for="(item, index) in transferData"
+              :key="index"
           >
             <BaseInput
-              v-if="item.type === 'text'"
-              v-model.trim="item.value"
-              v-model:change-value="item.changeValue"
-              :label="item.label"
-              :type="item.type"
-              :mask="item.mask"
-              :unmasked-value="item.unmaskedValue"
-              dense
-              :field="item.field"
-              :errors="errorsData"
+                v-if="item.type === 'text'"
+                v-model.trim="item.value"
+                v-model:change-value="item.changeValue"
+                :label="item.label"
+                :type="item.type"
+                :mask="item.mask"
+                :unmasked-value="item.unmaskedValue"
+                dense
+                :field="item.field"
+                :errors="errorsData"
             />
 
             <BaseInput
-              v-else-if="item.type === 'number'"
-              v-model.number="item.value"
-              v-model:change-value="item.changeValue"
-              :label="item.label"
-              :type="item.type"
-              :mask="item.mask"
-              :unmasked-value="item.unmaskedValue"
-              dense
-              :field="item.field"
-              :errors="errorsData"
+                v-else-if="item.type === 'number'"
+                v-model.number="item.value"
+                v-model:change-value="item.changeValue"
+                :label="item.label"
+                :type="item.type"
+                :mask="item.mask"
+                :unmasked-value="item.unmaskedValue"
+                dense
+                :field="item.field"
+                :errors="errorsData"
             />
 
             <SearchSelect
-              v-else-if="item.type === 'searchSelect'"
-              v-model="item.value"
-              v-model:change-value="item.changeValue"
-              dense
-              :options="item.options"
-              :label="item.label"
-              :field="item.field"
-              :func-load-data="item.funcLoadData"
-              :errors="errorsData"
-              @change="changeValue"
+                v-else-if="item.type === 'searchSelect'"
+                v-model="item.value"
+                v-model:change-value="item.changeValue"
+                dense
+                :options="item.options"
+                :label="item.label"
+                :field="item.field"
+                :func-load-data="item.funcLoadData"
+                :errors="errorsData"
+                @change="changeValue"
             />
 
             <BaseSelect
-              v-else-if="item.type === 'select'"
-              v-model="item.value"
-              v-model:change-value="item.changeValue"
-              :label="item.label"
-              :dense="true"
-              :options="item.options"
-              :field="item.field"
-              :errors="errorsData"
+                v-else-if="item.type === 'select'"
+                v-model="item.value"
+                v-model:change-value="item.changeValue"
+                :label="item.label"
+                :dense="true"
+                :options="item.options"
+                :field="item.field"
+                :errors="errorsData"
             />
 
             <BaseInput
-              v-else-if="item.type === 'date'"
-              v-model="item.value"
-              v-model:change-value="item.changeValue"
-              :label="item.label"
-              :errors="errorsData"
-              :field="item.field"
-              :readonly="item.readonly"
-              :mask="item.mask"
-              dense
+                v-else-if="item.type === 'date'"
+                v-model="item.value"
+                v-model:change-value="item.changeValue"
+                :label="item.label"
+                :errors="errorsData"
+                :field="item.field"
+                :readonly="item.readonly"
+                :mask="item.mask"
+                dense
             >
               <template #append>
                 <Date
-                  v-model:value="item.value"
-                  v-model:change-value="item.changeValue"
+                    v-model:value="item.value"
+                    v-model:change-value="item.changeValue"
                 />
               </template>
             </BaseInput>
@@ -113,46 +113,26 @@
         <Separator />
         <q-card-actions>
           <BaseBtn
-            label="Отмена"
-            color="negative"
-            @click-base-btn="confirm(cancel, transferData)"
+              label="Отмена"
+              color="negative"
+              @click-base-btn="confirm(cancel, transferData)"
           />
           <BaseBtn
-            label="Сохранить"
-            color="positive"
-            @click-base-btn="checkErrors(transferData, updateData)"
+              label="Сохранить"
+              color="positive"
+              @click-base-btn="checkErrors(transferData, updateData)"
           />
         </q-card-actions>
       </q-card>
     </Dialog>
     <DialogAddCode
-      v-model:show-dialog="showCodeDialog"
-      v-model:new-code-data="newCodeData"
+        v-model:show-dialog="showCodeDialog"
+        v-model:new-code-data="newCodeData"
     />
-    <Dialog
-      :dialog="dialogHistory"
-      :persistent="true"
-      :maximized="true"
-      transition-show="slide-up"
-      transition-hide="slide-down"
-    >
-      <q-card style="max-width: 600px;">
-        <q-bar>
-          <q-space />
-          <IconBtn
-            flat
-            dense
-            icon="close"
-            tooltip="Закрыть"
-            @icon-btn-click="dialogHistory = false"
-          />
-        </q-bar>
-
-        <q-card-section class="q-pt-none">
-          <TransferHistory :transfer-history-data="transferHistoryData" />
-        </q-card-section>
-      </q-card>
-    </Dialog>
+    <TransferHistory
+        ref="transferHistoryComponent"
+        v-model:show="dialogHistory"
+    />
   </div>
 </template>
 
@@ -160,10 +140,7 @@
 import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
-import {
-  prepareHistoryData,
-  setChangeValue, setFormatedDate, setMethodLabel, setStatusLabel,
-} from 'src/utils/FrequentlyCalledFunctions';
+import { setChangeValue } from 'src/utils/FrequentlyCalledFunctions';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
@@ -214,10 +191,6 @@ export default {
       showCodeDialog: false,
       newCodeData: {},
       dialogHistory: false,
-      transferHistoryData: {
-        cols: {},
-        transferHistory: [],
-      },
     };
   },
   computed: {
@@ -246,11 +219,11 @@ export default {
     changeValue(id) {
       if (_.isEmpty(this.localProps)) {
         this.$axios.get(`${getUrl('getTransferCodeCommission')}/${id}`)
-          .then(({ data: { transfer } }) => {
-            if (transfer) {
-              _.set(this.transferData, 'transfer_commission.value', transfer.transfer_commission || 1);
-            }
-          });
+            .then(({ data: { transfer } }) => {
+              if (transfer) {
+                _.set(this.transferData, 'transfer_commission.value', transfer.transfer_commission || 1);
+              }
+            });
       }
     },
     cancel(data) {
@@ -273,9 +246,9 @@ export default {
           color: 'negative',
         },
       })
-        .onOk(() => {
-          func(transferData);
-        });
+          .onOk(() => {
+            func(transferData);
+          });
     },
     updateData(data) {
       const sendData = _.cloneDeep(data);
@@ -293,19 +266,19 @@ export default {
           values.issued_by = formatISO(addTime(date));
         }
         this.$axios.post(getUrl('storeTransfers'), values)
-          .then(({ data: { transfer } }) => {
-            devlog.log('DDFR', transfer);
-            devlog.log('this.$store', this.$store.dispatch);
-            // this.$store.dispatch('transfers/addTransfer', transfer);
-            this.cancel(this.transferData);
-            this.$q.loading.hide();
-            this.show = false;
-            this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно добавлена.`);
-          })
-          .catch((errors) => {
-            this.$q.loading.hide();
-            this.errorsData.errors = _.get(errors, 'response.data.errors');
-          });
+            .then(({ data: { transfer } }) => {
+              devlog.log('DDFR', transfer);
+              devlog.log('this.$store', this.$store.dispatch);
+              // this.$store.dispatch('transfers/addTransfer', transfer);
+              this.cancel(this.transferData);
+              this.$q.loading.hide();
+              this.show = false;
+              this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно добавлена.`);
+            })
+            .catch((errors) => {
+              this.$q.loading.hide();
+              this.errorsData.errors = _.get(errors, 'response.data.errors');
+            });
       } else if (_.has(this.localProps, 'row.id')) {
         // ОБНОВЛЕНИЕ ЗАПИСИ
         if (_.some(sendData, 'changeValue')) {
@@ -334,46 +307,27 @@ export default {
           _.assign(dataToSend, { id: _.get(this.localProps, 'row.id') });
           devlog.log('dataToSend', dataToSend);
           this.$axios.post(getUrl('updateTransfers'), dataToSend)
-            .then(({ data: { transfer } }) => {
-              devlog.log('DDFR', transfer);
-              // this.$store.dispatch('transfers/updateTransfer', transfer);
-              this.cancel(this.transferData);
-              this.$q.loading.hide();
-              this.show = false;
-              this.$emit('update:selected', []);
-              this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно обновлена.`);
-            })
-            .catch((errors) => {
-              this.$q.loading.hide();
-              this.errorsData.errors = _.get(errors, 'response.data.errors');
-            });
+              .then(({ data: { transfer } }) => {
+                devlog.log('DDFR', transfer);
+                // this.$store.dispatch('transfers/updateTransfer', transfer);
+                this.cancel(this.transferData);
+                this.$q.loading.hide();
+                this.show = false;
+                this.$emit('update:selected', []);
+                this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно обновлена.`);
+              })
+              .catch((errors) => {
+                this.$q.loading.hide();
+                this.errorsData.errors = _.get(errors, 'response.data.errors');
+              });
         } else {
           devlog.log('item_DDD_FFF', data);
         }
       }
     },
-    setAdditionalData(data) {
-      return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
-    },
-    async getTransfersHistory(transferID, cols) {
-      this.$q.loading.show();
-      await this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`)
-        .then(({ data: { transferHistory } }) => {
-          if (!_.isEmpty(transferHistory)) {
-            this.$q.loading.hide();
-            this.dialogHistory = true;
-            devlog.log('transferHistory', transferHistory);
-            const historyData = prepareHistoryData(cols, transferHistory);
-            historyData.historyData = this.setAdditionalData(historyData.historyData);
-            this.transferHistoryData = historyData;
-          } else {
-            this.$q.loading.hide();
-            this.showNotif('info', 'По этому переводу нет истории.', 'center');
-          }
-        })
-        .catch(() => {
-          devlog.error('Ошибка при получении данных истории.');
-        });
+    getTransfersHistory(transferID, cols) {
+      this.dialogHistory = true;
+      this.$refs.transferHistoryComponent.getTransfersHistory(transferID, cols);
     },
   },
 };

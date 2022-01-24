@@ -23,7 +23,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item>
+    <q-item v-if="countTransfersStatisticsData.pending">
       <q-item-section>
         <q-item-label>
           <q-badge :color="statusColor(6)">
@@ -39,7 +39,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item>
+    <q-item v-if="countTransfersStatisticsData.notIssued">
       <q-item-section>
         <q-item-label>
           <q-badge :color="statusColor(2)">
@@ -55,7 +55,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item>
+    <q-item v-if="countTransfersStatisticsData.issued">
       <q-item-section>
         <q-item-label>
           <q-badge :color="statusColor(3)">
@@ -71,7 +71,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item>
+    <q-item v-if="countTransfersStatisticsData.question">
       <q-item-section>
         <q-item-label>
           <q-badge :color="statusColor(1)">
@@ -87,7 +87,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item>
+    <q-item v-if="countTransfersStatisticsData.cancel">
       <q-item-section>
         <q-item-label>
           <q-badge :color="statusColor(4)">
@@ -103,7 +103,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item>
+    <q-item v-if="countTransfersStatisticsData.returned">
       <q-item-section>
         <q-item-label>
           <q-badge :color="statusColor(5)">
@@ -119,7 +119,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item>
+    <q-item v-if="countTransfersStatisticsData.returnedClient">
       <q-item-section>
         <q-item-label>
           <q-badge :color="statusColor(7)">
@@ -149,25 +149,25 @@
       </q-item-section>
     </q-item>
 
-    <q-item>
-      <q-item-section class="statistics_title">
-        По пользователям
-      </q-item-section>
-    </q-item>
-    <q-item
-      v-for="(user, id) in countTransfersStatisticsData.usersData"
-      :key="id"
-    >
-      <q-item-section>
-        <q-item-label>{{ user.name }}</q-item-label>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>{{ numberFormat(user.all) }}</q-item-label>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>{{ numberFormat(user.allSum) }}</q-item-label>
-      </q-item-section>
-    </q-item>
+<!--    <q-item>-->
+<!--      <q-item-section class="statistics_title">-->
+<!--        По пользователям-->
+<!--      </q-item-section>-->
+<!--    </q-item>-->
+<!--    <q-item-->
+<!--      v-for="(user, id) in countTransfersStatisticsData.usersData"-->
+<!--      :key="id"-->
+<!--    >-->
+<!--      <q-item-section>-->
+<!--        <q-item-label>{{ user.name }}</q-item-label>-->
+<!--      </q-item-section>-->
+<!--      <q-item-section>-->
+<!--        <q-item-label>{{ numberFormat(user.all) }}</q-item-label>-->
+<!--      </q-item-section>-->
+<!--      <q-item-section>-->
+<!--        <q-item-label>{{ numberFormat(user.allSum) }}</q-item-label>-->
+<!--      </q-item-section>-->
+<!--    </q-item>-->
   </q-list>
 </template>
 

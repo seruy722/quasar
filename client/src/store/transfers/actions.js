@@ -2,61 +2,63 @@
 import { getUrl } from 'src/tools/url';
 import { axiosInstance } from 'boot/axios';
 import {
-  setFormatedDate,
-  setMethodLabel,
-  setStatusLabel,
+    setFormatedDate,
+    setMethodLabel,
+    setStatusLabel,
 } from 'src/utils/FrequentlyCalledFunctions';
 
 export const fetchTransfers = (({ commit }) => axiosInstance.get(getUrl('transfers'))
   .then(({ data: { transfers } }) => {
-    commit('SET_TRANSFERS', transfers);
+      commit('SET_TRANSFERS', transfers.data);
+      delete transfers.data;
+      commit('SET_TRANSFERS_DATA', transfers);
   })
   .catch(() => {
-    devlog.warn('Ошибка при запросе fetchTransfers');
+      devlog.warn('Ошибка при запросе fetchTransfers');
   }));
 
 export const fetchTransfersClient = (({ commit }) => axiosInstance.get(getUrl('transfersClient'))
   .then(({ data: { transfers } }) => {
-    commit('SET_TRANSFERS_CLIENT', setMethodLabel(setStatusLabel(setFormatedDate(transfers, ['created_at', 'issued_by']))));
+      commit('SET_TRANSFERS_CLIENT', setMethodLabel(setStatusLabel(setFormatedDate(transfers, ['created_at', 'issued_by']))));
   })
   .catch(() => {
-    devlog.warn('Ошибка при запросе fetchTransfers');
+      devlog.warn('Ошибка при запросе fetchTransfers');
   }));
 
 export const fetchNewAndChangedTransfers = (({
-                                               commit,
-                                               state,
+                                                 commit,
+                                                 state,
                                              }) => {
-  const id = _.get(_.first(state.transfers), 'id');
-  const updatedAt = _.max(_.map(state.transfers, 'updated_at'));
-  return axiosInstance.post(getUrl('getNewAndChangedTransfers'), {
-    lastCreatedId: id,
-    updatedAt,
-  })
-    .then(({ data: { transfers } }) => {
-      commit('UPDATE_TRANSFERS', transfers);
+    const id = _.get(_.first(state.transfers), 'id');
+    const updatedAt = _.max(_.map(state.transfers, 'updated_at'));
+    return axiosInstance.post(getUrl('getNewAndChangedTransfers'), {
+        lastCreatedId: id,
+        updatedAt,
     })
-    .catch(() => {
-      devlog.warn('Ошибка при запросе fetchTransfers');
-    });
+      .then(({ data: { transfers } }) => {
+          commit('UPDATE_TRANSFERS', transfers);
+      })
+      .catch(() => {
+          devlog.warn('Ошибка при запросе fetchTransfers');
+      });
 });
 
 export const setTransfers = (({ commit }, data) => {
-  commit('SET_TRANSFERS', data);
+    commit('SET_TRANSFERS', data);
 });
 
 export const addTransfer = (({ commit }, data) => {
-  commit('ADD_TRANSFER', data);
+    commit('ADD_TRANSFER', data);
 });
 
 export const addTransferClient = (({ commit }, data) => {
-  commit('ADD_TRANSFER_CLIENT', data);
+    commit('ADD_TRANSFER_CLIENT', data);
 });
 
 export const updateTransfer = (({ commit }, data) => {
-  commit('UPDATE_TRANSFER', data);
+    commit('UPDATE_TRANSFER', data);
 });
 
 export const updateTransferClient = (({ commit }, data) => {
-  commit('UPDATE_TRANSFER_CLIENT', data);
+    commit('UPDATE_TRANSFER_CLIENT', data);
 });

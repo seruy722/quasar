@@ -67,6 +67,7 @@ const urls = {
   shopsList: `${prefix}/shop-names`,
   deliveryMethodsList: `${prefix}/delivery-methods-list`,
   transfers: `${prefix}/transfers`,
+  transfersSearch: `${prefix}/transfers-search`,
   getNewAndChangedTransfers: `${prefix}/get-new-transfers`,
   updateTransfers: `${prefix}/update-transfers`,
   storeTransfers: `${prefix}/store-transfers`,

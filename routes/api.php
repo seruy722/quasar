@@ -199,6 +199,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     });
     // TRANSFERS
     Route::get('/transfers', 'Api\TransferController@index')->name('view transfers list')->middleware(['role_or_permission:admin|transfers|view transfers list']);
+    Route::post('/transfers-search', 'Api\TransferController@search')->name('transfers search')->middleware(['role_or_permission:admin|transfers|transfers search']);
     Route::post('/update-transfers', 'Api\TransferController@update')->name('update transfers data')->middleware(['role_or_permission:admin|transfers|client|update transfers data']);
     Route::post('/store-transfers', 'Api\TransferController@store')->name('store transfers data')->middleware(['role_or_permission:admin|transfers|client|store transfers data']);
     Route::post('/get-new-transfers', 'Api\TransferController@getNewTransfers')->name('get new transfers')->middleware(['role_or_permission:admin|transfers|get new transfers']);
