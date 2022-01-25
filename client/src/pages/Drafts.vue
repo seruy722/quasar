@@ -1,16 +1,16 @@
 <template>
   <div
-    data-vue-component-name="DraftsComponent"
-    class="q-pa-md"
+      data-vue-component-name="DraftsComponent"
+      class="q-pa-md"
   >
     <div>
       <div>Кода без информации о клиенте</div>
       <q-btn
-        unelevated
-        rounded
-        color="primary"
-        label="Export"
-        @click="getCodesWithoutInfo"
+          unelevated
+          rounded
+          color="primary"
+          label="Export"
+          @click="getCodesWithoutInfo"
       />
     </div>
 
@@ -22,8 +22,8 @@
 
         <q-card-actions align="right">
           <OutlineBtn
-            :btn-data="btnData"
-            @click-outline-btn="dialogUploadCargoData.value = false"
+              :btn-data="btnData"
+              @click-outline-btn="dialogUploadCargoData.value = false"
           />
         </q-card-actions>
       </Dialog>
@@ -41,8 +41,8 @@
 
           <q-card-actions align="right">
             <OutlineBtn
-              :btn-data="btnData"
-              @click-outline-btn="dialogUploadDebtsData.value = false"
+                :btn-data="btnData"
+                @click-outline-btn="dialogUploadDebtsData.value = false"
             />
           </q-card-actions>
         </template>
@@ -61,8 +61,8 @@
 
           <q-card-actions align="right">
             <OutlineBtn
-              :btn-data="btnData"
-              @click-outline-btn="dialogUploadSkladData.value = false"
+                :btn-data="btnData"
+                @click-outline-btn="dialogUploadSkladData.value = false"
             />
           </q-card-actions>
         </template>
@@ -77,27 +77,27 @@
     <div>
       Загрузка данных факсов
       <input
-        type="file"
-        multiple
-        @change="upFiles"
+          type="file"
+          multiple
+          @change="upFiles"
       >
 
       <div>
         <q-input
-          v-model.trim="search"
-          type="text"
-          label="Search"
+            v-model.trim="search"
+            type="text"
+            label="Search"
         />
         <q-btn
-          label="Test"
-          @click="searchData"
+            label="Test"
+            @click="searchData"
         />
         <div class="q-pa-md">
           <q-table
-            title="Treats"
-            :data="fields"
-            :columns="columns"
-            row-key="name"
+              title="Treats"
+              :data="fields"
+              :columns="columns"
+              row-key="name"
           />
         </div>
       </div>
@@ -106,30 +106,30 @@
     <div style="border: 1px solid blue;">
       Клиенты которые получают бренд
       <q-btn
-        label="GET"
-        @click="getBrandClients"
+          label="GET"
+          @click="getBrandClients"
       />
     </div>
     <div style="border: 1px solid blue;">
       Клиенты которые не получали брендовый товар больше месяца
       <q-btn
-        label="GET"
-        @click="exportCustomersWhoLeftBrand"
+          label="GET"
+          @click="exportCustomersWhoLeftBrand"
       />
     </div>
     <div style="border: 1px solid blue;">
       Клиенты которые не получали товар больше месяца
       <q-btn
-        label="GET"
-        @click="exportCustomersWhoLeft"
+          label="GET"
+          @click="exportCustomersWhoLeft"
       />
     </div>
 
     <div style="border: 1px solid blue;">
       Клиенты в нотации которых написано оплачено
       <q-btn
-        label="GET"
-        @click="getEntriesWithPayNotation"
+          label="GET"
+          @click="getEntriesWithPayNotation"
       />
     </div>
 
@@ -137,42 +137,41 @@
       Оборот товара Одесса
       <div class="q-pa-md">
         <q-date
-          v-model="date"
-          default-view="Months"
-          mask="MM-YYYY"
+            v-model="date"
+            default-view="Months"
+            mask="MM-YYYY"
         />
       </div>
       <q-btn
-        label="GET"
-        @click="exportReportOdessaData(date)"
+          label="GET"
+          @click="exportReportOdessaData(date)"
       />
     </div>
 
     <div>
       Загрузка факсов
       <input
-        type="file"
-        multiple
-        @change="upFaxDataFiles"
+          type="file"
+          multiple
+          @change="upFaxDataFiles"
       >
     </div>
 
     <div>
       Загрузка кодов
       <input
-        type="file"
-        multiple
-        @change="upCodes"
+          type="file"
+          multiple
+          @change="upCodes"
       >
     </div>
 
-<!--    <div>-->
-<!--      Reg-->
-<!--      <q-btn-->
-<!--        label="REGIST"-->
-<!--        @click="reg"-->
-<!--      />-->
-<!--    </div>-->
+    <div>
+      <q-btn
+          label="clearCache"
+          @click="clearCache"
+      />
+    </div>
   </div>
 </template>
 
@@ -284,27 +283,27 @@ export default {
       // this.$axios.get(getUrl('drafts.codesWithoutInfo'));
       this.$axios({
         url: getUrl('drafts.codesWithoutInfo'),
-        method: 'GET',
+        method: 'get',
         responseType: 'blob', // important
         // headers: {
         //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         // },
       })
-        .then((response) => {
-          devlog.log('RES_BLOB', response);
-          if (!window.navigator.msSaveOrOpenBlob) {
-            // BLOB NAVIGATOR
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'codes.xlsx');
-            document.body.appendChild(link);
-            link.click();
-          } else {
-            // BLOB FOR EXPLORER 11
-            window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'codes.xlsx');
-          }
-        });
+          .then((response) => {
+            devlog.log('RES_BLOB', response);
+            if (!window.navigator.msSaveOrOpenBlob) {
+              // BLOB NAVIGATOR
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'codes.xlsx');
+              document.body.appendChild(link);
+              link.click();
+            } else {
+              // BLOB FOR EXPLORER 11
+              window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'codes.xlsx');
+            }
+          });
     },
     upFiles({ target }) {
       devlog.log('dfdg', target.files);
@@ -314,14 +313,14 @@ export default {
       });
 
       this.$axios.post('/api/upload-faxes', formData)
-        .then(({ data }) => {
-          target.value = '';
-          devlog.log('UPLOADED', data);
-          this.showNotif('success', 'Данные успешно добавлены.', 'center');
-        })
-        .catch(() => {
-          this.showNotif('error', 'Произошла ошибка.', 'center');
-        });
+          .then(({ data }) => {
+            target.value = '';
+            devlog.log('UPLOADED', data);
+            this.showNotif('success', 'Данные успешно добавлены.', 'center');
+          })
+          .catch(() => {
+            this.showNotif('error', 'Произошла ошибка.', 'center');
+          });
     },
     upFaxDataFiles({ target }) {
       const formData = new FormData();
@@ -329,65 +328,65 @@ export default {
       formData.append('fax_id', 1);
 
       this.$axios.post('/api/upload-fax-data-table', formData)
-        .then(({ data }) => {
-          target.value = '';
-          devlog.log('UPLOADED', data);
-          this.showNotif('success', 'Данные успешно добавлены.', 'center');
-        })
-        .catch(() => {
-          target.value = '';
-          this.showNotif('error', 'Произошла ошибка.', 'center');
-        });
+          .then(({ data }) => {
+            target.value = '';
+            devlog.log('UPLOADED', data);
+            this.showNotif('success', 'Данные успешно добавлены.', 'center');
+          })
+          .catch(() => {
+            target.value = '';
+            this.showNotif('error', 'Произошла ошибка.', 'center');
+          });
     },
     upCodes({ target }) {
       const formData = new FormData();
       formData.append('upload', _.first(target.files));
 
       this.$axios.post('/api/upload-codes', formData)
-        .then(({ data }) => {
-          target.value = '';
-          devlog.log('UPLOADED', data);
-          this.showNotif('success', 'Данные успешно добавлены.', 'center');
-        })
-        .catch(() => {
-          target.value = '';
-          this.showNotif('error', 'Произошла ошибка.', 'center');
-        });
+          .then(({ data }) => {
+            target.value = '';
+            devlog.log('UPLOADED', data);
+            this.showNotif('success', 'Данные успешно добавлены.', 'center');
+          })
+          .catch(() => {
+            target.value = '';
+            this.showNotif('error', 'Произошла ошибка.', 'center');
+          });
     },
     searchData() {
       this.$axios.post('/api/search-in-faxes', { search: this.search })
-        .then(({ data }) => {
-          devlog.log('SEARCH', data);
-          this.fields = data.searchData;
-        })
-        .catch(() => {
+          .then(({ data }) => {
+            devlog.log('SEARCH', data);
+            this.fields = data.searchData;
+          })
+          .catch(() => {
 
-        });
+          });
     },
     getEntriesWithPayNotation() {
       this.$axios({
         url: '/api/get-entries-with-pay-notation',
-        method: 'GET',
+        method: 'get',
         responseType: 'blob', // important
         // headers: {
         //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         // },
       })
-        .then((response) => {
-          devlog.log('RES_BLOB', response);
-          if (!window.navigator.msSaveOrOpenBlob) {
-            // BLOB NAVIGATOR
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'олаченные места.xlsx');
-            document.body.appendChild(link);
-            link.click();
-          } else {
-            // BLOB FOR EXPLORER 11
-            window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'олаченные места.xlsx');
-          }
-        });
+          .then((response) => {
+            devlog.log('RES_BLOB', response);
+            if (!window.navigator.msSaveOrOpenBlob) {
+              // BLOB NAVIGATOR
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'олаченные места.xlsx');
+              document.body.appendChild(link);
+              link.click();
+            } else {
+              // BLOB FOR EXPLORER 11
+              window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'олаченные места.xlsx');
+            }
+          });
       // this.$axios.get('/api/get-entries-with-pay-notation')
       //   .then(() => {
       //   })
@@ -398,91 +397,12 @@ export default {
     getBrandClients() {
       this.$axios({
         url: getUrl('drafts.brandsCustomers'),
-        method: 'GET',
+        method: 'get',
         responseType: 'blob', // important
         // headers: {
         //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         // },
       })
-        .then((response) => {
-          devlog.log('RES_BLOB', response);
-          if (!window.navigator.msSaveOrOpenBlob) {
-            // BLOB NAVIGATOR
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'brands.xlsx');
-            document.body.appendChild(link);
-            link.click();
-          } else {
-            // BLOB FOR EXPLORER 11
-            window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
-          }
-        });
-    },
-    exportCustomersWhoLeft() {
-      this.$axios({
-        url: getUrl('exportCustomersWhoLeft'),
-        method: 'GET',
-        responseType: 'blob', // important
-        // headers: {
-        //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        // },
-      })
-        .then((response) => {
-          devlog.log('RES_BLOB', response);
-          if (!window.navigator.msSaveOrOpenBlob) {
-            // BLOB NAVIGATOR
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'brands.xlsx');
-            document.body.appendChild(link);
-            link.click();
-          } else {
-            // BLOB FOR EXPLORER 11
-            window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
-          }
-        });
-    },
-    exportCustomersWhoLeftBrand() {
-      this.$axios({
-        url: getUrl('exportCustomersWhoLeftBrand'),
-        method: 'GET',
-        responseType: 'blob', // important
-        // headers: {
-        //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        // },
-      })
-        .then((response) => {
-          devlog.log('RES_BLOB', response);
-          if (!window.navigator.msSaveOrOpenBlob) {
-            // BLOB NAVIGATOR
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'brands.xlsx');
-            document.body.appendChild(link);
-            link.click();
-          } else {
-            // BLOB FOR EXPLORER 11
-            window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
-          }
-        });
-    },
-    exportReportOdessaData(date) {
-      if (date) {
-        this.$axios({
-          url: getUrl('exportReportOdessaData'),
-          method: 'POST',
-          responseType: 'blob', // important
-          data: {
-            date,
-          },
-          // headers: {
-          //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          // },
-        })
           .then((response) => {
             devlog.log('RES_BLOB', response);
             if (!window.navigator.msSaveOrOpenBlob) {
@@ -498,6 +418,85 @@ export default {
               window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
             }
           });
+    },
+    exportCustomersWhoLeft() {
+      this.$axios({
+        url: getUrl('drafts.exportCustomersWhoLeft'),
+        method: 'get',
+        responseType: 'blob', // important
+        // headers: {
+        //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        // },
+      })
+          .then((response) => {
+            devlog.log('RES_BLOB', response);
+            if (!window.navigator.msSaveOrOpenBlob) {
+              // BLOB NAVIGATOR
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'brands.xlsx');
+              document.body.appendChild(link);
+              link.click();
+            } else {
+              // BLOB FOR EXPLORER 11
+              window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
+            }
+          });
+    },
+    exportCustomersWhoLeftBrand() {
+      this.$axios({
+        url: getUrl('drafts.exportCustomersWhoLeftBrand'),
+        method: 'get',
+        responseType: 'blob', // important
+        // headers: {
+        //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        // },
+      })
+          .then((response) => {
+            devlog.log('RES_BLOB', response);
+            if (!window.navigator.msSaveOrOpenBlob) {
+              // BLOB NAVIGATOR
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'brands.xlsx');
+              document.body.appendChild(link);
+              link.click();
+            } else {
+              // BLOB FOR EXPLORER 11
+              window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
+            }
+          });
+    },
+    exportReportOdessaData(date) {
+      if (date) {
+        this.$axios({
+          url: getUrl('drafts.exportReportOdessaData'),
+          method: 'POST',
+          responseType: 'blob', // important
+          data: {
+            date,
+          },
+          // headers: {
+          //     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          // },
+        })
+            .then((response) => {
+              devlog.log('RES_BLOB', response);
+              if (!window.navigator.msSaveOrOpenBlob) {
+                // BLOB NAVIGATOR
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'brands.xlsx');
+                document.body.appendChild(link);
+                link.click();
+              } else {
+                // BLOB FOR EXPLORER 11
+                window.navigator.msSaveOrOpenBlob(new Blob([response.data]), 'brands.xlsx');
+              }
+            });
       } else {
         this.showNotif('warning', 'Выберите дату!', 'center');
       }
@@ -516,6 +515,9 @@ export default {
     //     "subscribe": false
     //   });
     // },
+    clearCache() {
+      this.$axios.get(getUrl('drafts.clearCache'));
+    },
     reg() {
       /* eslint-disable */
       this.$axios.get(getUrl('test'));
