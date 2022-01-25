@@ -772,27 +772,30 @@ export default {
     },
   },
   watch: {
-    faxData(val) {
-      devlog.log('VAL_K', _.get(_.first(val), 'for_kg'));
-      if (!_.get(_.first(val), 'for_kg')) {
-        const { visibleColumns } = this;
-        const { fullVisibleColumns } = this;
-        const indexForKg = _.indexOf(visibleColumns, 'for_kg');
-        const indexForKg2 = _.indexOf(fullVisibleColumns, 'for_kg');
-        if (indexForKg !== -1) {
-          visibleColumns.splice(indexForKg, 2);
+    faxData: {
+      handler(val) {
+        devlog.log('VAL_K', _.get(_.first(val), 'for_kg'));
+        if (!_.get(_.first(val), 'for_kg')) {
+          const { visibleColumns } = this;
+          const { fullVisibleColumns } = this;
+          const indexForKg = _.indexOf(visibleColumns, 'for_kg');
+          const indexForKg2 = _.indexOf(fullVisibleColumns, 'for_kg');
+          if (indexForKg !== -1) {
+            visibleColumns.splice(indexForKg, 2);
+          }
+          if (indexForKg2 !== -1) {
+            fullVisibleColumns.splice(indexForKg2, 2);
+          }
         }
-        if (indexForKg2 !== -1) {
-          fullVisibleColumns.splice(indexForKg2, 2);
+        // const { faxData } = this;
+        if (this.combineTableData) {
+          this.faxTableData = sortArrayCollection(combineStoreHouseData(val), 'code_client_name');
+        } else {
+          this.faxTableData = sortArrayCollection(_.cloneDeep(val), 'code_client_name');
         }
-      }
-      // const { faxData } = this;
-      if (this.combineTableData) {
-        this.faxTableData = sortArrayCollection(combineStoreHouseData(val), 'code_client_name');
-      } else {
-        this.faxTableData = sortArrayCollection(_.cloneDeep(val), 'code_client_name');
-      }
-      this.$store.dispatch('faxes/setFaxCategoriesData', setCategoriesStoreHouseData(val));
+        this.$store.dispatch('faxes/setFaxCategoriesData', setCategoriesStoreHouseData(val));
+      },
+      deep: true,
     },
     combineTableData: {
       handler: function set(val) {

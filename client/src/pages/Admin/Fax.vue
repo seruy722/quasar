@@ -607,17 +607,17 @@ import {
 } from 'src/utils/FrequentlyCalledFunctions';
 import StorehouseDataMixin from 'src/mixins/StorehouseData';
 import { numberFormat, thingsFilter, optionsFilter } from 'src/utils';
-import Table from 'components/Elements/Table/Table.vue';
-import IconBtn from 'components/Buttons/IconBtn.vue';
-import BaseBtn from 'components/Buttons/BaseBtn.vue';
-import DialogFaxData from 'components/Dialogs/DialogFaxData.vue';
-import StorehouseDataHistory from 'components/History/StorehouseDataHistory.vue';
-import Dialog from 'components/Dialogs/Dialog.vue';
-import CountCategories from 'components/CountCategories.vue';
-import PopupEdit from 'components/PopupEdit.vue';
-import SearchSelect from 'components/Elements/SearchSelect.vue';
-import BaseSelect from 'components/Elements/BaseSelect.vue';
-import FaxTransferDataHistory from 'components/History/FaxTransferDataHistory.vue';
+import Table from 'src/components/Elements/Table/Table.vue';
+import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import DialogFaxData from 'src/components/Dialogs/DialogFaxData.vue';
+import StorehouseDataHistory from 'src/components/History/StorehouseDataHistory.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import CountCategories from 'src/components/CountCategories.vue';
+import PopupEdit from 'src/components/PopupEdit.vue';
+import SearchSelect from 'src/components/Elements/SearchSelect.vue';
+import BaseSelect from 'src/components/Elements/BaseSelect.vue';
+import FaxTransferDataHistory from 'src/components/History/FaxTransferDataHistory.vue';
 
 export default {
   name: 'AdminFaxComponent',
@@ -788,14 +788,18 @@ export default {
     },
   },
   watch: {
-    faxData(val) {
-      const { faxData } = this;
-      if (this.combineTableData) {
-        this.faxTableData = sortArrayCollection(combineStoreHouseData(faxData), 'code_client_name');
-      } else {
-        this.faxTableData = sortArrayCollection(_.cloneDeep(faxData), 'code_client_name');
-      }
-      this.$store.dispatch('faxes/setFaxCategoriesData', setCategoriesStoreHouseData(val));
+    faxData: {
+      handler(val) {
+        const { faxData } = this;
+        devlog.log('faxData', faxData);
+        if (this.combineTableData) {
+          this.faxTableData = sortArrayCollection(combineStoreHouseData(faxData), 'code_client_name');
+        } else {
+          this.faxTableData = sortArrayCollection(_.cloneDeep(faxData), 'code_client_name');
+        }
+        this.$store.dispatch('faxes/setFaxCategoriesData', setCategoriesStoreHouseData(val));
+      },
+      deep: true,
     },
     combineTableData: {
       handler: function set(val) {
