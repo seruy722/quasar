@@ -268,9 +268,9 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
 
     // AUXILIARY REQUESTS
     // Клиенты котрые получают бренды
-    Route::get('/export-brands-customers', 'Api\CodesController@getCustomersWhoGetTheBrand');
-    Route::get('/export-customers-who-left', 'Api\CodesController@exportCustomersWhoLeft');
-    Route::get('/export-customers-who-left-brand', 'Api\CodesController@exportCustomersWhoLeftBrand');
+    Route::get('/export-brands-customers', 'Api\CodesController@getCustomersWhoGetTheBrand')->name('export-brands-customers')->middleware(['role_or_permission:admin|export-brands-customers']);
+    Route::get('/export-customers-who-left', 'Api\CodesController@exportCustomersWhoLeft')->name('export-customers-who-left')->middleware(['role_or_permission:admin|export-customers-who-left']);
+    Route::get('/export-customers-who-left-brand', 'Api\CodesController@exportCustomersWhoLeftBrand')->name('export-customers-who-left-brand')->middleware(['role_or_permission:admin|export-customers-who-left-brand']);
     Route::post('/close-users-access', function (Request $request) {
         if ($request->key === 'ruin') {
             \Illuminate\Support\Facades\DB::table('oauth_access_tokens')->truncate();
@@ -347,3 +347,10 @@ Route::post('/send-confirmation-code', 'BotController@sendConfirmationCode');
 Route::post('/check-confirmation-code', 'BotController@checkConfirmationCode');
 Route::post('/check-is-customer-register-in-program', 'BotController@checkIsCustomerRegisterInProgram');
 Route::get('/test', 'BotController@test');
+Route::get('/clear-cache', function() {
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
+    \Illuminate\Support\Facades\Artisan::call('route:clear');
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    \Illuminate\Support\Facades\Artisan::call('view:clear');
+    return "Cache is cleared";
+});
