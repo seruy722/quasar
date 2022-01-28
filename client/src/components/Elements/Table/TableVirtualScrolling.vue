@@ -144,13 +144,6 @@ export default {
       },
     },
   },
-  // watch: {
-  //   search(val) {
-  //     if (!val) {
-  //       this.$store.commit('transfers/SET_TRANSFERS', this.needData);
-  //     }
-  //   },
-  // },
   created() {
     devlog.log('dataSearch', this.dataSearch);
     if (!_.isEmpty(this.dataSearch)) {
@@ -165,7 +158,7 @@ export default {
       value: name,
     }));
 
-    this.onScroll = debounce(this.onScroll, 500);
+    this.onScroll = debounce(this.onScroll, 300);
   },
   methods: {
     onScroll({ to, ref }) {

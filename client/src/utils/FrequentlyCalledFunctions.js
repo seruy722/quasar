@@ -10,19 +10,19 @@ import { uid } from 'quasar';
  * @return {{name: string, place: *, kg: *}}
  */
 const sumObjectForCategories = (arr, isForKg) => {
-  const result = {
-    name: '',
-    for_kg: 0,
-    kg: countSumCollection(arr, 'kg'),
-    place: countSumCollection(arr, 'place'),
-    sum: countSumCollection(arr, 'sum'),
-  };
-  if (!isForKg) {
-    delete result.for_kg;
-    delete result.sum;
-  }
+    const result = {
+        name: '',
+        for_kg: 0,
+        kg: countSumCollection(arr, 'kg'),
+        place: countSumCollection(arr, 'place'),
+        sum: countSumCollection(arr, 'sum'),
+    };
+    if (!isForKg) {
+        delete result.for_kg;
+        delete result.sum;
+    }
 
-  return result;
+    return result;
 };
 
 // TRANSFERS
@@ -32,13 +32,22 @@ const sumObjectForCategories = (arr, isForKg) => {
  * @return {*}
  */
 export const setMethodLabel = (value) => {
-  _.forEach(value, (item) => {
-    const findLabel = _.find(getFromSettings('transferMethod'), { value: _.toNumber(item.method) });
-    if (findLabel) {
-      _.set(item, 'method_label', _.get(findLabel, 'label'));
+    devlog.log('value', value);
+    if (_.isArray(value)) {
+        _.forEach(value, (item) => {
+            const findLabel = _.find(getFromSettings('transferMethod'), { value: _.toNumber(item.method) });
+            if (findLabel) {
+                _.set(item, 'method_label', _.get(findLabel, 'label'));
+            }
+        });
+    } else {
+        const findLabel = _.find(getFromSettings('transferMethod'), { value: _.toNumber(value) });
+        devlog.log('findLabel', findLabel);
+        if (findLabel) {
+            return _.get(findLabel, 'label');
+        }
     }
-  });
-  return value;
+    return value;
 };
 /**
  * Устанавливает название статуса по его id
@@ -46,127 +55,138 @@ export const setMethodLabel = (value) => {
  * @return {*}
  */
 export const setStatusLabel = (value) => {
-  _.forEach(value, (item) => {
-    const findLabel = _.find(getFromSettings('transferStatus'), { value: _.toNumber(item.status) });
-    if (findLabel) {
-      _.set(item, 'status_label', _.get(findLabel, 'label'));
+    if (_.isArray(value)) {
+        _.forEach(value, (item) => {
+            const findLabel = _.find(getFromSettings('transferStatus'), { value: _.toNumber(item.status) });
+            if (findLabel) {
+                _.set(item, 'status_label', _.get(findLabel, 'label'));
+            }
+        });
+    } else {
+        const findLabel = _.find(getFromSettings('transferStatus'), { value: _.toNumber(value) });
+        if (findLabel) {
+            return _.get(findLabel, 'label');
+        }
     }
-  });
-  return value;
+    return value;
 };
 /**
  * Обнуляет свойство changeValue
  * @param data
  */
 export const setChangeValue = (data) => {
-  _.forEach(data, (elem) => {
-    if (_.get(elem, 'changeValue')) {
-      _.set(elem, 'changeValue', false);
-    }
-  });
+    _.forEach(data, (elem) => {
+        if (_.get(elem, 'changeValue')) {
+            _.set(elem, 'changeValue', false);
+        }
+    });
 };
 // STOREHOUSEDATA
 export const setCategoriesStoreHouseData = (data, transporterPrices) => {
-  const uniq = _.uniqBy(_.map(data, ({ category_name: categoryName, category_id: categoryID, fax_id: faxId }) => ({
-    name: categoryName,
-    id: categoryID,
-    faxId,
-  })), 'name');
+    const uniq = _.uniqBy(_.map(data, ({
+                                           category_name: categoryName,
+                                           category_id: categoryID,
+                                           fax_id: faxId
+                                       }) => ({
+        name: categoryName,
+        id: categoryID,
+        faxId,
+    })), 'name');
 
-  const arr = [];
+    const arr = [];
 
-  _.forEach(uniq, ({ name, id, faxId }) => {
-    const kg = countSumCollection(_.filter(data, { category_id: id }), ({ kg: kilo }) => kilo);
-    const obj = {
-      name,
-      place: countSumCollection(_.filter(data, { category_id: id }), ({ place }) => place),
-      kg,
-      category_id: id,
-      fax_id: faxId,
-      uid: uid(),
+    _.forEach(uniq, ({ name, id, faxId }) => {
+        const kg = countSumCollection(_.filter(data, { category_id: id }), ({ kg: kilo }) => kilo);
+        const obj = {
+            name,
+            place: countSumCollection(_.filter(data, { category_id: id }), ({ place }) => place),
+            kg,
+            category_id: id,
+            fax_id: faxId,
+            uid: uid(),
+        };
+        if (!_.isEmpty(transporterPrices)) {
+            let forKg = 0;
+            const findForKg = _.find(transporterPrices, { category_id: id });
+            if (findForKg) {
+                forKg = findForKg.category_price;
+            }
+            obj.for_kg = forKg;
+            obj.sum = kg * forKg;
+        } else if (_.isArray(transporterPrices)) {
+            obj.for_kg = 0;
+            obj.sum = kg * obj.for_kg;
+        }
+        arr.push(obj);
+    });
+
+    arr.sort((a, b) => b.place - a.place);
+
+    return {
+        categoriesList: arr,
+        footer: sumObjectForCategories(arr, _.has(_.first(arr), 'for_kg')),
     };
-    if (!_.isEmpty(transporterPrices)) {
-      let forKg = 0;
-      const findForKg = _.find(transporterPrices, { category_id: id });
-      if (findForKg) {
-        forKg = findForKg.category_price;
-      }
-      obj.for_kg = forKg;
-      obj.sum = kg * forKg;
-    } else if (_.isArray(transporterPrices)) {
-      obj.for_kg = 0;
-      obj.sum = kg * obj.for_kg;
-    }
-    arr.push(obj);
-  });
-
-  arr.sort((a, b) => b.place - a.place);
-
-  return {
-    categoriesList: arr,
-    footer: sumObjectForCategories(arr, _.has(_.first(arr), 'for_kg')),
-  };
 };
 
 export const setCargoCategoriesData = (data) => {
-  const categoriesNames = _.uniq(_.map(data, 'category_name'));
-  const arr = [];
+    const categoriesNames = _.uniq(_.map(data, 'category_name'));
+    const arr = [];
 
-  _.forEach(categoriesNames, (name) => {
-    const categoryArr = _.filter(data, {
-      category_name: name,
-      type: 0,
+    _.forEach(categoriesNames, (name) => {
+        const categoryArr = _.filter(data, {
+            category_name: name,
+            type: 0,
+        });
+        const obj = {
+            name,
+            place: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ place }) => place),
+            kg: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ kg }) => kg),
+            sum: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ sum }) => sum),
+        };
+        if (name) {
+            arr.push(obj);
+        }
     });
-    const obj = {
-      name,
-      place: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ place }) => place),
-      kg: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ kg }) => kg),
-      sum: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ sum }) => sum),
-    };
-    if (name) {
-      arr.push(obj);
-    }
-  });
 
-  arr.sort((a, b) => b.place - a.place);
-  const dt = _.filter(data, { type: 0 });
-  return {
-    categoriesList: arr,
-    footer: {
-      name: null,
-      place: countSumCollection(dt, ({ place }) => place),
-      kg: countSumCollection(dt, ({ kg }) => kg),
-      sum: countSumCollection(data, ({ sum }) => sum) || null,
-    },
-  };
+    arr.sort((a, b) => b.place - a.place);
+    const dt = _.filter(data, { type: 0 });
+    return {
+        categoriesList: arr,
+        footer: {
+            name: null,
+            place: countSumCollection(dt, ({ place }) => place),
+            kg: countSumCollection(dt, ({ kg }) => kg),
+            sum: countSumCollection(data, ({ sum }) => sum) || null,
+        },
+    };
 };
 
 export const setStorehouseCategoriesData = (data) => {
-  const categoriesNames = _.uniq(_.map(data, 'category_name'));
-  const arr = [];
+    const categoriesNames = _.uniq(_.map(data, 'category_name'));
+    const arr = [];
 
-  _.forEach(categoriesNames, (name) => {
-    const categoryArr = _.filter(data, { category_name: name });
-    const obj = {
-      name,
-      place: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ place }) => place),
-      kg: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ kg }) => kg),
+    _.forEach(categoriesNames, (name) => {
+        const categoryArr = _.filter(data, { category_name: name });
+        const obj = {
+            name,
+            place: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ place }) => place),
+            kg: countSumCollection(_.filter(categoryArr, { type: 0 }), ({ kg }) => kg),
+        };
+        if (name) {
+            arr.push(obj);
+        }
+    });
+
+    arr.sort((a, b) => b.place - a.place);
+    const dt = _.filter(data, { type: 0 });
+    return {
+        categoriesList: arr,
+        footer: {
+            name: null,
+            place: countSumCollection(dt, ({ place }) => place),
+            kg: countSumCollection(dt, ({ kg }) => kg),
+        },
     };
-    if (name) {
-      arr.push(obj);
-    }
-  });
-
-  arr.sort((a, b) => b.place - a.place);
-  const dt = _.filter(data, { type: 0 });
-  return {
-    categoriesList: arr,
-    footer: {
-      name: null,
-      place: countSumCollection(dt, ({ place }) => place),
-      kg: countSumCollection(dt, ({ kg }) => kg),
-    },
-  };
 };
 // export const setDataForSearch = (data) => {
 //   const faxesNames = _.uniq(_.map(data, 'fax_name'));
@@ -208,37 +228,37 @@ export const setStorehouseCategoriesData = (data) => {
  * @type {function(*=): []}
  */
 export const combineStoreHouseData = ((data) => {
-  const clients = _.uniq(_.map(data, 'code_client_id'));
-  const clientsCategories2 = [];
-  _.forEach(clients, (item) => {
-    clientsCategories2.push(_.chain(data)
-      .filter({ code_client_id: item })
-      .groupBy('category_name')
-      .mapValues((values) => _.chain(values)
-        .groupBy('for_kg')
-        .mapValues((val) => _.chain(val)
-          .groupBy('for_place')
-          .value())
-        .value())
-      .value());
-  });
-  const result = [];
-  _.forEach(clientsCategories2, (elem) => {
-    _.forEach(elem, (el) => {
-      _.forEach(_.values(el), (arr) => {
-        _.forEach((arr), (arr2) => {
-          // devlog.log('ARR_EKL', arr2);
-          result.push(_.assign({}, _.first(arr2), {
-            kg: _.sumBy(arr2, 'kg'),
-            place: _.sumBy(arr2, 'place'),
-            arr: arr2,
-            in_cargo: _.every(arr2, { in_cargo: 1 }),
-          }));
-        });
-      });
+    const clients = _.uniq(_.map(data, 'code_client_id'));
+    const clientsCategories2 = [];
+    _.forEach(clients, (item) => {
+        clientsCategories2.push(_.chain(data)
+          .filter({ code_client_id: item })
+          .groupBy('category_name')
+          .mapValues((values) => _.chain(values)
+            .groupBy('for_kg')
+            .mapValues((val) => _.chain(val)
+              .groupBy('for_place')
+              .value())
+            .value())
+          .value());
     });
-  });
-  return result;
+    const result = [];
+    _.forEach(clientsCategories2, (elem) => {
+        _.forEach(elem, (el) => {
+            _.forEach(_.values(el), (arr) => {
+                _.forEach((arr), (arr2) => {
+                    // devlog.log('ARR_EKL', arr2);
+                    result.push(_.assign({}, _.first(arr2), {
+                        kg: _.sumBy(arr2, 'kg'),
+                        place: _.sumBy(arr2, 'place'),
+                        arr: arr2,
+                        in_cargo: _.every(arr2, { in_cargo: 1 }),
+                    }));
+                });
+            });
+        });
+    });
+    return result;
 });
 
 /**
@@ -246,61 +266,61 @@ export const combineStoreHouseData = ((data) => {
  * @type {function(*=): []}
  */
 export const combineCargoData = ((data) => {
-  // const formated = _.map(data, (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
-  const faxIds = _.uniq(_.map(data, 'fax_id'));
-  const newData = _.filter(data, (item) => item.type === 0 && item.fax_id > 0);
-  const newData3 = _.filter(data, { type: 1 });
-  const newData4 = _.filter(data, {
-    type: 0,
-    fax_id: 0,
-  });
-  devlog.log('newData', newData);
-  const clientsCategories2 = [];
-  _.forEach(faxIds, (id) => {
-    clientsCategories2.push(_.chain(newData)
-      .filter({ fax_id: id })
-      .groupBy('category_id')
-      .mapValues((values) => _.chain(values)
-        .groupBy('for_kg')
-        .mapValues((val) => _.chain(val)
-          .groupBy('for_place')
-          .value())
-        .value())
-      .value());
-  });
-
-  devlog.log('clientsCategories2', clientsCategories2);
-  const result = [];
-  _.forEach(clientsCategories2, (elem) => {
-    _.forEach(elem, (el) => {
-      _.forEach(_.values(el), (arr) => {
-        _.forEach((arr), (arr2) => {
-          // devlog.log('ARR_EKL', arr2);
-          result.push(_.assign({}, _.first(arr2), {
-            kg: _.sumBy(arr2, 'kg'),
-            place: _.sumBy(arr2, 'place'),
-            sum: _.sumBy(arr2, 'sum'),
-            arr: arr2,
-            in_cargo: _.every(arr2, { in_cargo: 1 }),
-          }, { id: uid() }));
-        });
-      });
+    // const formated = _.map(data, (item) => _.assign({}, item, { created_at: fullDate(item.created_at) }));
+    const faxIds = _.uniq(_.map(data, 'fax_id'));
+    const newData = _.filter(data, (item) => item.type === 0 && item.fax_id > 0);
+    const newData3 = _.filter(data, { type: 1 });
+    const newData4 = _.filter(data, {
+        type: 0,
+        fax_id: 0,
     });
-  });
-  result.push(...newData3, ...newData4);
-  // result.sort((a, b) => {
-  //   const x = new Date(a.created_at);
-  //   const y = new Date(b.created_at);
-  //   if (x > y) {
-  //     return -1;
-  //   }
-  //   if (x === y) {
-  //     return 0;
-  //   }
-  //
-  //   return 1;
-  // });
-  return result;
+    devlog.log('newData', newData);
+    const clientsCategories2 = [];
+    _.forEach(faxIds, (id) => {
+        clientsCategories2.push(_.chain(newData)
+          .filter({ fax_id: id })
+          .groupBy('category_id')
+          .mapValues((values) => _.chain(values)
+            .groupBy('for_kg')
+            .mapValues((val) => _.chain(val)
+              .groupBy('for_place')
+              .value())
+            .value())
+          .value());
+    });
+
+    devlog.log('clientsCategories2', clientsCategories2);
+    const result = [];
+    _.forEach(clientsCategories2, (elem) => {
+        _.forEach(elem, (el) => {
+            _.forEach(_.values(el), (arr) => {
+                _.forEach((arr), (arr2) => {
+                    // devlog.log('ARR_EKL', arr2);
+                    result.push(_.assign({}, _.first(arr2), {
+                        kg: _.sumBy(arr2, 'kg'),
+                        place: _.sumBy(arr2, 'place'),
+                        sum: _.sumBy(arr2, 'sum'),
+                        arr: arr2,
+                        in_cargo: _.every(arr2, { in_cargo: 1 }),
+                    }, { id: uid() }));
+                });
+            });
+        });
+    });
+    result.push(...newData3, ...newData4);
+    // result.sort((a, b) => {
+    //   const x = new Date(a.created_at);
+    //   const y = new Date(b.created_at);
+    //   if (x > y) {
+    //     return -1;
+    //   }
+    //   if (x === y) {
+    //     return 0;
+    //   }
+    //
+    //   return 1;
+    // });
+    return result;
 });
 /**
  * Получение и запись всех категорий во vuex
@@ -308,10 +328,10 @@ export const combineCargoData = ((data) => {
  * @return {boolean|*}
  */
 export const getCategories = (store) => {
-  if (_.isEmpty(store.getters['category/getCategories'])) {
-    return store.dispatch('category/getCategories');
-  }
-  return true;
+    if (_.isEmpty(store.getters['category/getCategories'])) {
+        return store.dispatch('category/getCategories');
+    }
+    return true;
 };
 /**
  * Получение и запись всех кодов клиентов во vuex
@@ -319,10 +339,10 @@ export const getCategories = (store) => {
  * @return {boolean|*}
  */
 export const getClientCodes = (store) => {
-  if (_.isEmpty(store.getters['codes/getCodes'])) {
-    return store.dispatch('codes/setCodes');
-  }
-  return true;
+    if (_.isEmpty(store.getters['codes/getCodes'])) {
+        return store.dispatch('codes/setCodes');
+    }
+    return true;
 };
 /**
  * Получение и запись описи вложения во vuex
@@ -330,10 +350,10 @@ export const getClientCodes = (store) => {
  * @return {boolean|*}
  */
 export const getThingsList = (store) => {
-  if (_.isEmpty(store.getters['thingsList/getThingsList'])) {
-    return store.dispatch('thingsList/setThingsList');
-  }
-  return true;
+    if (_.isEmpty(store.getters['thingsList/getThingsList'])) {
+        return store.dispatch('thingsList/setThingsList');
+    }
+    return true;
 };
 /**
  * Получение и запись списка названий магазинов во vuex
@@ -341,10 +361,10 @@ export const getThingsList = (store) => {
  * @return {boolean|*}
  */
 export const getShopsList = (store) => {
-  if (_.isEmpty(store.getters['shopsList/getShopsList'])) {
-    return store.dispatch('shopsList/setShopsList');
-  }
-  return true;
+    if (_.isEmpty(store.getters['shopsList/getShopsList'])) {
+        return store.dispatch('shopsList/setShopsList');
+    }
+    return true;
 };
 
 /**
@@ -353,10 +373,10 @@ export const getShopsList = (store) => {
  * @return {boolean|*}
  */
 export const getDeliveryMethodsList = (store) => {
-  if (_.isEmpty(store.getters['deliveryMethods/getDeliveryMethodsList'])) {
-    return store.dispatch('deliveryMethods/fetchDeliveryMethodsList');
-  }
-  return true;
+    if (_.isEmpty(store.getters['deliveryMethods/getDeliveryMethodsList'])) {
+        return store.dispatch('deliveryMethods/fetchDeliveryMethodsList');
+    }
+    return true;
 };
 /**
  * Получение и запись списка городов украины во vuex
@@ -364,10 +384,10 @@ export const getDeliveryMethodsList = (store) => {
  * @return {boolean|*}
  */
 export const getCities = (store) => {
-  if (_.isEmpty(store.getters['cities/getCities'])) {
-    return store.dispatch('cities/setCities');
-  }
-  return true;
+    if (_.isEmpty(store.getters['cities/getCities'])) {
+        return store.dispatch('cities/setCities');
+    }
+    return true;
 };
 /**
  * Получение и запись списка видов транспорта во vuex
@@ -375,10 +395,10 @@ export const getCities = (store) => {
  * @return {boolean|*}
  */
 export const getTransports = (store) => {
-  if (_.isEmpty(store.getters['transport/getTransports'])) {
-    return store.dispatch('transport/fetchTransports');
-  }
-  return true;
+    if (_.isEmpty(store.getters['transport/getTransports'])) {
+        return store.dispatch('transport/fetchTransports');
+    }
+    return true;
 };
 /**
  * Получение и запись списка перевожчиков во vuex
@@ -386,10 +406,10 @@ export const getTransports = (store) => {
  * @return {boolean|*}
  */
 export const getTransporters = (store) => {
-  if (_.isEmpty(store.getters['transporter/getTransporters'])) {
-    return store.dispatch('transporter/fetchTransporters');
-  }
-  return true;
+    if (_.isEmpty(store.getters['transporter/getTransporters'])) {
+        return store.dispatch('transporter/fetchTransporters');
+    }
+    return true;
 };
 /**
  * Получение и запись списка перевожчиков во vuex
@@ -397,10 +417,10 @@ export const getTransporters = (store) => {
  * @return {boolean|*}
  */
 export const getStorehouseTableData = (store) => {
-  if (_.isEmpty(store.getters['storehouse/getStorehouseData'])) {
-    return store.dispatch('storehouse/fetchStorehouseTableData');
-  }
-  return true;
+    if (_.isEmpty(store.getters['storehouse/getStorehouseData'])) {
+        return store.dispatch('storehouse/fetchStorehouseTableData');
+    }
+    return true;
 };
 /**
  * Получение и запись списка факсов во vuex
@@ -408,21 +428,21 @@ export const getStorehouseTableData = (store) => {
  * @return {boolean|*}
  */
 export const getFaxes = (store) => {
-  if (_.isEmpty(store.getters['faxes/getFaxes'])) {
-    return store.dispatch('faxes/fetchFaxes');
-  }
-  return true;
+    if (_.isEmpty(store.getters['faxes/getFaxes'])) {
+        return store.dispatch('faxes/fetchFaxes');
+    }
+    return true;
 };
 /**
  * Устанавливает значения по умолчанию
  * @param data
  */
 export const setDefaultData = (data) => {
-  if (_.isObject(data) || _.isArray(data)) {
-    _.forEach(data, (item) => {
-      _.set(item, 'value', item.default);
-    });
-  }
+    if (_.isObject(data) || _.isArray(data)) {
+        _.forEach(data, (item) => {
+            _.set(item, 'value', item.default);
+        });
+    }
 };
 /**
  * Форматирует даты из 2020-01-31 16:25:13 в 30-01-2020 16:25:13
@@ -431,23 +451,23 @@ export const setDefaultData = (data) => {
  * @return {*}
  */
 export const setFormatedDate = (data, fields = []) => {
-  if (_.isArray(data)) {
-    _.forEach(data, (item) => {
-      _.forEach(fields, (field) => {
-        if (item[field]) {
-          item[field] = fullDate(item[field]);
-        }
-      });
-    });
-  } else if (_.isObject(data)) {
-    _.forEach(fields, (field) => {
-      if (data[field]) {
-        data[field] = fullDate(data[field]);
-      }
-    });
-  }
+    if (_.isArray(data)) {
+        _.forEach(data, (item) => {
+            _.forEach(fields, (field) => {
+                if (item[field]) {
+                    item[field] = fullDate(item[field]);
+                }
+            });
+        });
+    } else if (_.isObject(data)) {
+        _.forEach(fields, (field) => {
+            if (data[field]) {
+                data[field] = fullDate(data[field]);
+            }
+        });
+    }
 
-  return data;
+    return data;
 };
 /**
  * Подготавливает данные для компонентов истории
@@ -456,12 +476,12 @@ export const setFormatedDate = (data, fields = []) => {
  * @return {{cols: *, historyData: *}}
  */
 export const prepareHistoryData = (cols, data) => ({
-  cols: _.reduce(cols, (result, { label, name }) => {
-    result[name] = label;
-    return result;
-  }, {}),
-  historyData: _.reduce(data, (result, item) => {
-    result.push(_.assign(item, JSON.parse(item.history_data)));
-    return result;
-  }, []),
+    cols: _.reduce(cols, (result, { label, name }) => {
+        result[name] = label;
+        return result;
+    }, {}),
+    historyData: _.reduce(data, (result, item) => {
+        result.push(_.assign(item, JSON.parse(item.history_data)));
+        return result;
+    }, []),
 });

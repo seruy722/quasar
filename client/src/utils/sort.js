@@ -1,5 +1,3 @@
-import { toDate } from 'src/utils/formatDate';
-
 const checkValue = (array) => _.isArray(array) && !_.isEmpty(array);
 // СОРТИРОВКА МАССИВА ДАННЫХ КАК ЧИСЛА
 export const sortArray = ((array) => {
@@ -34,7 +32,7 @@ export const sortSuper = (data, sortBy, descending = false) => {
       return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
     }
     if (sortBy === 'created_at' || sortBy === 'updated_at') {
-      return new Date(toDate(x[sortBy])) - new Date(toDate(y[sortBy]));
+      return new Date(x[sortBy]) - new Date(y[sortBy]);
     }
     let num = 0;
     if (b[sortBy] > a[sortBy]) {
