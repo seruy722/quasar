@@ -14,7 +14,7 @@
           tooltip="Меню"
           @icon-btn-click="drawer = !drawer"
         />
-        <q-toolbar-title>{{ $t(pageTitle) }}</q-toolbar-title>
+        <q-toolbar-title>{{ pageTitle }}</q-toolbar-title>
       </q-toolbar>
     </q-header>
 

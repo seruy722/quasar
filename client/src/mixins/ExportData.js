@@ -25,7 +25,7 @@ export default {
           }
           Notify.create({
             position: 'center',
-            message: 'Данные успешно выгружены.',
+            message: `${fileName} успешно выгружены.`,
             color: 'positive',
           });
         });

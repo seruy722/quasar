@@ -10,14 +10,25 @@
       virtual-scroll
       :virtual-scroll-item-size="48"
       :virtual-scroll-sticky-size-start="48"
+      :grid="$q.screen.lt.sm"
       :pagination="pagination"
       :rows-per-page-options="[0]"
       selection="multiple"
       data-vue-component="NewTable"
       :selected="selected"
-      @selection="onSelection"
       @virtual-scroll="onScroll"
   >
+    <template #top>
+      <slot name="top-buttons" />
+      <ExportBtn
+          url="exportTransfers"
+          title="Переводы"
+          :ids="selected.map((item)=>item.id)"
+      />
+      <SearchDialog :columns="columns" />
+
+    </template>
+
     <template #body="props">
       <slot
           name="inner-body"
@@ -28,48 +39,60 @@
 </template>
 
 <script>
-import { ref, computed, nextTick } from 'vue';
+import {
+  ref,
+  nextTick,
+  onMounted,
+} from 'vue';
 import { useStore } from 'vuex';
 import { axiosInstance } from 'boot/axios';
+import SearchDialog from 'src/components/Search/SearchDialog.vue';
+import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
 
 export default {
   name: 'NewTable',
+  components: {
+    SearchDialog,
+    ExportBtn,
+  },
   props: {
     columns: {
       type: Array,
       require: true,
       default: () => [],
     },
+    rows: {
+      type: Array,
+      require: true,
+      default: () => [],
+    },
   },
-  setup() {
+  setup(props) {
     const selected = ref([]);
     const store = useStore();
-    devlog.log('store', store);
     const loading = ref(false);
 
-    const rows = computed(() => store.getters['transfers/getTransfers']);
-    devlog.log('rows', rows);
+    onMounted(() => {
+      if (_.isEmpty(props.rows)) {
+        store.dispatch('transfers/fetchTransfers')
+            .finally(() => {
+              loading.value = false;
+            });
+      }
+    });
 
     return {
-      rows,
       selected,
       loading,
 
       pagination: { rowsPerPage: 0 },
-      onSelection(val) {
-        devlog.log('onSelection', val);
-      },
 
-      getSelectedString(val) {
-        devlog.log('getSelectedString', val);
-      },
+      onScroll(details) {
+        const data = store.getters['transfers/getTransfersData'];
+        const lastIndex = props.rows.length - 1;
 
-      onScroll({ to, ref }) {
-        const lastIndex = rows.value.length - 1;
-
-        if (loading.value !== true && to === lastIndex) {
+        if (loading.value !== true && details.to === lastIndex && _.isEmpty(store.getters['transfers/getSearchData'])) {
           loading.value = true;
-          const data = store.getters['transfers/getTransfersData'];
           if (data.next_page_url) {
             axiosInstance.get(data.next_page_url)
                 .then(({ data: { transfers } }) => {
@@ -78,16 +101,10 @@ export default {
                   store.commit('transfers/SET_TRANSFERS_DATA', transfers);
                   setTimeout(() => {
                     nextTick(() => {
-                      ref.refresh();
+                      details.ref.refresh();
                       loading.value = false;
                     });
                   }, 500);
-                  devlog.log('transfers', transfers);
-                });
-          } else if (!data.next_page_url || data.to !== data.total) {
-            store.dispatch('transfers/fetchTransfers')
-                .finally(() => {
-                  loading.value = false;
                 });
           }
         }

@@ -1,16 +1,16 @@
 <template>
   <q-btn
-    flat
-    round
-    color="primary"
-    icon="sync"
-    data-vue-component-name="UpdateBtn"
-    @click="$emit('update-btn-click')"
+      round
+      color="primary"
+      icon="sync"
+      :loading="loading"
+      data-vue-component-name="UpdateBtn"
+      @click="refresh"
   >
     <q-tooltip
-      anchor="bottom middle"
-      self="top middle"
-      :offset="[10, 10]"
+        anchor="bottom middle"
+        self="top middle"
+        :offset="[10, 10]"
     >
       Обновить
     </q-tooltip>
@@ -18,8 +18,28 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 export default {
   name: 'UpdateBtn',
-  emits: ['update-btn-click'],
+  props: {
+    func: {
+      type: Function,
+      default: null,
+    },
+  },
+  setup(props) {
+    const loading = ref(false);
+    return {
+      loading,
+      refresh() {
+        loading.value = true;
+        props.func()
+            .finally(() => {
+              loading.value = false;
+            });
+      },
+    };
+  },
 };
 </script>

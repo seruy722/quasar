@@ -32,7 +32,6 @@ const sumObjectForCategories = (arr, isForKg) => {
  * @return {*}
  */
 export const setMethodLabel = (value) => {
-    devlog.log('value', value);
     if (_.isArray(value)) {
         _.forEach(value, (item) => {
             const findLabel = _.find(getFromSettings('transferMethod'), { value: _.toNumber(item.method) });
@@ -42,7 +41,6 @@ export const setMethodLabel = (value) => {
         });
     } else {
         const findLabel = _.find(getFromSettings('transferMethod'), { value: _.toNumber(value) });
-        devlog.log('findLabel', findLabel);
         if (findLabel) {
             return _.get(findLabel, 'label');
         }

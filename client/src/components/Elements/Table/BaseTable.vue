@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import Search from 'src/components/Search.vue';
+import Search from 'src/components/Search/Search.vue';
 
 export default {
   name: 'BaseTable',

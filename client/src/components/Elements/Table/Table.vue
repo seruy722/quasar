@@ -82,7 +82,7 @@ import { sortSuper } from 'src/utils/sort.js';
 export default {
   name: 'Table',
   components: {
-    Search: defineAsyncComponent(() => import('src/components/Search.vue')),
+    Search: defineAsyncComponent(() => import('src/components/Search/Search.vue')),
     IconBtn: defineAsyncComponent(() => import('src/components/Buttons/IconBtn.vue')),
     BaseSelect: defineAsyncComponent(() => import('src/components/Elements/BaseSelect.vue')),
   },

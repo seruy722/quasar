@@ -47,6 +47,11 @@ export const setTransfers = (({ commit }, data) => {
     commit('SET_TRANSFERS', data);
 });
 
+export const setSearchData = (({ commit }, data) => {
+    devlog.log('setSearchData', data);
+    commit('SET_SEARCH_DATA', data);
+});
+
 export const addTransfer = (({ commit }, data) => {
     commit('ADD_TRANSFER', data);
 });

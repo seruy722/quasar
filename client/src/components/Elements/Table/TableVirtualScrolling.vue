@@ -86,7 +86,7 @@ import { getUrl } from 'src/tools/url';
 export default {
   name: 'TableVirtualScrolling',
   components: {
-    Search: defineAsyncComponent(() => import('src/components/Search.vue')),
+    Search: defineAsyncComponent(() => import('src/components/Search/Search.vue')),
     IconBtn: defineAsyncComponent(() => import('src/components/Buttons/IconBtn.vue')),
     BaseSelect: defineAsyncComponent(() => import('src/components/Elements/BaseSelect.vue')),
   },

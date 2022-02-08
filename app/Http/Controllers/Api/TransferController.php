@@ -7,6 +7,7 @@ use App\Code;
 use App\CodesSettings;
 use App\Debt;
 use App\Settings;
+use App\Statuses;
 use App\Transfer;
 use App\User;
 use GuzzleHttp\Client;
@@ -29,17 +30,6 @@ class TransferController extends Controller
         'notation' => 'nullable|string|max:255',
     ];
 
-    protected $transferStatus = [
-        0 => 'Не выбрано',
-        1 => 'Вопрос',
-        2 => 'Не выдан',
-        3 => 'Выдано',
-        4 => 'Отменен',
-        5 => 'Возврат',
-        6 => 'Обработка',
-        7 => 'Отменен клиентом',
-    ];
-
     public function stripData($value)
     {
         $func = function ($value) {
@@ -57,10 +47,11 @@ class TransferController extends Controller
 
     public function query()
     {
-        return Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name', 'codes_settings.transfer_commission as transfer_static_commission')
+        return Transfer::select('transfers.*', 'codes.code as client_name', 'users.name as user_name', 'codes_settings.transfer_commission as transfer_static_commission', 'statuses.name as status_label')
             ->join('codes', 'transfers.client_id', '=', 'codes.id')
             ->join('users', 'transfers.user_id', '=', 'users.id')
             ->leftJoin('codes_settings', 'transfers.client_id', '=', 'codes_settings.code_client_id')
+            ->leftJoin('statuses', 'transfers.status', '=', 'statuses.id')
             ->orderBy('id', 'DESC');
     }
 
@@ -96,7 +87,7 @@ class TransferController extends Controller
             return response(['transfers' => $this->query()->where('transfers.paid', $flag)->get()]);
         }
 
-        if ($request->field === 'method_label') {
+        if ($request->field === 'method') {
             $flag = 1;
             if ($request->value === 'товар деньги') {
                 $flag = 2;
@@ -104,30 +95,33 @@ class TransferController extends Controller
             return response(['transfers' => $this->query()->where('transfers.method', $flag)->get()]);
         }
 
-        if ($request->field === 'status_label') {
-            $flag = 2;
-            if ($request->value === 'выдано') {
-                $flag = 3;
-            } else if ($request->value === 'отменен') {
-                $flag = 4;
-            } else if ($request->value === 'вопрос') {
-                $flag = 1;
-            } else if ($request->value === 'возврат') {
-                $flag = 5;
-            } else if ($request->value === 'обработка') {
-                $flag = 6;
-            } else if ($request->value === 'отменен клиентом') {
-                $flag = 7;
+        if ($request->field === 'status') {
+            $status = Statuses::where('name', 'like', $request->value)->first();
+//            $flag = 2;
+//            if ($request->value === 'выдано') {
+//                $flag = 3;
+//            } else if ($request->value === 'отменен') {
+//                $flag = 4;
+//            } else if ($request->value === 'вопрос') {
+//                $flag = 1;
+//            } else if ($request->value === 'возврат') {
+//                $flag = 5;
+//            } else if ($request->value === 'обработка') {
+//                $flag = 6;
+//            } else if ($request->value === 'отменен клиентом') {
+//                $flag = 7;
+//            }
+            if ($status) {
+                return response(['transfers' => $this->query()->where('transfers.status', $status->id)->get()]);
             }
-            return response(['transfers' => $this->query()->where('transfers.status', $flag)->get()]);
         }
 
-        if ($request->field === 'created_at_date') {
+        if ($request->field === 'created_at') {
             $date = date("Y-m-d", strtotime($request->value));
             return response(['transfers' => $this->query()->whereDate('transfers.created_at', $date)->get()]);
         }
 
-        if ($request->field === 'issued_by_date') {
+        if ($request->field === 'issued_by') {
             $date = date("Y-m-d", strtotime($request->value));
             return response(['transfers' => $this->query()->whereDate('transfers.issued_by', $date)->get()]);
         }
@@ -136,7 +130,21 @@ class TransferController extends Controller
             return response(['transfers' => $this->query()->where('transfers.notation', 'like', '%' . $request->value . '%')->get()]);
         }
 
-        return response(['transfers' => $this->query()->orWhere('transfers.codes.code', 'like', '%' . $request->value . '%')->orWhere('transfers.sum', 'like', '%' . $request->value . '%')->get()]);
+        if ($request->value) {
+            return response(['transfers' => $this->query()
+                ->orWhere('codes.code', 'like', '%' . $request->value . '%')
+                ->orWhere('transfers.sum', 'like', '%' . $request->value . '%')
+                ->orWhere('transfers.receiver_name', 'like', '%' . $request->value . '%')
+                ->orWhere('transfers.receiver_phone', 'like', '%' . $request->value . '%')
+                ->orWhere('transfers.notation', 'like', '%' . $request->value . '%')
+                ->orWhere('transfers.created_at', 'like', '%' . $request->value . '%')
+                ->orWhere('transfers.issued_by', 'like', '%' . $request->value . '%')
+                ->orWhere('users.name', 'like', '%' . $request->value . '%')
+                ->orWhere('statuses.name', 'like', '%' . $request->value . '%')
+                ->get()]);
+        }
+
+        return response(['not_variant' => 2222]);
     }
 
     public function update(Request $request)

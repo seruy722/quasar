@@ -30,47 +30,47 @@
     <CountTransfersData :enter-data="statisticsData" />
 
     <!--Топ 10 клиентов-->
-    <q-list
-      separator
-      bordered
-      dense
-      style="max-width: 450px;margin: 20px auto;font-weight: bold;"
-    >
-      <q-item>
-        <q-item-section class="statistics_title">
-          Топ 10 клиентов
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>
-            <q-btn
-              push
-              color="primary"
-              label="Показать"
-              @click="setClientStatistics"
-            />
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item>
-        <q-item-section>Клиент</q-item-section>
-        <q-item-section>Количество</q-item-section>
-        <q-item-section>Сумма</q-item-section>
-      </q-item>
-      <q-item
-        v-for="(user, index) in topTransfersClients"
-        :key="index"
-      >
-        <q-item-section>
-          <q-item-label> {{ user.name }}</q-item-label>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ numberFormat(user.count) }}</q-item-label>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ numberFormat(user.sum) }}</q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list>
+<!--    <q-list-->
+<!--      separator-->
+<!--      bordered-->
+<!--      dense-->
+<!--      style="max-width: 450px;margin: 20px auto;font-weight: bold;"-->
+<!--    >-->
+<!--      <q-item>-->
+<!--        <q-item-section class="statistics_title">-->
+<!--          Топ 10 клиентов-->
+<!--        </q-item-section>-->
+<!--        <q-item-section>-->
+<!--          <q-item-label>-->
+<!--            <q-btn-->
+<!--              push-->
+<!--              color="primary"-->
+<!--              label="Показать"-->
+<!--              @click="setClientStatistics"-->
+<!--            />-->
+<!--          </q-item-label>-->
+<!--        </q-item-section>-->
+<!--      </q-item>-->
+<!--      <q-item>-->
+<!--        <q-item-section>Клиент</q-item-section>-->
+<!--        <q-item-section>Количество</q-item-section>-->
+<!--        <q-item-section>Сумма</q-item-section>-->
+<!--      </q-item>-->
+<!--      <q-item-->
+<!--        v-for="(user, index) in topTransfersClients"-->
+<!--        :key="index"-->
+<!--      >-->
+<!--        <q-item-section>-->
+<!--          <q-item-label> {{ user.name }}</q-item-label>-->
+<!--        </q-item-section>-->
+<!--        <q-item-section>-->
+<!--          <q-item-label>{{ numberFormat(user.count) }}</q-item-label>-->
+<!--        </q-item-section>-->
+<!--        <q-item-section>-->
+<!--          <q-item-label>{{ numberFormat(user.sum) }}</q-item-label>-->
+<!--        </q-item-section>-->
+<!--      </q-item>-->
+<!--    </q-list>-->
 
     <Dialog
       :dialog="choosePeriodDialog"

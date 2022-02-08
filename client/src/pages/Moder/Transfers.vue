@@ -241,7 +241,30 @@
     <!--      </TableVirtualScrolling>-->
     <!--      <CountTransfersData :enter-data="allTransfers" />-->
     <!--    </PullRefresh>-->
-    <NewTable :columns="transferTableProperties.columns">
+    <!--    <PullRefresh @refresh="refresh">-->
+    <NewTable
+        :columns="columns"
+        :rows="allTransfers"
+    >
+      <template #top-buttons>
+        <UpdateBtn
+            :func="refresh"
+        />
+        <RoundBtn
+            color="orange"
+            tooltip="Статистика"
+            icon="trending_up"
+            @round-btn-click="dialogStatistics = true"
+        />
+        <RoundBtn
+            v-show="transferTableReactiveProperties.selected.length"
+            color="teal"
+            tooltip="Добавить в долги"
+            icon="move_to_inbox"
+            @round-btn-click="addToDebtsTable(transferTableReactiveProperties.selected)"
+        />
+      </template>
+
       <template #inner-body="{props}">
         <q-tr
             :props="props"
@@ -307,7 +330,7 @@
               :props="props"
           >
             <q-badge :color="statusColor(props.row.status)">
-              {{ setStatusLabel(props.row.status) }}
+              {{ props.row.status_label }}
             </q-badge>
           </q-td>
 
@@ -341,6 +364,7 @@
         </q-tr>
       </template>
     </NewTable>
+    <!--    </PullRefresh>-->
     <PageSticky :offset="[18, 200]">
       <Fab color="accent">
         <FabAction
@@ -420,8 +444,9 @@ import {
 import { defineAsyncComponent } from 'vue';
 // import TableVirtualScrolling from 'src/components/Elements/Table/TableVirtualScrolling.vue';
 import NewTable from 'src/components/Elements/Table/NewTable.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
+import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
-// import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
 // import CountTransfersData from 'src/components/Transfers/CountTransfersData.vue';
 // import PullRefresh from 'src/components/PullRefresh.vue';
 import PageSticky from 'src/components/PageSticky.vue';
@@ -437,11 +462,12 @@ export default {
     NewTable,
     // TableVirtualScrolling,
     // BaseBtn,
-    IconBtn,
+    RoundBtn,
     PageSticky,
     // PullRefresh,
     // CountTransfersData,
-    // UpdateBtn,
+    UpdateBtn,
+    IconBtn,
     Fab,
     FabAction,
     PageScroller,
@@ -578,6 +604,85 @@ export default {
           value: '',
         },
       },
+      columns: [
+        {
+          name: 'client_name',
+          label: 'Клиент',
+          align: 'center',
+          field: 'client_name',
+          sortable: true,
+        },
+        {
+          name: 'receiver_name',
+          label: 'Получатель',
+          field: 'receiver_name',
+          align: 'center',
+          sortable: true,
+        },
+        {
+          name: 'receiver_phone',
+          label: 'Телефон получателя',
+          field: 'receiver_phone',
+          align: 'center',
+          sortable: true,
+        },
+        {
+          name: 'sum',
+          label: 'Сумма',
+          field: 'sum',
+          align: 'center',
+          sortable: true,
+        },
+        {
+          name: 'paid',
+          label: 'Оплачен',
+          field: 'paid',
+          align: 'center',
+          sortable: true,
+        },
+        {
+          name: 'method',
+          label: 'Метод',
+          field: 'method',
+          align: 'center',
+          sortable: true,
+        },
+        {
+          name: 'status',
+          label: 'Статус',
+          field: 'status',
+          align: 'center',
+          sortable: true,
+        },
+        {
+          name: 'user_name',
+          label: 'Пользователь',
+          field: 'user_name',
+          align: 'center',
+          sortable: true,
+        },
+        {
+          name: 'created_at',
+          label: 'Добавлено',
+          field: 'created_at',
+          align: 'center',
+          sortable: true,
+        },
+        {
+          name: 'issued_by',
+          field: 'issued_by',
+          label: 'Выдано',
+          align: 'center',
+          sortable: true,
+        },
+        {
+          name: 'notation',
+          label: 'Примечания',
+          field: 'notation',
+          align: 'center',
+          sortable: true,
+        },
+      ],
       transferTableProperties: {
         columns: [
           {
@@ -669,6 +774,9 @@ export default {
     };
   },
   computed: {
+    tr() {
+      return this.$store.getters['transfers/getSearchData'];
+    },
     allTransfers() {
       return this.$store.getters['transfers/getTransfers'];
     },
@@ -710,9 +818,6 @@ export default {
     },
   },
   mounted() {
-    if (_.isEmpty(this.allTransfers)) {
-      this.getTransfers();
-    }
     const pusher = new Pusher('47b7c9db3b44606e887f', {
       cluster: 'eu',
     });
@@ -740,9 +845,6 @@ export default {
       this.dialog = val;
     },
     viewEditDialog(val, event) {
-      devlog.log('EVENT', event);
-      devlog.log('EVENT_get', _.get(event, 'target.classList'));
-      devlog.log('val', val);
       if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
         if (val) {
           this.localProps = val;
@@ -750,7 +852,6 @@ export default {
           setTimeout(() => {
             val.selected = !val.selected;
           }, 100);
-          devlog.log('SEL', val);
           this.$q.loading.show();
           Promise.all([getClientCodes(this.$store)])
               .then(() => {
@@ -774,28 +875,12 @@ export default {
         }
       }
     },
-    getTransfers() {
+    refresh() {
       this.loading = true;
       return this.$store.dispatch('transfers/fetchTransfers')
           .finally(() => {
             this.loading = false;
           });
-    },
-    refresh(done) {
-      if (!done) {
-        this.loading = true;
-      }
-      this.getTransfers()
-          .finally(() => {
-            callFunction(done);
-            this.loading = false;
-          });
-    },
-    exportTransfers(data, selectedData) {
-      const ids = _.isEmpty(selectedData) ? [] : _.uniq(_.map(selectedData, 'id'));
-      this.exportDataToExcel(getUrl('exportTransfers'), {
-        ids,
-      }, 'Переводы.xlsx');
     },
     addToDebtsTableFinish({
                             ids,

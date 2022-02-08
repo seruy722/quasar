@@ -12,6 +12,7 @@
       data-vue-component-name="BaseSelect"
       emit-value
       map-options
+      clearable
       @update:model-value="inputEvent"
   >
     <template #prepend>
