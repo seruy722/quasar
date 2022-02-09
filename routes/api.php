@@ -24,7 +24,7 @@ use App\Traits\UserSetAccessData;
 //});
 
 Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:api']], function () {
-    Route::get('/user', function (Request $request) {
+    Route::get('/user', function () {
         class Access
         {
             use UserSetAccessData;
@@ -120,7 +120,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('/export-general-cargo-data', 'Api\CargoController@exportGeneralCargoData')->name('export general cargo data')->middleware(['role_or_permission:admin|export general cargo data']);
     Route::post('/export-cargo', 'Api\CargoController@exportGeneralCargoData')->name('export cargo')->middleware(['role_or_permission:admin|export cargo']);
     Route::post('/export-general-debts-data', 'Api\CargoController@exportGeneralDebtsData')->name('export general debts data')->middleware(['role_or_permission:admin|export general debts data']);
-    Route::post('/export-general-data-by-clients', 'Api\CargoController@exportGeneralDataByClients')->name('export general data by clients')->middleware(['role_or_permission:admin|export general data by clients']);
+    Route::post('/export-general-data-by-clients', 'Api\CargoController@exportGeneralDataByClients');
     Route::post('/export-clients-general-data-odessa', 'Api\CargoController@exportGeneralDataByClientsOdessa')->name('export clients general data odessa')->middleware(['role_or_permission:admin|export clients general data odessa']);
     Route::post('/cargo-pay-entry', 'Api\CargoController@cargoPayEntry')->name('cargo pay entry')->middleware(['role_or_permission:admin|cargo pay entry']);
     Route::post('/debt-pay-entry', 'Api\CargoController@debtPayEntry')->name('debt pay entry')->middleware(['role_or_permission:admin|debt pay entry']);
