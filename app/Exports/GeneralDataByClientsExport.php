@@ -2,9 +2,7 @@
 
 namespace App\Exports;
 
-use App\Cargo;
-use App\Code;
-use App\Debt;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithTitle;
@@ -30,14 +28,15 @@ class GeneralDataByClientsExport implements FromView, ShouldAutoSize, WithTitle
     public function getCollection()
     {
         $arr = [];
-        $clientsIds = Code::get();
+        $clientsIds = DB::table('codes')->get();
 
         if ($this->model === 'cargo') {
             foreach ($clientsIds as $item) {
-                $sum = Cargo::select(
-                    'cargos.*',
-                    'codes.code as code_client_name'
-                )
+                $sum = DB::table('cargos')
+                    ->select(
+                        'cargos.*',
+                        'codes.code as code_client_name'
+                    )
                     ->leftJoin('codes', 'codes.id', '=', 'cargos.code_client_id')
                     ->where('code_client_id', $item->id)->sum('sum');
                 if ($sum) {
@@ -46,11 +45,12 @@ class GeneralDataByClientsExport implements FromView, ShouldAutoSize, WithTitle
             }
         } else if ($this->model === 'debts') {
             foreach ($clientsIds as $item) {
-                $sum = Debt::select(
-                    'debts.*',
-                    'codes.code as code_client_name'
+                $sum = DB::table('debts')
+                    ->select(
+                        'debts.*',
+                        'codes.code as code_client_name'
 
-                )
+                    )
                     ->leftJoin('codes', 'codes.id', '=', 'debts.code_client_id')
                     ->where('code_client_id', $item->id)->sum('sum');
                 if ($sum) {
@@ -59,11 +59,12 @@ class GeneralDataByClientsExport implements FromView, ShouldAutoSize, WithTitle
             }
         } else if ($this->model === 'commission') {
             foreach ($clientsIds as $item) {
-                $sum = Debt::select(
-                    'debts.*',
-                    'codes.code as code_client_name'
+                $sum = DB::table('debts')
+                    ->select(
+                        'debts.*',
+                        'codes.code as code_client_name'
 
-                )
+                    )
                     ->leftJoin('codes', 'codes.id', '=', 'debts.code_client_id')
                     ->where('code_client_id', $item->id)->sum('commission');
                 if (round($sum)) {
