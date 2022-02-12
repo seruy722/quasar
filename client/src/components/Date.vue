@@ -3,7 +3,7 @@
     name="event"
     class="cursor-pointer"
     size="md"
-    data-vue-component-name="Date"
+    data-vue-component-name="DateComponent"
   >
     <q-popup-proxy
       ref="qDateProxy"
@@ -21,11 +21,11 @@
 </template>
 
 <script>
-import Icon from 'components/Elements/Icon.vue';
+import Icon from 'src/components/Elements/Icon.vue';
 import { computed } from 'vue';
 
 export default {
-  name: 'Date',
+  name: 'DateComponent',
   components: {
     Icon,
   },

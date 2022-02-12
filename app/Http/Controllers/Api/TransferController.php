@@ -348,9 +348,8 @@ class TransferController extends Controller
         $entryIds = $request->ids;
         $date = $request->date;
         $transfersData = Transfer::whereIn('id', $entryIds)->get();
-        $debts = Debt::all();
-        $transfersData->each(function ($item) use ($debts, $date) {
-            if (!$debts->contains('transfer_id', $item->id)) {
+        $transfersData->each(function ($item) use ($date) {
+            if (!Debt::where('transfer_id', $item->id)->first()) {
                 $data = $item->toArray();
                 $data['sum'] = $data['sum'] * -1;
                 $data['code_client_id'] = $data['client_id'];
@@ -367,7 +366,7 @@ class TransferController extends Controller
                 Debt::create($data);
             }
         });
-        return response()->json(null, 201);
+        return response()->json(Debt::where('transfer_id', 6976)->first(), 201);
     }
 
     public function indexClient()

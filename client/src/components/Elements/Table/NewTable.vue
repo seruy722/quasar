@@ -27,6 +27,17 @@
       />
       <SearchDialog :columns="columns" />
 
+      <DialogChooseDate2
+          :values="selected"
+      />
+
+    </template>
+
+    <template #item="props">
+      <slot
+          name="inner-item"
+          :props="props"
+      />
     </template>
 
     <template #body="props">
@@ -48,12 +59,14 @@ import { useStore } from 'vuex';
 import { axiosInstance } from 'boot/axios';
 import SearchDialog from 'src/components/Search/SearchDialog.vue';
 import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
+import DialogChooseDate2 from 'src/components/Dialogs/DialogChooseDate2.vue';
 
 export default {
   name: 'NewTable',
   components: {
     SearchDialog,
     ExportBtn,
+    DialogChooseDate2,
   },
   props: {
     columns: {

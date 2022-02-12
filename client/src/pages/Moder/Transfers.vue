@@ -256,13 +256,115 @@
             icon="trending_up"
             @round-btn-click="dialogStatistics = true"
         />
-        <RoundBtn
-            v-show="transferTableReactiveProperties.selected.length"
-            color="teal"
-            tooltip="Добавить в долги"
-            icon="move_to_inbox"
-            @round-btn-click="addToDebtsTable(transferTableReactiveProperties.selected)"
-        />
+<!--        <RoundBtn-->
+<!--            v-show="transferTableReactiveProperties.selected.length"-->
+<!--            color="teal"-->
+<!--            tooltip="Добавить в долги"-->
+<!--            icon="move_to_inbox"-->
+<!--            @round-btn-click="addToDebtsTable(transferTableReactiveProperties.selected)"-->
+<!--        />-->
+      </template>
+
+      <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
+      <template #inner-item="{props}">
+        <div
+            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+            :style="props.selected ? 'transform: scale(0.95);' : ''"
+        >
+          <q-expansion-item
+              expand-separator
+              class="shadow-1 overflow-hidden"
+              style="border-radius: 30px;border: 1px solid;"
+              :class="`border_${statusColor(props.row.status_label)}`"
+              :header-class="`bg-${statusColor(props.row.status_label)} text-white`"
+              expand-icon-class="text-white"
+          >
+            <template #header>
+              <q-item-section>
+                <q-item-label :lines="2">
+                  {{ props.row.client_name }}
+                </q-item-label>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>
+                  {{ props.row.sum }}
+                </q-item-label>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>
+                  {{ props.row.created_at.slice(0, 10) }}
+                </q-item-label>
+              </q-item-section>
+
+              <q-item-section
+                  avatar
+                  side
+              >
+                <q-icon
+                    v-if="props.row.paid"
+                    name="money"
+                    size="md"
+                    color="white"
+                />
+              </q-item-section>
+            </template>
+
+            <!--            <q-list-->
+            <!--                separator-->
+            <!--                dense-->
+            <!--                @click="viewEditDialog(props)"-->
+            <!--            >-->
+            <!--              <q-item-->
+            <!--                  v-for="col in props.cols.filter(col => col.name !== 'desc')"-->
+            <!--                  :key="col.name"-->
+            <!--              >-->
+            <!--                <q-item-section>-->
+            <!--                  <q-item-label>{{ `${col.label}:` }}</q-item-label>-->
+            <!--                </q-item-section>-->
+            <!--                <q-item-section side>-->
+            <!--                  <q-item-label v-if="col.field === 'status_label'">-->
+            <!--                    <q-badge :color="statusColor(col.value)">-->
+            <!--                      {{ col.value }}-->
+            <!--                    </q-badge>-->
+            <!--                  </q-item-label>-->
+            <!--                  <q-item-label v-else-if="col.field === 'receiver_phone'">-->
+            <!--                    {{ phoneNumberFilter(col.value) }}-->
+            <!--                  </q-item-label>-->
+            <!--                  <q-item-label v-else-if="col.field === 'receiver_name'">-->
+            <!--                    {{ col.value }}-->
+            <!--                  </q-item-label>-->
+            <!--                  <q-item-label-->
+            <!--                      v-else-if="col.field === 'notation'"-->
+            <!--                      :lines="3"-->
+            <!--                  >-->
+            <!--                    {{ col.value }}-->
+            <!--                  </q-item-label>-->
+            <!--                  <q-item-label-->
+            <!--                      v-else-if="col.field === 'paid'"-->
+            <!--                      :lines="3"-->
+            <!--                  >-->
+            <!--                    {{ col.value ? 'Да' : 'Нет' }}-->
+            <!--                  </q-item-label>-->
+            <!--                  <q-item-label v-else>-->
+            <!--                    {{ col.value }}-->
+            <!--                  </q-item-label>-->
+            <!--                </q-item-section>-->
+            <!--              </q-item>-->
+            <!--              <q-item>-->
+            <!--                <q-item-section>-->
+            <!--                  <BaseBtn-->
+            <!--                      label="История"-->
+            <!--                      color="info"-->
+            <!--                      style="max-width: 100px;margin: 0 auto;"-->
+            <!--                      @click-base-btn="getTransfersHistory(props.row.id, props.cols)"-->
+            <!--                  />-->
+            <!--                </q-item-section>-->
+            <!--              </q-item>-->
+            <!--            </q-list>-->
+          </q-expansion-item>
+        </div>
       </template>
 
       <template #inner-body="{props}">
@@ -411,10 +513,10 @@
         </q-card-section>
       </q-card>
     </Dialog>
-    <DialogChooseDate
-        v-model:show-dialog="showDialogChooseDate"
-        v-model:date="dialogChooseDateData"
-    />
+<!--    <DialogChooseDate-->
+<!--        v-model:show-dialog="showDialogChooseDate"-->
+<!--        v-model:date="dialogChooseDateData"-->
+<!--    />-->
     <TransferHistory
         ref="transferHistoryComponent"
         v-model:show="dialogHistory"
@@ -475,7 +577,7 @@ export default {
     DialogAddCode: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddCode.vue')),
     DialogAddTransfer: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddTransfer.vue')),
     TransfersStatistics: defineAsyncComponent(() => import('src/components/Transfers/TransfersStatistics.vue')),
-    DialogChooseDate: defineAsyncComponent(() => import('src/components/Dialogs/DialogChooseDate.vue')),
+    // DialogChooseDate: defineAsyncComponent(() => import('src/components/Dialogs/DialogChooseDate.vue')),
     TransferHistory: defineAsyncComponent(() => import('src/components/History/TransferHistory.vue')),
   },
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
@@ -881,50 +983,6 @@ export default {
           .finally(() => {
             this.loading = false;
           });
-    },
-    addToDebtsTableFinish({
-                            ids,
-                            date = null,
-                          }) {
-      this.$q.loading.show();
-      this.$axios.post(getUrl('addTransfersToDebts'), {
-        ids,
-        date,
-      })
-          .then(() => {
-            this.transferTableReactiveProperties.selected = [];
-            this.showDialogChooseDate = false;
-            this.$q.loading.hide();
-            this.showNotif('success', 'Данные успешно добавлены в таблицу долгов', 'center');
-          })
-          .catch(() => {
-            this.$q.loading.hide();
-            this.showNotif('error', 'Произошла ошибка при добавлении данных', 'center');
-            devlog.error('Ошибка запроса - addTransfersToDebts');
-          });
-    },
-    addToDebtsTable(data) {
-      devlog.log('DATAAAA', data);
-      const ids = _.map(data, 'id');
-      this.showNotif('warning', _.size(ids) > 1 ? 'Добавить записи в талицу долгов?' : 'Добавить запись в талицу долгов?', 'center', [
-        {
-          label: 'Отмена',
-          color: 'white',
-          handler: () => {
-            this.transferTableReactiveProperties.selected = [];
-          },
-        },
-        {
-          label: 'Добавить',
-          color: 'white',
-          handler: () => {
-            this.showDialogChooseDate = true;
-            this.dialogChooseDataForSend = {
-              ids,
-            };
-          },
-        },
-      ]);
     },
   },
 };
