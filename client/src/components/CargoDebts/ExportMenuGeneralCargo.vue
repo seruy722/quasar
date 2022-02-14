@@ -1,58 +1,58 @@
 <template>
   <div
-    data-vue-component-name="ExportMenuGeneralCargo"
+      data-vue-component-name="ExportMenuGeneralCargo"
   >
     <ExportBtn
-      color="positive"
-      tooltip="Excel"
-      icon="explicit"
-      @export-btn-click="show = true"
+        color="positive"
+        tooltip="Excel"
+        icon="explicit"
+        @export-btn-click="show = true"
     />
 
     <Dialog
-      v-model:dialog="show"
-      :persistent="true"
-      title="Оплата"
+        v-model:dialog="show"
+        :persistent="true"
+        title="Оплата"
     >
       <q-card style="min-width: 320px;width: 100%;max-width: 900px;">
         <q-card-section class="row justify-between items-center bg-grey q-mb-sm">
           <span class="text-h6">{{ title }}</span>
           <IconBtn
-            dense
-            icon="clear"
-            tooltip="Закрыть"
-            color="negative"
-            @icon-btn-click="show = false"
+              dense
+              icon="clear"
+              tooltip="Закрыть"
+              color="negative"
+              @icon-btn-click="show = false"
           />
         </q-card-section>
         <q-card-section>
           <div
-            class="row items-center"
-            style="margin: 0 40px;text-align: center;"
+              class="row items-center"
+              style="margin: 0 40px;text-align: center;"
           >
             <q-select
-              v-model="type"
-              :options="typeOptions"
-              style="margin-right: 40px;"
+                v-model="type"
+                :options="typeOptions"
+                style="margin-right: 40px;"
             />
             <q-btn
-              color="primary"
-              :label="selectData.label"
+                color="primary"
+                :label="selectData.label"
             >
               <q-menu
-                auto-close
-                transition-show="scale"
-                transition-hide="scale"
+                  auto-close
+                  transition-show="scale"
+                  transition-hide="scale"
               >
                 <q-list
-                  separator
-                  style="min-width: 100px"
+                    separator
+                    style="min-width: 100px"
                 >
                   <q-item
-                    v-for="(item, index) in list"
-                    :key="index"
-                    clickable
-                    @click="setSelectData(item)"
+                      v-for="(item, index) in list"
+                      :key="index"
+                      clickable
+                      @click="setSelectData(item)"
                   >
                     <q-item-section>{{ item.label }}</q-item-section>
                   </q-item>
@@ -64,26 +64,26 @@
             </div>
             <div class="q-gutter-md row items-start">
               <SearchSelect
-                v-model="city"
-                label="Сводка по городу"
-                clearable
-                :dense="$q.screen.xs || $q.screen.sm"
-                :func-load-data="getCities"
-                :options="cities"
+                  v-model="city"
+                  label="Сводка по городу"
+                  clearable
+                  :dense="$q.screen.xs || $q.screen.sm"
+                  :func-load-data="getCities"
+                  :options="cities"
               />
               <q-btn
-                v-if="city"
-                label="Выгрузить"
-                color="positive"
-                @click="exportGeneralDataByClientsCity(model, city)"
+                  v-if="city"
+                  label="Выгрузить"
+                  color="positive"
+                  @click="exportGeneralDataByClientsCity(model, city)"
               />
             </div>
           </div>
           <Dialog
-            :dialog="choosePeriodDialog"
-            :persistent="true"
-            transition-show="flip-up"
-            transition-hide="flip-down"
+              :dialog="choosePeriodDialog"
+              :persistent="true"
+              transition-show="flip-up"
+              transition-hide="flip-down"
           >
             <q-card style="max-width: 600px;">
               <q-card-section class="q-pt-none">
@@ -91,33 +91,33 @@
                   <div class="row items-center">
                     <span>От:</span>
                     <DateWithInputForCargo
-                      v-model:value="period.from"
+                        v-model:value="period.from"
                     />
                   </div>
                   <div class="row items-center">
                     <span>До:</span>
                     <DateWithInputForCargo
-                      v-model:value="period.to"
+                        v-model:value="period.to"
                     />
                   </div>
                 </div>
                 <div v-show="selectData.value === 3">
                   <DateWithInputForCargo
-                    v-model:value="period.day"
+                      v-model:value="period.day"
                   />
                 </div>
               </q-card-section>
               <q-card-actions align="right">
                 <OutlineBtn
-                  label="Отмена"
-                  dense
-                  color="negative"
-                  @click-outline-btn="setDate(null)"
+                    label="Отмена"
+                    dense
+                    color="negative"
+                    @click-outline-btn="setDate(null)"
                 />
                 <OutlineBtn
-                  dense
-                  color="positive"
-                  @click-outline-btn="setDate(true)"
+                    dense
+                    color="positive"
+                    @click-outline-btn="setDate(true)"
                 />
               </q-card-actions>
             </q-card>
@@ -126,20 +126,20 @@
         <Separator />
         <q-card-actions align="right">
           <BaseBtn
-            label="Сводка по клиентам"
-            color="orange"
-            @click-base-btn="exportGeneralDataByClients(model)"
+              label="Сводка по клиентам"
+              color="orange"
+              @click-base-btn="exportGeneralDataByClients(model)"
           />
           <BaseBtn
-            v-show="model === 'debts'"
-            label="сводка по комиссии"
-            color="orange"
-            @click-base-btn="exportGeneralDataByClients('commission')"
+              v-show="model === 'debts'"
+              label="сводка по комиссии"
+              color="orange"
+              @click-base-btn="exportGeneralDataByClients('commission')"
           />
           <BaseBtn
-            label="Общее"
-            color="positive"
-            @click-base-btn="exportFaxData(selectData,type, period, city)"
+              label="Общее"
+              color="positive"
+              @click-base-btn="exportFaxData(selectData,type, period, city)"
           />
         </q-card-actions>
       </q-card>
@@ -293,6 +293,7 @@ export default {
       }
     },
     async exportFaxData(select, type, period, city) {
+      devlog.log('EXPORT', city);
       const { getTimeZone } = await import('src/utils/formatDate');
       const sendData = {
         type: type.value,
@@ -306,26 +307,27 @@ export default {
       const { addTime } = await import('src/utils/formatDate');
       if (select.value === 1) {
         sendData.day = addTime(period.today)
-          .toISOString();
+            .toISOString();
       } else if (select.value === 2) {
         sendData.period = period;
         if (period.to) {
           sendData.period.to = addTime(period.to)
-            .toISOString();
+              .toISOString();
         }
         if (period.from) {
           sendData.period.from = addTime(period.from)
-            .toISOString();
+              .toISOString();
         }
       } else if (select.value === 3) {
         sendData.day = addTime(period.day)
-          .toISOString();
+            .toISOString();
       }
       devlog.log(sendData);
+      const findCity = _.find(this.cities, { value: city });
       this.exportDataToExcel(getUrl(this.urlName), {
         data: sendData,
-        cityId: _.get(city, 'value'),
-      }, `${this.model}_${city ? _.get(city, 'label') : 'все'}.xlsx`);
+        cityId: _.get(findCity, 'value'),
+      }, `${this.model}_${findCity ? _.get(findCity, 'label') : 'все'}.xlsx`);
       this.show = false;
     },
     async exportGeneralDataByClients(model) {
@@ -334,7 +336,7 @@ export default {
       }, `${model}.xlsx`);
     },
     async exportGeneralDataByClientsCity(model, cityId) {
-      const findCity = _.find(this.cities, {value: cityId});
+      const findCity = _.find(this.cities, { value: cityId });
       this.exportDataToExcel(getUrl('exportClientsGeneralDataOdessa'), {
         model,
         cityId,
