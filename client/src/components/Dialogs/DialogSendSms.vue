@@ -53,7 +53,9 @@
 
       <div>
         Тариф: {{ rate }} | Баланс :
-        <q-badge :color="balance > 0 ? 'positive' : 'negative'">{{ balance }}</q-badge>
+        <q-badge :color="balance > 0 ? 'positive' : 'negative'">
+          {{ balance }}
+        </q-badge>
         |
         Остаток сообщений: {{ Math.round(balance / rate) }}
       </div>
@@ -218,7 +220,12 @@
                   key="text"
                   :props="props"
               >
-                <q-input v-model="props.row.text" :maxlength="maxLength" counter dense></q-input>
+                <q-input
+                    v-model="props.row.text"
+                    :maxlength="maxLength"
+                    counter
+                    dense
+                />
               </q-td>
 
               <q-td
@@ -386,8 +393,6 @@ import { getUrl } from 'src/tools/url';
 import { fullDate } from 'src/utils/formatDate';
 import { thingsFilter, numberFormat } from 'src/utils';
 import Table from 'src/components/Elements/Table/Table.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
-import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import showNotif from 'src/mixins/showNotif';
 import { uid } from 'quasar';
 
@@ -395,8 +400,6 @@ export default {
   name: 'DialogSendSms',
   components: {
     Table,
-    IconBtn,
-    BaseBtn,
   },
   mixins: [showNotif],
   props: {
@@ -419,7 +422,7 @@ export default {
       status: false,
       archive: {},
       maxLength: 70,
-      rate: 0.35,
+      rate: 0.48,
       balance: null,
       group: [],
       options: [
