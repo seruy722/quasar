@@ -1,38 +1,40 @@
 <template>
   <q-page
-    data-vue-component-name="CodePrice"
-    class="q-pa-md"
+      data-vue-component-name="CodePrice"
+      class="q-pa-md"
   >
     <PullRefresh @refresh="refresh">
       <Table
-        :table-properties="transferTableProperties"
-        :table-data="codesPriceData"
-        :table-reactive-properties="transferTableReactiveProperties"
-        :loading="loading"
-        title="Цены"
+          :table-properties="transferTableProperties"
+          :table-data="codesPriceData"
+          :table-reactive-properties="transferTableReactiveProperties"
+          :loading="loading"
+          title="Цены"
       >
         <template #top-buttons>
-          <IconBtn
-            color="teal"
-            icon="add_box"
-            tooltip="Добавить"
-            @icon-btn-click="addCodeWithCategory"
-          />
-          <UpdateBtn
-            @update-btn-click="refresh"
-          />
+          <div class="row q-gutter-sm">
+            <RoundBtn
+                color="teal"
+                icon="add_box"
+                tooltip="Добавить"
+                @round-btn-click="addCodeWithCategory"
+            />
+            <UpdateBtn
+                :func="refresh"
+            />
+          </div>
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
         <template #inner-item="{props}">
           <div
-            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-            :style="props.selected ? 'transform: scale(0.95);' : ''"
+              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+              :style="props.selected ? 'transform: scale(0.95);' : ''"
           >
             <q-expansion-item
-              expand-separator
-              class="shadow-1 overflow-hidden"
-              style="border-radius: 30px;border: 1px solid;"
-              expand-icon-class="text-white"
+                expand-separator
+                class="shadow-1 overflow-hidden"
+                style="border-radius: 30px;border: 1px solid;"
+                expand-icon-class="text-white"
             >
               <template #header>
                 <q-item-section>
@@ -49,10 +51,10 @@
               </template>
 
               <q-list
-                dense
-                bordered
-                separator
-                class="q-ma-md"
+                  dense
+                  bordered
+                  separator
+                  class="q-ma-md"
               >
                 <q-item class="text-bold text-center">
                   <q-item-section>
@@ -76,9 +78,9 @@
                 </q-item>
 
                 <q-item
-                  v-for="(elem, i) in props.row.data"
-                  :key="i"
-                  class="text-center"
+                    v-for="(elem, i) in props.row.data"
+                    :key="i"
+                    class="text-center"
                 >
                   <q-item-section>
                     <q-item-label :lines="3">
@@ -107,27 +109,27 @@
                   <q-item-section side>
                     <div class="row">
                       <IconBtn
-                        flat
-                        dense
-                        icon="history"
-                        tooltip="История"
-                        @icon-btn-click="getCodePriceHistory(elem.id)"
+                          flat
+                          dense
+                          icon="history"
+                          tooltip="История"
+                          @icon-btn-click="getCodePriceHistory(elem.id)"
                       />
                       <IconBtn
-                        flat
-                        dense
-                        icon="edit"
-                        color="teal"
-                        tooltip="Редактировать"
-                        @icon-btn-click="openDialogAddCodePriceForUpdate(elem)"
+                          flat
+                          dense
+                          icon="edit"
+                          color="teal"
+                          tooltip="Редактировать"
+                          @icon-btn-click="openDialogAddCodePriceForUpdate(elem)"
                       />
                       <IconBtn
-                        flat
-                        dense
-                        icon="delete"
-                        color="negative"
-                        tooltip="Удалить"
-                        @icon-btn-click="deleteCodePrice(elem)"
+                          flat
+                          dense
+                          icon="delete"
+                          color="negative"
+                          tooltip="Удалить"
+                          @icon-btn-click="deleteCodePrice(elem)"
                       />
                     </div>
                   </q-item-section>
@@ -139,23 +141,23 @@
 
         <template #inner-body="{props}">
           <q-tr
-            :props="props"
-            class="text-bold cursor-pointer"
-            @click.stop="viewEditDialog(props, $event)"
+              :props="props"
+              class="text-bold cursor-pointer"
+              @click.stop="viewEditDialog(props, $event)"
           >
             <q-td
-              auto-width
-              class="select_checkbox"
+                auto-width
+                class="select_checkbox"
             >
               <q-checkbox
-                v-model="props.selected"
-                dense
+                  v-model="props.selected"
+                  dense
               />
             </q-td>
 
             <q-td
-              key="code"
-              :props="props"
+                key="code"
+                :props="props"
             >
               {{ props.row.code }}
             </q-td>
@@ -169,30 +171,30 @@
         </template>
       </Table>
       <DialogAddCodePrice
-        v-model:show-dialog="showDialogAddCodePrice"
-        v-model:code-id="codeId"
-        v-model:entry-data="entryData"
+          v-model:show-dialog="showDialogAddCodePrice"
+          v-model:code-id="codeId"
+          v-model:entry-data="entryData"
       />
       <DialogAddNewCodePrice
-        v-model:show-dialog="showDialogAddNewCodePrice"
+          v-model:show-dialog="showDialogAddNewCodePrice"
       />
 
       <Dialog
-        :dialog="dialogHistory"
-        :persistent="true"
-        :maximized="true"
-        transition-show="slide-up"
-        transition-hide="slide-down"
+          :dialog="dialogHistory"
+          :persistent="true"
+          :maximized="true"
+          transition-show="slide-up"
+          transition-hide="slide-down"
       >
         <q-card style="max-width: 600px;">
           <q-bar>
             <q-space />
             <IconBtn
-              flat
-              dense
-              icon="close"
-              tooltip="Закрыть"
-              @icon-btn-click="dialogHistory = false"
+                flat
+                dense
+                icon="close"
+                tooltip="Закрыть"
+                @icon-btn-click="dialogHistory = false"
             />
           </q-bar>
 
@@ -202,28 +204,28 @@
         </q-card>
       </Dialog>
       <Dialog
-        :dialog="dialogViewCodeData"
-        :persistent="true"
-        transition-show="slide-up"
-        transition-hide="slide-down"
+          :dialog="dialogViewCodeData"
+          :persistent="true"
+          transition-show="slide-up"
+          transition-hide="slide-down"
       >
         <q-card style="width: 100%;max-width: 800px;">
           <q-bar>
             {{ codeName }}
             <q-space />
             <q-btn
-              dense
-              flat
-              icon="close"
-              color="negative"
-              @click="dialogViewCodeData = false"
+                dense
+                flat
+                icon="close"
+                color="negative"
+                @click="dialogViewCodeData = false"
             />
           </q-bar>
           <q-list
-            dense
-            bordered
-            separator
-            class="q-ma-md"
+              dense
+              bordered
+              separator
+              class="q-ma-md"
           >
             <q-item class="text-bold text-center">
               <q-item-section>
@@ -248,9 +250,9 @@
             </q-item>
 
             <q-item
-              v-for="(elem, i) in codeData"
-              :key="i"
-              class="text-center"
+                v-for="(elem, i) in codeData"
+                :key="i"
+                class="text-center"
             >
               <q-item-section>
                 <q-item-label :lines="3">
@@ -279,27 +281,27 @@
               <q-item-section side>
                 <div class="row">
                   <IconBtn
-                    flat
-                    dense
-                    icon="history"
-                    tooltip="История"
-                    @icon-btn-click="getCodePriceHistory(elem.id)"
+                      flat
+                      dense
+                      icon="history"
+                      tooltip="История"
+                      @icon-btn-click="getCodePriceHistory(elem.id)"
                   />
                   <IconBtn
-                    flat
-                    dense
-                    icon="edit"
-                    color="teal"
-                    tooltip="Редактировать"
-                    @icon-btn-click="openDialogAddCodePriceForUpdate(elem)"
+                      flat
+                      dense
+                      icon="edit"
+                      color="teal"
+                      tooltip="Редактировать"
+                      @icon-btn-click="openDialogAddCodePriceForUpdate(elem)"
                   />
                   <IconBtn
-                    flat
-                    dense
-                    icon="delete"
-                    color="negative"
-                    tooltip="Удалить"
-                    @icon-btn-click="deleteCodePrice(elem)"
+                      flat
+                      dense
+                      icon="delete"
+                      color="negative"
+                      tooltip="Удалить"
+                      @icon-btn-click="deleteCodePrice(elem)"
                   />
                 </div>
               </q-item-section>
@@ -323,6 +325,7 @@ import {
 import { callFunction } from 'src/utils';
 import Table from 'components/Elements/Table/Table.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
 import PullRefresh from 'src/components/PullRefresh.vue';
 import DialogAddCodePrice from 'src/components/Dialogs/DialogAddCodePrice.vue';
@@ -341,6 +344,7 @@ export default {
     Dialog,
     DialogAddNewCodePrice,
     PullRefresh,
+    RoundBtn,
   },
   mixins: [showNotif],
   data() {
@@ -417,17 +421,17 @@ export default {
     getCodesPrices() {
       this.loading = true;
       return this.$axios.get(getUrl('getCodesPrices'))
-        .then(({ data: { codesPrice } }) => {
-          _.forEach(codesPrice, (price) => {
-            setFormatedDate(price, ['updated_at']);
+          .then(({ data: { codesPrice } }) => {
+            _.forEach(codesPrice, (price) => {
+              setFormatedDate(price, ['updated_at']);
+            });
+            this.$store.dispatch('codesPrices/setCodesPrices', codesPrice);
+            this.loading = false;
+          })
+          .catch((errors) => {
+            devlog.error('Ошибка запроса getClientsPrices', errors);
+            this.loading = false;
           });
-          this.$store.dispatch('codesPrices/setCodesPrices', codesPrice);
-          this.loading = false;
-        })
-        .catch((errors) => {
-          devlog.error('Ошибка запроса getClientsPrices', errors);
-          this.loading = false;
-        });
     },
     openDialogAddCodePrice(id) {
       this.showDialogAddCodePrice = true;
@@ -452,15 +456,15 @@ export default {
           handler: () => {
             this.$q.loading.show();
             this.$axios.delete(`${getUrl('deleteCodePrice')}/${elem.id}`)
-              .then(({ data: { status } }) => {
-                devlog.log('DEL_DATA', status);
-                this.$store.dispatch('codesPrices/deleteCodePrice', elem);
-                this.$q.loading.hide();
-              })
-              .catch((errors) => {
-                devlog.error('Ошибка запроса deleteCodePrice', errors);
-                this.$q.loading.hide();
-              });
+                .then(({ data: { status } }) => {
+                  devlog.log('DEL_DATA', status);
+                  this.$store.dispatch('codesPrices/deleteCodePrice', elem);
+                  this.$q.loading.hide();
+                })
+                .catch((errors) => {
+                  devlog.error('Ошибка запроса deleteCodePrice', errors);
+                  this.$q.loading.hide();
+                });
           },
         },
       ]);
@@ -471,54 +475,54 @@ export default {
     async getCodePriceHistory(id) {
       this.$q.loading.show();
       await this.$axios.get(`${getUrl('getCodePriceHistory')}/${id}`)
-        .then(({ data: { codePriceHistory } }) => {
-          if (!_.isEmpty(codePriceHistory)) {
-            this.$q.loading.hide();
-            this.dialogHistory = true;
-            const historyData = prepareHistoryData([
-              {
-                label: 'Категория',
-                name: 'category_name',
-              },
-              {
-                label: 'За кг',
-                name: 'for_kg',
-              },
-              {
-                label: 'За кг',
-                name: 'for_place',
-              },
-              {
-                label: 'Пользователь',
-                name: 'user_name',
-              },
-            ], codePriceHistory);
-            devlog.log('historyData', historyData);
-            historyData.historyData = this.setAdditionalData(historyData.historyData);
-            this.codePriceHistoryData = historyData;
-          } else {
-            this.$q.loading.hide();
-            this.showNotif('info', 'По этому коду нет истории.', 'center');
-          }
-        })
-        .catch(() => {
-          devlog.error('Ошибка при получении данных истории - getCodePriceHistory');
-        });
+          .then(({ data: { codePriceHistory } }) => {
+            if (!_.isEmpty(codePriceHistory)) {
+              this.$q.loading.hide();
+              this.dialogHistory = true;
+              const historyData = prepareHistoryData([
+                {
+                  label: 'Категория',
+                  name: 'category_name',
+                },
+                {
+                  label: 'За кг',
+                  name: 'for_kg',
+                },
+                {
+                  label: 'За кг',
+                  name: 'for_place',
+                },
+                {
+                  label: 'Пользователь',
+                  name: 'user_name',
+                },
+              ], codePriceHistory);
+              devlog.log('historyData', historyData);
+              historyData.historyData = this.setAdditionalData(historyData.historyData);
+              this.codePriceHistoryData = historyData;
+            } else {
+              this.$q.loading.hide();
+              this.showNotif('info', 'По этому коду нет истории.', 'center');
+            }
+          })
+          .catch(() => {
+            devlog.error('Ошибка при получении данных истории - getCodePriceHistory');
+          });
     },
     async refresh(done) {
       if (!done) {
         this.$q.loading.show();
       }
       this.getCodesPrices()
-        .then(() => {
-          callFunction(done);
-          this.$q.loading.hide();
-          this.showNotif('success', 'Данные успешно обновлены.', 'center');
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          callFunction(done);
-        });
+          .then(() => {
+            callFunction(done);
+            this.$q.loading.hide();
+            this.showNotif('success', 'Данные успешно обновлены.', 'center');
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            callFunction(done);
+          });
     },
     viewEditDialog(elem, event) {
       if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {

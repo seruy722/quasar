@@ -248,6 +248,9 @@ export default {
       })
           .onOk(() => {
             func(transferData);
+          })
+          .onCancel(() => {
+            func(transferData);
           });
     },
     updateData(data) {
@@ -268,7 +271,6 @@ export default {
         this.$axios.post(getUrl('storeTransfers'), values)
             .then(({ data: { transfer } }) => {
               devlog.log('DDFR', transfer);
-              devlog.log('this.$store', this.$store.dispatch);
               // this.$store.dispatch('transfers/addTransfer', transfer);
               this.cancel(this.transferData);
               this.$q.loading.hide();
@@ -307,14 +309,20 @@ export default {
           _.assign(dataToSend, { id: _.get(this.localProps, 'row.id') });
           devlog.log('dataToSend', dataToSend);
           this.$axios.post(getUrl('updateTransfers'), dataToSend)
-              .then(({ data: { transfer } }) => {
-                devlog.log('DDFR', transfer);
+              .then(({
+                       data: {
+                         transfer: {
+                           client_name: clientName,
+                         },
+                       },
+                     }) => {
+                devlog.log('DDFR', clientName);
                 // this.$store.dispatch('transfers/updateTransfer', transfer);
                 this.cancel(this.transferData);
                 this.$q.loading.hide();
                 this.show = false;
                 this.$emit('update:selected', []);
-                this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно обновлена.`);
+                this.showNotif('success', `Запись клиента - ${clientName} успешно обновлена.`);
               })
               .catch((errors) => {
                 this.$q.loading.hide();

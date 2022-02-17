@@ -7,30 +7,28 @@
       :columns="columns"
       :loading="loading"
       row-key="id"
-      virtual-scroll
-      :virtual-scroll-item-size="48"
-      :virtual-scroll-sticky-size-start="48"
-      :grid="$q.screen.lt.sm"
       :pagination="pagination"
       :rows-per-page-options="[0]"
       selection="multiple"
       data-vue-component="NewTable"
+      :grid="$q.screen.xs || $q.screen.sm || grid"
+      :style="`height: ${tableHeight}px`"
       :selected="selected"
-      @virtual-scroll="onScroll"
   >
     <template #top>
       <slot name="top-buttons" />
-      <ExportBtn
-          url="exportTransfers"
-          title="Переводы"
-          :ids="selected.map((item)=>item.id)"
-      />
-      <SearchDialog :columns="columns" />
+      <div class="row q-gutter-sm q-ml-sm">
+        <ExportBtn
+            url="exportTransfers"
+            title="Переводы"
+            :ids="selected.map((item)=>item.id)"
+        />
+        <SearchDialog :columns="columns" />
 
-      <DialogChooseDate2
-          :values="selected"
-      />
-
+        <DialogChooseDate2
+            :values="selected"
+        />
+      </div>
     </template>
 
     <template #item="props">
@@ -46,20 +44,27 @@
           :props="props"
       />
     </template>
+
+    <template #loading>
+      <q-inner-loading
+          showing
+          color="primary"
+      />
+    </template>
   </q-table>
 </template>
 
 <script>
 import {
   ref,
-  nextTick,
   onMounted,
+  computed,
 } from 'vue';
 import { useStore } from 'vuex';
-import { axiosInstance } from 'boot/axios';
 import SearchDialog from 'src/components/Search/SearchDialog.vue';
 import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
 import DialogChooseDate2 from 'src/components/Dialogs/DialogChooseDate2.vue';
+import { useQuasar } from 'quasar';
 
 export default {
   name: 'NewTable',
@@ -79,49 +84,34 @@ export default {
       require: true,
       default: () => [],
     },
+    grid: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const selected = ref([]);
     const store = useStore();
     const loading = ref(false);
+    const $q = useQuasar();
 
     onMounted(() => {
       if (_.isEmpty(props.rows)) {
+        loading.value = true;
         store.dispatch('transfers/fetchTransfers')
             .finally(() => {
               loading.value = false;
             });
       }
     });
+    const tableHeight = computed(() => $q.screen.height - 50);
 
     return {
       selected,
       loading,
+      tableHeight,
 
       pagination: { rowsPerPage: 0 },
-
-      onScroll(details) {
-        const data = store.getters['transfers/getTransfersData'];
-        const lastIndex = props.rows.length - 1;
-
-        if (loading.value !== true && details.to === lastIndex && _.isEmpty(store.getters['transfers/getSearchData'])) {
-          loading.value = true;
-          if (data.next_page_url) {
-            axiosInstance.get(data.next_page_url)
-                .then(({ data: { transfers } }) => {
-                  store.commit('transfers/ADD_TRANSFERS', transfers.data);
-                  delete transfers.data;
-                  store.commit('transfers/SET_TRANSFERS_DATA', transfers);
-                  setTimeout(() => {
-                    nextTick(() => {
-                      details.ref.refresh();
-                      loading.value = false;
-                    });
-                  }, 500);
-                });
-          }
-        }
-      },
     };
   },
 };
@@ -129,7 +119,9 @@ export default {
 
 <style lang="sass">
 .my-sticky-dynamic
-  height: 410px
+  .q-table__grid-content
+    height: 100px
+    overflow: auto
 
   .q-table__top,
   .q-table__bottom,

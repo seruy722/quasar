@@ -1,43 +1,44 @@
 <template>
   <q-page
-    data-vue-component-name="Codes"
+      data-vue-component-name="CodesPage"
   >
     <PullRefresh @refresh="refresh">
       <Table
-        :table-properties="transferTableProperties"
-        :table-data="allCodes"
-        :table-reactive-properties="customerTableReactiveProperties"
-        :loading="loading"
-        title="Клиенты"
+          :table-properties="transferTableProperties"
+          :table-data="allCodes"
+          :table-reactive-properties="customerTableReactiveProperties"
+          :loading="loading"
+          title="Клиенты"
       >
         <template #top-buttons>
-          <IconBtn
-            color="primary"
-            icon="sync"
-            tooltip="Обновить"
-            @icon-btn-click="refresh"
-          />
-          <Menu :items="['Код', 'Клиента']" />
-          <IconBtn
-            color="positive"
-            tooltip="Excel"
-            icon="explicit"
-            class="q-ml-sm"
-            @icon-btn-click="exportCustomers"
-          />
+          <div class="row q-gutter-sm">
+            <RoundBtn
+                color="primary"
+                icon="sync"
+                tooltip="Обновить"
+                @round-btn-click="refresh"
+            />
+            <Menu :items="['Код', 'Клиента']" />
+            <RoundBtn
+                color="positive"
+                tooltip="Excel"
+                icon="explicit"
+                @round-btn-click="exportCustomers"
+            />
+          </div>
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
         <template #inner-item="{props}">
           <div
-            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-            :style="props.selected ? 'transform: scale(0.95);' : ''"
+              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+              :style="props.selected ? 'transform: scale(0.95);' : ''"
           >
             <q-expansion-item
-              expand-separator
-              class="shadow-1 overflow-hidden"
-              style="border-radius: 30px;border: 1px solid #26A69A;"
-              :class="`border_${props.row.customers.length ? 'secondary':'grey'}`"
-              :header-class="`bg-${props.row.customers.length ? 'secondary':'grey'} text-white`"
+                expand-separator
+                class="shadow-1 overflow-hidden"
+                style="border-radius: 30px;border: 1px solid #26A69A;"
+                :class="`border_${props.row.customers.length ? 'secondary':'grey'}`"
+                :header-class="`bg-${props.row.customers.length ? 'secondary':'grey'} text-white`"
             >
               <template #header>
                 <!--                <q-item-section avatar>-->
@@ -61,30 +62,30 @@
                     <!--                      @icon-btn-click="openClientAddDialog(props)"-->
                     <!--                    />-->
                     <IconBtn
-                      dense
-                      icon="history"
-                      tooltip="История"
-                      @icon-btn-click="getCodeHistory(props.row.id, props.cols)"
+                        dense
+                        icon="history"
+                        tooltip="История"
+                        @icon-btn-click="getCodeHistory(props.row.id, props.cols)"
                     />
                   </q-item-label>
                 </q-item-section>
               </template>
 
               <q-list
-                separator
-                dense
+                  separator
+                  dense
               >
                 <q-item
-                  v-for="col in props.cols.filter(col => col.name !== 'desc' && col.name !== 'phones')"
-                  :key="col.name"
+                    v-for="col in props.cols.filter(col => col.name !== 'desc' && col.name !== 'phones')"
+                    :key="col.name"
                 >
                   <q-item-section>
                     <q-item-label>{{ `${col.label}:` }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-item-label
-                      v-if="col.name === 'code'"
-                      :lines="3"
+                        v-if="col.name === 'code'"
+                        :lines="3"
                     >
                       <q-badge>{{ col.value }}</q-badge>
                     </q-item-label>
@@ -92,8 +93,8 @@
                       <ListNumbered :values="compactArray(col.value)" />
                     </q-item-label>
                     <q-item-label
-                      v-else
-                      :lines="3"
+                        v-else
+                        :lines="3"
                     >
                       {{ col.value }}
                     </q-item-label>
@@ -105,26 +106,26 @@
                     <div class="row items-center justify-center">
                       <span>Клиенты</span>
                       <IconBtn
-                        dense
-                        icon="add_box"
-                        tooltip="Добавить клиента"
-                        @icon-btn-click="openClientAddDialog(props)"
+                          dense
+                          icon="add_box"
+                          tooltip="Добавить клиента"
+                          @icon-btn-click="openClientAddDialog(props)"
                       />
                     </div>
                   </q-item-section>
                 </q-item>
 
                 <q-item
-                  v-for="(item, i) in props.row.customers"
-                  :key="i"
-                  clickable
-                  @click="openClientEditDialog(item)"
+                    v-for="(item, i) in props.row.customers"
+                    :key="i"
+                    clickable
+                    @click="openClientEditDialog(item)"
                 >
                   <q-item-section avatar>
                     <q-icon
-                      name="call"
-                      color="positive"
-                      @click.stop="call(item.phone)"
+                        name="call"
+                        color="positive"
+                        @click.stop="call(item.phone)"
                     />
                   </q-item-section>
                   <q-item-section>
@@ -140,17 +141,17 @@
                   <q-item-section side>
                     <q-item-label>
                       <IconBtn
-                        dense
-                        icon="history"
-                        tooltip="История"
-                        @icon-btn-click="getClientHistory(item.id, localProps.cols)"
+                          dense
+                          icon="history"
+                          tooltip="История"
+                          @icon-btn-click="getClientHistory(item.id, localProps.cols)"
                       />
                       <IconBtn
-                        dense
-                        icon="delete"
-                        tooltip="Удалить"
-                        color="negative"
-                        @icon-btn-click="destroyCustomer(item)"
+                          dense
+                          icon="delete"
+                          tooltip="Удалить"
+                          color="negative"
+                          @icon-btn-click="destroyCustomer(item)"
                       />
                     </q-item-label>
                   </q-item-section>
@@ -162,42 +163,42 @@
 
         <template #inner-body="{props}">
           <q-tr
-            :props="props"
-            class="text-bold cursor-pointer"
-            :class="`bg-${props.row.customers.length ? 'secondary':'grey'} text-white`"
-            @click.stop="viewEditDialog(props, $event)"
+              :props="props"
+              class="text-bold cursor-pointer"
+              :class="`bg-${props.row.customers.length ? 'secondary':'grey'} text-white`"
+              @click.stop="viewEditDialog(props, $event)"
           >
             <q-td
-              auto-width
-              class="select_checkbox"
+                auto-width
+                class="select_checkbox"
             >
               <q-checkbox
-                v-model="props.selected"
-                dense
+                  v-model="props.selected"
+                  dense
               />
             </q-td>
 
             <q-td
-              key="code"
-              :props="props"
+                key="code"
+                :props="props"
             >
               {{ props.row.code }}
             </q-td>
 
             <q-td
-              key="cities"
-              :props="props"
+                key="cities"
+                :props="props"
             >
               <ListNumbered :values="compactArray(props.row.cities)" />
             </q-td>
 
             <q-td
-              key="phones"
-              :props="props"
+                key="phones"
+                :props="props"
             >
               <ListNumbered
-                :values="props.row.phones"
-                type="phones"
+                  :values="props.row.phones"
+                  type="phones"
               />
             </q-td>
 
@@ -209,8 +210,8 @@
             <!--            </q-td>-->
 
             <q-td
-              key="created_at"
-              :props="props"
+                key="created_at"
+                :props="props"
             >
               {{ props.row.created_at }}
             </q-td>
@@ -218,45 +219,45 @@
         </template>
       </Table>
       <Dialog
-        :dialog="dialog"
-        :persistent="true"
+          :dialog="dialog"
+          :persistent="true"
       >
         <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
           <q-card-section class="row justify-between items-center bg-grey">
             <span class="text-h6">{{ dialogTitle }}</span>
             <div class="row">
               <IconBtn
-                dense
-                icon="add_box"
-                color="teal"
-                tooltip="Добавить клиента"
-                @icon-btn-click="openClientAddDialog(localProps)"
+                  dense
+                  icon="add_box"
+                  color="teal"
+                  tooltip="Добавить клиента"
+                  @icon-btn-click="openClientAddDialog(localProps)"
               />
               <IconBtn
-                dense
-                icon="history"
-                tooltip="История"
-                @icon-btn-click="getCodeHistory(localProps.row.id, localProps.cols)"
+                  dense
+                  icon="history"
+                  tooltip="История"
+                  @icon-btn-click="getCodeHistory(localProps.row.id, localProps.cols)"
               />
 
               <IconBtn
-                dense
-                icon="clear"
-                color="negative"
-                tooltip="Закрыть"
-                @icon-btn-click="cancel"
+                  dense
+                  icon="clear"
+                  color="negative"
+                  tooltip="Закрыть"
+                  @icon-btn-click="cancel"
               />
             </div>
           </q-card-section>
           <q-item-section>
             <q-list
-              v-if="localProps.row"
-              separator
-              dense
+                v-if="localProps.row"
+                separator
+                dense
             >
               <q-item
-                v-for="col in localProps.cols.filter(col => col.name !== 'desc')"
-                :key="col.name"
+                  v-for="col in localProps.cols.filter(col => col.name !== 'desc')"
+                  :key="col.name"
               >
                 <q-item-section>
                   <q-item-label>
@@ -265,8 +266,8 @@
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label
-                    v-if="col.name === 'code'"
-                    :lines="3"
+                      v-if="col.name === 'code'"
+                      :lines="3"
                   >
                     <q-badge>{{ col.value }}</q-badge>
                   </q-item-label>
@@ -275,13 +276,13 @@
                   </q-item-label>
                   <q-item-label v-else-if="col.name === 'phones'">
                     <ListNumbered
-                      :values="col.value"
-                      :type="col.name"
+                        :values="col.value"
+                        :type="col.name"
                     />
                   </q-item-label>
                   <q-item-label
-                    v-else
-                    :lines="3"
+                      v-else
+                      :lines="3"
                   >
                     {{ col.value }}
                   </q-item-label>
@@ -289,8 +290,8 @@
               </q-item>
 
               <q-item
-                class="text-bold text-center"
-                style="border-bottom: 1px solid blue;border-top: 1px solid blue;"
+                  class="text-bold text-center"
+                  style="border-bottom: 1px solid blue;border-top: 1px solid blue;"
               >
                 <q-item-section>
                   Клиенты
@@ -298,8 +299,8 @@
               </q-item>
 
               <q-item
-                v-if="localProps.row.customers.length"
-                class="text-bold"
+                  v-if="localProps.row.customers.length"
+                  class="text-bold"
               >
                 <q-item-section>
                   <q-item-label>
@@ -319,10 +320,10 @@
               </q-item>
 
               <q-item
-                v-for="(item, i) in localProps.row.customers"
-                :key="i"
-                clickable
-                @click="openClientEditDialog(item)"
+                  v-for="(item, i) in localProps.row.customers"
+                  :key="i"
+                  clickable
+                  @click="openClientEditDialog(item)"
               >
                 <q-item-section>
                   <q-item-label :lines="2">
@@ -337,17 +338,17 @@
                 <q-item-section side>
                   <q-item-label>
                     <IconBtn
-                      dense
-                      icon="history"
-                      tooltip="История"
-                      @icon-btn-click="getClientHistory(item.id, localProps.cols)"
+                        dense
+                        icon="history"
+                        tooltip="История"
+                        @icon-btn-click="getClientHistory(item.id, localProps.cols)"
                     />
                     <IconBtn
-                      dense
-                      icon="delete"
-                      tooltip="Удалить"
-                      color="negative"
-                      @icon-btn-click="destroyCustomer(item)"
+                        dense
+                        icon="delete"
+                        tooltip="Удалить"
+                        color="negative"
+                        @icon-btn-click="destroyCustomer(item)"
                     />
                   </q-item-label>
                 </q-item-section>
@@ -360,21 +361,21 @@
       <DialogAddCode v-model:show-dialog="showCodeDialog" />
 
       <Dialog
-        :dialog="dialogHistory"
-        :persistent="true"
-        :maximized="true"
-        transition-show="slide-up"
-        transition-hide="slide-down"
+          :dialog="dialogHistory"
+          :persistent="true"
+          :maximized="true"
+          transition-show="slide-up"
+          transition-hide="slide-down"
       >
         <q-card style="max-width: 600px;">
           <q-bar>
             <q-space />
             <IconBtn
-              flat
-              dense
-              icon="close"
-              tooltip="Закрыть"
-              @icon-btn-click="dialogHistory = false"
+                flat
+                dense
+                icon="close"
+                tooltip="Закрыть"
+                @icon-btn-click="dialogHistory = false"
             />
           </q-bar>
 
@@ -385,9 +386,9 @@
       </Dialog>
     </PullRefresh>
     <DialogAddClient
-      v-model:show-dialog="showClientDialog"
-      v-model:entry-data="localClientEditData"
-      v-model:code-id="codeId"
+        v-model:show-dialog="showClientDialog"
+        v-model:entry-data="localClientEditData"
+        v-model:code-id="codeId"
     />
   </q-page>
 </template>
@@ -408,6 +409,7 @@ import {
 } from 'src/utils/FrequentlyCalledFunctions';
 import Table from 'components/Elements/Table/Table.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import PullRefresh from 'src/components/PullRefresh.vue';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
 import Separator from 'src/components/Separator.vue';
@@ -418,7 +420,7 @@ import CodeHistory from 'src/components/History/CodeHistory.vue';
 import ListNumbered from 'src/components/ListNumbered.vue';
 
 export default {
-  name: 'Codes',
+  name: 'CodesPage',
   components: {
     Table,
     Dialog,
@@ -430,6 +432,7 @@ export default {
     PullRefresh,
     CodeHistory,
     ListNumbered,
+    RoundBtn,
   },
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
   data() {
@@ -546,10 +549,10 @@ export default {
           devlog.log('SEL', val);
           this.$q.loading.show();
           Promise.all([getClientCodes(this.$store)])
-            .then(() => {
-              this.openCloseDialog(true);
-              this.$q.loading.hide();
-            });
+              .then(() => {
+                this.openCloseDialog(true);
+                this.$q.loading.hide();
+              });
         } else {
           this.openCloseDialog(true);
           this.localProps = {};
@@ -560,12 +563,12 @@ export default {
       if (_.isEmpty(this.allCodes)) {
         this.loading = true;
         this.$store.dispatch('codes/setCodesWithCustomers')
-          .catch((errors) => {
-            devlog.error('Ошибка', errors);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+            .catch((errors) => {
+              devlog.error('Ошибка', errors);
+            })
+            .finally(() => {
+              this.loading = false;
+            });
       }
     },
     setAdditionalData(data) {
@@ -583,16 +586,16 @@ export default {
         this.$q.loading.show();
       }
       await this.$store.dispatch('codes/setCodesWithCustomers')
-        .then(() => {
-          this.showNotif('success', 'Данные успешно обновлены.', 'center');
-        })
-        .catch((errors) => {
-          devlog.error('Ошибка', errors);
-        })
-        .finally(() => {
-          callFunction(done);
-          this.$q.loading.hide();
-        });
+          .then(() => {
+            this.showNotif('success', 'Данные успешно обновлены.', 'center');
+          })
+          .catch((errors) => {
+            devlog.error('Ошибка', errors);
+          })
+          .finally(() => {
+            callFunction(done);
+            this.$q.loading.hide();
+          });
     },
     async getCodeHistory(codeId, cols) {
       devlog.log('codeId', codeId);
@@ -603,21 +606,21 @@ export default {
       });
       this.$q.loading.show();
       await this.$axios.get(`${getUrl('codeHistory')}/${codeId}`)
-        .then(({ data: { codeHistory } }) => {
-          if (!_.isEmpty(codeHistory)) {
-            this.$q.loading.hide();
-            this.dialogHistory = true;
-            const historyData = prepareHistoryData(cols, codeHistory);
-            historyData.historyData = this.setAdditionalData(historyData.historyData);
-            this.transferHistoryData = historyData;
-          } else {
-            this.$q.loading.hide();
-            this.showNotif('info', 'По этому коду нет истории.', 'center');
-          }
-        })
-        .catch(() => {
-          devlog.error('Ошибка при получении данных истории.');
-        });
+          .then(({ data: { codeHistory } }) => {
+            if (!_.isEmpty(codeHistory)) {
+              this.$q.loading.hide();
+              this.dialogHistory = true;
+              const historyData = prepareHistoryData(cols, codeHistory);
+              historyData.historyData = this.setAdditionalData(historyData.historyData);
+              this.transferHistoryData = historyData;
+            } else {
+              this.$q.loading.hide();
+              this.showNotif('info', 'По этому коду нет истории.', 'center');
+            }
+          })
+          .catch(() => {
+            devlog.error('Ошибка при получении данных истории.');
+          });
     },
     async getClientHistory(customerId) {
       const newCols = [
@@ -655,21 +658,21 @@ export default {
 
       this.$q.loading.show();
       await this.$axios.get(`${getUrl('getCustomerHistory')}/${customerId}`)
-        .then(({ data: { customerHistory } }) => {
-          if (!_.isEmpty(customerHistory)) {
-            this.$q.loading.hide();
-            this.dialogHistory = true;
-            const historyData = prepareHistoryData(newCols, customerHistory);
-            historyData.historyData = this.setAdditionalData(historyData.historyData);
-            this.transferHistoryData = historyData;
-          } else {
-            this.$q.loading.hide();
-            this.showNotif('info', 'По этому клиенту нет истории.', 'center');
-          }
-        })
-        .catch(() => {
-          devlog.error('Ошибка при получении данных истории.');
-        });
+          .then(({ data: { customerHistory } }) => {
+            if (!_.isEmpty(customerHistory)) {
+              this.$q.loading.hide();
+              this.dialogHistory = true;
+              const historyData = prepareHistoryData(newCols, customerHistory);
+              historyData.historyData = this.setAdditionalData(historyData.historyData);
+              this.transferHistoryData = historyData;
+            } else {
+              this.$q.loading.hide();
+              this.showNotif('info', 'По этому клиенту нет истории.', 'center');
+            }
+          })
+          .catch(() => {
+            devlog.error('Ошибка при получении данных истории.');
+          });
     },
     destroyCustomer({
                       id,
@@ -692,14 +695,14 @@ export default {
               id,
               code_id: codeId,
             })
-              .then(() => {
-                this.$q.loading.hide();
-                this.showNotif('success', `Клиент ${name} успешно удален.`, 'center');
-              })
-              .catch(() => {
-                this.$q.loading.hide();
-                devlog.error('Ошибка запроса - destroyCustomerEntry');
-              });
+                .then(() => {
+                  this.$q.loading.hide();
+                  this.showNotif('success', `Клиент ${name} успешно удален.`, 'center');
+                })
+                .catch(() => {
+                  this.$q.loading.hide();
+                  devlog.error('Ошибка запроса - destroyCustomerEntry');
+                });
           },
         },
       ]);

@@ -2,11 +2,11 @@
   <div
       data-vue-component-name="ExportMenuGeneralCargo"
   >
-    <ExportBtn
+    <RoundBtn
         color="positive"
         tooltip="Excel"
         icon="explicit"
-        @export-btn-click="show = true"
+        @round-btn-click="show = true"
     />
 
     <Dialog
@@ -150,7 +150,7 @@
 <script>
 import { format } from 'date-fns';
 import ExportDataMixin from 'src/mixins/ExportData';
-import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
@@ -164,7 +164,7 @@ import { getUrl } from 'src/tools/url';
 export default {
   name: 'ExportMenuGeneralCargo',
   components: {
-    ExportBtn,
+    RoundBtn,
     IconBtn,
     BaseBtn,
     OutlineBtn,

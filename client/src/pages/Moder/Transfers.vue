@@ -2,267 +2,17 @@
   <q-page
       data-vue-component-name="TransfersPage"
   >
-    <!--    <PullRefresh @refresh="refresh">-->
-    <!--      &lt;!&ndash;    <TransfersListSkeleton v-if="viewSkeleton" />&ndash;&gt;-->
-    <!--      <TableVirtualScrolling-->
-    <!--          :table-properties="transferTableProperties"-->
-    <!--          :table-data="allTransfers"-->
-    <!--          :table-reactive-properties="transferTableReactiveProperties"-->
-    <!--          :loading="loading"-->
-    <!--          title="Переводы"-->
-    <!--      >-->
-    <!--        <template #top-buttons>-->
-    <!--          <UpdateBtn-->
-    <!--              @update-btn-click="refresh"-->
-    <!--          />-->
-    <!--          <IconBtn-->
-    <!--              color="positive"-->
-    <!--              tooltip="Excel"-->
-    <!--              icon="explicit"-->
-    <!--              class="q-ml-sm"-->
-    <!--              @icon-btn-click="exportTransfers(allTransfers, transferTableReactiveProperties.selected)"-->
-    <!--          />-->
-    <!--          <IconBtn-->
-    <!--              color="orange"-->
-    <!--              tooltip="Статистика"-->
-    <!--              icon="trending_up"-->
-    <!--              class="q-ml-sm"-->
-    <!--              @icon-btn-click="dialogStatistics = true"-->
-    <!--          />-->
-    <!--          <IconBtn-->
-    <!--              v-show="transferTableReactiveProperties.selected.length"-->
-    <!--              color="teal"-->
-    <!--              tooltip="Добавить в долги"-->
-    <!--              icon="move_to_inbox"-->
-    <!--              class="q-ml-sm"-->
-    <!--              @icon-btn-click="addToDebtsTable(transferTableReactiveProperties.selected)"-->
-    <!--          />-->
-    <!--        </template>-->
-    <!--        &lt;!&ndash;ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ&ndash;&gt;-->
-    <!--        <template #inner-item="{props}">-->
-    <!--          <div-->
-    <!--              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"-->
-    <!--              :style="props.selected ? 'transform: scale(0.95);' : ''"-->
-    <!--          >-->
-    <!--            <q-expansion-item-->
-    <!--                expand-separator-->
-    <!--                class="shadow-1 overflow-hidden"-->
-    <!--                style="border-radius: 30px;border: 1px solid;"-->
-    <!--                :class="`border_${statusColor(props.row.status_label)}`"-->
-    <!--                :header-class="`bg-${statusColor(props.row.status_label)} text-white`"-->
-    <!--                expand-icon-class="text-white"-->
-    <!--            >-->
-    <!--              <template #header>-->
-    <!--                <q-item-section>-->
-    <!--                  <q-item-label :lines="2">-->
-    <!--                    {{ props.row.client_name }}-->
-    <!--                  </q-item-label>-->
-    <!--                </q-item-section>-->
-
-    <!--                <q-item-section>-->
-    <!--                  <q-item-label>-->
-    <!--                    {{ props.row.sum }}-->
-    <!--                  </q-item-label>-->
-    <!--                </q-item-section>-->
-
-    <!--                <q-item-section>-->
-    <!--                  <q-item-label>-->
-    <!--                    {{ props.row.created_at_date.slice(0, 5) }}-->
-    <!--                  </q-item-label>-->
-    <!--                </q-item-section>-->
-
-    <!--                <q-item-section-->
-    <!--                    avatar-->
-    <!--                    side-->
-    <!--                >-->
-    <!--                  <q-icon-->
-    <!--                      v-if="props.row.paid"-->
-    <!--                      name="money"-->
-    <!--                      size="md"-->
-    <!--                      color="white"-->
-    <!--                  />-->
-    <!--                </q-item-section>-->
-    <!--              </template>-->
-
-    <!--              <q-list-->
-    <!--                  separator-->
-    <!--                  dense-->
-    <!--                  @click="viewEditDialog(props)"-->
-    <!--              >-->
-    <!--                <q-item-->
-    <!--                    v-for="col in props.cols.filter(col => col.name !== 'desc')"-->
-    <!--                    :key="col.name"-->
-    <!--                >-->
-    <!--                  <q-item-section>-->
-    <!--                    <q-item-label>{{ `${col.label}:` }}</q-item-label>-->
-    <!--                  </q-item-section>-->
-    <!--                  <q-item-section side>-->
-    <!--                    <q-item-label v-if="col.field === 'status_label'">-->
-    <!--                      <q-badge :color="statusColor(col.value)">-->
-    <!--                        {{ col.value }}-->
-    <!--                      </q-badge>-->
-    <!--                    </q-item-label>-->
-    <!--                    <q-item-label v-else-if="col.field === 'receiver_phone'">-->
-    <!--                      {{ phoneNumberFilter(col.value) }}-->
-    <!--                    </q-item-label>-->
-    <!--                    <q-item-label v-else-if="col.field === 'receiver_name'">-->
-    <!--                      {{ col.value }}-->
-    <!--                    </q-item-label>-->
-    <!--                    <q-item-label-->
-    <!--                        v-else-if="col.field === 'notation'"-->
-    <!--                        :lines="3"-->
-    <!--                    >-->
-    <!--                      {{ col.value }}-->
-    <!--                    </q-item-label>-->
-    <!--                    <q-item-label-->
-    <!--                        v-else-if="col.field === 'paid'"-->
-    <!--                        :lines="3"-->
-    <!--                    >-->
-    <!--                      {{ col.value ? 'Да' : 'Нет' }}-->
-    <!--                    </q-item-label>-->
-    <!--                    <q-item-label v-else>-->
-    <!--                      {{ col.value }}-->
-    <!--                    </q-item-label>-->
-    <!--                  </q-item-section>-->
-    <!--                </q-item>-->
-    <!--                <q-item>-->
-    <!--                  <q-item-section>-->
-    <!--                    <BaseBtn-->
-    <!--                        label="История"-->
-    <!--                        color="info"-->
-    <!--                        style="max-width: 100px;margin: 0 auto;"-->
-    <!--                        @click-base-btn="getTransfersHistory(props.row.id, props.cols)"-->
-    <!--                    />-->
-    <!--                  </q-item-section>-->
-    <!--                </q-item>-->
-    <!--              </q-list>-->
-    <!--            </q-expansion-item>-->
-    <!--          </div>-->
-    <!--        </template>-->
-
-    <!--        <template #inner-body="{props}">-->
-    <!--          <q-tr-->
-    <!--              :props="props"-->
-    <!--              class="text-bold cursor-pointer"-->
-    <!--              @click="viewEditDialog(props, $event)"-->
-    <!--          >-->
-    <!--            <q-td-->
-    <!--                auto-width-->
-    <!--                class="select_checkbox"-->
-    <!--            >-->
-    <!--              <q-checkbox-->
-    <!--                  v-model="props.selected"-->
-    <!--                  dense-->
-    <!--              />-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="client_name"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              {{ props.row.client_name }}-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="receiver_name"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              {{ props.row.receiver_name }}-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="receiver_phone"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              {{ phoneNumberFilter(props.row.receiver_phone) }}-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="sum"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              {{ numberFormat(props.row.sum) }}-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="paid"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              <q-badge :color="props.row.paid ? 'positive': 'negative'">-->
-    <!--                {{ props.row.paid ? 'Да' : 'Нет' }}-->
-    <!--              </q-badge>-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="method_label"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              {{ props.row.method_label }}-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="status_label"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              <q-badge :color="statusColor(props.row.status)">-->
-    <!--                {{ props.row.status_label }}-->
-    <!--              </q-badge>-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="user_name"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              {{ props.row.user_name }}-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="created_at_date"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              {{ props.row.created_at_date }}-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="issued_by_date"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              {{ props.row.issued_by_date }}-->
-    <!--            </q-td>-->
-
-    <!--            <q-td-->
-    <!--                key="notation"-->
-    <!--                :props="props"-->
-    <!--            >-->
-    <!--              {{ props.row.notation }}-->
-    <!--            </q-td>-->
-    <!--          </q-tr>-->
-    <!--        </template>-->
-    <!--      </TableVirtualScrolling>-->
-    <!--      <CountTransfersData :enter-data="allTransfers" />-->
-    <!--    </PullRefresh>-->
-    <!--    <PullRefresh @refresh="refresh">-->
     <NewTable
         :columns="columns"
         :rows="allTransfers"
     >
       <template #top-buttons>
-        <UpdateBtn
-            :func="refresh"
-        />
-        <RoundBtn
-            color="orange"
-            tooltip="Статистика"
-            icon="trending_up"
-            @round-btn-click="dialogStatistics = true"
-        />
-<!--        <RoundBtn-->
-<!--            v-show="transferTableReactiveProperties.selected.length"-->
-<!--            color="teal"-->
-<!--            tooltip="Добавить в долги"-->
-<!--            icon="move_to_inbox"-->
-<!--            @round-btn-click="addToDebtsTable(transferTableReactiveProperties.selected)"-->
-<!--        />-->
+        <div class="row q-gutter-sm">
+          <UpdateBtn
+              :func="refresh"
+          />
+          <DialogStatistics />
+        </div>
       </template>
 
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -278,6 +28,8 @@
               :class="`border_${statusColor(props.row.status_label)}`"
               :header-class="`bg-${statusColor(props.row.status_label)} text-white`"
               expand-icon-class="text-white"
+              @before-show="props.row.show = true"
+              @hide="props.row.show = false"
           >
             <template #header>
               <q-item-section>
@@ -288,7 +40,7 @@
 
               <q-item-section>
                 <q-item-label>
-                  {{ props.row.sum }}
+                  {{ numberFormat(props.row.sum) }}
                 </q-item-label>
               </q-item-section>
 
@@ -311,58 +63,59 @@
               </q-item-section>
             </template>
 
-            <!--            <q-list-->
-            <!--                separator-->
-            <!--                dense-->
-            <!--                @click="viewEditDialog(props)"-->
-            <!--            >-->
-            <!--              <q-item-->
-            <!--                  v-for="col in props.cols.filter(col => col.name !== 'desc')"-->
-            <!--                  :key="col.name"-->
-            <!--              >-->
-            <!--                <q-item-section>-->
-            <!--                  <q-item-label>{{ `${col.label}:` }}</q-item-label>-->
-            <!--                </q-item-section>-->
-            <!--                <q-item-section side>-->
-            <!--                  <q-item-label v-if="col.field === 'status_label'">-->
-            <!--                    <q-badge :color="statusColor(col.value)">-->
-            <!--                      {{ col.value }}-->
-            <!--                    </q-badge>-->
-            <!--                  </q-item-label>-->
-            <!--                  <q-item-label v-else-if="col.field === 'receiver_phone'">-->
-            <!--                    {{ phoneNumberFilter(col.value) }}-->
-            <!--                  </q-item-label>-->
-            <!--                  <q-item-label v-else-if="col.field === 'receiver_name'">-->
-            <!--                    {{ col.value }}-->
-            <!--                  </q-item-label>-->
-            <!--                  <q-item-label-->
-            <!--                      v-else-if="col.field === 'notation'"-->
-            <!--                      :lines="3"-->
-            <!--                  >-->
-            <!--                    {{ col.value }}-->
-            <!--                  </q-item-label>-->
-            <!--                  <q-item-label-->
-            <!--                      v-else-if="col.field === 'paid'"-->
-            <!--                      :lines="3"-->
-            <!--                  >-->
-            <!--                    {{ col.value ? 'Да' : 'Нет' }}-->
-            <!--                  </q-item-label>-->
-            <!--                  <q-item-label v-else>-->
-            <!--                    {{ col.value }}-->
-            <!--                  </q-item-label>-->
-            <!--                </q-item-section>-->
-            <!--              </q-item>-->
-            <!--              <q-item>-->
-            <!--                <q-item-section>-->
-            <!--                  <BaseBtn-->
-            <!--                      label="История"-->
-            <!--                      color="info"-->
-            <!--                      style="max-width: 100px;margin: 0 auto;"-->
-            <!--                      @click-base-btn="getTransfersHistory(props.row.id, props.cols)"-->
-            <!--                  />-->
-            <!--                </q-item-section>-->
-            <!--              </q-item>-->
-            <!--            </q-list>-->
+            <q-list
+                v-if="props.row.show"
+                separator
+                dense
+                @click="viewEditDialog(props)"
+            >
+              <q-item
+                  v-for="col in columns"
+                  :key="col.name"
+              >
+                <q-item-section>
+                  <q-item-label>{{ `${col.label}:` }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label v-if="col.field === 'status'">
+                    <q-badge :color="statusColor(props.row.status_label)">
+                      {{ props.row.status_label }}
+                    </q-badge>
+                  </q-item-label>
+                  <q-item-label v-else-if="col.field === 'receiver_phone'">
+                    {{ phoneNumberFilter(props.row[col.field]) }}
+                  </q-item-label>
+                  <q-item-label v-else-if="col.field === 'method'">
+                    {{ setMethodLabel(props.row[col.field]) }}
+                  </q-item-label>
+                  <q-item-label v-else-if="col.field === 'receiver_name'">
+                    {{ props.row[col.field] }}
+                  </q-item-label>
+                  <q-item-label v-else-if="col.field === 'sum'">
+                    {{ numberFormat(props.row[col.field]) }}
+                  </q-item-label>
+                  <q-item-label
+                      v-else-if="col.field === 'paid'"
+                      :lines="3"
+                  >
+                    {{ props.row[col.field] ? 'Да' : 'Нет' }}
+                  </q-item-label>
+                  <q-item-label v-else>
+                    {{ props.row[col.field] }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <BaseBtn
+                      label="История"
+                      color="info"
+                      style="max-width: 100px;margin: 0 auto;"
+                      @click-base-btn="getTransfersHistory(props.row.id, props.cols)"
+                  />
+                </q-item-section>
+              </q-item>
+            </q-list>
           </q-expansion-item>
         </div>
       </template>
@@ -489,34 +242,6 @@
         :transfer-data="transferData"
     />
     <DialogAddCode v-model:show-dialog="showCodeDialog" />
-    <Dialog
-        :dialog="dialogStatistics"
-        :persistent="true"
-        :maximized="true"
-        transition-show="slide-up"
-        transition-hide="slide-down"
-    >
-      <q-card style="max-width: 600px;">
-        <q-bar>
-          <q-space />
-          <IconBtn
-              flat
-              dense
-              icon="close"
-              tooltip="Закрыть"
-              @icon-btn-click="dialogStatistics = false"
-          />
-        </q-bar>
-
-        <q-card-section class="q-pt-none">
-          <TransfersStatistics :enter-data="allTransfers" />
-        </q-card-section>
-      </q-card>
-    </Dialog>
-<!--    <DialogChooseDate-->
-<!--        v-model:show-dialog="showDialogChooseDate"-->
-<!--        v-model:date="dialogChooseDateData"-->
-<!--    />-->
     <TransferHistory
         ref="transferHistoryComponent"
         v-model:show="dialogHistory"
@@ -525,64 +250,59 @@
 </template>
 
 <script>
-import { getUrl } from 'src/tools/url';
+// import { getUrl } from 'src/tools/url';
 import getFromSettings from 'src/tools/settings';
 import {
   formatToDotDate,
-  addTime,
   fullDate,
 } from 'src/utils/formatDate';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import ExportDataMixin from 'src/mixins/ExportData';
-import { callFunction, numberFormat, phoneNumberFilter } from 'src/utils';
+import { numberFormat, phoneNumberFilter } from 'src/utils';
 import TransferMixin from 'src/mixins/Transfer';
 import {
   setDefaultData,
   getClientCodes,
   setMethodLabel,
-  setStatusLabel,
 } from 'src/utils/FrequentlyCalledFunctions';
 import { defineAsyncComponent } from 'vue';
 // import TableVirtualScrolling from 'src/components/Elements/Table/TableVirtualScrolling.vue';
 import NewTable from 'src/components/Elements/Table/NewTable.vue';
-import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
 // import CountTransfersData from 'src/components/Transfers/CountTransfersData.vue';
 // import PullRefresh from 'src/components/PullRefresh.vue';
 import PageSticky from 'src/components/PageSticky.vue';
 import Fab from 'src/components/Elements/Fab.vue';
 import FabAction from 'src/components/Elements/FabAction.vue';
 import PageScroller from 'src/components/PageScroller.vue';
-// import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
+import DialogStatistics from 'src/components/Elements/Table/DialogStatistics.vue';
+import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import Pusher from 'pusher-js';
 
 export default {
   name: 'TransfersPage',
   components: {
+    DialogStatistics,
     NewTable,
     // TableVirtualScrolling,
-    // BaseBtn,
-    RoundBtn,
+    BaseBtn,
     PageSticky,
     // PullRefresh,
     // CountTransfersData,
     UpdateBtn,
-    IconBtn,
     Fab,
     FabAction,
     PageScroller,
-    Dialog: defineAsyncComponent(() => import('src/components/Dialogs/Dialog.vue')),
     DialogAddCode: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddCode.vue')),
     DialogAddTransfer: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddTransfer.vue')),
-    TransfersStatistics: defineAsyncComponent(() => import('src/components/Transfers/TransfersStatistics.vue')),
     // DialogChooseDate: defineAsyncComponent(() => import('src/components/Dialogs/DialogChooseDate.vue')),
     TransferHistory: defineAsyncComponent(() => import('src/components/History/TransferHistory.vue')),
   },
   mixins: [CheckErrorsMixin, showNotif, ExportDataMixin, TransferMixin],
   data() {
     return {
+      channel: null,
       dialogHistory: false,
       loading: false,
       dialogStatistics: false,
@@ -871,25 +591,16 @@ export default {
         visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at_date', 'issued_by_date', 'paid'],
       },
       showDialogChooseDate: false,
-      dialogChooseDateData: null,
+      // dialogChooseDateData: null,
       dialogChooseDataForSend: {},
     };
   },
   computed: {
-    tr() {
-      return this.$store.getters['transfers/getSearchData'];
-    },
     allTransfers() {
       return this.$store.getters['transfers/getTransfers'];
     },
     clientCodes() {
       return this.$store.getters['codes/getCodes'];
-    },
-    countCheckedTransfers() {
-      return _.size(this.transferTableReactiveProperties.selected);
-    },
-    countSumCheckedTransfers() {
-      return _.sumBy(this.transferTableReactiveProperties.selected, 'sum');
     },
   },
   watch: {
@@ -911,13 +622,6 @@ export default {
       },
       immediate: true,
     },
-    dialogChooseDateData(val) {
-      if (val) {
-        this.dialogChooseDataForSend.date = addTime(val)
-            .toISOString();
-        this.addToDebtsTableFinish(this.dialogChooseDataForSend);
-      }
-    },
   },
   mounted() {
     const pusher = new Pusher('47b7c9db3b44606e887f', {
@@ -925,17 +629,21 @@ export default {
     });
 
     const channel = pusher.subscribe('transfer');
-    channel.bind('Transfers', ({ transferData }) => {
-      if (transferData.type === 'store') {
-        this.$store.dispatch('transfers/addTransfer', transferData.transfer);
+    this.channel = channel.bind('Transfers', ({ transferData: { type, transfer } }) => {
+      devlog.log('transferData', transfer);
+      if (type === 'store') {
+        this.$store.dispatch('transfers/addTransfer', transfer);
       } else {
-        this.$store.dispatch('transfers/updateTransfer', transferData.transfer);
+        this.$store.dispatch('transfers/updateTransfer', transfer);
       }
     });
   },
+  unmounted() {
+    this.channel.unbind('Transfers');
+    this.$store.dispatch('transfers/setTransfers', []);
+  },
   methods: {
     setMethodLabel,
-    setStatusLabel,
     fullDate,
     getTransfersHistory(transferID, cols) {
       this.dialogHistory = true;
@@ -951,9 +659,6 @@ export default {
         if (val) {
           this.localProps = val;
           this.transferTableReactiveProperties.selected = [];
-          setTimeout(() => {
-            val.selected = !val.selected;
-          }, 100);
           this.$q.loading.show();
           Promise.all([getClientCodes(this.$store)])
               .then(() => {

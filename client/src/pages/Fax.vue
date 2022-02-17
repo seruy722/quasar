@@ -1,89 +1,91 @@
 <template>
   <q-page
-    data-vue-component-name="FaxComponent"
+      data-vue-component-name="FaxComponent"
   >
     <Table
-      :table-properties="faxTableProperties"
-      :table-data="faxTableData"
-      :table-reactive-properties="faxTableReactiveProperties"
-      :title="currentFaxItem.name"
-      :data-search="dataSearchFax"
-      :loading="loading"
+        :table-properties="faxTableProperties"
+        :table-data="faxTableData"
+        :table-reactive-properties="faxTableReactiveProperties"
+        :title="currentFaxItem.name"
+        :data-search="dataSearchFax"
+        :loading="loading"
     >
       <template #top-buttons>
-        <IconBtn
-          v-show="addToSaveArray.length"
-          color="positive"
-          icon="save"
-          tooltip="Сохранить"
-          @icon-btn-click="saveDataInCombineTable(addToSaveArray)"
-        />
+        <div class="row q-gutter-sm">
+          <RoundBtn
+              v-show="addToSaveArray.length"
+              color="positive"
+              icon="save"
+              tooltip="Сохранить"
+              @round-btn-click="saveDataInCombineTable(addToSaveArray)"
+          />
 
-        <q-checkbox
-          v-model="combineTableData"
-          label="Обьеденено"
-          dense
-        />
+          <RoundBtn
+              color="positive"
+              icon="explicit"
+              tooltip="Excel"
+              @round-btn-click="exportFaxData(faxTableReactiveProperties.selected)"
+          />
 
-        <IconBtn
-          color="positive"
-          icon="explicit"
-          tooltip="Excel"
-          @icon-btn-click="exportFaxData(faxTableReactiveProperties.selected)"
-        />
+          <RoundBtn
+              color="orange"
+              icon="mail"
+              tooltip="Почта"
+              @round-btn-click="exportFaxMailData(faxTableReactiveProperties.selected)"
+          />
 
-        <IconBtn
-          color="orange"
-          icon="mail"
-          tooltip="Почта"
-          @icon-btn-click="exportFaxMailData(faxTableReactiveProperties.selected)"
-        />
+          <RoundBtn
+              v-show="!combineTableData && currentFaxItem.status !== 3"
+              icon="sync_alt"
+              tooltip="Трансфер данных"
+              @round-btn-click="openDialogTransferFromStorehouse"
+          />
 
-        <IconBtn
-          v-show="!combineTableData && currentFaxItem.status !== 3"
-          icon="sync_alt"
-          tooltip="Трансфер данных"
-          @icon-btn-click="openDialogTransferFromStorehouse"
-        />
+          <MoveToFaxBtn
+              v-show="faxTableReactiveProperties.selected.length && faxUploadStatus === 0"
+              @move-to-fax-click="moveToFax"
+          />
+          <RoundBtn
+              v-show="faxTableReactiveProperties.selected.length"
+              color="negative"
+              icon="delete"
+              tooltip="Удалить"
+              @round-btn-click="destroyEntry(faxTableReactiveProperties.selected)"
+          />
 
-        <MoveToFaxBtn
-          v-show="faxTableReactiveProperties.selected.length && faxUploadStatus === 0"
-          @move-to-fax-click="moveToFax"
-        />
-        <IconBtn
-          v-show="faxTableReactiveProperties.selected.length"
-          color="negative"
-          icon="delete"
-          tooltip="Удалить"
-          @icon-btn-click="destroyEntry(faxTableReactiveProperties.selected)"
-        />
+          <RoundBtn
+              icon="send"
+              color="primary"
+              tooltip="Отправить смс"
+              @round-btn-click="openDialogSendSms(faxTableData, faxTableReactiveProperties.selected)"
+          />
 
-        <IconBtn
-          icon="send"
-          color="primary"
-          tooltip="Отправить смс"
-          @icon-btn-click="openDialogSendSms(faxTableData, faxTableReactiveProperties.selected)"
-        />
+          <q-checkbox
+              v-model="combineTableData"
+              label="Обьеденено"
+              dense
+          />
+        </div>
       </template>
 
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
       <template #inner-item="{props}">
         <div
-          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-          :style="props.selected ? 'transform: scale(0.95);' : ''"
+            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+            :style="props.selected ? 'transform: scale(0.95);' : ''"
         >
           <q-expansion-item
-            expand-separator
-            class="shadow-1 overflow-hidden"
-            header-class="bg-secondary text-white"
-            style="border-radius: 30px;border: 1px solid #26A69A;"
-            expand-icon-class="text-white"
+              expand-separator
+              class="shadow-1 overflow-hidden"
+              header-class="bg-secondary text-white"
+              style="border-radius: 30px;border: 1px solid #26A69A;"
+              expand-icon-class="text-white"
           >
             <template #header>
               <ItemSection avatar>
                 <q-checkbox
-                  v-model="props.selected"
-                  dense
+                    v-model="props.selected"
+                    dense
                 />
               </ItemSection>
 
@@ -115,26 +117,26 @@
             </template>
 
             <List
-              separator
-              dense
+                separator
+                dense
             >
               <ListItem
-                v-for="col in props.cols.filter(col => col.name !== 'desc')"
-                :key="col.name"
-                @click-list="viewEditDialog(props)"
+                  v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                  :key="col.name"
+                  @click-list="viewEditDialog(props)"
               >
                 <ItemSection>
                   <ItemLabel>{{ `${col.label}:` }}</ItemLabel>
                 </ItemSection>
                 <ItemSection side>
                   <ItemLabel
-                    v-if="col.field === 'things'"
-                    :lines="10"
+                      v-if="col.field === 'things'"
+                      :lines="10"
                   >
                     {{ thingsFilter(col.value) }}
                   </ItemLabel>
                   <ItemLabel
-                    v-else-if="col.field === 'kg'"
+                      v-else-if="col.field === 'kg'"
                   >
                     {{ numberFormat(col.value) }}
                   </ItemLabel>
@@ -146,10 +148,10 @@
               <ListItem>
                 <ItemSection>
                   <BaseBtn
-                    label="История"
-                    color="info"
-                    style="max-width: 100px;margin: 0 auto;"
-                    @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"
+                      label="История"
+                      color="info"
+                      style="max-width: 100px;margin: 0 auto;"
+                      @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"
                   />
                 </ItemSection>
               </ListItem>
@@ -160,161 +162,161 @@
 
       <template #inner-body="{props}">
         <q-tr
-          :props="props"
-          :class="{table__tr_bold_text: props.row.brand, 'cursor-pointer': !combineTableData}"
-          @click.stop="viewEditDialog(props, $event)"
+            :props="props"
+            :class="{table__tr_bold_text: props.row.brand, 'cursor-pointer': !combineTableData}"
+            @click.stop="viewEditDialog(props, $event)"
         >
           <q-td
-            auto-width
-            class="select_checkbox"
+              auto-width
+              class="select_checkbox"
           >
             <q-checkbox
-              v-model="props.selected"
-              dense
+                v-model="props.selected"
+                dense
             />
           </q-td>
           <q-td
-            key="code_place"
-            :props="props"
+              key="code_place"
+              :props="props"
           >
             {{ props.row.code_place }}
           </q-td>
 
           <q-td
-            key="code_client_name"
-            class="cursor-pointer"
-            :props="props"
+              key="code_client_name"
+              class="cursor-pointer"
+              :props="props"
           >
             {{ optionsFilter(props.row.code_client_id, clientCodes) }}
             <PopupEdit
-              v-if="combineTableData"
-              v-model:value="props.row.code_client_id"
-              type="number"
-              :title="props.row.code_client_name"
-              @add-to-save="addToAddSaveArray(props.row, 'code_client_id')"
+                v-if="combineTableData"
+                v-model:value="props.row.code_client_id"
+                type="number"
+                :title="props.row.code_client_name"
+                @add-to-save="addToAddSaveArray(props.row, 'code_client_id')"
             >
               <template #inner-default="{scope}">
                 <SearchSelect
-                  v-model="scope.value"
-                  label="Клиент"
-                  :dense="$q.screen.xs || $q.screen.sm"
-                  :options="clientCodes"
+                    v-model="scope.value"
+                    label="Клиент"
+                    :dense="$q.screen.xs || $q.screen.sm"
+                    :options="clientCodes"
                 />
               </template>
             </PopupEdit>
           </q-td>
 
           <q-td
-            key="place"
-            :props="props"
+              key="place"
+              :props="props"
           >
             {{ props.row.place }}
           </q-td>
 
           <q-td
-            key="kg"
-            :props="props"
+              key="kg"
+              :props="props"
           >
             {{ numberFormat(props.row.kg) }}
           </q-td>
 
           <q-td
-            key="for_kg"
-            class="text-bold text-red cursor-pointer"
-            :props="props"
+              key="for_kg"
+              class="text-bold text-red cursor-pointer"
+              :props="props"
           >
             {{ numberFormat(props.row.for_kg) }}
             <PopupEdit
-              v-if="combineTableData"
-              v-model:value="props.row.for_kg"
-              type="number"
-              :title="props.row.code_client_name"
-              @add-to-save="addToAddSaveArray(props.row, 'for_kg')"
+                v-if="combineTableData"
+                v-model:value="props.row.for_kg"
+                type="number"
+                :title="props.row.code_client_name"
+                @add-to-save="addToAddSaveArray(props.row, 'for_kg')"
             >
               <template #inner-default="{scope}">
                 <q-input
-                  v-model.number="scope.value"
-                  type="number"
-                  dense
-                  autofocus
-                  @keyup.enter="scope.set"
+                    v-model.number="scope.value"
+                    type="number"
+                    dense
+                    autofocus
+                    @keyup.enter="scope.set"
                 />
                 <q-checkbox
-                  v-model="props.row.replacePrice"
-                  label="Заменить"
-                  dense
+                    v-model="props.row.replacePrice"
+                    label="Заменить"
+                    dense
                 />
               </template>
             </PopupEdit>
           </q-td>
 
           <q-td
-            key="for_place"
-            class="text-bold text-red cursor-pointer"
-            :props="props"
+              key="for_place"
+              class="text-bold text-red cursor-pointer"
+              :props="props"
           >
             {{ numberFormat(props.row.for_place) }}
             <PopupEdit
-              v-if="combineTableData"
-              v-model:value="props.row.for_place"
-              type="number"
-              :title="props.row.code_client_name"
-              @add-to-save="addToAddSaveArray(props.row, 'for_place')"
+                v-if="combineTableData"
+                v-model:value="props.row.for_place"
+                type="number"
+                :title="props.row.code_client_name"
+                @add-to-save="addToAddSaveArray(props.row, 'for_place')"
             />
           </q-td>
 
           <q-td
-            key="cube"
-            class="cursor-pointer"
-            :props="props"
+              key="cube"
+              class="cursor-pointer"
+              :props="props"
           >
             {{ props.row.cube }}
             <PopupEdit
-              v-if="combineTableData"
-              v-model:value="props.row.cube"
-              type="number"
-              :title="props.row.code_client_name"
-              @add-to-save="addToAddSaveArray(props.row, 'cube')"
+                v-if="combineTableData"
+                v-model:value="props.row.cube"
+                type="number"
+                :title="props.row.code_client_name"
+                @add-to-save="addToAddSaveArray(props.row, 'cube')"
             >
               <template #inner-default="{scope}">
                 <q-input
-                  v-model.number="scope.value"
-                  type="number"
-                  autofocus
-                  dense
-                  @keyup.enter="scope.set"
+                    v-model.number="scope.value"
+                    type="number"
+                    autofocus
+                    dense
+                    @keyup.enter="scope.set"
                 />
               </template>
             </PopupEdit>
           </q-td>
 
           <q-td
-            key="category_name"
-            class="cursor-pointer"
-            :props="props"
+              key="category_name"
+              class="cursor-pointer"
+              :props="props"
           >
             {{ optionsFilter(props.row.category_id, categories) }}
             <PopupEdit
-              v-if="combineTableData"
-              v-model:value="props.row.category_id"
-              type="number"
-              :title="props.row.code_client_name"
-              @add-to-save="addToAddSaveArray(props.row, 'category_id')"
+                v-if="combineTableData"
+                v-model:value="props.row.category_id"
+                type="number"
+                :title="props.row.code_client_name"
+                @add-to-save="addToAddSaveArray(props.row, 'category_id')"
             >
               <template #inner-default="{scope}">
                 <SearchSelect
-                  v-model="scope.value"
-                  label="Категория"
-                  :dense="$q.screen.xs || $q.screen.sm"
-                  :options="categories"
+                    v-model="scope.value"
+                    label="Категория"
+                    :dense="$q.screen.xs || $q.screen.sm"
+                    :options="categories"
                 />
               </template>
             </PopupEdit>
           </q-td>
 
           <q-td
-            key="in_cargo"
-            :props="props"
+              key="in_cargo"
+              :props="props"
           >
             <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
               {{ props.row.in_cargo ? 'Да' : 'Нет' }}
@@ -322,60 +324,60 @@
           </q-td>
 
           <q-td
-            key="shop"
-            :props="props"
+              key="shop"
+              :props="props"
           >
             {{ props.row.shop }}
           </q-td>
 
           <q-td
-            key="delivery_method_name"
-            class="cursor-pointer"
-            :props="props"
+              key="delivery_method_name"
+              class="cursor-pointer"
+              :props="props"
           >
             {{ optionsFilter(props.row.delivery_method_id, deliveryMethodsList) }}
             <PopupEdit
-              v-if="combineTableData"
-              v-model:value="props.row.delivery_method_id"
-              type="number"
-              :title="props.row.code_client_name"
-              @add-to-save="addToAddSaveArray(props.row, 'delivery_method_id')"
+                v-if="combineTableData"
+                v-model:value="props.row.delivery_method_id"
+                type="number"
+                :title="props.row.code_client_name"
+                @add-to-save="addToAddSaveArray(props.row, 'delivery_method_id')"
             >
               <template #inner-default="{scope}">
                 <SearchSelect
-                  v-model="scope.value"
-                  label="Способ доставки"
-                  :dense="$q.screen.xs || $q.screen.sm"
-                  :options="deliveryMethodsList"
+                    v-model="scope.value"
+                    label="Способ доставки"
+                    :dense="$q.screen.xs || $q.screen.sm"
+                    :options="deliveryMethodsList"
                 />
               </template>
             </PopupEdit>
           </q-td>
 
           <q-td
-            key="department"
-            :props="props"
-            class="cursor-pointer"
+              key="department"
+              :props="props"
+              class="cursor-pointer"
           >
             {{ props.row.department }}
             <PopupEdit
-              v-if="combineTableData"
-              v-model:value="props.row.department"
-              :title="props.row.code_client_name"
-              @add-to-save="addToAddSaveArray(props.row, 'department')"
+                v-if="combineTableData"
+                v-model:value="props.row.department"
+                :title="props.row.code_client_name"
+                @add-to-save="addToAddSaveArray(props.row, 'department')"
             />
           </q-td>
 
           <q-td
-            key="notation"
-            :props="props"
+              key="notation"
+              :props="props"
           >
             {{ props.row.notation }}
           </q-td>
 
           <q-td
-            key="things"
-            :props="props"
+              key="things"
+              :props="props"
           >
             {{ thingsFilter(props.row.things) }}
           </q-td>
@@ -384,28 +386,28 @@
     </Table>
 
     <CountCategories
-      :list="faxTableData"
-      :fax-id="currentFaxItem.id"
-      style="max-width: 600px;margin:0 auto;"
+        :list="faxTableData"
+        :fax-id="currentFaxItem.id"
+        style="max-width: 600px;margin:0 auto;"
     />
     <DialogFaxData
-      v-model:show-dialog="showFaxDataDialog"
-      v-model:entry-data="localFaxEditData"
+        v-model:show-dialog="showFaxDataDialog"
+        v-model:entry-data="localFaxEditData"
     />
     <Dialog
-      :dialog="dialogHistory"
-      :persistent="true"
-      :maximized="true"
+        :dialog="dialogHistory"
+        :persistent="true"
+        :maximized="true"
     >
       <Card style="max-width: 600px;">
         <q-bar>
           <q-space />
           <IconBtn
-            flat
-            dense
-            icon="close"
-            tooltip="Закрыть"
-            @icon-btn-click="dialogHistory = false"
+              flat
+              dense
+              icon="close"
+              tooltip="Закрыть"
+              @icon-btn-click="dialogHistory = false"
           />
         </q-bar>
 
@@ -415,33 +417,33 @@
       </Card>
     </Dialog>
     <Dialog
-      :dialog="dialogTransferFromStorehouse"
-      :persistent="true"
-      :maximized="true"
+        :dialog="dialogTransferFromStorehouse"
+        :persistent="true"
+        :maximized="true"
     >
       <Card>
         <q-bar>
           <q-space />
           <IconBtn
-            v-if="isTransfer"
-            flat
-            dense
-            icon="save"
-            tooltip="Сохранить"
-            color="positive"
-            @icon-btn-click="saveTransfersData(faxSideData, storehouseSideData)"
+              v-if="isTransfer"
+              flat
+              dense
+              icon="save"
+              tooltip="Сохранить"
+              color="positive"
+              @icon-btn-click="saveTransfersData(faxSideData, storehouseSideData)"
           />
           <IconBtn
-            flat
-            dense
-            icon="close"
-            tooltip="Закрыть"
-            @icon-btn-click="closeDialogTransferFromStorehouse"
+              flat
+              dense
+              icon="close"
+              tooltip="Закрыть"
+              @icon-btn-click="closeDialogTransferFromStorehouse"
           />
         </q-bar>
         <CardSection>
           <q-splitter
-            v-model="splitterModel"
+              v-model="splitterModel"
           >
             <template #before>
               <div class="q-pa-md">
@@ -450,12 +452,12 @@
                 </div>
                 <!--                <Search v-model="search" />-->
                 <CountCategories
-                  :list="faxSideData"
-                  style="margin-bottom: 20px;"
+                    :list="faxSideData"
+                    style="margin-bottom: 20px;"
                 />
                 <q-list
-                  bordered
-                  separator
+                    bordered
+                    separator
                 >
                   <q-item>
                     <q-item-section>Код</q-item-section>
@@ -465,10 +467,10 @@
                     <q-item-section>Категория</q-item-section>
                   </q-item>
                   <q-slide-item
-                    v-for="(item, index) in faxSideData"
-                    :key="index"
-                    @left="onLeft(item)"
-                    @action="onAction"
+                      v-for="(item, index) in faxSideData"
+                      :key="index"
+                      @left="onLeft(item)"
+                      @action="onAction"
                   >
                     <template #left>
                       <div>На склад</div>
@@ -490,10 +492,10 @@
 
             <template #separator>
               <q-avatar
-                color="primary"
-                text-color="white"
-                size="40px"
-                icon="drag_indicator"
+                  color="primary"
+                  text-color="white"
+                  size="40px"
+                  icon="drag_indicator"
               />
             </template>
 
@@ -504,12 +506,12 @@
                 </div>
                 <!--                <Search v-model="searchStorehouseData" />-->
                 <CountCategories
-                  :list="storehouseSideData"
-                  style="margin-bottom: 20px;"
+                    :list="storehouseSideData"
+                    style="margin-bottom: 20px;"
                 />
                 <q-list
-                  bordered
-                  separator
+                    bordered
+                    separator
                 >
                   <q-item>
                     <q-item-section>Код</q-item-section>
@@ -519,10 +521,10 @@
                     <q-item-section>Категория</q-item-section>
                   </q-item>
                   <q-slide-item
-                    v-for="(item, index) in storehouseSideData"
-                    :key="index"
-                    @right="onRight(item)"
-                    @action="onAction"
+                      v-for="(item, index) in storehouseSideData"
+                      :key="index"
+                      @right="onRight(item)"
+                      @action="onAction"
                   >
                     <template #right>
                       <div>В факс</div>
@@ -546,13 +548,13 @@
       </Card>
     </Dialog>
     <DialogMoveToFax
-      v-model:show="showMoveToFaxDialog"
-      v-model:values="faxTableReactiveProperties.selected"
+        v-model:show="showMoveToFaxDialog"
+        v-model:values="faxTableReactiveProperties.selected"
     />
     <DialogSendSms
-      v-model:show="showSendSmsDialog"
-      v-model:values="sendSmsDialogData"
-      :fax="currentFaxItem"
+        v-model:show="showSendSmsDialog"
+        v-model:values="sendSmsDialogData"
+        :fax="currentFaxItem"
     />
   </q-page>
 </template>
@@ -576,6 +578,7 @@ import StorehouseDataMixin from 'src/mixins/StorehouseData';
 import { numberFormat, thingsFilter, optionsFilter } from 'src/utils';
 import Table from 'src/components/Elements/Table/Table.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import DialogFaxData from 'src/components/Dialogs/DialogFaxData.vue';
 import StorehouseDataHistory from 'src/components/History/StorehouseDataHistory.vue';
@@ -614,6 +617,7 @@ export default {
     MoveToFaxBtn,
     DialogMoveToFax,
     DialogSendSms,
+    RoundBtn,
   },
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {
@@ -821,9 +825,9 @@ export default {
   mounted() {
     this.loading = true;
     Promise.all([this.getFax(this.$route.params.id), this.getFaxData(this.$route.params.id), getCategories(this.$store), getClientCodes(this.$store), getDeliveryMethodsList(this.$store)])
-      .then(() => {
-        this.loading = false;
-      });
+        .then(() => {
+          this.loading = false;
+        });
   },
   beforeUnmount() {
     clearTimeout(this.timer);
@@ -863,18 +867,18 @@ export default {
             handler: () => {
               this.$q.loading.show();
               this.$axios.post(getUrl('destroyStorehouseData'), { ids })
-                .then(({ data: { status } }) => {
-                  devlog.log('status', status);
-                  this.$store.dispatch('faxes/deleteEntryFromFaxData', ids);
-                  // this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
-                  this.faxTableReactiveProperties.selected = [];
-                  this.$q.loading.hide();
-                  this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
-                })
-                .catch(() => {
-                  this.$q.loading.hide();
-                  devlog.error('Ошибка запроса - destroyEntry');
-                });
+                  .then(({ data: { status } }) => {
+                    devlog.log('status', status);
+                    this.$store.dispatch('faxes/deleteEntryFromFaxData', ids);
+                    // this.$store.dispatch('storehouse/setStorehouseCategoriesData', setCategoriesStoreHouseData(this.storehouseData));
+                    this.faxTableReactiveProperties.selected = [];
+                    this.$q.loading.hide();
+                    this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', 'center');
+                  })
+                  .catch(() => {
+                    this.$q.loading.hide();
+                    devlog.error('Ошибка запроса - destroyEntry');
+                  });
             },
           },
         ]);
@@ -883,29 +887,29 @@ export default {
     async getFax(id) {
       if (_.isEmpty(this.currentFaxItem) || _.toNumber(this.currentFaxItem.id) !== _.toNumber(id)) {
         this.$axios.get(`${getUrl('fax')}/${id}`)
-          .then(({ data: { fax } }) => {
-            this.$store.dispatch('faxes/setCurrentFaxItem', fax);
-          })
-          .catch((errors) => {
-            devlog.log('errors', errors);
-          });
+            .then(({ data: { fax } }) => {
+              this.$store.dispatch('faxes/setCurrentFaxItem', fax);
+            })
+            .catch((errors) => {
+              devlog.log('errors', errors);
+            });
       }
     },
     saveDataInCombineTable(values) {
       this.$q.loading.show();
       this.$axios.post(getUrl('updateFaxCombineData'), values)
-        .then(({ data: { updatedData } }) => {
-          _.forEach(updatedData, (item) => {
-            this.$store.dispatch('faxes/updateFaxData', item);
+          .then(({ data: { updatedData } }) => {
+            _.forEach(updatedData, (item) => {
+              this.$store.dispatch('faxes/updateFaxData', item);
+            });
+            this.addToSaveArray = [];
+            this.$q.loading.hide();
+            this.showNotif('success', 'Запись успешно обновлена.', 'center');
+          })
+          .catch((errors) => {
+            this.$q.loading.hide();
+            devlog.log('errors', errors);
           });
-          this.addToSaveArray = [];
-          this.$q.loading.hide();
-          this.showNotif('success', 'Запись успешно обновлена.', 'center');
-        })
-        .catch((errors) => {
-          this.$q.loading.hide();
-          devlog.log('errors', errors);
-        });
     },
     addToAddSaveArray(val, key) {
       const findIndex = _.findIndex(this.addToSaveArray, { id: val.id });
@@ -958,15 +962,15 @@ export default {
     async getFaxData(id) {
       // this.$q.loading.show();
       await this.$axios.get(`${getUrl('faxData')}/${id}`)
-        .then(({ data: { faxData } }) => {
-          this.$store.dispatch('faxes/setFaxData', faxData);
-          this.faxTableData = combineStoreHouseData(faxData);
-          // this.$q.loading.hide();
-        })
-        .catch(() => {
-          // this.$q.loading.hide();
-          devlog.error('Ошибка получения данных факса');
-        });
+          .then(({ data: { faxData } }) => {
+            this.$store.dispatch('faxes/setFaxData', faxData);
+            this.faxTableData = combineStoreHouseData(faxData);
+            // this.$q.loading.hide();
+          })
+          .catch(() => {
+            // this.$q.loading.hide();
+            devlog.error('Ошибка получения данных факса');
+          });
     },
     viewEditDialog(val, event) {
       devlog.log('viewEditDialog', _.get(event, 'target.classList'));
@@ -982,37 +986,37 @@ export default {
         }, 100);
 
         Promise.all([getClientCodes(this.$store), getShopsList(this.$store), getCategories(this.$store)])
-          .then(() => {
-            this.showFaxDataDialog = true;
-            this.$q.loading.hide();
-          })
-          .catch(() => {
-            this.$q.loading.hide();
-            devlog.warn('Ошибка при получении данных. Edit faxData');
-          });
+            .then(() => {
+              this.showFaxDataDialog = true;
+              this.$q.loading.hide();
+            })
+            .catch(() => {
+              this.$q.loading.hide();
+              devlog.warn('Ошибка при получении данных. Edit faxData');
+            });
       }
     },
     openDialogTransferFromStorehouse() {
       this.dialogTransferFromStorehouse = true;
       this.$q.loading.show();
       Promise.all([this.$store.dispatch('storehouse/fetchStorehouseTableData'), getFaxes(this.$store)])
-        .then(() => {
-          devlog.log('Promise.all');
-          // if (_.isEmpty(this.faxSideData)) {
-          this.faxSideData = sortArrayCollection(_.cloneDeep(this.faxTableData), 'code_client_name');
-          // }
-          // if (_.isEmpty(this.storehouseSideData)) {
-          // setTimeout(() => {
-          this.storehouseSideData = sortArrayCollection(_.cloneDeep(this.storehouseData), 'code_client_name');
-          // }, 100);
-          // }
-          this.dialogTransferFromStorehouse = true;
-          this.$q.loading.hide();
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          devlog.warn('Ошибка при получении данных. openDialogTransferFromStorehouse');
-        });
+          .then(() => {
+            devlog.log('Promise.all');
+            // if (_.isEmpty(this.faxSideData)) {
+            this.faxSideData = sortArrayCollection(_.cloneDeep(this.faxTableData), 'code_client_name');
+            // }
+            // if (_.isEmpty(this.storehouseSideData)) {
+            // setTimeout(() => {
+            this.storehouseSideData = sortArrayCollection(_.cloneDeep(this.storehouseData), 'code_client_name');
+            // }, 100);
+            // }
+            this.dialogTransferFromStorehouse = true;
+            this.$q.loading.hide();
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            devlog.warn('Ошибка при получении данных. openDialogTransferFromStorehouse');
+          });
     },
     // Действие, когда пользователь закончил сдвиг элемента в лево, с факса в склад
     onLeft(item) {
@@ -1052,21 +1056,21 @@ export default {
         faxIds: _.map(faxData, 'id'),
         storehouseIds: _.map(storehouseData, 'id'),
       })
-        .then(({ data }) => {
-          devlog.log('DATA', data);
-          this.faxSideData = [];
-          this.storehouseSideData = [];
-          this.getFaxData(this.$route.params.id);
-          this.$store.dispatch('storehouse/fetchStorehouseTableData');
-          this.isTransfer = false;
-          this.closeDialogTransferFromStorehouse();
-          this.$q.loading.hide();
-          this.showNotif('success', 'Данные успешно сохранены.', 'center');
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          devlog.error('Произошла ошибка в запросе - saveTransfersData');
-        });
+          .then(({ data }) => {
+            devlog.log('DATA', data);
+            this.faxSideData = [];
+            this.storehouseSideData = [];
+            this.getFaxData(this.$route.params.id);
+            this.$store.dispatch('storehouse/fetchStorehouseTableData');
+            this.isTransfer = false;
+            this.closeDialogTransferFromStorehouse();
+            this.$q.loading.hide();
+            this.showNotif('success', 'Данные успешно сохранены.', 'center');
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            devlog.error('Произошла ошибка в запросе - saveTransfersData');
+          });
     },
     closeDialogTransferFromStorehouse() {
       if (this.isTransfer) {
@@ -1096,16 +1100,16 @@ export default {
       this.$q.loading.show();
       devlog.log('faxId', faxId);
       this.$axios.get(`${getUrl('updatePricesInFax')}/${faxId}`)
-        .then(({ data: { faxData } }) => {
-          this.$store.dispatch('faxes/setFaxData', faxData);
-          this.faxTableData = combineStoreHouseData(faxData);
-          this.$q.loading.hide();
-          this.showNotif('success', 'Цены успешно обновлены.', 'center');
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          devlog.error('Ошибка получения данных факса');
-        });
+          .then(({ data: { faxData } }) => {
+            this.$store.dispatch('faxes/setFaxData', faxData);
+            this.faxTableData = combineStoreHouseData(faxData);
+            this.$q.loading.hide();
+            this.showNotif('success', 'Цены успешно обновлены.', 'center');
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            devlog.error('Ошибка получения данных факса');
+          });
     },
   },
 };

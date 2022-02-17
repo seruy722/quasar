@@ -6,7 +6,7 @@
       :columns="tableProperties.columns"
       :visible-columns="tableReactiveProperties.visibleColumns"
       :selection="tableProperties.selection || 'multiple'"
-      :grid="$q.screen.lt.sm || grid"
+      :grid="$q.screen.xs || $q.screen.sm || grid"
       :loading="loading"
       dense
       row-key="id"
@@ -18,8 +18,9 @@
       :virtual-scroll-sticky-start="48"
       :sort-method="customSort"
       class="my-sticky-virtscroll-table"
+      :style="`height: ${tableHeight}px; overflow: auto;`"
       virtual-scroll
-      data-vue-component-name="Table"
+      data-vue-component-name="TableComponent"
   >
     <template
         v-if="!tableProperties.hideTop"
@@ -43,10 +44,11 @@
       />
 
       <q-space />
-      <IconBtn
+      <RoundBtn
           :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
           :tooltip="$t(props.inFullscreen ? 'hide' : 'reveal')"
-          @icon-btn-click="props.toggleFullscreen"
+          class="q-mr-sm"
+          @round-btn-click="props.toggleFullscreen"
       />
       <slot name="top-buttons" />
     </template>
@@ -80,10 +82,10 @@ import { defineAsyncComponent } from 'vue';
 import { sortSuper } from 'src/utils/sort.js';
 
 export default {
-  name: 'Table',
+  name: 'TableComponent',
   components: {
     Search: defineAsyncComponent(() => import('src/components/Search/Search.vue')),
-    IconBtn: defineAsyncComponent(() => import('src/components/Buttons/IconBtn.vue')),
+    RoundBtn: defineAsyncComponent(() => import('src/components/Buttons/RoundBtn.vue')),
     BaseSelect: defineAsyncComponent(() => import('src/components/Elements/BaseSelect.vue')),
   },
   props: {
@@ -139,16 +141,16 @@ export default {
         _.set(this.tableReactiveProperties, 'selected', val);
       },
     },
+    tableHeight() {
+      return this.$q.screen.height - 250;
+    },
   },
   created() {
-    devlog.log('dataSearch', this.dataSearch);
     if (!_.isEmpty(this.dataSearch)) {
       this.search = this.dataSearch.value;
       this.searchField = this.dataSearch.field;
     }
-    // const el = document.querySelector('.my-sticky-virtscroll-table >.q-table__middle');
-    // el.setAttribute('style', `max-height: ${document.documentElement.clientHeight - 100}px`);
-    // devlog.log('el', el);
+
     this.searchOptionsFields = _.map(_.get(this.tableProperties, 'columns'), ({
                                                                                 label,
                                                                                 name,
@@ -166,7 +168,6 @@ export default {
   methods: {
     filterMethod(rows, terms, cols, cellValue) {
       const newCols = this.searchField === 'Все' ? cols : _.filter(cols, { name: this.searchField });
-      devlog.log('newCols', newCols);
       const lowerTerms = terms ? terms.toLowerCase() : '';
       const result = rows.filter(
           (row) => newCols.some((col) => (`${cellValue(col, row)} `).toLowerCase()
@@ -178,8 +179,6 @@ export default {
     },
     customSort(rows, sortBy, descending) {
       const data = [...rows];
-      devlog.log('sortBy', sortBy);
-
       if (sortBy) {
         sortSuper(data, sortBy, descending);
       }
@@ -190,10 +189,6 @@ export default {
 </script>
 
 <style lang="scss">
-.my-sticky-virtscroll-table .q-table__middle {
-  max-height: 385px;
-}
-
 .q-table__top .q-table__bottom thead tr:first-child th {
   background-color: #fff;
 }

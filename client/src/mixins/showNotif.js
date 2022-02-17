@@ -12,7 +12,6 @@ export default {
             icon: 'thumb_up',
             message,
             position: position || 'top-right',
-            multiLine: true,
             actions: actions || [
               {
                 label: 'Закрыть',
@@ -31,7 +30,6 @@ export default {
             icon: 'warning',
             message,
             position: position || 'top-right',
-            multiLine: true,
             actions: actions || [
               {
                 label: 'Закрыть',
@@ -50,7 +48,6 @@ export default {
             icon: 'info',
             message,
             position: position || 'top-right',
-            multiLine: true,
             actions: actions || [
               {
                 label: 'Закрыть',
@@ -69,7 +66,6 @@ export default {
             icon: 'error',
             message,
             position: position || 'top-right',
-            multiLine: true,
             actions: actions || [
               {
                 label: 'Закрыть',

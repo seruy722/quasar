@@ -11,26 +11,27 @@
           title="Факсы"
       >
         <template #top-buttons>
-          <IconBtn
-              v-show="faxesTableReactiveProperties.selected.length"
-              color="negative"
-              icon="delete"
-              tooltip="Удалить"
-              class="q-ml-md"
-              @icon-btn-click="deleteFaxItems(faxesTableReactiveProperties.selected)"
-          />
+          <div class="row q-gutter-sm">
+            <RoundBtn
+                v-show="faxesTableReactiveProperties.selected.length"
+                color="negative"
+                icon="delete"
+                tooltip="Удалить"
+                class="q-ml-md"
+                @round-btn-click="deleteFaxItems(faxesTableReactiveProperties.selected)"
+            />
 
-          <UpdateBtn
-              @update-btn-click="refresh"
-          />
-          <Menu :items="['Факс', 'Перевожчика']" />
-          <IconBtn
-              dense
-              icon="flight_land"
-              color="accent"
-              tooltip="Не доставленные места"
-              @icon-btn-click="showDialogNotDeliveredCargo = true"
-          />
+            <UpdateBtn
+                :func="refresh"
+            />
+            <Menu :items="['Факс', 'Перевожчика']" />
+            <RoundBtn
+                icon="flight_land"
+                color="accent"
+                tooltip="Не доставленные места"
+                @round-btn-click="showDialogNotDeliveredCargo = true"
+            />
+          </div>
         </template>
         <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
         <template #inner-item="{props}">
@@ -271,6 +272,7 @@ import { callFunction, numberFormat } from 'src/utils';
 import showNotif from 'src/mixins/showNotif';
 import Table from 'src/components/Elements/Table/Table.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
 import List from 'src/components/Elements/List/List.vue';
@@ -295,6 +297,7 @@ export default {
     PullRefresh,
     UpdateBtn,
     DialogNotDeliveredCargo,
+    RoundBtn,
   },
   mixins: [showNotif],
   data() {

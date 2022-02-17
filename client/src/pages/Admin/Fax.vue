@@ -10,75 +10,75 @@
         :loading="loading"
     >
       <template #top-buttons>
-        <IconBtn
-            v-show="addToSaveArray.length"
-            color="positive"
-            icon="save"
-            tooltip="Сохранить"
-            @icon-btn-click="saveDataInCombineTable(addToSaveArray)"
-        />
+        <div class="row q-gutter-sm">
+          <RoundBtn
+              v-show="addToSaveArray.length"
+              color="positive"
+              icon="save"
+              tooltip="Сохранить"
+              @round-btn-click="saveDataInCombineTable(addToSaveArray)"
+          />
 
-        <q-checkbox
-            v-model="combineTableData"
-            label="Обьеденено"
-            dense
-        />
+          <RoundBtn
+              color="positive"
+              icon="explicit"
+              tooltip="excel"
+              @round-btn-click="exportFaxData(faxTableReactiveProperties.selected)"
+          />
 
-        <IconBtn
-            color="positive"
-            icon="explicit"
-            tooltip="excel"
-            @icon-btn-click="exportFaxData(faxTableReactiveProperties.selected)"
-        />
+          <RoundBtn
+              v-show="!combineTableData"
+              icon="sync_alt"
+              tooltip="Трансфер данных"
+              @round-btn-click="openDialogTransferFromStorehouse"
+          />
 
-        <IconBtn
-            color="positive"
-            icon="directions_bus"
-            tooltip="Одесса-Харьков"
-            @icon-btn-click="exportFaxDataOdessaKharkov"
-        />
+          <RoundBtn
+              icon="data_usage"
+              color="orange"
+              tooltip="Обновить цены"
+              @round-btn-click="updatePricesInFax(currentFaxItem.id)"
+          />
+          <RoundBtn
+              v-show="faxTableReactiveProperties.selected.length"
+              color="negative"
+              icon="delete"
+              tooltip="Удалить"
+              @round-btn-click="destroyEntry(faxTableReactiveProperties.selected)"
+          />
+          <RoundBtn
+              icon="history"
+              tooltip="История"
+              @round-btn-click="getFaxTransfersDataHistory(currentFaxItem)"
+          />
+          <RoundBtn
+              v-show="faxTableReactiveProperties.selected.length"
+              icon="vertical_align_center"
+              color="accent"
+              tooltip="Доставлено"
+              @round-btn-click="dialogSelectDeliveredPlace = true"
+          />
 
-        <IconBtn
-            color="positive"
-            icon="directions_railway"
-            tooltip="Одесса"
-            @icon-btn-click="exportFaxDataOdessa"
-        />
+          <RoundBtn
+              color="positive"
+              icon="directions_bus"
+              tooltip="Одесса-Харьков"
+              @round-btn-click="exportFaxDataOdessaKharkov"
+          />
 
-        <IconBtn
-            v-show="!combineTableData"
-            icon="sync_alt"
-            tooltip="Трансфер данных"
-            @icon-btn-click="openDialogTransferFromStorehouse"
-        />
+          <RoundBtn
+              color="positive"
+              icon="directions_railway"
+              tooltip="Одесса"
+              @round-btn-click="exportFaxDataOdessa"
+          />
 
-        <IconBtn
-            icon="data_usage"
-            color="orange"
-            tooltip="Обновить цены"
-            @icon-btn-click="updatePricesInFax(currentFaxItem.id)"
-        />
-        <IconBtn
-            v-show="faxTableReactiveProperties.selected.length"
-            color="negative"
-            icon="delete"
-            tooltip="Удалить"
-            @icon-btn-click="destroyEntry(faxTableReactiveProperties.selected)"
-        />
-        <IconBtn
-            dense
-            icon="history"
-            tooltip="История"
-            @icon-btn-click="getFaxTransfersDataHistory(currentFaxItem)"
-        />
-        <IconBtn
-            v-show="faxTableReactiveProperties.selected.length"
-            dense
-            icon="vertical_align_center"
-            color="accent"
-            tooltip="Доставлено"
-            @icon-btn-click="dialogSelectDeliveredPlace = true"
-        />
+          <q-checkbox
+              v-model="combineTableData"
+              label="Обьеденено"
+              dense
+          />
+        </div>
       </template>
 
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
@@ -609,6 +609,7 @@ import StorehouseDataMixin from 'src/mixins/StorehouseData';
 import { numberFormat, thingsFilter, optionsFilter } from 'src/utils';
 import Table from 'src/components/Elements/Table/Table.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import DialogFaxData from 'src/components/Dialogs/DialogFaxData.vue';
 import StorehouseDataHistory from 'src/components/History/StorehouseDataHistory.vue';
@@ -633,6 +634,7 @@ export default {
     SearchSelect,
     BaseSelect,
     FaxTransferDataHistory,
+    RoundBtn,
   },
   mixins: [showNotif, ExportDataMixin, StorehouseDataMixin],
   data() {

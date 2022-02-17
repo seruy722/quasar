@@ -16,6 +16,7 @@
     >
       {{ tooltip }}
     </q-tooltip>
+    <slot />
   </q-btn>
 </template>
 

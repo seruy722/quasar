@@ -28,7 +28,7 @@
 
           <BaseSelect
               v-model="searchField"
-              label="Поле"
+              label="В каком поле искать"
               style="min-width: 210px;padding-bottom: 0;"
               dense
               options-dense
@@ -48,7 +48,7 @@
           />
 
           <BaseBtn
-              label="OK"
+              label="Найти"
               color="positive"
               :dense="$q.screen.xs || $q.screen.sm"
               @click-base-btn="filterMethod(search)"
@@ -100,10 +100,6 @@ export default {
       value: name,
     }));
 
-    onBeforeUnmount(() => {
-      store.dispatch('transfers/setSearchData', []);
-    });
-
     const filterMethod = ((val) => {
       if (val) {
         showDialog.value = false;
@@ -113,8 +109,11 @@ export default {
           field: searchField.value,
         })
             .then(({ data: { transfers } }) => {
-              store.dispatch('transfers/setSearchData', transfers);
               emit('update:loading', false);
+              if (!_.isEmpty(transfers)) {
+                store.dispatch('transfers/setTransfers', transfers);
+                store.commit('transfers/SET_TRANSFERS_DATA', {});
+              }
             });
       } else {
         searchInput.value.$el.focus();
@@ -122,9 +121,13 @@ export default {
     });
 
     const clearSearchData = (() => {
-      store.dispatch('transfers/setSearchData', []);
       search.value = null;
       searchField.value = '';
+      emit('update:loading', true);
+      store.dispatch('transfers/fetchTransfers')
+          .finally(() => {
+            emit('update:loading', false);
+          });
     });
 
     return {

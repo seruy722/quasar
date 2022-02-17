@@ -1,10 +1,10 @@
 <template>
   <div data-vue-component-name="UploadExcelFileForCodesPlaces">
-    <IconBtn
+    <RoundBtn
       color="accent"
       :icon="icon"
       :tooltip="tooltip"
-      @icon-btn-click="$refs.input.click()"
+      @round-btn-click="$refs.input.click()"
     />
 
     <input
@@ -17,13 +17,13 @@
 </template>
 
 <script>
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import showNotif from 'src/mixins/showNotif';
 
 export default {
   name: 'UploadExcelFileForCodesPlaces',
   components: {
-    IconBtn,
+    RoundBtn,
   },
   mixins: [showNotif],
   props: {

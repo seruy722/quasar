@@ -2,10 +2,6 @@ export const SET_TRANSFERS = ((state, data) => {
     state.transfers = data;
 });
 
-export const SET_SEARCH_DATA = ((state, data) => {
-    state.searchData = data;
-});
-
 export const ADD_TRANSFERS = ((state, data) => {
     const ids = _.map(state.transfers, 'id');
     const arr = [];
@@ -20,14 +16,6 @@ export const ADD_TRANSFERS = ((state, data) => {
         }
     });
     state.transfers.push(...arr);
-});
-
-export const SET_TRANSFERS_DATA = ((state, data) => {
-    state.transfersData = data;
-});
-
-export const SET_TRANSFERS_CLIENT = ((state, data) => {
-    state.transfersClient = data;
 });
 
 export const UPDATE_TRANSFERS = ((state, data) => {
@@ -46,13 +34,10 @@ export const UPDATE_TRANSFERS = ((state, data) => {
 export const ADD_TRANSFER = ((state, elem) => {
     const index = _.findIndex(state.transfers, { id: elem.id });
     if (index === -1) {
-        state.transfers.push(elem);
+        state.transfers.unshift(elem);
     }
 });
 
-export const ADD_TRANSFER_CLIENT = ((state, [elem]) => {
-    state.transfersClient.unshift(elem);
-});
 export const UPDATE_TRANSFER = ((state, elem) => {
     const index = _.findIndex(state.transfers, { id: elem.id });
     if (index !== -1) {
@@ -63,4 +48,12 @@ export const UPDATE_TRANSFER = ((state, elem) => {
 export const UPDATE_TRANSFER_CLIENT = ((state, [elem]) => {
     const index = _.findIndex(state.transfersClient, { id: elem.id });
     state.transfersClient.splice(index, 1, elem);
+});
+
+export const ADD_TRANSFER_CLIENT = ((state, [elem]) => {
+    state.transfersClient.unshift(elem);
+});
+
+export const SET_TRANSFERS_CLIENT = ((state, data) => {
+    state.transfersClient = data;
 });

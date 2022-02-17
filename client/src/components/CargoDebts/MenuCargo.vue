@@ -2,9 +2,10 @@
   <div
     data-vue-component-name="MenuCargo"
   >
-    <IconBtn
+    <RoundBtn
       color="secondary"
       tooltip="Добавить"
+      icon="add"
     >
       <q-menu
         transition-show="flip-right"
@@ -28,7 +29,7 @@
           </q-item>
         </q-list>
       </q-menu>
-    </IconBtn>
+    </RoundBtn>
 
     <DialogAddCargoPaymentEntry
       v-model:show-dialog="showDialogAddCargoPaymentEntry"
@@ -41,7 +42,7 @@
 
 <script>
 import DialogAddCargoPaymentEntry from 'src/components/CargoDebts/Dialogs/DialogAddCargoPaymentEntry.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import DialogAddCargoDebtEntry from 'src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue';
 
 const listItems = [
@@ -58,7 +59,7 @@ export default {
   name: 'MenuCargo',
   components: {
     DialogAddCargoPaymentEntry,
-    IconBtn,
+    RoundBtn,
     DialogAddCargoDebtEntry,
   },
   props: {

@@ -33,6 +33,7 @@ export default {
     return {
       loading,
       refresh() {
+        devlog.log(' props.func', props.func);
         loading.value = true;
         props.func()
             .finally(() => {

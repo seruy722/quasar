@@ -1,100 +1,99 @@
 <template>
   <div
-    data-vue-component-name="CargoComponent"
+      data-vue-component-name="CargoComponent"
   >
     <Table
-      :table-properties="cargoTableProperties"
-      :table-data="cargo"
-      :table-reactive-properties="cargoTableReactiveProperties"
-      :title="titleTable"
-      :loading="loading"
+        :table-properties="cargoTableProperties"
+        :table-data="cargo"
+        :table-reactive-properties="cargoTableReactiveProperties"
+        :title="titleTable"
+        :loading="loading"
     >
       <template #top-buttons>
-        <MenuCargo
-          v-show="currentCodeClientId"
-        />
-        <UpdateBtn
-          v-show="currentCodeClientId"
-          @update-btn-click="refresh"
-        />
-        <!--        <ExportBtn-->
-        <!--          @export-btn-click="exportFaxData(cargoTableReactiveProperties.selected)"-->
-        <!--        />-->
-        <IconBtn
-          v-show="cargoTableReactiveProperties.selected.length"
-          color="negative"
-          icon="delete"
-          tooltip="Удалить"
-          @icon-btn-click="destroyEntry(cargoTableReactiveProperties.selected)"
-        />
+        <div class="row q-gutter-sm">
+          <MenuCargo
+              v-show="currentCodeClientId"
+          />
+          <UpdateBtn
+              v-show="currentCodeClientId"
+              :func="refresh"
+          />
+          <RoundBtn
+              v-show="cargoTableReactiveProperties.selected.length"
+              color="negative"
+              icon="delete"
+              tooltip="Удалить"
+              @round-btn-click="destroyEntry(cargoTableReactiveProperties.selected)"
+          />
 
-        <IconBtn
-          v-show="cargoTableReactiveProperties.selected.length === 1"
-          icon="attach_money"
-          tooltip="Оплатить"
-          @icon-btn-click="pay(cargoTableReactiveProperties.selected[0])"
-        />
-        <IconBtn
-          v-show="currentCodeClientId"
-          icon="payments"
-          color="orange"
-          tooltip="Оплатить все"
-          @icon-btn-click="paymentsAll(currentCodeClientId)"
-        />
-        <q-btn-dropdown
-          split
-          color="positive"
-          icon="explicit"
-          dense
-        >
-          <q-list separator>
-            <q-item
-              v-close-popup
-              clickable
-              @click="exportFaxData(cargoTableReactiveProperties.selected)"
-            >
-              <q-item-section>
-                <q-item-label>Выгрузить</q-item-label>
-              </q-item-section>
-            </q-item>
+          <RoundBtn
+              v-show="cargoTableReactiveProperties.selected.length === 1"
+              icon="attach_money"
+              tooltip="Оплатить"
+              @round-btn-click="pay(cargoTableReactiveProperties.selected[0])"
+          />
+          <RoundBtn
+              v-show="currentCodeClientId"
+              icon="payments"
+              color="orange"
+              tooltip="Оплатить все"
+              @round-btn-click="paymentsAll(currentCodeClientId)"
+          />
+          <q-btn-dropdown
+              split
+              color="positive"
+              icon="explicit"
+              dense
+          >
+            <q-list separator>
+              <q-item
+                  v-close-popup
+                  clickable
+                  @click="exportFaxData(cargoTableReactiveProperties.selected)"
+              >
+                <q-item-section>
+                  <q-item-label>Выгрузить</q-item-label>
+                </q-item-section>
+              </q-item>
 
-            <q-item
-              v-close-popup
-              clickable
-              @click="exportDetailFaxData(cargoTableReactiveProperties.selected)"
-            >
-              <q-item-section>
-                <q-item-label>Выгрузить детально</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-        <IconBtn
-          v-show="currentCodeClientId"
-          icon="payment"
-          color="brown"
-          tooltip="Рассчитать клиента"
-          @icon-btn-click="calculateClient(cargoTableReactiveProperties.selected, cargo)"
-        />
+              <q-item
+                  v-close-popup
+                  clickable
+                  @click="exportDetailFaxData(cargoTableReactiveProperties.selected)"
+              >
+                <q-item-section>
+                  <q-item-label>Выгрузить детально</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+          <RoundBtn
+              v-show="currentCodeClientId"
+              icon="payment"
+              color="brown"
+              tooltip="Рассчитать клиента"
+              @round-btn-click="calculateClient(cargoTableReactiveProperties.selected, cargo)"
+          />
+        </div>
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
       <template #inner-item="{props}">
         <div
-          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-          :style="props.selected ? 'transform: scale(0.95);' : ''"
+            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+            :style="props.selected ? 'transform: scale(0.95);' : ''"
         >
           <q-expansion-item
-            expand-separator
-            class="shadow-1 overflow-hidden"
-            :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
-            :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
-            expand-icon-class="text-white"
+              expand-separator
+              class="shadow-1 overflow-hidden"
+              :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
+              :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
+              expand-icon-class="text-white"
           >
             <template #header>
               <q-item-section avatar>
                 <q-checkbox
-                  v-model="props.selected"
-                  dense
+                    v-model="props.selected"
+                    dense
                 />
               </q-item-section>
               <q-item-section avatar>
@@ -107,72 +106,72 @@
                 <q-item-label :lines="2">
                   {{
                     props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name || ''}` : props.row.type
-                      ?
-                      props.row.sum : props.row.notation
+                        ?
+                        props.row.sum : props.row.notation
                   }}
                 </q-item-label>
               </q-item-section>
 
               <q-item-section
-                avatar
-                side
+                  avatar
+                  side
               >
                 <q-icon
-                  v-if="props.row.paid"
-                  name="money"
-                  size="md"
-                  color="white"
+                    v-if="props.row.paid"
+                    name="money"
+                    size="md"
+                    color="white"
                 />
               </q-item-section>
             </template>
 
             <q-list
-              separator
-              dense
+                separator
+                dense
             >
               <q-item
-                v-for="col in props.cols.filter(col => col.name !== 'desc')"
-                :key="col.name"
-                @click="viewEditDialog(props)"
+                  v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                  :key="col.name"
+                  @click="viewEditDialog(props)"
               >
                 <q-item-section>
                   <q-item-label>{{ `${col.label}:` }}</q-item-label>
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label
-                    v-if="col.field === 'things'"
-                    :lines="10"
+                      v-if="col.field === 'things'"
+                      :lines="10"
                   >
                     {{ thingsFilter(col.value) }}
                   </q-item-label>
                   <q-item-label
-                    v-else-if="col.field === 'kg'"
+                      v-else-if="col.field === 'kg'"
                   >
                     {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
-                    v-else-if="col.field === 'sum'"
+                      v-else-if="col.field === 'sum'"
                   >
                     {{ numberFormat(col.value) }}
                   </q-item-label>
                   <q-item-label
-                    v-else-if="col.field === 'paid'"
+                      v-else-if="col.field === 'paid'"
                   >
                     <q-badge :color="props.row.paid ? 'positive' : 'negative'">
                       {{
                         props.row.paid ? 'Да' :
-                          props.row.type ? null : 'Нет'
+                            props.row.type ? null : 'Нет'
                       }}
                     </q-badge>
                   </q-item-label>
                   <q-item-label
-                    v-else-if="col.field === 'type'"
+                      v-else-if="col.field === 'type'"
                   >
                     {{ col.value ? 'Оплата' : 'Долг' }}
                   </q-item-label>
                   <q-item-label
-                    v-else-if="col.field === 'notation'"
-                    :lines="3"
+                      v-else-if="col.field === 'notation'"
+                      :lines="3"
                   >
                     {{ col.value }}
                   </q-item-label>
@@ -188,113 +187,113 @@
 
       <template #inner-body="{props}">
         <q-tr
-          :props="props"
-          class="cursor-pointer"
-          :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
-          @click.stop="viewEditDialog(props, $event)"
+            :props="props"
+            class="cursor-pointer"
+            :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
+            @click.stop="viewEditDialog(props, $event)"
         >
           <q-td
-            auto-width
-            class="select_checkbox"
+              auto-width
+              class="select_checkbox"
           >
             <q-checkbox
-              v-model="props.selected"
-              dense
+                v-model="props.selected"
+                dense
             />
           </q-td>
 
           <q-td
-            key="created_at"
-            :props="props"
+              key="created_at"
+              :props="props"
           >
             {{ props.row.created_at }}
           </q-td>
 
           <q-td
-            key="code_place"
-            :props="props"
+              key="code_place"
+              :props="props"
           >
             {{ props.row.code_place }}
           </q-td>
 
           <q-td
-            key="code_client_name"
-            :props="props"
+              key="code_client_name"
+              :props="props"
           >
             {{ props.row.code_client_name }}
           </q-td>
 
           <q-td
-            key="type"
-            :props="props"
+              key="type"
+              :props="props"
           >
             {{ props.row.type ? 'Оплата' : 'Долг' }}
           </q-td>
 
           <q-td
-            key="place"
-            :props="props"
+              key="place"
+              :props="props"
           >
             {{ props.row.type ? null : props.row.place }}
           </q-td>
 
           <q-td
-            key="kg"
-            :props="props"
+              key="kg"
+              :props="props"
           >
             {{ props.row.type ? null : props.row.kg }}
           </q-td>
 
           <q-td
-            key="for_kg"
-            class="text-bold cursor-pointer"
-            :props="props"
+              key="for_kg"
+              class="text-bold cursor-pointer"
+              :props="props"
           >
             {{ props.row.type ? null : props.row.for_kg }}
           </q-td>
 
           <q-td
-            key="for_place"
-            class="text-bold cursor-pointer"
-            :props="props"
+              key="for_place"
+              class="text-bold cursor-pointer"
+              :props="props"
           >
             {{ props.row.type ? null : props.row.for_place }}
           </q-td>
 
           <q-td
-            key="sum"
-            :props="props"
+              key="sum"
+              :props="props"
           >
             {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
-            key="sale"
-            :props="props"
+              key="sale"
+              :props="props"
           >
             {{ props.row.type ? props.row.sale : null }}
           </q-td>
           <q-td
-            key="paid"
-            :props="props"
+              key="paid"
+              :props="props"
           >
             <q-badge :color="props.row.paid ? 'positive' : 'negative'">
               {{
                 props.row.paid ? 'Да' :
-                  props.row.type ? null : 'Нет'
+                    props.row.type ? null : 'Нет'
               }}
             </q-badge>
           </q-td>
 
           <q-td
-            key="category_name"
-            :props="props"
+              key="category_name"
+              :props="props"
           >
             {{ props.row.category_name }}
           </q-td>
           <q-td
-            key="fax_name"
-            :props="props"
-            class="faxName"
+              key="fax_name"
+              :props="props"
+              class="faxName"
           >
             <router-link :to="{ name: 'fax', params: { id: props.row.fax_id }}">
               {{ props.row.fax_name }}
@@ -302,55 +301,55 @@
           </q-td>
 
           <q-td
-            key="get_pay_user_name"
-            :props="props"
+              key="get_pay_user_name"
+              :props="props"
           >
             {{ props.row.get_pay_user_name }}
           </q-td>
 
           <q-td
-            key="notation"
-            :props="props"
+              key="notation"
+              :props="props"
           >
             {{ props.row.notation }}
           </q-td>
 
           <q-td
-            key="shop"
-            :props="props"
+              key="shop"
+              :props="props"
           >
             {{ props.row.shop }}
           </q-td>
 
           <q-td
-            key="in_cargo"
-            :props="props"
+              key="in_cargo"
+              :props="props"
           >
             <q-badge :color="props.row.in_cargo ? 'positive' : 'negative'">
               {{
                 props.row.in_cargo ? 'Да' :
-                  props.row.type ? null : 'Нет'
+                    props.row.type ? null : 'Нет'
               }}
             </q-badge>
           </q-td>
 
           <q-td
-            key="things"
-            :props="props"
+              key="things"
+              :props="props"
           >
             {{ thingsFilter(props.row.things) }}
           </q-td>
 
           <q-td
-            key="delivery_method_name"
-            :props="props"
+              key="delivery_method_name"
+              :props="props"
           >
             {{ props.row.delivery_method_name }}
           </q-td>
 
           <q-td
-            key="department"
-            :props="props"
+              key="department"
+              :props="props"
           >
             {{ props.row.department }}
           </q-td>
@@ -358,44 +357,44 @@
       </template>
     </Table>
     <GeneralClientCargoData
-      :list="cargo"
-      title="Баланс"
-      style="max-width: 500px;margin:20px auto;"
+        :list="cargo"
+        title="Баланс"
+        style="max-width: 500px;margin:20px auto;"
     />
     <CountCargoCategories
-      :list="cargo"
-      style="max-width: 500px;margin:0 auto;"
+        :list="cargo"
+        style="max-width: 500px;margin:0 auto;"
     />
     <DialogViewCargoData
-      v-model:values="entryData"
-      v-model:show="showDialogViewCargoData"
+        v-model:values="entryData"
+        v-model:show="showDialogViewCargoData"
     />
     <DialogAddCargoPaymentEntry
-      v-model:entry-data="dialogAddCargoPaymentEntryData"
-      v-model:show-dialog="showDialogAddCargoPaymentEntry"
+        v-model:entry-data="dialogAddCargoPaymentEntryData"
+        v-model:show-dialog="showDialogAddCargoPaymentEntry"
     />
     <DialogAddCargoPayEntry
-      v-model:entry-data="dialogAddCargoPayEntryData"
-      v-model:show-dialog="showDialogAddCargoPayEntry"
+        v-model:entry-data="dialogAddCargoPayEntryData"
+        v-model:show-dialog="showDialogAddCargoPayEntry"
     />
     <DialogAddCargoDebtEntry
-      v-model:entry-data="dialogAddCargoDebtEntryData"
-      v-model:show-dialog="showDialogAddCargoDebtEntry"
+        v-model:entry-data="dialogAddCargoDebtEntryData"
+        v-model:show-dialog="showDialogAddCargoDebtEntry"
     />
     <Dialog
-      :dialog="dialogCalculateClient"
-      :persistent="true"
-      :maximized="true"
+        :dialog="dialogCalculateClient"
+        :persistent="true"
+        :maximized="true"
     >
       <q-card style="max-width: 600px;">
         <q-bar>
           <q-space />
           <IconBtn
-            flat
-            dense
-            icon="close"
-            tooltip="Закрыть"
-            @icon-btn-click="dialogCalculateClient = false"
+              flat
+              dense
+              icon="close"
+              tooltip="Закрыть"
+              @icon-btn-click="dialogCalculateClient = false"
           />
         </q-bar>
 
@@ -421,6 +420,7 @@ import DialogAddCargoPaymentEntry from 'src/components/CargoDebts/Dialogs/Dialog
 import DialogAddCargoDebtEntry from 'src/components/CargoDebts/Dialogs/DialogAddCargoDebtEntry.vue';
 import DialogAddCargoPayEntry from 'src/components/CargoDebts/Dialogs/DialogAddCargoPayEntry.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import CalculateClient from 'src/components/CargoDebts/CalculateClient.vue';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
 
@@ -439,6 +439,7 @@ export default {
     IconBtn,
     CalculateClient,
     Dialog,
+    RoundBtn,
   },
   mixins: [ExportDataMixin, showNotif],
   props: {
@@ -665,16 +666,16 @@ export default {
               const { getUrl } = await import('src/tools/url');
               this.$q.loading.show();
               this.$axios.post(getUrl('deleteCargoEntry'), { ids })
-                .then(() => {
-                  this.$store.dispatch('cargoDebts/deleteCargoEntry', ids);
-                  this.cargoTableReactiveProperties.selected = [];
-                  this.$q.loading.hide();
-                  this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', false);
-                })
-                .catch(() => {
-                  this.$q.loading.hide();
-                  devlog.error('Ошибка запроса - destroyEntry');
-                });
+                  .then(() => {
+                    this.$store.dispatch('cargoDebts/deleteCargoEntry', ids);
+                    this.cargoTableReactiveProperties.selected = [];
+                    this.$q.loading.hide();
+                    this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', false);
+                  })
+                  .catch(() => {
+                    this.$q.loading.hide();
+                    devlog.error('Ошибка запроса - destroyEntry');
+                  });
             },
           },
         ]);
@@ -745,14 +746,14 @@ export default {
               const { getUrl } = await import('src/tools/url');
               this.$q.loading.show();
               this.$axios.get(`${getUrl('cargoPaymentsAll')}/${id}`)
-                .then(({ data: { cargo } }) => {
-                  this.$store.dispatch('cargoDebts/updateCargoEntry', cargo);
-                  this.$q.loading.hide();
-                  this.showNotif('success', 'Данные по карго все переведены в статус оплаты.', false);
-                })
-                .catch(() => {
-                  this.$q.loading.hide();
-                });
+                  .then(({ data: { cargo } }) => {
+                    this.$store.dispatch('cargoDebts/updateCargoEntry', cargo);
+                    this.$q.loading.hide();
+                    this.showNotif('success', 'Данные по карго все переведены в статус оплаты.', false);
+                  })
+                  .catch(() => {
+                    this.$q.loading.hide();
+                  });
             },
           },
         ]);

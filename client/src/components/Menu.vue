@@ -1,10 +1,11 @@
 <template>
   <div
-    data-vue-component-name="Menu"
+    data-vue-component-name="MenuCodes"
   >
-    <IconBtn
+    <RoundBtn
       color="secondary"
       tooltip="Добавить"
+      icon="add"
     >
       <q-menu
         transition-show="flip-right"
@@ -28,7 +29,7 @@
           </q-item>
         </q-list>
       </q-menu>
-    </IconBtn>
+    </RoundBtn>
 
     <DialogAddEntryOnStorehouse v-model:show-dialog="showAddEntryOnStorehouseDialog" />
     <DialogAddTransporter v-model:show-dialog="showTransporterDialog" />
@@ -46,7 +47,7 @@ import DialogAddCategory from 'src/components/Dialogs/DialogAddCategory.vue';
 import DialogAddFax from 'src/components/Dialogs/DialogAddFax.vue';
 import DialogAddClient from 'src/components/Dialogs/DialogAddClient.vue';
 import DialogAddCode from 'src/components/Dialogs/DialogAddCode.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import { defineAsyncComponent } from 'vue';
 
 const listItems = [
@@ -76,7 +77,7 @@ const listItems = [
   },
 ];
 export default {
-  name: 'Menu',
+  name: 'MenuCodes',
   components: {
     DialogAddEntryOnStorehouse: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddEntryOnStorehouse.vue')),
     DialogAddTransporter,
@@ -84,7 +85,7 @@ export default {
     DialogAddFax,
     DialogAddClient,
     DialogAddCode,
-    IconBtn,
+    RoundBtn,
   },
   props: {
     items: {

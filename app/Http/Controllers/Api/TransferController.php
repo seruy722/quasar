@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Bot;
 use App\Code;
 use App\CodesSettings;
 use App\Debt;
-use App\Settings;
-use App\Statuses;
 use App\Transfer;
-use App\User;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\PushNotifications;
+use Illuminate\Support\Facades\DB;
 
 class TransferController extends Controller
 {
@@ -57,7 +53,43 @@ class TransferController extends Controller
 
     public function index()
     {
-        return response(['transfers' => $this->query()->paginate(50)]);
+        return response(['transfers' => $this->query()->paginate(150)]);
+    }
+
+    public function getStatistics(Request $request)
+    {
+        $statuses = DB::table('statuses')->get();
+        $answer = [];
+        if ($request->selectValue === -1) {
+            foreach ($statuses as $status) {
+                $count = DB::table('transfers')->where('status', $status->id)->count();
+                if ($count) {
+                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->sum('sum')];
+                }
+            }
+        } else if ($request->selectValue === 3 || $request->selectValue === 0) {
+            foreach ($statuses as $status) {
+                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', $request->values['day'])->count();
+                if ($count) {
+                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', $request->values['day'])->sum('sum')];
+                }
+            }
+        } else if ($request->selectValue === 2) {
+            foreach ($statuses as $status) {
+                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $request->values['from'])->whereDate('created_at', '<=', $request->values['to'])->count();
+                if ($count) {
+                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $request->values['from'])->whereDate('created_at', '<=', $request->values['to'])->sum('sum')];
+                }
+            }
+        } else if ($request->selectValue === 0) {
+            foreach ($statuses as $status) {
+                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $request->values['from'])->whereDate('created_at', '<=', $request->values['to'])->count();
+                if ($count) {
+                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $request->values['from'])->whereDate('created_at', '<=', $request->values['to'])->sum('sum')];
+                }
+            }
+        }
+        return response(['statistics' => $answer]);
     }
 
     public function search(Request $request)
@@ -96,21 +128,7 @@ class TransferController extends Controller
         }
 
         if ($request->field === 'status') {
-            $status = Statuses::where('name', 'like', $request->value)->first();
-//            $flag = 2;
-//            if ($request->value === 'выдано') {
-//                $flag = 3;
-//            } else if ($request->value === 'отменен') {
-//                $flag = 4;
-//            } else if ($request->value === 'вопрос') {
-//                $flag = 1;
-//            } else if ($request->value === 'возврат') {
-//                $flag = 5;
-//            } else if ($request->value === 'обработка') {
-//                $flag = 6;
-//            } else if ($request->value === 'отменен клиентом') {
-//                $flag = 7;
-//            }
+            $status = DB::table('statuses')->where('name', 'like', $request->value)->first();
             if ($status) {
                 return response(['transfers' => $this->query()->where('transfers.status', $status->id)->get()]);
             }
@@ -147,6 +165,42 @@ class TransferController extends Controller
         return response(['not_variant' => 2222]);
     }
 
+    public function store(Request $request)
+    {
+        $transferArr = [
+            'client_id' => $request->client_id,
+            'receiver_name' => $request->receiver_name,
+            'receiver_phone' => $request->receiver_phone,
+            'sum' => $request->sum,
+            'method' => $request['method'],
+            'status' => $request->status,
+            'transfer_commission' => $request->transfer_commission,
+            'issued_by' => null,
+            'user_id' => auth()->user()->id,
+        ];
+
+        if ($request->has('transfer_commission')) {
+            CodesSettings::updateOrCreate(['code_client_id' => $request->client_id], ['transfer_commission' => $request->transfer_commission]);
+        }
+
+        if ($request->issued_by) {
+            $transferArr['issued_by'] = date("Y-m-d H:i:s", strtotime($request->issued_by));
+        }
+        if ($request->notation) {
+            $transferArr['notation'] = $request->notation;
+        }
+
+        $this->validate($request, $this->rules);
+
+        $transfer = Transfer::create($this->stripData($transferArr));
+        $this->storeTransferHistory($transfer->id, $this->stripData($transferArr), 'create');
+        $transferData = $this->query()->where('transfers.id', $transfer->id)->first();
+
+        event(new \App\Events\Transfers(['transfer' => $transferData, 'type' => 'store']));
+
+        return response(['transfer' => $transferData]);
+    }
+
     public function update(Request $request)
     {
         $data = $this->stripData($request->except('id'));
@@ -177,136 +231,12 @@ class TransferController extends Controller
         }
 
         $this->validate($request, $rul);
-        $notificationText = null;
-        $transfer = Transfer::find($request->id);
-        if ($request->sum && $request->status) {
-            $notificationText = 'Изменены данные перевода №<b>' . $transfer->id . '</b> для ' . $transfer->receiver_name . ' сумма - <<b>' . $request->sum . '</b>>' . ' статус - <' . $this->transferStatus[$request->status] . '>';
-        } else if ($request->sum) {
-            $notificationText = 'Изменена сумма перевода №<b>' . $transfer->id . '</b> для ' . $transfer->receiver_name . ' c <b>' . $transfer->sum . '</b> на  <' . $request->sum . '>';
-        } else if ($request->status) {
-            $notificationText = 'Изменен статус перевода №<b>' . $transfer->id . '</b> для ' . $transfer->receiver_name . ' - <' . $this->transferStatus[$request->status] . '> на сумму <b>' . $transfer->sum . '</b>';
-        }
 
         Transfer::where('id', $request->id)->update($data);
         $this->storeTransferHistory($request->id, $data, 'update');
-        // PUSH
-        $players = User::where([['code_id', '=', 0], ['id', '<>', 11], ['player_id', '<>', null], ['id', '<>', auth()->user()->id]])->get();
-        $notificationData = null;
-        if ($players) {
-            $playersIds = $players->map(function ($item) {
-                return json_decode($item->player_id);
-            })->flatten();
-            $transfer = Transfer::find($request->id);
-            $customer = Code::where('id', $transfer->client_id)->first();
-            if ($customer) {
-                $notificationTextCustomer = null;
-                if ($request->sum && $request->status) {
-                    $notificationTextCustomer = 'Пользователь ' . auth()->user()->name . ' изменил сумму перевода на - <' . $request->sum . '>' . ' статус - <' . $this->transferStatus[$request->status] . '> для ' . $customer->code;
-                } else if ($request->sum) {
-                    $notificationTextCustomer = 'Пользователь ' . auth()->user()->name . ' изменил сумму перевода на - <' . $request->sum . '> для ' . $customer->code;
-                } else if ($request->status) {
-                    $notificationTextCustomer = ' Пользователь ' . auth()->user()->name . ' изменил статус перевода на - <' . $this->transferStatus[$request->status] . '> для (' . $customer->code . ' - ' . $transfer->sum . ')';
-                }
-                $notificationData = ['text' => $notificationTextCustomer, 'player_ids' => $playersIds, 'url' => 'https://cargo007.net/#/moder/transfers'];
-                $this->createNotification($notificationData);
-            }
-        } else if ((auth()->user()->player_id && auth()->user()->code_id)) {
-            $notificationData = ['text' => $notificationText, 'player_ids' => json_decode(auth()->user()->player_id), 'url' => 'https://cargo007.net/#/moder/client-transfers'];
-            $this->createNotification($notificationData);
-        }
-
-        $this->sendBotNotification($notificationText, $transfer->client_id);
         $transferData = $this->query()->where('transfers.id', $request->id)->first();
         event(new \App\Events\Transfers(['transfer' => $transferData, 'type' => 'update']));
         return response(['transfer' => $transferData]);
-    }
-
-    public function store(Request $request)
-    {
-        $transferArr = [
-            'client_id' => $request->client_id,
-            'receiver_name' => $request->receiver_name,
-            'receiver_phone' => $request->receiver_phone,
-            'sum' => $request->sum,
-            'method' => $request['method'],
-            'status' => $request->status,
-            'transfer_commission' => $request->transfer_commission,
-            'issued_by' => null,
-            'user_id' => auth()->user()->id,
-        ];
-
-        if ($request->has('transfer_commission')) {
-            CodesSettings::updateOrCreate(['code_client_id' => $request->client_id], ['transfer_commission' => $request->transfer_commission]);
-        }
-
-        if ($request->issued_by) {
-            $transferArr['issued_by'] = date("Y-m-d H:i:s", strtotime($request->issued_by));
-        }
-        if ($request->notation) {
-            $transferArr['notation'] = $request->notation;
-        }
-
-        $this->validate($request, $this->rules);
-
-        $transfer = Transfer::create($this->stripData($transferArr));
-        $this->storeTransferHistory($transfer->id, $this->stripData($transferArr), 'create');
-        $players = User::where([['code_id', '=', 0], ['id', '<>', 11], ['player_id', '<>', null], ['id', '<>', auth()->user()->id]])->get();
-        $notificationData = null;
-        if ($players) {
-            $playersIds = $players->map(function ($item) {
-                return json_decode($item->player_id);
-            })->flatten();
-            $customer = Code::where('id', $transferArr['client_id'])->first();
-            if ($customer) {
-                $notificationData = ['text' => 'Пользователь ' . auth()->user()->name . ' добавил перевод клиенту - ' . $customer->code . ' на сумму - ' . $request->sum, 'player_ids' => $playersIds, 'url' => 'https://cargo007.net/#/moder/transfers'];
-                $this->createNotification($notificationData);
-            }
-        } else if (auth()->user()->player_id && auth()->user()->code_id) {
-            $notificationData = ['text' => 'Добавлен перевод для <' . $request->receiver_name . '> на сумму - ' . $request->sum . ' статус - <' . $this->transferStatus[$request->status] . '>', 'player_ids' => json_decode(auth()->user()->player_id), 'url' => 'https://cargo007.net/#/moder/client-transfers'];
-            $this->createNotification($notificationData);
-        }
-        $message = 'Добавлен перевод' . ' №<b>' . $transfer->id . '</b> для <' . $request->receiver_name . '> на сумму - <b>' . $request->sum . '</b>. Статус - <' . $this->transferStatus[$request->status] . '>';
-
-        $this->sendBotNotification($message, $request->client_id);
-        $transferData = $this->query()->where('transfers.id', $transfer->id)->first();
-
-        event(new \App\Events\Transfers(['transfer' => $transferData, 'type' => 'store']));
-
-        return response(['transfer' => $transferData]);
-    }
-
-    // Отправка сообщений ботам телеграмм и вотсап
-    public function sendBotNotification($message, $codeId)
-    {
-        $hour = intval(\Illuminate\Support\Carbon::now()->format('H'));
-        if ($hour < 18 && $hour > 6) {
-            $client = Bot::where('code_id', $codeId)->get();
-            $tokenData = Settings::where('bot_name', 'sendpulse')->first();
-            if ($tokenData && $message && $client) {
-                $client->each(function ($item) use ($message, $tokenData) {
-                    $client = new Client();
-                    $client->post("https://api.sendpulse.com/telegram/contacts/sendText", ['body' => json_encode([
-                        "contact_id" => $item->contact_id,
-                        "text" => $message,
-                    ]), 'headers' => [
-                        'Content-Type' => 'application/json',
-                        "Authorization" => 'Bearer ' . $tokenData->token,
-                    ]]);
-                });
-            }
-        }
-    }
-
-    public function getNewTransfers(Request $request)
-    {
-        $this->validate($request, [
-            'lastCreatedId' => 'required|integer',
-            'updatedAt' => 'required|date',
-        ]);
-        return response(['transfers' => $this->query()
-            ->where('transfers.id', '>', $request->lastCreatedId)
-            ->orWhere('transfers.updated_at', '>', $request->updatedAt)
-            ->get()]);
     }
 
     public function getTransferCodeCommission($id)
@@ -366,7 +296,7 @@ class TransferController extends Controller
                 Debt::create($data);
             }
         });
-        return response()->json(Debt::where('transfer_id', 6976)->first(), 201);
+        return response()->json(null, 201);
     }
 
     public function indexClient()

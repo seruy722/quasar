@@ -1,65 +1,72 @@
 <template>
   <div
-    data-vue-component-name="DebtsComponent"
+      data-vue-component-name="DebtsComponent"
   >
     <Table
-      :table-properties="debtsTableProperties"
-      :table-data="debts"
-      :table-reactive-properties="debtsTableReactiveProperties"
-      :title="titleTable"
-      :loading="loading"
+        :table-properties="debtsTableProperties"
+        :table-data="debts"
+        :table-reactive-properties="debtsTableReactiveProperties"
+        :title="titleTable"
+        :loading="loading"
     >
       <template #top-buttons>
-        <MenuDebt
-          v-show="currentCodeClientId"
-        />
-        <UpdateBtn
-          v-show="currentCodeClientId"
-          @update-btn-click="refresh"
-        />
-        <ExportBtn
-          @export-btn-click="exportFaxData(debtsTableReactiveProperties.selected)"
-        />
-        <IconBtn
-          v-show="debtsTableReactiveProperties.selected.length"
-          color="negative"
-          icon="delete"
-          :tooltip="$t('delete')"
-          @icon-btn-click="destroyDebtEntry(debtsTableReactiveProperties.selected)"
-        />
+        <div class="row q-gutter-sm">
+          <MenuDebt
+              v-show="currentCodeClientId"
+          />
+          <UpdateBtn
+              v-show="currentCodeClientId"
+              :func="refresh"
+          />
+          <RoundBtn
+              v-show="debts.length"
+              color="positive"
+              tooltip="Excel"
+              icon="explicit"
+              :loading="loadingBtn"
+              @round-btn-click="exportFaxData(debtsTableReactiveProperties.selected)"
+          />
+          <RoundBtn
+              v-show="debtsTableReactiveProperties.selected.length"
+              color="negative"
+              icon="delete"
+              :tooltip="$t('delete')"
+              @round-btn-click="destroyDebtEntry(debtsTableReactiveProperties.selected)"
+          />
 
-        <IconBtn
-          v-show="debtsTableReactiveProperties.selected.length === 1"
-          icon="attach_money"
-          tooltip="Оплатить"
-          @icon-btn-click="pay(debtsTableReactiveProperties.selected[0])"
-        />
-        <IconBtn
-          v-show="currentCodeClientId"
-          icon="payments"
-          color="orange"
-          tooltip="Оплатить все"
-          @icon-btn-click="paymentsAll(currentCodeClientId)"
-        />
+          <RoundBtn
+              v-show="debtsTableReactiveProperties.selected.length === 1"
+              icon="attach_money"
+              tooltip="Оплатить"
+              @round-btn-click="pay(debtsTableReactiveProperties.selected[0])"
+          />
+          <RoundBtn
+              v-show="currentCodeClientId"
+              icon="payments"
+              color="orange"
+              tooltip="Оплатить все"
+              @round-btn-click="paymentsAll(currentCodeClientId)"
+          />
+        </div>
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
       <template #inner-item="{props}">
         <div
-          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-          :style="props.selected ? 'transform: scale(0.95);' : ''"
+            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+            :style="props.selected ? 'transform: scale(0.95);' : ''"
         >
           <q-expansion-item
-            expand-separator
-            class="shadow-1 overflow-hidden"
-            :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
-            :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
-            expand-icon-class="text-white"
+              expand-separator
+              class="shadow-1 overflow-hidden"
+              :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
+              :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
+              expand-icon-class="text-white"
           >
             <template #header>
               <q-item-section avatar>
                 <q-checkbox
-                  v-model="props.selected"
-                  dense
+                    v-model="props.selected"
+                    dense
                 />
               </q-item-section>
 
@@ -76,25 +83,25 @@
               </q-item-section>
 
               <q-item-section
-                avatar
-                side
+                  avatar
+                  side
               >
                 <q-icon
-                  v-if="props.row.paid"
-                  name="money"
-                  size="md"
-                  color="white"
+                    v-if="props.row.paid"
+                    name="money"
+                    size="md"
+                    color="white"
                 />
               </q-item-section>
             </template>
 
             <q-list
-              separator
-              dense
+                separator
+                dense
             >
               <q-item
-                v-for="col in props.cols.filter(col => col.name !== 'desc')"
-                :key="col.name"
+                  v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                  :key="col.name"
               >
                 <q-item-section>
                   <q-item-label>{{ `${col.label}:` }}</q-item-label>
@@ -110,7 +117,7 @@
                     <q-badge :color="props.row.paid ? 'positive' : 'negative'">
                       {{
                         props.row.paid ? 'Да' :
-                          props.row.type ? null : 'Нет'
+                            props.row.type ? null : 'Нет'
                       }}
                     </q-badge>
                   </q-item-label>
@@ -119,16 +126,6 @@
                   </q-item-label>
                 </q-item-section>
               </q-item>
-              <!--              <q-item>-->
-              <!--                <q-item-section>-->
-              <!--                  <BaseBtn-->
-              <!--                    label="История"-->
-              <!--                    color="info"-->
-              <!--                    style="max-width: 100px;margin: 0 auto;"-->
-              <!--                    @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"-->
-              <!--                  />-->
-              <!--                </q-item-section>-->
-              <!--              </q-item>-->
             </q-list>
           </q-expansion-item>
         </div>
@@ -136,76 +133,76 @@
 
       <template #inner-body="{props}">
         <q-tr
-          :props="props"
-          class="cursor-pointer"
-          :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
-          @click.stop="viewDebtEditDialog(props, $event)"
+            :props="props"
+            class="cursor-pointer"
+            :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
+            @click.stop="viewDebtEditDialog(props, $event)"
         >
           <q-td
-            auto-width
-            class="select_checkbox"
+              auto-width
+              class="select_checkbox"
           >
             <q-checkbox
-              v-model="props.selected"
-              dense
+                v-model="props.selected"
+                dense
             />
           </q-td>
 
           <q-td
-            key="created_at"
-            :props="props"
+              key="created_at"
+              :props="props"
           >
             {{ props.row.created_at }}
           </q-td>
 
           <q-td
-            key="code_client_name"
-            :props="props"
+              key="code_client_name"
+              :props="props"
           >
             {{ props.row.code_client_name }}
           </q-td>
 
           <q-td
-            key="type"
-            :props="props"
+              key="type"
+              :props="props"
           >
             {{ props.row.type ? 'Оплата' : 'Долг' }}
           </q-td>
 
           <q-td
-            key="sum"
-            :props="props"
+              key="sum"
+              :props="props"
           >
             {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
-            key="commission"
-            :props="props"
+              key="commission"
+              :props="props"
           >
             {{ Math.round(props.row.commission) }}
           </q-td>
           <q-td
-            key="paid"
-            :props="props"
+              key="paid"
+              :props="props"
           >
             <q-badge :color="props.row.paid ? 'positive' : 'negative'">
               {{
                 props.row.paid ? 'Да' :
-                  props.row.type ? null : 'Нет'
+                    props.row.type ? null : 'Нет'
               }}
             </q-badge>
           </q-td>
 
           <q-td
-            key="get_pay_user_name"
-            :props="props"
+              key="get_pay_user_name"
+              :props="props"
           >
             {{ props.row.get_pay_user_name }}
           </q-td>
 
           <q-td
-            key="notation"
-            :props="props"
+              key="notation"
+              :props="props"
           >
             {{ props.row.notation }}
           </q-td>
@@ -213,21 +210,21 @@
       </template>
     </Table>
     <GeneralClientDebtsData
-      :list="debts"
-      title="Баланс"
-      style="max-width: 500px;margin:0 auto;"
+        :list="debts"
+        title="Баланс"
+        style="max-width: 500px;margin:0 auto;"
     />
     <DialogAddDebtPaymentEntry
-      v-model:entry-data="dialogAddDebtPaymentEntryData"
-      v-model:show-dialog="showDialogAddDebtPaymentEntry"
+        v-model:entry-data="dialogAddDebtPaymentEntryData"
+        v-model:show-dialog="showDialogAddDebtPaymentEntry"
     />
     <DialogAddDebtPayEntry
-      v-model:entry-data="dialogAddDebtPayEntryData"
-      v-model:show-dialog="showDialogAddDebtPayEntry"
+        v-model:entry-data="dialogAddDebtPayEntryData"
+        v-model:show-dialog="showDialogAddDebtPayEntry"
     />
     <DialogAddDebEntry
-      v-model:entry-data="dialogAddDebtEntryData"
-      v-model:show-dialog="showDialogAddDebtEntry"
+        v-model:entry-data="dialogAddDebtEntryData"
+        v-model:show-dialog="showDialogAddDebtEntry"
     />
   </div>
 </template>
@@ -237,10 +234,9 @@ import ExportDataMixin from 'src/mixins/ExportData';
 import showNotif from 'src/mixins/showNotif';
 import { numberFormat } from 'src/utils';
 import Table from 'src/components/Elements/Table/Table.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import GeneralClientDebtsData from 'src/components/CargoDebts/GeneralClientDebtsData.vue';
 import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
-import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import DialogAddDebtPaymentEntry from 'src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue';
 import DialogAddDebEntry from 'src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue';
 import DialogAddDebtPayEntry from 'src/components/CargoDebts/Dialogs/DialogAddDebtPayEntry.vue';
@@ -250,10 +246,9 @@ export default {
   name: 'DebtsComponent',
   components: {
     Table,
-    IconBtn,
     GeneralClientDebtsData,
     UpdateBtn,
-    ExportBtn,
+    RoundBtn,
     DialogAddDebtPaymentEntry,
     DialogAddDebEntry,
     DialogAddDebtPayEntry,
@@ -273,6 +268,7 @@ export default {
   },
   data() {
     return {
+      loadingBtn: false,
       debtsTableProperties: {
         columns: [
           {
@@ -386,11 +382,15 @@ export default {
         data = _.orderBy(newArr, (item) => new Date(item.created_at), 'desc');
       }
       if (!_.isEmpty(data)) {
+        this.loadingBtn = true;
         const clientName = `${_.get(_.first(data), 'code_client_name')} код долги`;
         const { getUrl } = await import('src/tools/url');
         this.exportDataToExcel(getUrl('exportDebtsData'), {
           data,
-        }, `${clientName}.xlsx`);
+        }, `${clientName}.xlsx`)
+            .finally(() => {
+              this.loadingBtn = false;
+            });
       }
     },
     destroyDebtEntry(data) {
@@ -411,16 +411,16 @@ export default {
               const { getUrl } = await import('src/tools/url');
               this.$q.loading.show();
               this.$axios.post(getUrl('deleteDebtEntry'), { ids })
-                .then(() => {
-                  this.$store.dispatch('cargoDebts/deleteDebtEntry', ids);
-                  this.debtsTableReactiveProperties.selected = [];
-                  this.$q.loading.hide();
-                  this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', false);
-                })
-                .catch(() => {
-                  this.$q.loading.hide();
-                  devlog.error('Ошибка запроса - deleteDebtEntry');
-                });
+                  .then(() => {
+                    this.$store.dispatch('cargoDebts/deleteDebtEntry', ids);
+                    this.debtsTableReactiveProperties.selected = [];
+                    this.$q.loading.hide();
+                    this.showNotif('success', _.size(ids) > 1 ? 'Записи успешно удалены.' : 'Запись успешно удалена.', false);
+                  })
+                  .catch(() => {
+                    this.$q.loading.hide();
+                    devlog.error('Ошибка запроса - deleteDebtEntry');
+                  });
             },
           },
         ]);
@@ -449,14 +449,14 @@ export default {
               const { getUrl } = await import('src/tools/url');
               this.$q.loading.show();
               this.$axios.get(`${getUrl('debtsPaymentsAll')}/${id}`)
-                .then(({ data: { debts } }) => {
-                  this.$store.dispatch('cargoDebts/updateDebtEntry', debts);
-                  this.$q.loading.hide();
-                  this.showNotif('success', 'Данные по карго все переведены в статус оплаты.', false);
-                })
-                .catch(() => {
-                  this.$q.loading.hide();
-                });
+                  .then(({ data: { debts } }) => {
+                    this.$store.dispatch('cargoDebts/updateDebtEntry', debts);
+                    this.$q.loading.hide();
+                    this.showNotif('success', 'Данные по карго все переведены в статус оплаты.', false);
+                  })
+                  .catch(() => {
+                    this.$q.loading.hide();
+                  });
             },
           },
         ]);

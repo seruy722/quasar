@@ -200,9 +200,10 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     // TRANSFERS
     Route::get('/transfers', 'Api\TransferController@index')->name('view transfers list')->middleware(['role_or_permission:admin|transfers|view transfers list']);
     Route::post('/transfers-search', 'Api\TransferController@search')->name('transfers search')->middleware(['role_or_permission:admin|transfers|transfers search']);
+    Route::post('/transfers-statistics', 'Api\TransferController@getStatistics')->name('transfers-statistics')->middleware(['role_or_permission:admin|transfers|transfers-statistics']);
     Route::post('/update-transfers', 'Api\TransferController@update')->name('update transfers data')->middleware(['role_or_permission:admin|transfers|client|update transfers data']);
     Route::post('/store-transfers', 'Api\TransferController@store')->name('store transfers data')->middleware(['role_or_permission:admin|transfers|client|store transfers data']);
-    Route::post('/get-new-transfers', 'Api\TransferController@getNewTransfers')->name('get new transfers')->middleware(['role_or_permission:admin|transfers|get new transfers']);
+//    Route::post('/get-new-transfers', 'Api\TransferController@getNewTransfers')->name('get new transfers')->middleware(['role_or_permission:admin|transfers|get new transfers']);
     Route::post('/export-transfers', 'Api\TransferController@export')->name('export transfers')->middleware(['role_or_permission:admin|transfers|export transfers']);
     Route::post('/add-transfers-to-debts', 'Api\TransferController@addTransfersToDebts')->name('add transfers to debts')->middleware(['role_or_permission:admin|add transfers to debts']);
     Route::get('/get-transfer-code-commission/{id}', 'Api\TransferController@getTransferCodeCommission')->name('get transfer code commission')->middleware(['role_or_permission:admin|transfers|get transfer code commission']);

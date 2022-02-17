@@ -4,7 +4,7 @@ import { Notify } from 'quasar';
 export default {
     methods: {
         exportDataToExcel(url, data, fileName) {
-            axiosInstance({
+            return axiosInstance({
                 url,
                 method: 'POST',
                 responseType: 'blob', // important

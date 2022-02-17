@@ -166,6 +166,7 @@ const urls = {
     areas: `${prefix}/areas`,
     test: `${prefix}/test`,
     transfersSearch: `${prefix}/transfers-search`,
+    transfersStatistics: `${prefix}/transfers-statistics`,
     serverUrl: 'https://server007cargo.net.ua',
     getTransferCodeCommission: `${prefix}/get-transfer-code-commission`,
     axiosData: {

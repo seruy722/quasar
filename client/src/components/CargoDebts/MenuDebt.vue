@@ -2,8 +2,9 @@
   <div
     data-vue-component-name="MenuDebt"
   >
-    <IconBtn
+    <RoundBtn
       color="secondary"
+      icon="add"
       tooltip="Добавить"
     >
       <q-menu
@@ -28,7 +29,7 @@
           </q-item>
         </q-list>
       </q-menu>
-    </IconBtn>
+    </RoundBtn>
 
     <DialogAddDebtPaymentEntry
       v-model:show-dialog="showDialogAddDebtPaymentEntry"
@@ -41,7 +42,7 @@
 
 <script>
 import DialogAddDebtPaymentEntry from 'src/components/CargoDebts/Dialogs/DialogAddDebtPaymentEntry.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import DialogAddDebEntry from 'src/components/CargoDebts/Dialogs/DialogAddDebEntry.vue';
 
 const listItems = [
@@ -58,7 +59,7 @@ export default {
   name: 'MenuDebt',
   components: {
     DialogAddDebtPaymentEntry,
-    IconBtn,
+    RoundBtn,
     DialogAddDebEntry,
   },
   props: {
