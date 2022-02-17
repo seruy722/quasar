@@ -53,7 +53,7 @@ class TransferController extends Controller
 
     public function index()
     {
-        return response(['transfers' => $this->query()->paginate(150)]);
+        return response(['transfers' => $this->query()->take(150)->get()]);
     }
 
     public function getStatistics(Request $request)

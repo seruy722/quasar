@@ -7,8 +7,8 @@ import {
 } from 'src/utils/FrequentlyCalledFunctions';
 
 export const fetchTransfers = (({ commit }) => axiosInstance.get(getUrl('transfers'))
-  .then(({ data: { transfers: { data } } }) => {
-      commit('SET_TRANSFERS', data);
+  .then(({ data: { transfers } }) => {
+      commit('SET_TRANSFERS', transfers);
   })
   .catch(() => {
       devlog.warn('Ошибка при запросе fetchTransfers');
