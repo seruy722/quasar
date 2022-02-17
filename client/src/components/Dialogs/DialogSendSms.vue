@@ -67,91 +67,6 @@
             :table-reactive-properties="faxTableReactiveProperties"
             :title="fax.name"
         >
-          <!--          <template #top-buttons>-->
-          <!--            <IconBtn-->
-          <!--              color="positive"-->
-          <!--              icon="explicit"-->
-          <!--              tooltip="excel"-->
-          <!--              @icon-btn-click="exportFaxData(faxTableReactiveProperties.selected)"-->
-          <!--            />-->
-          <!--          </template>-->
-
-          <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
-          <!--          <template #inner-item="{props}">-->
-          <!--            <div-->
-          <!--              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"-->
-          <!--              :style="props.selected ? 'transform: scale(0.95);' : ''"-->
-          <!--            >-->
-          <!--              <q-expansion-item-->
-          <!--                expand-separator-->
-          <!--                class="shadow-1 overflow-hidden"-->
-          <!--                header-class="bg-secondary text-white"-->
-          <!--                style="border-radius: 30px;border: 1px solid #26A69A;"-->
-          <!--                expand-icon-class="text-white"-->
-          <!--              >-->
-          <!--                <template #header>-->
-          <!--                  <q-item-section avatar>-->
-          <!--                    <q-checkbox-->
-          <!--                      v-model="props.selected"-->
-          <!--                      dense-->
-          <!--                    />-->
-          <!--                  </q-item-section>-->
-
-          <!--                  <q-item-section>-->
-          <!--                    <q-item-label :lines="2">-->
-          <!--                      {{ props.row.code_client_name }}-->
-          <!--                    </q-item-label>-->
-          <!--                  </q-item-section>-->
-          <!--                </template>-->
-
-          <!--                <q-list-->
-          <!--                  separator-->
-          <!--                  dense-->
-          <!--                >-->
-          <!--                  <q-item-->
-          <!--                    v-for="col in props.cols.filter(col => col.name !== 'desc')"-->
-          <!--                    :key="col.name"-->
-          <!--                  >-->
-          <!--                    <q-item-section>-->
-          <!--                      <q-item-label>{{ `${col.label}:` }}</q-item-label>-->
-          <!--                    </q-item-section>-->
-          <!--                    <q-item-section side>-->
-          <!--                      <q-item-label-->
-          <!--                        v-if="col.field === 'things'"-->
-          <!--                        :lines="10"-->
-          <!--                      >-->
-          <!--                        {{ thingsFilter(col.value) }}-->
-          <!--                      </q-item-label>-->
-          <!--                      <q-item-label-->
-          <!--                        v-else-if="col.field === 'kg'"-->
-          <!--                      >-->
-          <!--                        {{ numberFormat(col.value) }}-->
-          <!--                      </q-item-label>-->
-          <!--                      <q-item-label-->
-          <!--                        v-else-if="col.field === 'notation'"-->
-          <!--                        :lines="4"-->
-          <!--                      >-->
-          <!--                        {{ col.value }}-->
-          <!--                      </q-item-label>-->
-          <!--                      <q-item-label v-else>-->
-          <!--                        {{ col.value }}-->
-          <!--                      </q-item-label>-->
-          <!--                    </q-item-section>-->
-          <!--                  </q-item>-->
-          <!--                  <q-item>-->
-          <!--                    <q-item-section>-->
-          <!--                      <BaseBtn-->
-          <!--                        label="История"-->
-          <!--                        color="info"-->
-          <!--                        style="max-width: 100px;margin: 0 auto;"-->
-          <!--                      />-->
-          <!--                    </q-item-section>-->
-          <!--                  </q-item>-->
-          <!--                </q-list>-->
-          <!--              </q-expansion-item>-->
-          <!--            </div>-->
-          <!--          </template>-->
-
           <template #inner-body="{props}">
             <q-tr
                 :props="props"
@@ -266,7 +181,10 @@
         </Table>
       </q-card-section>
       <q-card-section v-if="faxTableData.length">
-        <q-btn-group outline spread>
+        <q-btn-group
+            outline
+            spread
+        >
           <q-btn
               v-for="(item,index) in options"
               :key="index"
