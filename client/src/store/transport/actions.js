@@ -4,8 +4,8 @@ import { getUrl } from 'src/tools/url';
 
 export const fetchTransports = (({ commit }) => axiosInstance.get(getUrl('transports'))
   .then(({ data: { transports } }) => {
-    commit('SET_TRANSPORTS', transports);
+      commit('SET_TRANSPORTS', transports);
   })
   .catch((errors) => {
-    devlog.error(errors);
+      devlog.error(errors);
   }));

@@ -20,35 +20,35 @@ import tasks from './tasks';
 import documents from './documents';
 import questions from './questions';
 import statistics from './statistics';
+import statuses from './statuses';
 
 export default function initStore() {
-  const Store = createStore({
-    modules: {
-      auth,
-      faxes,
-      category,
-      transporter,
-      transport,
-      storehouse,
-      cities,
-      thingsList,
-      shopsList,
-      transfers,
-      codes,
-      roles,
-      permissions,
-      codesPrices,
-      deliveryMethods,
-      cargoDebts,
-      settings,
-      tasks,
-      documents,
-      questions,
-      statistics,
-    },
+    return createStore({
+        modules: {
+            auth,
+            faxes,
+            category,
+            transporter,
+            transport,
+            storehouse,
+            cities,
+            thingsList,
+            shopsList,
+            transfers,
+            codes,
+            roles,
+            permissions,
+            codesPrices,
+            deliveryMethods,
+            cargoDebts,
+            settings,
+            tasks,
+            documents,
+            questions,
+            statistics,
+            statuses,
+        },
 
-    strict: process.env.DEBUGGING,
-  });
-
-  return Store;
+        strict: process.env.DEBUGGING,
+    });
 }

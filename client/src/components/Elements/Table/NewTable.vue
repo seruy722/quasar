@@ -23,7 +23,10 @@
             title="Переводы"
             :ids="selected.map((item)=>item.id)"
         />
-        <SearchDialog :columns="columns" />
+        <SearchDialog
+            v-model:loading="loading"
+            :columns="columns"
+        />
 
         <DialogChooseDate2
             :values="selected"

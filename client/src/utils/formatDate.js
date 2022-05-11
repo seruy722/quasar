@@ -1,8 +1,8 @@
 import {
-  formatISO,
-  isDate,
-  format,
-  set,
+    formatISO,
+    isDate,
+    format,
+    set,
 } from 'date-fns';
 
 /**
@@ -24,16 +24,16 @@ export const today = () => new Date()
  * @returns string
  */
 export const formatToDayMonthYear = ((date) => {
-  if (checkDate(date)) {
-    return new Intl.DateTimeFormat('ru',
-      {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      }).format(new Date(date))
-      .replace(/ г./u, '');
-  }
-  return date;
+    if (checkDate(date)) {
+        return new Intl.DateTimeFormat('ru',
+          {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+          }).format(new Date(date))
+          .replace(/ г./u, '');
+    }
+    return date;
 });
 
 /**
@@ -42,14 +42,14 @@ export const formatToDayMonthYear = ((date) => {
  * @returns string
  */
 export const formatToDayMonth = ((date) => {
-  if (checkDate(date)) {
-    return new Intl.DateTimeFormat('ru',
-      {
-        day: '2-digit',
-        month: '2-digit',
-      }).format(new Date(date));
-  }
-  return date;
+    if (checkDate(date)) {
+        return new Intl.DateTimeFormat('ru',
+          {
+              day: '2-digit',
+              month: '2-digit',
+          }).format(new Date(date));
+    }
+    return date;
 });
 
 /**
@@ -58,14 +58,14 @@ export const formatToDayMonth = ((date) => {
  * @returns string
  */
 export const formatToDayMonthLong = ((date) => {
-  if (checkDate(date)) {
-    return new Intl.DateTimeFormat('ru',
-      {
-        day: 'numeric',
-        month: 'long',
-      }).format(new Date(date));
-  }
-  return date;
+    if (checkDate(date)) {
+        return new Intl.DateTimeFormat('ru',
+          {
+              day: 'numeric',
+              month: 'long',
+          }).format(new Date(date));
+    }
+    return date;
 });
 
 /**
@@ -74,14 +74,14 @@ export const formatToDayMonthLong = ((date) => {
  * @returns string
  */
 export const formatToHoursMinutes = ((date) => {
-  if (checkDate(date)) {
-    return new Intl.DateTimeFormat('ru',
-      {
-        hour: '2-digit',
-        minute: '2-digit',
-      }).format(new Date(date));
-  }
-  return date;
+    if (checkDate(date)) {
+        return new Intl.DateTimeFormat('ru',
+          {
+              hour: '2-digit',
+              minute: '2-digit',
+          }).format(new Date(date));
+    }
+    return date;
 });
 
 /**
@@ -90,15 +90,15 @@ export const formatToHoursMinutes = ((date) => {
  * @returns string
  */
 export const formatToDotDate = ((date) => {
-  if (checkDate(date)) {
-    return new Intl.DateTimeFormat('ru',
-      {
-        day: 'numeric',
-        month: 'numeric',
-        year: 'numeric',
-      }).format(new Date(date));
-  }
-  return date;
+    if (checkDate(date)) {
+        return new Intl.DateTimeFormat('ru',
+          {
+              day: 'numeric',
+              month: 'numeric',
+              year: 'numeric',
+          }).format(new Date(date));
+    }
+    return date;
 });
 
 /**
@@ -107,21 +107,21 @@ export const formatToDotDate = ((date) => {
  * @type Object || Boolean
  */
 export const formatTimer = ((date) => {
-  date = _.isFinite(date) ? date : Date.parse(date);
-  let result = false;
-  if (!_.isNaN(date)) {
-    const seconds = Math.floor((date / 1000) % 60);
-    const minutes = Math.floor((date / 1000 / 60) % 60);
-    const hours = Math.floor((date / (1000 * 60 * 60)) % 24);
-    const days = Math.floor(date / (1000 * 60 * 60 * 24));
-    result = {
-      days,
-      hours,
-      minutes,
-      seconds,
-    };
-  }
-  return result;
+    date = _.isFinite(date) ? date : Date.parse(date);
+    let result = false;
+    if (!_.isNaN(date)) {
+        const seconds = Math.floor((date / 1000) % 60);
+        const minutes = Math.floor((date / 1000 / 60) % 60);
+        const hours = Math.floor((date / (1000 * 60 * 60)) % 24);
+        const days = Math.floor(date / (1000 * 60 * 60 * 24));
+        result = {
+            days,
+            hours,
+            minutes,
+            seconds,
+        };
+    }
+    return result;
 });
 
 /**
@@ -130,23 +130,23 @@ export const formatTimer = ((date) => {
  * @returns string
  */
 export const formatToYear = ((date) => {
-  if (checkDate(date)) {
-    return new Intl.DateTimeFormat('ru',
-      {
-        year: 'numeric',
-      }).format(new Date(date));
-  }
-  return date;
+    if (checkDate(date)) {
+        return new Intl.DateTimeFormat('ru',
+          {
+              year: 'numeric',
+          }).format(new Date(date));
+    }
+    return date;
 });
 /**
  * Преобразовывает дату формата 2020-02-01T14:35:46+00:00 в 01-02-2020 14:35:46
  * @type {Function}
  */
 export const fullDate = ((date) => {
-  if (isDate(new Date(date)) && date) {
-    return format(new Date(date), 'dd-MM-yyyy HH:mm:ss');
-  }
-  return date;
+    if (isDate(new Date(date)) && date) {
+        return format(new Date(date), 'dd-MM-yyyy HH:mm:ss');
+    }
+    return date;
 });
 
 /**
@@ -155,18 +155,18 @@ export const fullDate = ((date) => {
  * @return {string|*}
  */
 export const toDate = (str) => {
-  // devlog.log('STR_DATE', str);
-  if (str && _.size(str) === 19) {
-    const [date, time] = _.split(str, ' ');
-    const parseDate = _.join(_.reverse(_.split(date, '-')), '-');
-    // devlog.log('time', time);
-    return `${parseDate} ${time}`;
-  }
-  if (_.trim(str) && isDate(new Date(str))) {
-    toDate(fullDate(str));
-  }
+    // devlog.log('STR_DATE', str);
+    if (str && _.size(str) === 19) {
+        const [date, time] = _.split(str, ' ');
+        const parseDate = _.join(_.reverse(_.split(date, '-')), '-');
+        // devlog.log('time', time);
+        return `${parseDate} ${time}`;
+    }
+    if (_.trim(str) && isDate(new Date(str))) {
+        toDate(fullDate(str));
+    }
 
-  return str;
+    return str;
 };
 
 /**
@@ -174,12 +174,12 @@ export const toDate = (str) => {
  * @type {Function}
  */
 export const isoDate = ((str) => {
-  const date = toDate(str);
-  if (isDate(new Date(date)) && date) {
-    devlog.log('F_I_D', formatISO(new Date(date)));
-    return formatISO(new Date(date));
-  }
-  return null;
+    const date = toDate(str);
+    if (isDate(new Date(date)) && date) {
+        devlog.log('F_I_D', formatISO(new Date(date)));
+        return formatISO(new Date(date));
+    }
+    return null;
 });
 
 /**
@@ -187,14 +187,14 @@ export const isoDate = ((str) => {
  * @type {Function}
  */
 export const addTime = ((date) => {
-  if (date) {
-    return set(new Date(date), {
-      hours: '12',
-      minutes: '00',
-      seconds: '00',
-    });
-  }
-  return date;
+    if (date) {
+        return set(new Date(date), {
+            hours: '12',
+            minutes: '00',
+            seconds: '00',
+        });
+    }
+    return date;
 });
 
 /**
@@ -202,12 +202,12 @@ export const addTime = ((date) => {
  * @type {Function}
  */
 export const reverseDate = ((date) => {
-  if (date) {
-    return date.split('-')
-      .reverse()
-      .join('-');
-  }
-  return date;
+    if (date) {
+        return date.split('-')
+          .reverse()
+          .join('-');
+    }
+    return date;
 });
 
 /**
@@ -216,10 +216,10 @@ export const reverseDate = ((date) => {
  * @return {string|*} // 2020-01-31 13:43:56
  */
 export const formatToMysql = (date) => {
-  if (isDate(date) && date) {
-    return format(new Date(date), 'yyyy-MM-dd HH:mm:ss');
-  }
-  return date;
+    if (isDate(date) && date) {
+        return format(new Date(date), 'yyyy-MM-dd HH:mm:ss');
+    }
+    return date;
 };
 
 /**
@@ -228,12 +228,12 @@ export const formatToMysql = (date) => {
  * @returns string
  */
 export const formatToPickerDate = ((date) => {
-  if (_.isString(date) && date) {
-    return date.split('.')
-      .reverse()
-      .join('/');
-  }
-  return date;
+    if (_.isString(date) && date) {
+        return date.split('.')
+          .reverse()
+          .join('/');
+    }
+    return date;
 });
 /**
  * Преобразует дату в число без учета времени
@@ -242,6 +242,6 @@ export const formatToPickerDate = ((date) => {
 export const getDateWithoutTime = ((date) => Math.floor(new Date(date).getTime() / 86400000));
 
 export const getTimeZone = (() => {
-  const timeZoneOffset = new Date().getTimezoneOffset();
-  return timeZoneOffset < 0 ? `+0${(timeZoneOffset / 60) * -1}:00` : `-0${(timeZoneOffset / 60)}:00`;
+    const timeZoneOffset = new Date().getTimezoneOffset();
+    return timeZoneOffset < 0 ? `+0${(timeZoneOffset / 60) * -1}:00` : `-0${(timeZoneOffset / 60)}:00`;
 });

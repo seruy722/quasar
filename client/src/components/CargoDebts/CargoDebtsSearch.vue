@@ -138,10 +138,10 @@
 
 <script>
 import { format } from 'date-fns';
-import DateWithInputForCargo from 'components/DateWithInputForCargo.vue';
-import OutlineBtn from 'components/Buttons/OutlineBtn.vue';
-import Dialog from 'components/Dialogs/Dialog.vue';
-import Date from 'components/Date.vue';
+import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
+import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
+import Dialog from 'src/components/Dialogs/Dialog.vue';
+import Date from 'src/components/Date.vue';
 
 export default {
   name: 'CargoDebtsSearch',

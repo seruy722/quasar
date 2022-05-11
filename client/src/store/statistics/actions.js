@@ -10,6 +10,5 @@ export const fetchStatistics = (({ commit }) => {
 });
 
 export const addStatistic = (({ commit }, data) => {
-  devlog.log('addStatistic', data);
   commit('ADD_STATISTIC', data);
 });

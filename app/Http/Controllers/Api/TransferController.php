@@ -9,6 +9,7 @@ use App\Transfer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\PushNotifications;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class TransferController extends Controller
@@ -48,121 +49,17 @@ class TransferController extends Controller
             ->join('users', 'transfers.user_id', '=', 'users.id')
             ->leftJoin('codes_settings', 'transfers.client_id', '=', 'codes_settings.code_client_id')
             ->leftJoin('statuses', 'transfers.status', '=', 'statuses.id')
-            ->orderBy('id', 'DESC');
+            ->orderByDesc('id');
     }
 
     public function index()
     {
-        return response(['transfers' => $this->query()->take(150)->get()]);
-    }
-
-    public function getStatistics(Request $request)
-    {
-        $statuses = DB::table('statuses')->get();
-        $answer = [];
-        if ($request->selectValue === -1) {
-            foreach ($statuses as $status) {
-                $count = DB::table('transfers')->where('status', $status->id)->count();
-                if ($count) {
-                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->sum('sum')];
-                }
-            }
-        } else if ($request->selectValue === 3 || $request->selectValue === 0) {
-            foreach ($statuses as $status) {
-                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', $request->values['day'])->count();
-                if ($count) {
-                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', $request->values['day'])->sum('sum')];
-                }
-            }
-        } else if ($request->selectValue === 2) {
-            foreach ($statuses as $status) {
-                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $request->values['from'])->whereDate('created_at', '<=', $request->values['to'])->count();
-                if ($count) {
-                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $request->values['from'])->whereDate('created_at', '<=', $request->values['to'])->sum('sum')];
-                }
-            }
-        } else if ($request->selectValue === 0) {
-            foreach ($statuses as $status) {
-                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $request->values['from'])->whereDate('created_at', '<=', $request->values['to'])->count();
-                if ($count) {
-                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $request->values['from'])->whereDate('created_at', '<=', $request->values['to'])->sum('sum')];
-                }
-            }
+        $yesterday = Carbon::yesterday();
+        $yesterdayTransfers = $this->query()->whereDate('transfers.created_at', '>=', $yesterday->toDateString())->get();
+        if (!$yesterdayTransfers->count() < 10) {
+            return response(['transfers' => $yesterdayTransfers]);
         }
-        return response(['statistics' => $answer]);
-    }
-
-    public function search(Request $request)
-    {
-        if ($request->field === 'client_name') {
-            $clientIds = Code::where('code', 'like', '%' . $request->value . '%')->pluck('id')->unique()->toArray();
-            return response(['transfers' => $this->query()->whereIn('transfers.client_id', $clientIds)->get()]);
-        }
-
-        if ($request->field === 'receiver_name') {
-            return response(['transfers' => $this->query()->where('transfers.receiver_name', 'like', '%' . $request->value . '%')->get()]);
-        }
-
-        if ($request->field === 'receiver_phone') {
-            return response(['transfers' => $this->query()->where('transfers.receiver_phone', 'like', '%' . $request->value . '%')->get()]);
-        }
-
-        if ($request->field === 'sum') {
-            return response(['transfers' => $this->query()->where('transfers.sum', $request->value)->get()]);
-        }
-
-        if ($request->field === 'paid') {
-            $flag = 0;
-            if ($request->value === 'да') {
-                $flag = 1;
-            }
-            return response(['transfers' => $this->query()->where('transfers.paid', $flag)->get()]);
-        }
-
-        if ($request->field === 'method') {
-            $flag = 1;
-            if ($request->value === 'товар деньги') {
-                $flag = 2;
-            }
-            return response(['transfers' => $this->query()->where('transfers.method', $flag)->get()]);
-        }
-
-        if ($request->field === 'status') {
-            $status = DB::table('statuses')->where('name', 'like', $request->value)->first();
-            if ($status) {
-                return response(['transfers' => $this->query()->where('transfers.status', $status->id)->get()]);
-            }
-        }
-
-        if ($request->field === 'created_at') {
-            $date = date("Y-m-d", strtotime($request->value));
-            return response(['transfers' => $this->query()->whereDate('transfers.created_at', $date)->get()]);
-        }
-
-        if ($request->field === 'issued_by') {
-            $date = date("Y-m-d", strtotime($request->value));
-            return response(['transfers' => $this->query()->whereDate('transfers.issued_by', $date)->get()]);
-        }
-
-        if ($request->field === 'notation') {
-            return response(['transfers' => $this->query()->where('transfers.notation', 'like', '%' . $request->value . '%')->get()]);
-        }
-
-        if ($request->value) {
-            return response(['transfers' => $this->query()
-                ->orWhere('codes.code', 'like', '%' . $request->value . '%')
-                ->orWhere('transfers.sum', 'like', '%' . $request->value . '%')
-                ->orWhere('transfers.receiver_name', 'like', '%' . $request->value . '%')
-                ->orWhere('transfers.receiver_phone', 'like', '%' . $request->value . '%')
-                ->orWhere('transfers.notation', 'like', '%' . $request->value . '%')
-                ->orWhere('transfers.created_at', 'like', '%' . $request->value . '%')
-                ->orWhere('transfers.issued_by', 'like', '%' . $request->value . '%')
-                ->orWhere('users.name', 'like', '%' . $request->value . '%')
-                ->orWhere('statuses.name', 'like', '%' . $request->value . '%')
-                ->get()]);
-        }
-
-        return response(['not_variant' => 2222]);
+        return response(['transfers' => $this->query()->take(50)->get()]);
     }
 
     public function store(Request $request)
@@ -329,5 +226,107 @@ class TransferController extends Controller
         $transfer = Transfer::create($this->stripData($transferArr));
         $this->storeTransferHistory($transfer->id, $this->stripData($transferArr), 'create');
         return response(['transfer' => $this->query()->where('transfers.id', $transfer->id)->get()]);
+    }
+
+    public function getStatistics(Request $request)
+    {
+        $statuses = DB::table('statuses')->get();
+        $answer = [];
+        if ($request->selectValue === -1) {
+            foreach ($statuses as $status) {
+                $count = DB::table('transfers')->where('status', $status->id)->count();
+                if ($count) {
+                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->sum('sum')];
+                }
+            }
+        } else if ($request->selectValue === 3 || $request->selectValue === 0) {
+            $date = date("Y-m-d", strtotime($request->values['day']));
+            foreach ($statuses as $status) {
+                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', $date)->count();
+                if ($count) {
+                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', $date)->sum('sum')];
+                }
+            }
+        } else if ($request->selectValue === 2) {
+            $dateFrom = date("Y-m-d", strtotime($request->values['from']));
+            $dateTo = date("Y-m-d", strtotime($request->values['to']));
+            foreach ($statuses as $status) {
+                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->count();
+                if ($count) {
+                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->sum('sum')];
+                }
+            }
+        } else if ($request->selectValue === 0) {
+            $dateFrom = date("Y-m-d", strtotime($request->values['from']));
+            $dateTo = date("Y-m-d", strtotime($request->values['to']));
+            foreach ($statuses as $status) {
+                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->count();
+                if ($count) {
+                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->sum('sum')];
+                }
+            }
+        }
+        return response(['statistics' => $answer]);
+    }
+
+    public function search(Request $request)
+    {
+        ['value' => $value, 'field' => $field] = $request;
+
+        if ($field === 'client_name') {
+            return response(['transfers' => $this->query()->where('transfers.client_id', $value)->get()]);
+        }
+
+        if ($field === 'receiver_name') {
+            return response(['transfers' => $this->query()->where('transfers.receiver_name', 'like', '%' . $value . '%')->get()]);
+        }
+
+        if ($field === 'receiver_phone') {
+            return response(['transfers' => $this->query()->where('transfers.receiver_phone', 'like', '%' . $value . '%')->get()]);
+        }
+
+        if ($field === 'sum') {
+            return response(['transfers' => $this->query()->where('transfers.sum', $value)->get()]);
+        }
+
+        if ($field === 'paid') {
+            return response(['transfers' => $this->query()->where('transfers.paid', $value)->get()]);
+        }
+
+        if ($field === 'method') {
+            return response(['transfers' => $this->query()->where('transfers.method', $value)->get()]);
+        }
+
+        if ($field === 'status') {
+            return response(['transfers' => $this->query()->where('transfers.status', $value)->get()]);
+        }
+
+        if ($field === 'created_at') {
+            return response(['transfers' => $this->query()->whereDate('transfers.created_at', $value)->get()]);
+        }
+
+        if ($field === 'issued_by') {
+            return response(['transfers' => $this->query()->whereDate('transfers.issued_by', $value)->get()]);
+        }
+
+        if ($field === 'notation') {
+            return response(['transfers' => $this->query()->where('transfers.notation', 'like', '%' . $value . '%')->get()]);
+        }
+
+        if ($value) {
+            return response(['transfers' => $this->query()
+                ->orWhere('codes.code', 'like', '%' . $value . '%')
+                ->orWhere('transfers.sum', 'like', '%' . $value . '%')
+                ->orWhere('transfers.receiver_name', 'like', '%' . $value . '%')
+                ->orWhere('transfers.receiver_phone', 'like', '%' . $value . '%')
+                ->orWhere('transfers.notation', 'like', '%' . $value . '%')
+                ->orWhere('transfers.created_at', 'like', '%' . $value . '%')
+                ->orWhere('transfers.issued_by', 'like', '%' . $value . '%')
+                ->orWhere('users.name', 'like', '%' . $value . '%')
+                ->orWhere('statuses.name', 'like', '%' . $value . '%')
+                ->get()]);
+        }
+
+        return response(['not_variant' => 2222]);
     }
 }

@@ -107,19 +107,11 @@ export default {
       }
     },
     filterFn(val, update) {
-      devlog.log('valSE', val);
       if (!_.isEmpty(this.options) && !val) {
         update(() => {
           this.duplicateOptions = this.options;
         });
       } else if (_.isEmpty(this.options) && _.isFunction(this.funcLoadData)) {
-        // this.$store.dispatch('codes/setCodes').then(() => {
-        //   update(() => {
-        //     this.duplicateOptions = this.options;
-        //   });
-        // });
-        devlog.log('funcLoadData', this.options);
-        devlog.log('this.options', this.options);
         this.funcLoadData(this.$store)
           .then(() => {
             update(() => {

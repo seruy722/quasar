@@ -1,12 +1,13 @@
 <template>
   <q-btn
-    :color="color"
-    :label="label"
-    :push="push"
-    :loading="loading"
-    no-caps
-    data-vue-component-name="BaseBtn"
-    @click.stop="$emit('click-base-btn')"
+      :color="color"
+      :label="label"
+      :push="push"
+      :loading="loading"
+      :disable="disable"
+      no-caps
+      data-vue-component-name="BaseBtn"
+      @click.stop="$emit('click-base-btn')"
   />
 </template>
 
@@ -27,6 +28,10 @@ export default {
       default: false,
     },
     loading: {
+      type: Boolean,
+      default: false,
+    },
+    disable: {
       type: Boolean,
       default: false,
     },
