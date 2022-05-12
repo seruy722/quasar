@@ -371,8 +371,8 @@ export default {
           require: true,
           requireError: 'Поле обьязательное для заполнения.',
           changeValue: false,
-          default: 0,
-          value: 0,
+          default: null,
+          value: null,
         },
         transfer_commission: {
           type: 'number',

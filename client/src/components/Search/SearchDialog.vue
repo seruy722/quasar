@@ -1,5 +1,7 @@
 <template>
-  <div data-vue-component-name="SearchDialog">
+  <div
+      data-vue-component-name="SearchDialog"
+  >
     <RoundBtn
         color="primary"
         icon="search"
@@ -7,21 +9,20 @@
         :loading="loading"
         @round-btn-click="showDialog = true"
     />
-    <!--    <RoundBtn-->
-    <!--        v-show="search && !loading"-->
-    <!--        color="negative"-->
-    <!--        icon="clear"-->
-    <!--        tooltip="Очистить"-->
-    <!--        @round-btn-click="clearSearchData"-->
-    <!--    />-->
+    <RoundBtn
+        v-show="searchValues[searchField]"
+        color="negative"
+        icon="clear"
+        tooltip="Очистить"
+        @round-btn-click="clearSearchData"
+    />
     <Dialog
         :dialog="showDialog"
-        title="Удаление доступов"
         :persistent="true"
+        @keyup.enter="filterMethod(searchValues)"
     >
       <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
         <q-card-section class="bg-grey q-mb-sm">
-
           <BaseSelect
               v-model="searchField"
               label="В каком поле искать"
@@ -154,6 +155,7 @@ export default {
 
     const clearSearchData = (() => {
       searchField.value = 'all';
+      searchValues[searchField.value] = null;
       emit('update:loading', true);
       showDialog.value = false;
       store.dispatch('transfers/fetchTransfers')
@@ -207,6 +209,9 @@ export default {
       clearSearchData,
       getComponent,
       searchValues,
+      key(ev) {
+        devlog.log('ev', ev);
+      },
     };
   },
 };
