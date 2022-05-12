@@ -46,7 +46,7 @@
 
               <q-item-section>
                 <q-item-label>
-                  {{ props.row.created_at.slice(0, 10) }}
+                  {{ props.row.created_at.slice(2, 10).split('-').reverse().join('-') }}
                 </q-item-label>
               </q-item-section>
 
@@ -90,6 +90,9 @@
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'receiver_name'">
                     {{ props.row[col.field] }}
+                  </q-item-label>
+                  <q-item-label v-else-if="col.field === 'created_at' || col.field === 'issued_by'">
+                    {{ fullDate(props.row[col.field]) }}
                   </q-item-label>
                   <q-item-label v-else-if="col.field === 'sum'">
                     {{ numberFormat(props.row[col.field]) }}
@@ -250,7 +253,6 @@
 </template>
 
 <script>
-// import { getUrl } from 'src/tools/url';
 import getFromSettings from 'src/tools/settings';
 import {
   formatToDotDate,
@@ -267,11 +269,8 @@ import {
   setMethodLabel,
 } from 'src/utils/FrequentlyCalledFunctions';
 import { defineAsyncComponent } from 'vue';
-// import TableVirtualScrolling from 'src/components/Elements/Table/TableVirtualScrolling.vue';
 import NewTable from 'src/components/Elements/Table/NewTable.vue';
 import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
-// import CountTransfersData from 'src/components/Transfers/CountTransfersData.vue';
-// import PullRefresh from 'src/components/PullRefresh.vue';
 import PageSticky from 'src/components/PageSticky.vue';
 import Fab from 'src/components/Elements/Fab.vue';
 import FabAction from 'src/components/Elements/FabAction.vue';

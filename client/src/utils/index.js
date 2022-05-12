@@ -3,6 +3,10 @@ import getFromSettings from 'src/tools/settings';
 export const countSumCollection = ((arr, key) => _.sumBy(arr, key));
 export const round = ((num, precision = 1) => _.round(num, precision));
 export const numberFormat = ((number) => new Intl.NumberFormat('ru-RU').format(_.toNumber(number)));
+export const statusColor2 = ((value) => {
+    const findLabel = _.find(getFromSettings('transferStatus'), { value }) || _.find(getFromSettings('transferStatus'), { label: value });
+    return _.get(findLabel, 'color');
+});
 export const numberUnformat = ((number) => _.chain(number)
   .toString()
   .split(' ')

@@ -25,10 +25,13 @@
           </q-list>
         </q-menu>
       </q-btn>
-      <div>{{ viewPeriodDate }}</div>
+      <div class="text-red text-bold">{{ viewPeriodDate }}</div>
     </div>
 
-    <q-linear-progress v-show="visible" indeterminate />
+    <q-linear-progress
+        v-show="visible"
+        indeterminate
+    />
 
     <q-list
         v-if="!isEmptyData"
@@ -45,9 +48,23 @@
           v-for="({count, sum}, index) in statistics"
           :key="index"
       >
-        <q-item-section>{{ index }}</q-item-section>
-        <q-item-section>{{ numberFormat(count) }}</q-item-section>
-        <q-item-section>{{ numberFormat(sum) }}</q-item-section>
+        <q-item-section>
+          <q-item-label>
+            <q-badge :color="statusColor2(index)">
+              {{ index }}
+            </q-badge>
+          </q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>
+            {{ numberFormat(count) }}
+          </q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>
+            {{ numberFormat(sum) }}
+          </q-item-label>
+        </q-item-section>
       </q-item>
 
       <q-item>
@@ -66,8 +83,9 @@
       <q-icon
           name="warning"
           size="md"
+          color="orange"
       />
-      По этому запросу нет данных
+      Нет данных
     </div>
 
     <Dialog
@@ -119,7 +137,7 @@
 
 <script>
 import { format } from 'date-fns';
-import { numberFormat } from 'src/utils';
+import { numberFormat, statusColor2 } from 'src/utils';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 import DateWithInput from 'src/components/DateWithInput.vue';
@@ -183,6 +201,7 @@ export default {
       return null;
     },
     numberFormat,
+    statusColor2,
     setStatistics(val) {
       this.$q.loading.show();
       if (val.value === 1) {
