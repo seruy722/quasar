@@ -197,7 +197,7 @@
               key="get_pay_user_name"
               :props="props"
           >
-            {{ props.row.get_pay_user_name }}
+            {{ props.row.get_pay_user_name || props.row.user_name }}
           </q-td>
 
           <q-td
