@@ -34,11 +34,13 @@ export default {
       loading,
       refresh() {
         devlog.log(' props.func', props.func);
-        loading.value = true;
-        props.func()
-            .finally(() => {
-              loading.value = false;
-            });
+        if (_.isFunction(props.func)) {
+          loading.value = true;
+          props.func()
+              .finally(() => {
+                loading.value = false;
+              });
+        }
       },
     };
   },

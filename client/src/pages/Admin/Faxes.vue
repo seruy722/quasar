@@ -21,7 +21,7 @@
             />
 
             <UpdateBtn
-                @update-btn-click="refresh"
+                :func="refresh"
             />
             <RoundBtn
                 v-show="faxesTableReactiveProperties.selected.length > 1"

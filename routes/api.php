@@ -206,10 +206,14 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     });
 
     // TRANSPORTS
-    Route::get('/transports', 'Api\TransportController@index');
+    Route::controller(\App\Http\Controllers\Api\TransportController::class)->group(function () {
+        Route::get('/transports', 'index');
+    });
 
     // TRANSPORTER_PRICE
-    Route::post('/update-transporter-price-data', 'Api\TransporterPriceController@updateData');
+    Route::controller(\App\Http\Controllers\Api\TransporterPriceController::class)->group(function () {
+        Route::get('/update-transporter-price-data', 'updateData');
+    });
     Route::controller(\App\Http\Controllers\Api\TransporterFaxesPriceController::class)->group(function () {
         Route::post('/update-transporter-faxes-price', 'updateData');
         Route::get('/transporter-price-data/{id}', 'getTransporterPriceData');
@@ -356,11 +360,13 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
     Route::post('update-player-id', 'Api\NotificationController@updatePlayerId')->name('update player id');
 //    Route::post('create-notification', 'Api\NotificationController@createNotification')->name('create notification');
 });
-Route::group(['middleware' => 'throttle'], function () {
-    Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');
-    Route::post('change-password-code', 'Api\AuthController@getCodeForChangePassword')->name('code for password');
-    Route::post('change-password', 'Api\AuthController@changePassword')->name('change password');
-    Route::post('register-client-register', 'Api\AuthController@registerClient')->name('register client');
+Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(function () {
+    Route::group(['middleware' => 'throttle'], function () {
+        Route::post('register-client-code', 'getCodeForRegister')->name('code');
+        Route::post('change-password-code', 'getCodeForChangePassword')->name('code for password');
+        Route::post('change-password', 'changePassword')->name('change password');
+        Route::post('register-client-register', 'registerClient')->name('register client');
+    });
 });
 
 Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(function () {
