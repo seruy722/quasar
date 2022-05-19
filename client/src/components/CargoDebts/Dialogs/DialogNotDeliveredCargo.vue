@@ -1,24 +1,24 @@
 <template>
   <div
-    class="q-pa-md q-gutter-sm"
-    data-vue-component-name="DialogNotDeliveredCargo"
+      class="q-pa-md q-gutter-sm"
+      data-vue-component-name="DialogNotDeliveredCargo"
   >
     <q-dialog
-      v-model="dialog"
-      persistent
-      maximized
-      transition-show="slide-up"
-      transition-hide="slide-down"
+        v-model="dialog"
+        persistent
+        maximized
+        transition-show="slide-up"
+        transition-hide="slide-down"
     >
       <q-card>
         <q-bar>
           <q-space />
           <q-btn
-            v-close-popup
-            dense
-            flat
-            icon="close"
-            color="negative"
+              v-close-popup
+              dense
+              flat
+              icon="close"
+              color="negative"
           >
             <q-tooltip content-class="bg-white text-primary">
               Закрыть
@@ -30,9 +30,9 @@
           <div class="text-h6">
             Не доставленные места
             <q-btn
-              label="Показать"
-              color="primary"
-              @click="getNotDeliveredCargo"
+                label="Показать"
+                color="primary"
+                @click="getNotDeliveredCargo"
             />
           </div>
         </q-card-section>
@@ -41,7 +41,7 @@
           <div class="q-gutter-y-md">
             <q-card>
               <Cargo
-                :list="cargo"
+                  :list="cargo"
               />
             </q-card>
           </div>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import Cargo from 'components/PaymentArrears/Cargo.vue';
+import Cargo from 'src/components/PaymentArrears/Cargo.vue';
 
 export default {
   name: 'DialogNotDeliveredCargo',
@@ -86,11 +86,11 @@ export default {
       this.$q.loading.show();
       const { getUrl } = await import('src/tools/url');
       this.$axios.get(getUrl('getNotDeliveredCargo'))
-        .then(({ data: { cargo } }) => {
-          this.cargo = cargo;
-          devlog.log(cargo);
-          this.$q.loading.hide();
-        });
+          .then(({ data: { cargo } }) => {
+            this.cargo = cargo;
+            devlog.log(cargo);
+            this.$q.loading.hide();
+          });
     },
   },
 };

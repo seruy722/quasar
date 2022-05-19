@@ -1,24 +1,24 @@
 <template>
   <Dialog
-    v-model:dialog="show"
-    :persistent="true"
-    title="Долг"
-    data-vue-component-name="DialogAddCargoDebtEntry"
+      v-model:dialog="show"
+      :persistent="true"
+      title="Долг"
+      data-vue-component-name="DialogAddCargoDebtEntry"
   >
     <q-card style="min-width: 320px;width: 100%;max-width: 900px;">
       <q-card-section class="row justify-between items-center bg-grey q-mb-sm">
         <span class="text-h6">{{ entryData.row ? 'Редактирование долга' : 'Новая запись долга' }}</span>
         <q-list
-          dense
+            dense
         >
           <q-item>
             <q-item-section v-if="entryData.row">
               <q-item-label>
-                <IconBtn
-                  dense
-                  icon="history"
-                  tooltip="История"
-                  @icon-btn-click="entryData.historyFunc(entryData.row.id, entryData.cols)"
+                <RoundBtn
+                    dense
+                    icon="history"
+                    tooltip="История"
+                    @round-btn-click="entryData.historyFunc(entryData.row.id, entryData.cols)"
                 />
               </q-item-label>
             </q-item-section>
@@ -29,11 +29,11 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>
-                <IconBtn
-                  dense
-                  icon="clear"
-                  tooltip="Закрыть"
-                  @icon-btn-click="close(storehouseData)"
+                <SquareBtn
+                    icon="clear"
+                    tooltip="Закрыть"
+                    color="negative"
+                    @square-btn-click="close(storehouseData)"
                 />
               </q-item-label>
             </q-item-section>
@@ -43,77 +43,77 @@
       <q-card-section>
         <div class="fit row wrap justify-start items-start content-start">
           <div
-            v-for="(item, index) in storehouseData"
-            :key="index"
-            class="col-xs-12 col-sm-4 col-md-4 col-lg-4 q-pt-md q-px-sm bg-white"
+              v-for="(item, index) in storehouseData"
+              :key="index"
+              class="col-xs-12 col-sm-4 col-md-4 col-lg-4 q-pt-md q-px-sm bg-white"
           >
             <BaseInput
-              v-if="item.type === 'text'"
-              v-model.trim="item.value"
-              v-model:change-value="item.changeValue"
-              :label="item.label"
-              :type="item.type"
-              :mask="item.mask"
-              :dense="$q.screen.xs || $q.screen.sm"
-              :field="index"
-              :readonly="item.readonly"
-              :disable="item.disable"
-              :errors="errorsData"
+                v-if="item.type === 'text'"
+                v-model.trim="item.value"
+                v-model:change-value="item.changeValue"
+                :label="item.label"
+                :type="item.type"
+                :mask="item.mask"
+                :dense="$q.screen.xs || $q.screen.sm"
+                :field="index"
+                :readonly="item.readonly"
+                :disable="item.disable"
+                :errors="errorsData"
             />
 
             <BaseInput
-              v-else-if="item.type === 'number'"
-              v-model.number="item.value"
-              v-model:change-value="item.changeValue"
-              :label="item.label"
-              :autofocus="item.autofocus"
-              :type="item.type"
-              :mask="item.mask"
-              :dense="$q.screen.xs || $q.screen.sm"
-              :field="index"
-              :disable="item.disable"
-              :errors="errorsData"
+                v-else-if="item.type === 'number'"
+                v-model.number="item.value"
+                v-model:change-value="item.changeValue"
+                :label="item.label"
+                :autofocus="item.autofocus"
+                :type="item.type"
+                :mask="item.mask"
+                :dense="$q.screen.xs || $q.screen.sm"
+                :field="index"
+                :disable="item.disable"
+                :errors="errorsData"
             />
 
             <SelectChips
-              v-else-if="item.type === 'select-chips'"
-              v-model="item.value"
-              v-model:change-value="item.changeValue"
-              :label="item.label"
-              :field="index"
-              :dense="$q.screen.xs || $q.screen.sm"
-              :options="item.options"
-              :func-load-data="item.funcLoadData"
-              :errors="errorsData"
+                v-else-if="item.type === 'select-chips'"
+                v-model="item.value"
+                v-model:change-value="item.changeValue"
+                :label="item.label"
+                :field="index"
+                :dense="$q.screen.xs || $q.screen.sm"
+                :options="item.options"
+                :func-load-data="item.funcLoadData"
+                :errors="errorsData"
             />
             <BaseInput
-              v-else-if="item.type === 'date'"
-              v-model.trim="item.value"
-              v-model:change-value="item.changeValue"
-              :label="item.label"
-              :field="index"
-              :mask="item.mask"
-              :dense="$q.screen.xs || $q.screen.sm"
-              :errors="errorsData"
+                v-else-if="item.type === 'date'"
+                v-model.trim="item.value"
+                v-model:change-value="item.changeValue"
+                :label="item.label"
+                :field="index"
+                :mask="item.mask"
+                :dense="$q.screen.xs || $q.screen.sm"
+                :errors="errorsData"
             >
               <template #append>
                 <DateComponent
-                  v-model:value="item.value"
-                  v-model:change-value="item.changeValue"
+                    v-model:value="item.value"
+                    v-model:change-value="item.changeValue"
                 />
               </template>
             </BaseInput>
 
             <SearchSelect
-              v-else
-              v-model="item.value"
-              v-model:change-value="item.changeValue"
-              :label="item.label"
-              :field="index"
-              :dense="$q.screen.xs || $q.screen.sm"
-              :options="item.options"
-              :func-load-data="item.funcLoadData"
-              :errors="errorsData"
+                v-else
+                v-model="item.value"
+                v-model:change-value="item.changeValue"
+                :label="item.label"
+                :field="index"
+                :dense="$q.screen.xs || $q.screen.sm"
+                :options="item.options"
+                :func-load-data="item.funcLoadData"
+                :errors="errorsData"
             />
           </div>
         </div>
@@ -121,27 +121,24 @@
       <Separator />
       <q-card-actions align="right">
         <BaseBtn
-          :label="$t('save')"
-          color="positive"
-          icon="save"
-          :size="size"
-          @click-base-btn="checkErrors(storehouseData, saveData)"
+            :label="$t('save')"
+            color="positive"
+            :size="size"
+            @click-base-btn="checkErrors(storehouseData, saveData)"
         />
 
         <BaseBtn
-          :label="$t('clear')"
-          color="negative"
-          icon="clear"
-          :size="size"
-          @click-base-btn="clear(storehouseData)"
+            :label="$t('clear')"
+            color="warning"
+            :size="size"
+            @click-base-btn="clear(storehouseData)"
         />
 
         <BaseBtn
-          :label="$t('close')"
-          color="negative"
-          icon="cancel"
-          :size="size"
-          @click-base-btn="close(storehouseData)"
+            :label="$t('close')"
+            color="negative"
+            :size="size"
+            @click-base-btn="close(storehouseData)"
         />
       </q-card-actions>
     </q-card>
@@ -157,7 +154,8 @@ import {
   getFaxes,
 } from 'src/utils/FrequentlyCalledFunctions';
 import Dialog from 'src/components/Dialogs/Dialog.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
+import SquareBtn from 'src/components/Buttons/SquareBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
@@ -170,7 +168,8 @@ export default {
   name: 'DialogAddCargoDebtEntry',
   components: {
     Dialog,
-    IconBtn,
+    RoundBtn,
+    SquareBtn,
     BaseInput,
     SearchSelect,
     BaseBtn,
@@ -203,15 +202,15 @@ export default {
           requireError: 'Поле обьзательное для заполнения.',
           changeValue: false,
           default: new Date().toISOString()
-            .slice(0, 10)
-            .split('-')
-            .reverse()
-            .join('-'),
+              .slice(0, 10)
+              .split('-')
+              .reverse()
+              .join('-'),
           value: new Date().toISOString()
-            .slice(0, 10)
-            .split('-')
-            .reverse()
-            .join('-'),
+              .slice(0, 10)
+              .split('-')
+              .reverse()
+              .join('-'),
         },
         code_client_id: {
           name: 'code_client_id',
@@ -230,32 +229,32 @@ export default {
           type: 'number',
           label: 'Мест',
           changeValue: false,
-          default: 0,
-          value: 0,
+          default: null,
+          value: null,
         },
         kg: {
           name: 'kg',
           type: 'number',
           label: 'Вес',
           changeValue: false,
-          default: 0,
-          value: 0,
+          default: null,
+          value: null,
         },
         for_kg: {
           name: 'for_kg',
           type: 'number',
           label: 'За кг',
           changeValue: false,
-          default: 0,
-          value: 0,
+          default: null,
+          value: null,
         },
         for_place: {
           name: 'for_place',
           type: 'number',
           label: 'За кг',
           changeValue: false,
-          default: 0,
-          value: 0,
+          default: null,
+          value: null,
         },
         sum: {
           name: 'sum',
@@ -263,8 +262,8 @@ export default {
           label: 'Сумма',
           changeValue: false,
           autofocus: true,
-          default: 0,
-          value: 0,
+          default: null,
+          value: null,
         },
         // sale: {
         //     name: 'sale',
@@ -401,13 +400,13 @@ export default {
       if (val) {
         this.$q.loading.show();
         Promise.all([getCategories(this.$store), getFaxes(this.$store)])
-          .then(() => {
-            this.storehouseData.code_client_id.value = this.currentClientCodeId;
-            this.storehouseData.category_id.options = this.categories;
-            this.storehouseData.fax_id.options = this.faxes;
-            this.show = val;
-            this.$q.loading.hide();
-          });
+            .then(() => {
+              this.storehouseData.code_client_id.value = this.currentClientCodeId;
+              this.storehouseData.category_id.options = this.categories;
+              this.storehouseData.fax_id.options = this.faxes;
+              this.show = val;
+              this.$q.loading.hide();
+            });
       }
     },
     show(val) {
@@ -436,7 +435,7 @@ export default {
           addTime,
         } = await import('src/utils/formatDate');
         sendData.created_at = addTime(reverseDate(sendData.created_at))
-          .toISOString();
+            .toISOString();
       }
       const { getUrl } = await import('src/tools/url');
       const { setChangeValue } = await import('src/utils/FrequentlyCalledFunctions');
@@ -445,16 +444,16 @@ export default {
         sendData.code_client_id = this.storehouseData.code_client_id.value;
         this.$q.loading.show();
         this.$axios.post(getUrl('createCargoDebtEntry'), sendData)
-          .then(({ data: { answer } }) => {
-            this.$store.dispatch('cargoDebts/addCargoEntry', answer);
-            this.$q.loading.hide();
-            this.showNotif('success', 'Запись успешно добавлена.', false);
-            this.close(this.storehouseData);
-          })
-          .catch((errors) => {
-            this.errorsData.errors = _.get(errors, 'response.data.errors');
-            this.$q.loading.hide();
-          });
+            .then(({ data: { answer } }) => {
+              this.$store.dispatch('cargoDebts/addCargoEntry', answer);
+              this.$q.loading.hide();
+              this.showNotif('success', 'Запись успешно добавлена.', false);
+              this.close(this.storehouseData);
+            })
+            .catch((errors) => {
+              this.errorsData.errors = _.get(errors, 'response.data.errors');
+              this.$q.loading.hide();
+            });
       } else if (!_.isEmpty(sendData)) {
         // UPDATE
         if (_.get(this.entryData, 'row.arr') && _.size(_.get(this.entryData, 'row.arr')) === 1) {
@@ -464,18 +463,18 @@ export default {
         }
         this.$q.loading.show();
         this.$axios.post(getUrl('updateCargoDebtEntry'), sendData)
-          .then(({ data: { answer } }) => {
-            devlog.log('DTA_UPDATE', answer);
-            this.$store.dispatch('cargoDebts/updateCargoEntry', answer);
-            setChangeValue(this.storehouseData);
-            this.$q.loading.hide();
-            this.showNotif('success', 'Запись успешно обновлена.', false);
-            this.close(this.storehouseData);
-          })
-          .catch((errors) => {
-            this.errorsData.errors = _.get(errors, 'response.data.errors');
-            this.$q.loading.hide();
-          });
+            .then(({ data: { answer } }) => {
+              devlog.log('DTA_UPDATE', answer);
+              this.$store.dispatch('cargoDebts/updateCargoEntry', answer);
+              setChangeValue(this.storehouseData);
+              this.$q.loading.hide();
+              this.showNotif('success', 'Запись успешно обновлена.', false);
+              this.close(this.storehouseData);
+            })
+            .catch((errors) => {
+              this.errorsData.errors = _.get(errors, 'response.data.errors');
+              this.$q.loading.hide();
+            });
       } else {
         this.close(this.storehouseData);
       }

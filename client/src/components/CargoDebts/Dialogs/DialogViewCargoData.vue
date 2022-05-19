@@ -1,20 +1,20 @@
 <template>
   <Dialog
-    :dialog="show"
-    title="Записи"
-    :persistent="true"
-    data-vue-component-name="DialogViewCargoData"
-    class="q-pa-md"
+      :dialog="show"
+      title="Записи"
+      :persistent="true"
+      data-vue-component-name="DialogViewCargoData"
+      class="q-pa-md"
   >
     <q-card style="min-width: 320px;width: 100%;max-width: 1900px;">
       <q-card-section class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">Просмотр записей долгов</span>
         <div>
           <IconBtn
-            dense
-            icon="clear"
-            tooltip="Закрыть"
-            @icon-btn-click="close"
+              dense
+              icon="clear"
+              tooltip="Закрыть"
+              @icon-btn-click="close"
           />
         </div>
       </q-card-section>
@@ -22,9 +22,9 @@
       <q-card-section>
         <div class="q-gutter-y-md">
           <Table
-            :table-properties="faxTableProperties"
-            :table-data="values"
-            :table-reactive-properties="faxTableReactiveProperties"
+              :table-properties="faxTableProperties"
+              :table-data="values"
+              :table-reactive-properties="faxTableReactiveProperties"
           >
             <template #top-buttons>
               <!--                <IconBtn-->
@@ -61,21 +61,21 @@
             <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
             <template #inner-item="{props}">
               <div
-                class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-                :style="props.selected ? 'transform: scale(0.95);' : ''"
+                  class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+                  :style="props.selected ? 'transform: scale(0.95);' : ''"
               >
                 <q-expansion-item
-                  expand-separator
-                  class="shadow-1 overflow-hidden"
-                  header-class="bg-secondary text-white"
-                  style="border-radius: 30px;border: 1px solid #26A69A;"
-                  expand-icon-class="text-white"
+                    expand-separator
+                    class="shadow-1 overflow-hidden"
+                    header-class="bg-secondary text-white"
+                    style="border-radius: 30px;border: 1px solid #26A69A;"
+                    expand-icon-class="text-white"
                 >
                   <template #header>
                     <q-item-section avatar>
                       <q-checkbox
-                        v-model="props.selected"
-                        dense
+                          v-model="props.selected"
+                          dense
                       />
                     </q-item-section>
 
@@ -87,26 +87,26 @@
                   </template>
 
                   <q-list
-                    separator
-                    dense
+                      separator
+                      dense
                   >
                     <q-item
-                      v-for="col in props.cols.filter(col => col.name !== 'desc')"
-                      :key="col.name"
-                      @click="viewEditDialog(props)"
+                        v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                        :key="col.name"
+                        @click="viewEditDialog(props)"
                     >
                       <q-item-section>
                         <q-item-label>{{ `${col.label}:` }}</q-item-label>
                       </q-item-section>
                       <q-item-section side>
                         <q-item-label
-                          v-if="col.field === 'things'"
-                          :lines="10"
+                            v-if="col.field === 'things'"
+                            :lines="10"
                         >
                           {{ thingsFilter(col.value) }}
                         </q-item-label>
                         <q-item-label
-                          v-else-if="col.field === 'kg'"
+                            v-else-if="col.field === 'kg'"
                         >
                           {{ numberFormat(col.value) }}
                         </q-item-label>
@@ -118,10 +118,10 @@
                     <q-item>
                       <q-item-section>
                         <BaseBtn
-                          label="История"
-                          color="info"
-                          style="max-width: 100px;margin: 0 auto;"
-                          @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"
+                            label="История"
+                            color="info"
+                            style="max-width: 100px;margin: 0 auto;"
+                            @click-base-btn="getStorehouseDataHistory(props.row.id, props.cols)"
                         />
                       </q-item-section>
                     </q-item>
@@ -132,136 +132,136 @@
 
             <template #inner-body="{props}">
               <q-tr
-                :props="props"
-                class="cursor-pointer"
-                :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
-                @click.stop="viewEditDialog(props, $event)"
+                  :props="props"
+                  class="cursor-pointer"
+                  :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
+                  @click.stop="viewEditDialog(props, $event)"
               >
                 <q-td
-                  auto-width
-                  class="select_checkbox"
+                    auto-width
+                    class="select_checkbox"
                 >
                   <q-checkbox
-                    v-model="props.selected"
-                    dense
+                      v-model="props.selected"
+                      dense
                   />
                 </q-td>
 
                 <q-td
-                  key="created_at"
-                  :props="props"
+                    key="created_at"
+                    :props="props"
                 >
                   {{ props.row.created_at }}
                 </q-td>
 
                 <q-td
-                  key="code_place"
-                  :props="props"
+                    key="code_place"
+                    :props="props"
                 >
                   {{ props.row.code_place }}
                 </q-td>
 
                 <q-td
-                  key="code_client_name"
-                  :props="props"
+                    key="code_client_name"
+                    :props="props"
                 >
                   {{ props.row.code_client_name }}
                 </q-td>
 
                 <q-td
-                  key="type"
-                  :props="props"
+                    key="type"
+                    :props="props"
                 >
                   {{ props.row.type ? 'Оплата' : 'Долг' }}
                 </q-td>
 
                 <q-td
-                  key="place"
-                  :props="props"
+                    key="place"
+                    :props="props"
                 >
                   {{ props.row.place }}
                 </q-td>
 
                 <q-td
-                  key="kg"
-                  :props="props"
+                    key="kg"
+                    :props="props"
                 >
                   {{ numberFormat(props.row.kg) }}
                 </q-td>
 
                 <q-td
-                  key="for_kg"
-                  class="text-bold cursor-pointer"
-                  :props="props"
+                    key="for_kg"
+                    class="text-bold cursor-pointer"
+                    :props="props"
                 >
                   {{ props.row.for_kg }}
                 </q-td>
 
                 <q-td
-                  key="for_place"
-                  class="text-bold cursor-pointer"
-                  :props="props"
+                    key="for_place"
+                    class="text-bold cursor-pointer"
+                    :props="props"
                 >
                   {{ numberFormat(props.row.for_place) }}
                 </q-td>
 
                 <q-td
-                  key="sum"
-                  :props="props"
+                    key="sum"
+                    :props="props"
                 >
                   {{ numberFormat(props.row.sum) }}
                 </q-td>
                 <q-td
-                  key="paid"
-                  :props="props"
+                    key="paid"
+                    :props="props"
                 >
                   {{ props.row.paid ? 'Да' : 'Нет' }}
                 </q-td>
 
                 <q-td
-                  key="category_name"
-                  :props="props"
+                    key="category_name"
+                    :props="props"
                 >
                   {{ props.row.category_name }}
                 </q-td>
                 <q-td
-                  key="fax_name"
-                  :props="props"
+                    key="fax_name"
+                    :props="props"
                 >
                   {{ props.row.fax_name }}
                 </q-td>
 
                 <q-td
-                  key="notation"
-                  :props="props"
+                    key="notation"
+                    :props="props"
                 >
                   {{ props.row.notation }}
                 </q-td>
 
                 <q-td
-                  key="shop"
-                  :props="props"
+                    key="shop"
+                    :props="props"
                 >
                   {{ props.row.shop }}
                 </q-td>
 
                 <q-td
-                  key="things"
-                  :props="props"
+                    key="things"
+                    :props="props"
                 >
                   {{ thingsFilter(props.row.things) }}
                 </q-td>
 
                 <q-td
-                  key="delivery_method_name"
-                  :props="props"
+                    key="delivery_method_name"
+                    :props="props"
                 >
                   {{ props.row.delivery_method_name }}
                 </q-td>
 
                 <q-td
-                  key="department"
-                  :props="props"
+                    key="department"
+                    :props="props"
                 >
                   {{ props.row.department }}
                 </q-td>
@@ -272,14 +272,14 @@
       </q-card-section>
       <q-card-section>
         <CountCargoCategories
-          :list="values"
-          style="max-width: 500px;margin:0 auto;"
+            :list="values"
+            style="max-width: 500px;margin:0 auto;"
         />
       </q-card-section>
     </q-card>
     <DialogAddCargoDebtEntry
-      v-model:entry-data="dialogAddCargoDebtEntryData"
-      v-model:show-dialog="showDialogAddCargoDebtEntry"
+        v-model:entry-data="dialogAddCargoDebtEntryData"
+        v-model:show-dialog="showDialogAddCargoDebtEntry"
     />
   </Dialog>
 </template>
