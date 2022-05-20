@@ -25,7 +25,9 @@
           </q-list>
         </q-menu>
       </q-btn>
-      <div class="text-red text-bold">{{ viewPeriodDate }}</div>
+      <div class="text-red text-bold">
+        {{ viewPeriodDate }}
+      </div>
     </div>
 
     <q-linear-progress
@@ -38,7 +40,7 @@
         bordered
         separator
     >
-      <q-item>
+      <q-item class="bg-grey">
         <q-item-section>Статус</q-item-section>
         <q-item-section>Количество</q-item-section>
         <q-item-section>Сумма</q-item-section>
@@ -87,6 +89,43 @@
       />
       Нет данных
     </div>
+
+    <q-list
+        v-if="!isEmptyData"
+        bordered
+        separator
+    >
+      <q-item>
+        <q-item-section class="text-center text-bold">
+          По пользователям
+        </q-item-section>
+      </q-item>
+      <q-item class="bg-grey">
+        <q-item-section>
+          <q-item-label>Пользователь</q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Количество</q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Сумма</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item
+          v-for="(user, index) in usersStatistics"
+          :key="index"
+      >
+        <q-item-section>
+          <q-item-label>{{ user.name }}</q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ numberFormat(user.count) }}</q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ numberFormat(user.sum) }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </q-list>
 
     <Dialog
         :dialog="choosePeriodDialog"
@@ -154,6 +193,7 @@ export default {
     return {
       visible: false,
       statistics: {},
+      usersStatistics: [],
       choosePeriodDialog: false,
       viewPeriodDate: '',
       period: {
@@ -248,6 +288,27 @@ export default {
     getStatistics(selectValue, values) {
       return this.$axios.post(getUrl('transfersStatistics'), { selectValue, values });
     },
+    getUsersDataForTransfers(statistics) {
+      const obj = {};
+      _.forEach(statistics, (elem) => {
+        const usersIds = _.uniq(_.map(elem.countUserTransfers, 'user_id'));
+        _.forEach(usersIds, (id) => {
+          const userData = _.filter(elem.countUserTransfers, (item) => item.user_id === id);
+          if (!obj[id]) {
+            obj[id] = {
+              name: _.get(_.first(userData), 'user_name'),
+              sum: _.sumBy(userData, 'sum'),
+              count: _.size(userData),
+            };
+          } else {
+            obj[id]['sum'] += _.sumBy(userData, 'sum');
+            obj[id]['count'] += _.size(userData);
+          }
+        });
+      });
+      const arr = _.filter(obj, (item) => item);
+      return _.orderBy(arr, 'sum', 'desc');
+    },
     async setStatisticsData(data, date) {
       this.visible = true;
       devlog.log('visible', this.visible);
@@ -260,6 +321,7 @@ export default {
         this.getStatistics(-1, null)
             .then(({ data: { statistics } }) => {
               this.statistics = statistics;
+              this.usersStatistics = this.getUsersDataForTransfers(statistics);
             });
       } else if (_.isObject(date) && this.statisticsSelectData.value === 3) {
         this.viewPeriodDate = date.day;
@@ -267,6 +329,7 @@ export default {
         this.getStatistics(3, { day })
             .then(({ data: { statistics } }) => {
               this.statistics = statistics;
+              this.usersStatistics = this.getUsersDataForTransfers(statistics);
             });
       } else if (_.isObject(date) && this.statisticsSelectData.value === 2) {
         const from = new Date(reverseDate(date.from));
@@ -275,12 +338,14 @@ export default {
         this.getStatistics(2, { from, to })
             .then(({ data: { statistics } }) => {
               this.statistics = statistics;
+              this.usersStatistics = this.getUsersDataForTransfers(statistics);
             });
       } else {
         this.viewPeriodDate = date;
         this.getStatistics(0, { day: date })
             .then(({ data: { statistics } }) => {
               this.statistics = statistics;
+              this.usersStatistics = this.getUsersDataForTransfers(statistics);
             });
       }
       this.visible = false;

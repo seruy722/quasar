@@ -1,10 +1,10 @@
 <template>
   <q-list
-    separator
-    bordered
-    dense
-    style="max-width: 450px;margin: 20px auto;font-weight: bold;"
-    data-vue-component-name="CountTransfersData"
+      separator
+      bordered
+      dense
+      style="max-width: 450px;margin: 20px auto;font-weight: bold;"
+      data-vue-component-name="CountTransfersData"
   >
     <q-item>
       <q-item-section class="statistics_title">
@@ -149,25 +149,25 @@
       </q-item-section>
     </q-item>
 
-<!--    <q-item>-->
-<!--      <q-item-section class="statistics_title">-->
-<!--        По пользователям-->
-<!--      </q-item-section>-->
-<!--    </q-item>-->
-<!--    <q-item-->
-<!--      v-for="(user, id) in countTransfersStatisticsData.usersData"-->
-<!--      :key="id"-->
-<!--    >-->
-<!--      <q-item-section>-->
-<!--        <q-item-label>{{ user.name }}</q-item-label>-->
-<!--      </q-item-section>-->
-<!--      <q-item-section>-->
-<!--        <q-item-label>{{ numberFormat(user.all) }}</q-item-label>-->
-<!--      </q-item-section>-->
-<!--      <q-item-section>-->
-<!--        <q-item-label>{{ numberFormat(user.allSum) }}</q-item-label>-->
-<!--      </q-item-section>-->
-<!--    </q-item>-->
+    <!--    <q-item>-->
+    <!--      <q-item-section class="statistics_title">-->
+    <!--        По пользователям-->
+    <!--      </q-item-section>-->
+    <!--    </q-item>-->
+    <!--    <q-item-->
+    <!--      v-for="(user, id) in countTransfersStatisticsData.usersData"-->
+    <!--      :key="id"-->
+    <!--    >-->
+    <!--      <q-item-section>-->
+    <!--        <q-item-label>{{ user.name }}</q-item-label>-->
+    <!--      </q-item-section>-->
+    <!--      <q-item-section>-->
+    <!--        <q-item-label>{{ numberFormat(user.all) }}</q-item-label>-->
+    <!--      </q-item-section>-->
+    <!--      <q-item-section>-->
+    <!--        <q-item-label>{{ numberFormat(user.allSum) }}</q-item-label>-->
+    <!--      </q-item-section>-->
+    <!--    </q-item>-->
   </q-list>
 </template>
 

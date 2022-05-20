@@ -232,37 +232,63 @@ class TransferController extends Controller
     {
         $statuses = DB::table('statuses')->get();
         $answer = [];
-        if ($request->selectValue === -1) {
+        $value = $request->selectValue;
+        if ($value === -1) {
             foreach ($statuses as $status) {
-                $count = DB::table('transfers')->where('status', $status->id)->count();
-                if ($count) {
-                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->sum('sum')];
+                $transfers = DB::table('transfers')
+                    ->select('transfers.sum', 'transfers.user_id', 'transfers.status', 'statuses.name as status_name', 'users.name as user_name')
+                    ->leftJoin('users', 'transfers.user_id', '=', 'users.id')
+                    ->leftJoin('statuses', 'transfers.status', '=', 'statuses.id')
+                    ->where('transfers.status', $status->id)
+                    ->get();
+                if ($transfers->count()) {
+                    $answer[$status->name] = ['count' => $transfers->count(), 'sum' => $transfers->sum('sum'), 'countUserTransfers' => $transfers];
                 }
             }
-        } else if ($request->selectValue === 3 || $request->selectValue === 0) {
+        } else if ($value === 3 || $value === 0) {
             $date = date("Y-m-d", strtotime($request->values['day']));
             foreach ($statuses as $status) {
-                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', $date)->count();
-                if ($count) {
-                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', $date)->sum('sum')];
+                $transfers = DB::table('transfers')
+                    ->select('transfers.sum', 'transfers.user_id', 'transfers.status', 'statuses.name as status_name', 'users.name as user_name')
+                    ->leftJoin('users', 'transfers.user_id', '=', 'users.id')
+                    ->leftJoin('statuses', 'transfers.status', '=', 'statuses.id')
+                    ->where('transfers.status', $status->id)
+                    ->whereDate('transfers.created_at', $date)
+                    ->get();
+                if ($transfers->count()) {
+                    $answer[$status->name] = ['count' => $transfers->count(), 'sum' => $transfers->sum('sum'), 'countUserTransfers' => $transfers];
                 }
             }
-        } else if ($request->selectValue === 2) {
+        } else if ($value === 2) {
             $dateFrom = date("Y-m-d", strtotime($request->values['from']));
             $dateTo = date("Y-m-d", strtotime($request->values['to']));
             foreach ($statuses as $status) {
-                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->count();
-                if ($count) {
-                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->sum('sum')];
+                $transfers = DB::table('transfers')
+                    ->select('transfers.sum', 'transfers.user_id', 'transfers.status', 'statuses.name as status_name', 'users.name as user_name')
+                    ->leftJoin('users', 'transfers.user_id', '=', 'users.id')
+                    ->leftJoin('statuses', 'transfers.status', '=', 'statuses.id')
+                    ->where('transfers.status', $status->id)
+                    ->whereDate('transfers.created_at', '>=', $dateFrom)
+                    ->whereDate('transfers.created_at', '<=', $dateTo)
+                    ->get();
+                if ($transfers->count()) {
+                    $answer[$status->name] = ['count' => $transfers->count(), 'sum' => $transfers->sum('sum'), 'countUserTransfers' => $transfers];
                 }
             }
-        } else if ($request->selectValue === 0) {
+        } else if ($value === 0) {
             $dateFrom = date("Y-m-d", strtotime($request->values['from']));
             $dateTo = date("Y-m-d", strtotime($request->values['to']));
             foreach ($statuses as $status) {
-                $count = DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->count();
-                if ($count) {
-                    $answer[$status->name] = ['count' => $count, 'sum' => DB::table('transfers')->where('status', $status->id)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->sum('sum')];
+                $transfers = DB::table('transfers')
+                    ->select('transfers.sum', 'transfers.user_id', 'transfers.status', 'statuses.name as status_name', 'users.name as user_name')
+                    ->leftJoin('users', 'transfers.user_id', '=', 'users.id')
+                    ->leftJoin('statuses', 'transfers.status', '=', 'statuses.id')
+                    ->where('transfers.status', $status->id)
+                    ->whereDate('transfers.created_at', '>=', $dateFrom)
+                    ->whereDate('transfers.created_at', '<=', $dateTo)
+                    ->get();
+                if ($transfers->count()) {
+                    $answer[$status->name] = ['count' => $transfers->count(), 'sum' => $transfers->sum('sum'), 'countUserTransfers' => $transfers->pluck('user_id')];
                 }
             }
         }
