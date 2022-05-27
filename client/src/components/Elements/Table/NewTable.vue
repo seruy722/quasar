@@ -29,7 +29,7 @@
         />
 
         <DialogChooseDate2
-            :values="selected"
+            v-model:values="selected"
         />
       </div>
     </template>

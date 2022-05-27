@@ -46,7 +46,12 @@
 
               <q-item-section>
                 <q-item-label>
-                  {{ props.row.created_at.slice(2, 10).split('-').reverse().join('-') }}
+                  {{
+                    props.row.created_at.slice(2, 10)
+                        .split('-')
+                        .reverse()
+                        .join('-')
+                  }}
                 </q-item-label>
               </q-item-section>
 
@@ -241,7 +246,6 @@
     <DialogAddTransfer
         v-model:show-dialog="dialog"
         v-model:local-props="localProps"
-        v-model:selected="transferTableReactiveProperties.selected"
         :transfer-data="transferData"
     />
     <DialogAddCode v-model:show-dialog="showCodeDialog" />
@@ -585,10 +589,10 @@ export default {
           },
         ],
       },
-      transferTableReactiveProperties: {
-        selected: [],
-        visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at_date', 'issued_by_date', 'paid'],
-      },
+      // transferTableReactiveProperties: {
+      //   selected: [],
+      //   visibleColumns: ['client_name', 'receiver_name', 'receiver_phone', 'sum', 'method_label', 'user_name', 'notation', 'status_label', 'created_at_date', 'issued_by_date', 'paid'],
+      // },
       showDialogChooseDate: false,
       // dialogChooseDateData: null,
       dialogChooseDataForSend: {},
@@ -642,6 +646,9 @@ export default {
     this.$store.dispatch('transfers/setTransfers', []);
   },
   methods: {
+    view(val) {
+      devlog.log('DFF', val);
+    },
     setMethodLabel,
     fullDate,
     getTransfersHistory(transferID, cols) {
@@ -657,7 +664,7 @@ export default {
       if (!_.includes(_.get(event, 'target.classList'), 'select_checkbox')) {
         if (val) {
           this.localProps = val;
-          this.transferTableReactiveProperties.selected = [];
+          // this.transferTableReactiveProperties.selected = [];
           this.$q.loading.show();
           Promise.all([getClientCodes(this.$store)])
               .then(() => {

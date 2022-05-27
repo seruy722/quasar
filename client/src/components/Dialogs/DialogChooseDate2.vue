@@ -69,8 +69,8 @@ export default {
       default: () => ([]),
     },
   },
-
-  setup() {
+  emits: ['update:values'],
+  setup(props, { emit }) {
     const $q = useQuasar();
     const value = ref(null);
     const { dialogRef } = useDialogPluginComponent();
@@ -82,19 +82,20 @@ export default {
       onOKClick(val, dialog, values) {
         $q.loading.show();
         axiosInstance.post(getUrl('addTransfersToDebts'), {
-            ids: _.map(values, 'id'),
-            date: val,
-          })
-              .then(() => {
-                dialog.hide();
-                $q.loading.hide();
-                // this.showNotif('success', 'Данные успешно добавлены в таблицу долгов', 'center');
-              })
-              .catch(() => {
-                $q.loading.hide();
-                // this.showNotif('error', 'Произошла ошибка при добавлении данных', 'center');
-                devlog.error('Ошибка запроса - addTransfersToDebts');
-              });
+          ids: _.map(values, 'id'),
+          date: val,
+        })
+            .then(() => {
+              dialog.hide();
+              $q.loading.hide();
+              emit('update:values', []);
+              $q.notify({ message: 'Данные успешно добавлены в таблицу долгов', color: 'positive', position: 'top-right' });
+            })
+            .catch(() => {
+              $q.loading.hide();
+              $q.notify({ message: 'Данные успешно добавлены в таблицу долгов', color: 'negative', position: 'top-right' });
+              devlog.error('Ошибка запроса - addTransfersToDebts');
+            });
       },
     };
   },
