@@ -372,7 +372,7 @@ Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(functi
 Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(function () {
     Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'middleware' => 'throttle:10,10']], function () {
         Route::post('/login', 'login');
-//    Route::post('/register', 'Api\AuthController@register');
+        Route::post('/register', 'register')->middleware(['role_or_permission:admin']);
 //    Route::post('register-client-code', 'Api\AuthController@getCodeForRegister')->name('code');
 
 

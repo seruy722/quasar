@@ -83,3 +83,9 @@ export const optionsFilter = ((id, categories) => {
     }
     return id;
 });
+
+export const statusColor = (value) => {
+    devlog.log('VAAA', value);
+    const findLabel = _.find(getFromSettings('transferStatus'), { value }) || _.find(getFromSettings('transferStatus'), { label: value });
+    return _.get(findLabel, 'color');
+};

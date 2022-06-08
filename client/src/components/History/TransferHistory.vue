@@ -64,11 +64,16 @@
                       {{ history }}
                     </ItemLabel>
                     <ItemLabel
-                        v-else-if="i === 'status_label'"
+                        v-else-if="i === 'status'"
                     >
-                      <Badge :color="statusColor(history)">
-                        {{ history }}
+                      <Badge :color="statusColor(transfer['status_label'])">
+                        {{ transfer['status_label'] }}
                       </Badge>
+                    </ItemLabel>
+                    <ItemLabel
+                        v-else-if="i === 'method'"
+                    >
+                      {{ transfer['method_label'] }}
                     </ItemLabel>
                     <ItemLabel
                         v-else-if="i === 'receiver_phone'"
@@ -93,7 +98,7 @@
 <script>
 import TransferMixin from 'src/mixins/Transfer';
 import getFromSettings from 'src/tools/settings';
-import { phoneNumberFilter } from 'src/utils';
+import { phoneNumberFilter, statusColor } from 'src/utils';
 import TimelineEntry from 'src/components/Timeline/TimelineEntry.vue';
 import List from 'src/components/Elements/List/List.vue';
 import ItemSection from 'src/components/Elements/List/ItemSection.vue';
@@ -157,7 +162,10 @@ export default {
       return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
     },
     phoneNumberFilter,
+    statusColor,
     getTransfersHistory(transferID, cols) {
+      devlog.log('cols', cols);
+
       this.loading = true;
       this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`)
           .then(({ data: { transferHistory } }) => {

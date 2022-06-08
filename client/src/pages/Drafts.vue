@@ -169,7 +169,7 @@
     <div>
       <q-btn
           label="clearCache"
-          @click="clearCache"
+          @click="reg"
       />
     </div>
   </div>
@@ -519,8 +519,12 @@ export default {
       this.$axios.get(getUrl('drafts.clearCache'));
     },
     reg() {
-      /* eslint-disable */
-      this.$axios.get(getUrl('test'));
+      // this.$axios.post(getUrl('register'), {
+      //   name: 'dasha',
+      //   email: 'dasha@ya.ru',
+      //   password: 'pbJ767S3Ym',
+      //   password_confirmation: 'pbJ767S3Ym',
+      // });
     },
   },
 };
