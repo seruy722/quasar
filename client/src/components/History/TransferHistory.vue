@@ -1,11 +1,14 @@
 <template>
   <Dialog
-      :dialog="showDialog"
+      :dialog="show"
       :maximized="true"
       transition-show="slide-up"
       transition-hide="slide-down"
   >
-    <q-card style="max-width: 600px;">
+    <q-card
+        style="max-width: 600px;"
+        data-vue-component-name="TransferHistory"
+    >
       <q-card-section class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">История изменения данных</span>
         <div>
@@ -24,7 +27,6 @@
             indeterminate
         />
         <q-timeline
-            data-vue-component-name="TransferHistory"
             color="secondary"
         >
 
@@ -32,7 +34,7 @@
               v-for="(transfer, index) in transferHistoryData.historyData"
               :key="index"
               :subtitle="transfer.created_at"
-              :icon="$action[transfer.action]"
+              :icon="action[transfer.action]"
           >
             <List
                 separator
@@ -96,7 +98,6 @@
 </template>
 
 <script>
-import TransferMixin from 'src/mixins/Transfer';
 import getFromSettings from 'src/tools/settings';
 import { phoneNumberFilter, statusColor } from 'src/utils';
 import TimelineEntry from 'src/components/Timeline/TimelineEntry.vue';
@@ -115,6 +116,8 @@ import {
   setMethodLabel,
   setStatusLabel,
 } from 'src/utils/FrequentlyCalledFunctions';
+import { ref } from 'vue';
+import { axiosInstance } from 'boot/axios';
 
 export default {
   name: 'TransferHistory',
@@ -129,7 +132,6 @@ export default {
     Dialog,
     IconBtn,
   },
-  mixins: [TransferMixin],
   props: {
     show: {
       type: Boolean,
@@ -137,58 +139,49 @@ export default {
     },
   },
   emits: ['update:show'],
-  data() {
-    this.$action = getFromSettings('historyActionForIcon');
-    return {
-      loading: false,
-      transferHistoryData: {
-        cols: {},
-        transferHistory: [],
-      },
-    };
-  },
-  computed: {
-    showDialog: {
-      get: function get() {
-        return this.show;
-      },
-      set: function set(val) {
-        this.$emit('update:show', val);
-      },
-    },
-  },
-  methods: {
-    setAdditionalData(data) {
-      return setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by'])));
-    },
-    phoneNumberFilter,
-    statusColor,
-    getTransfersHistory(transferID, cols) {
-      devlog.log('cols', cols);
+  setup(props, { emit }) {
+    const action = getFromSettings('historyActionForIcon');
+    const loading = ref(false);
+    const transferHistoryData = ref({
+      cols: {},
+      transferHistory: [],
+    });
 
-      this.loading = true;
-      this.$axios.get(`${getUrl('transfersHistory')}/${transferID}`)
-          .then(({ data: { transferHistory } }) => {
-            if (!_.isEmpty(transferHistory)) {
-              devlog.log('transferHistory', transferHistory);
-              const historyData = prepareHistoryData(cols, transferHistory);
-              historyData.historyData = this.setAdditionalData(historyData.historyData);
-              this.transferHistoryData = historyData;
-            }
-            this.loading = false;
-          })
-          .catch(() => {
-            this.loading = false;
-            devlog.error('Ошибка при получении данных истории.');
-          });
-    },
-    close() {
-      this.transferHistoryData = {
+    const close = (() => {
+      transferHistoryData.value = {
         cols: {},
         transferHistory: [],
       };
-      this.showDialog = false;
-    },
+      emit('update:show', false);
+    });
+
+    const setAdditionalData = ((data) => setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by']))));
+    const getTransfersHistory = ((transferID, cols) => {
+      loading.value = true;
+      axiosInstance.get(`${getUrl('transfersHistory')}/${transferID}`)
+          .then(({ data: { transferHistory } }) => {
+            if (!_.isEmpty(transferHistory)) {
+              const historyData = prepareHistoryData(cols, transferHistory);
+              historyData.historyData = setAdditionalData(historyData.historyData);
+              transferHistoryData.value = historyData;
+            }
+            loading.value = false;
+          })
+          .catch(() => {
+            loading.value = false;
+            devlog.error('Ошибка при получении данных истории.');
+          });
+    });
+    return {
+      action,
+      loading,
+      transferHistoryData,
+      phoneNumberFilter,
+      statusColor,
+      close,
+      setAdditionalData,
+      getTransfersHistory,
+    };
   },
 };
 </script>
