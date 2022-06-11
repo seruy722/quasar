@@ -4,6 +4,7 @@
 /storage/*.key
 /vendor
 .env
+.yarn
 .phpunit.result.cache
 qus.zip
 destroyedDepndencies

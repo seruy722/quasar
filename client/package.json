@@ -5,6 +5,7 @@
   "productName": "App Cargo 007",
   "author": "Den",
   "private": true,
+  "packageManager": "yarn@3.2.1",
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0",
