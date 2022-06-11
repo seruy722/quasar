@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
     v-model:dialog="show"
     title="Клиент"
     :persistent="true"
@@ -86,7 +86,7 @@
         />
       </CardActions>
     </Card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
@@ -103,7 +103,7 @@ import {
 } from 'src/utils/FrequentlyCalledFunctions';
 import BaseSelect from 'src/components/Elements/BaseSelect.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import Separator from 'src/components/Separator.vue';
@@ -117,7 +117,7 @@ export default {
   components: {
     BaseSelect,
     SearchSelect,
-    Dialog,
+    DialogComponent,
     BaseBtn,
     BaseInput,
     Separator,

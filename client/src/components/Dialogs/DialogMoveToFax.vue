@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
     :dialog="show"
     title="Факсы"
     :persistent="true"
@@ -48,7 +48,7 @@
         />
       </q-card-section>
     </q-card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
@@ -57,7 +57,7 @@ import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import Separator from 'src/components/Separator.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
@@ -66,7 +66,7 @@ export default {
   components: {
     SearchSelect,
     BaseBtn,
-    Dialog,
+    DialogComponent,
     Separator,
     IconBtn,
   },

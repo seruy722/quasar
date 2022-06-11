@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
     v-model:dialog="show"
     :persistent="true"
     title="Запись"
@@ -180,7 +180,7 @@
         />
       </CardActions>
     </Card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
@@ -194,7 +194,7 @@ import {
   setFormatedDate,
   setChangeValue,
 } from 'src/utils/FrequentlyCalledFunctions';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import Separator from 'src/components/Separator.vue';
 import Card from 'src/components/Elements/Card/Card.vue';
@@ -214,7 +214,7 @@ import CheckBox from 'src/components/Elements/CheckBox.vue';
 export default {
   name: 'DialogFaxData',
   components: {
-    Dialog,
+    DialogComponent,
     DialogAddThings,
     IconBtn,
     BaseInput,

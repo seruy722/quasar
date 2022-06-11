@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
     v-model:dialog="show"
     title="Код"
     :persistent="true"
@@ -77,7 +77,7 @@
         />
       </CardActions>
     </Card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
@@ -85,7 +85,7 @@ import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import { setDefaultData, getCategories } from 'src/utils/FrequentlyCalledFunctions';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import Separator from 'src/components/Separator.vue';
@@ -98,7 +98,7 @@ import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 export default {
   name: 'DialogAddStatisticForMonth',
   components: {
-    Dialog,
+    DialogComponent,
     BaseBtn,
     BaseInput,
     Separator,

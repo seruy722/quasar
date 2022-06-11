@@ -15,7 +15,7 @@
       :list="cargo"
       style="max-width: 500px;margin:0 auto;"
     />
-    <Dialog
+    <DialogComponent
       :dialog="choosePeriodDialog"
       :persistent="true"
       transition-show="flip-up"
@@ -53,23 +53,23 @@
           />
         </q-card-actions>
       </q-card>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
 <script>
 import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
-import Cargo from 'components/Storehouse/Cargo.vue';
-import CountStorehouseCategories from 'components/Storehouse/CountStorehouseCategories.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
+import Cargo from 'src/components/Storehouse/Cargo.vue';
+import CountStorehouseCategories from 'src/components/Storehouse/CountStorehouseCategories.vue';
 
 export default {
   name: 'StorehouseInfo',
   components: {
     DateWithInputForCargo,
     OutlineBtn,
-    Dialog,
+    DialogComponent,
     Cargo,
     CountStorehouseCategories,
   },

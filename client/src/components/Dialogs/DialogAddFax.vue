@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
     v-model:dialog="show"
     title="Fax"
     :persistent="true"
@@ -127,7 +127,7 @@
         />
       </CardActions>
     </Card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
@@ -147,7 +147,7 @@ import {
   addTime,
 } from 'src/utils/formatDate';
 import { formatISO } from 'date-fns';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
@@ -162,7 +162,7 @@ import Date from 'src/components/Date.vue';
 export default {
   name: 'DialogAddFax',
   components: {
-    Dialog,
+    DialogComponent,
     OutlineBtn,
     BaseInput,
     SearchSelect,

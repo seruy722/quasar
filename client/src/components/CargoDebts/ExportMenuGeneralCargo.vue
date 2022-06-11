@@ -9,7 +9,7 @@
         @round-btn-click="show = true"
     />
 
-    <Dialog
+    <DialogComponent
         v-model:dialog="show"
         :persistent="true"
         title="Оплата"
@@ -79,7 +79,7 @@
               />
             </div>
           </div>
-          <Dialog
+          <DialogComponent
               :dialog="choosePeriodDialog"
               :persistent="true"
               transition-show="flip-up"
@@ -121,7 +121,7 @@
                 />
               </q-card-actions>
             </q-card>
-          </Dialog>
+          </DialogComponent>
         </q-card-section>
         <Separator />
         <q-card-actions align="right">
@@ -143,7 +143,7 @@
           />
         </q-card-actions>
       </q-card>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
@@ -154,7 +154,7 @@ import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import Separator from 'src/components/Separator.vue';
 import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
@@ -168,7 +168,7 @@ export default {
     IconBtn,
     BaseBtn,
     OutlineBtn,
-    Dialog,
+    DialogComponent,
     Separator,
     DateWithInputForCargo,
     SearchSelect,

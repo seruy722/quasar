@@ -1,17 +1,19 @@
 <template>
   <q-dialog
-    v-model="modelData"
-    :persistent="persistent"
-    :maximized="maximized"
-    :transition-show="transitionShow"
-    :transition-hide="transitionHide"
-    data-vue-component-name="DialogComponent"
+      v-model="modelData"
+      :persistent="persistent"
+      :maximized="maximized"
+      :transition-show="transitionShow"
+      :transition-hide="transitionHide"
+      data-vue-component-name="DialogComponent"
   >
     <slot />
   </q-dialog>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
   name: 'DialogComponent',
   props: {
@@ -37,15 +39,19 @@ export default {
     },
   },
   emits: ['update:dialog'],
-  computed: {
-    modelData: {
+  setup(props, { emit }) {
+    const modelData = computed({
       get: function getValue() {
-        return this.dialog;
+        return props.dialog;
       },
       set: function setValue(newValue) {
-        this.$emit('update:dialog', newValue);
+        emit('update:dialog', newValue);
       },
-    },
+    });
+
+    return {
+      modelData,
+    };
   },
 };
 </script>

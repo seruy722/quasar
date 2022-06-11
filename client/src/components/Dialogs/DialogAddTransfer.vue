@@ -1,139 +1,137 @@
 <template>
-  <div>
-    <Dialog
-        v-model:dialog="show"
-        :persistent="true"
-        @keyup.enter="checkErrors(transferData, updateData)"
-    >
-      <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
-        <q-card-section class="row justify-between bg-grey q-mb-sm">
-          <span class="text-h6">{{ dialogTitle }}</span>
-          <div>
-            <IconBtn
-                v-if="localProps.row"
-                dense
-                icon="history"
-                tooltip="История"
-                @icon-btn-click="getTransfersHistory(localProps.row.id, localProps.cols)"
-            />
-
-            <IconBtn
-                dense
-                icon="save"
-                tooltip="Сохранить"
-                color="positive"
-                @icon-btn-click="checkErrors(transferData, updateData)"
-            />
-
-            <IconBtn
-                dense
-                icon="clear"
-                tooltip="Закрыть"
-                color="negative"
-                @icon-btn-click="confirm(cancel, transferData)"
-            />
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <div
-              v-for="(item, index) in transferData"
-              :key="index"
-          >
-            <BaseInput
-                v-if="item.type === 'text'"
-                v-model.trim="item.value"
-                v-model:change-value="item.changeValue"
-                :label="item.label"
-                :type="item.type"
-                :mask="item.mask"
-                :unmasked-value="item.unmaskedValue"
-                dense
-                :field="item.field"
-                :errors="errorsData"
-            />
-
-            <BaseInput
-                v-else-if="item.type === 'number'"
-                v-model.number="item.value"
-                v-model:change-value="item.changeValue"
-                :label="item.label"
-                :type="item.type"
-                :mask="item.mask"
-                :unmasked-value="item.unmaskedValue"
-                dense
-                :field="item.field"
-                :errors="errorsData"
-            />
-
-            <SearchSelect
-                v-else-if="item.type === 'searchSelect'"
-                v-model="item.value"
-                v-model:change-value="item.changeValue"
-                dense
-                :options="item.options"
-                :label="item.label"
-                :field="item.field"
-                :func-load-data="item.funcLoadData"
-                :errors="errorsData"
-                @change="changeValue"
-            />
-
-            <BaseSelect
-                v-else-if="item.type === 'select'"
-                v-model="item.value"
-                v-model:change-value="item.changeValue"
-                :label="item.label"
-                :dense="true"
-                :options="item.options"
-                :field="item.field"
-                :errors="errorsData"
-            />
-
-            <BaseInput
-                v-else-if="item.type === 'date'"
-                v-model="item.value"
-                v-model:change-value="item.changeValue"
-                :label="item.label"
-                :errors="errorsData"
-                :field="item.field"
-                :readonly="item.readonly"
-                :mask="item.mask"
-                dense
-            >
-              <template #append>
-                <Date
-                    v-model:value="item.value"
-                    v-model:change-value="item.changeValue"
-                />
-              </template>
-            </BaseInput>
-          </div>
-        </q-card-section>
-
-        <Separator />
-        <q-card-actions>
-          <BaseBtn
-              label="Отмена"
-              color="negative"
-              @click-base-btn="confirm(cancel, transferData)"
+  <DialogComponent
+      v-model:dialog="show"
+      :persistent="true"
+      @keyup.enter="checkErrors(transferData, updateData)"
+  >
+    <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
+      <q-card-section class="row justify-between bg-grey q-mb-sm">
+        <span class="text-h6">{{ dialogTitle }}</span>
+        <div>
+          <IconBtn
+              v-if="localProps.row"
+              dense
+              icon="history"
+              tooltip="История"
+              @icon-btn-click="getTransfersHistory(localProps.row.id, localProps.cols)"
           />
-          <BaseBtn
-              label="Сохранить"
+
+          <IconBtn
+              dense
+              icon="save"
+              tooltip="Сохранить"
               color="positive"
-              @click-base-btn="checkErrors(transferData, updateData)"
+              @icon-btn-click="checkErrors(transferData, updateData)"
           />
-        </q-card-actions>
-      </q-card>
-    </Dialog>
-    <DialogAddCode
-        v-model:show-dialog="showCodeDialog"
-        v-model:new-code-data="newCodeData"
-    />
-    <TransferHistory
-        ref="transferHistoryComponent"
-        v-model:show="dialogHistory"
-    />
-  </div>
+
+          <IconBtn
+              dense
+              icon="clear"
+              tooltip="Закрыть"
+              color="negative"
+              @icon-btn-click="confirm(cancel, transferData)"
+          />
+        </div>
+      </q-card-section>
+      <q-card-section>
+        <div
+            v-for="(item, index) in transferData"
+            :key="index"
+        >
+          <BaseInput
+              v-if="item.type === 'text'"
+              v-model.trim="item.value"
+              v-model:change-value="item.changeValue"
+              :label="item.label"
+              :type="item.type"
+              :mask="item.mask"
+              :unmasked-value="item.unmaskedValue"
+              dense
+              :field="item.field"
+              :errors="errorsData"
+          />
+
+          <BaseInput
+              v-else-if="item.type === 'number'"
+              v-model.number="item.value"
+              v-model:change-value="item.changeValue"
+              :label="item.label"
+              :type="item.type"
+              :mask="item.mask"
+              :unmasked-value="item.unmaskedValue"
+              dense
+              :field="item.field"
+              :errors="errorsData"
+          />
+
+          <SearchSelect
+              v-else-if="item.type === 'searchSelect'"
+              v-model="item.value"
+              v-model:change-value="item.changeValue"
+              dense
+              :options="item.options"
+              :label="item.label"
+              :field="item.field"
+              :func-load-data="item.funcLoadData"
+              :errors="errorsData"
+              @change="changeValue"
+          />
+
+          <BaseSelect
+              v-else-if="item.type === 'select'"
+              v-model="item.value"
+              v-model:change-value="item.changeValue"
+              :label="item.label"
+              :dense="true"
+              :options="item.options"
+              :field="item.field"
+              :errors="errorsData"
+          />
+
+          <BaseInput
+              v-else-if="item.type === 'date'"
+              v-model="item.value"
+              v-model:change-value="item.changeValue"
+              :label="item.label"
+              :errors="errorsData"
+              :field="item.field"
+              :readonly="item.readonly"
+              :mask="item.mask"
+              dense
+          >
+            <template #append>
+              <Date
+                  v-model:value="item.value"
+                  v-model:change-value="item.changeValue"
+              />
+            </template>
+          </BaseInput>
+        </div>
+      </q-card-section>
+
+      <Separator />
+      <q-card-actions>
+        <BaseBtn
+            label="Отмена"
+            color="negative"
+            @click-base-btn="confirm(cancel, transferData)"
+        />
+        <BaseBtn
+            label="Сохранить"
+            color="positive"
+            @click-base-btn="checkErrors(transferData, updateData)"
+        />
+      </q-card-actions>
+    </q-card>
+  </DialogComponent>
+  <DialogAddCode
+      v-model:show-dialog="showCodeDialog"
+      v-model:new-code-data="newCodeData"
+  />
+  <TransferHistory
+      ref="transferHistoryComponent"
+      v-model:show="dialogHistory"
+  />
 </template>
 
 <script>
@@ -141,7 +139,7 @@ import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import { setChangeValue } from 'src/utils/FrequentlyCalledFunctions';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import Separator from 'src/components/Separator.vue';
@@ -155,7 +153,7 @@ import { defineAsyncComponent } from 'vue';
 export default {
   name: 'DialogAddTransfer',
   components: {
-    Dialog,
+    DialogComponent,
     BaseBtn,
     BaseInput,
     Separator,

@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
       :dialog="show"
       :maximized="true"
       transition-show="slide-up"
@@ -29,7 +29,6 @@
         <q-timeline
             color="secondary"
         >
-
           <TimelineEntry
               v-for="(transfer, index) in transferHistoryData.historyData"
               :key="index"
@@ -94,7 +93,7 @@
         </q-timeline>
       </q-card-section>
     </q-card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
@@ -107,7 +106,7 @@ import ItemLabel from 'src/components/Elements/List/ItemLabel.vue';
 import ListItem from 'src/components/Elements/List/ListItem.vue';
 import Badge from 'src/components/Elements/Badge.vue';
 import Separator from 'src/components/Separator.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import { getUrl } from 'src/tools/url';
 import {
@@ -129,7 +128,7 @@ export default {
     ListItem,
     Badge,
     Separator,
-    Dialog,
+    DialogComponent,
     IconBtn,
   },
   props: {

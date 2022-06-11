@@ -3,8 +3,8 @@
     data-vue-component-name="AddCustomers"
     class="row items-center justify-center"
   >
-    <Dialog v-model:dialog="dialogAddClientData">
-      <template #body>
+    <DialogComponent v-model:dialog="dialogAddClientData">
+      <template>
         <q-card-section>
           <div
             v-for="(input, index) in inputs"
@@ -34,7 +34,7 @@
           />
         </q-card-actions>
       </template>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
@@ -42,7 +42,7 @@
 import { getUrl } from 'src/tools/url';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseSelect from 'src/components/Elements/BaseSelect.vue';
 
 export default {
@@ -50,7 +50,7 @@ export default {
   components: {
     BaseInput,
     OutlineBtn,
-    Dialog,
+    DialogComponent,
     BaseSelect,
   },
   props: {

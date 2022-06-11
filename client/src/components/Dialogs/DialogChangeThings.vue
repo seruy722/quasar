@@ -2,7 +2,7 @@
   <div
     data-vue-component-name="DialogChangeThings"
   >
-    <Dialog
+    <DialogComponent
       v-model:dialog="thingsData.dialog"
       :persistent="true"
       title="Запись"
@@ -91,12 +91,12 @@
           />
         </CardActions>
       </Card>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
 <script>
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import Separator from 'src/components/Separator.vue';
 import Card from 'src/components/Elements/Card/Card.vue';
@@ -118,7 +118,7 @@ export default {
     ItemSection,
     ListItem,
     IconBtn,
-    Dialog,
+    DialogComponent,
     Card,
     CardActions,
     CardSection,

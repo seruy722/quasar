@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
       v-model:dialog="show"
       :persistent="true"
       title="Долг"
@@ -142,7 +142,7 @@
         />
       </q-card-actions>
     </q-card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
@@ -153,7 +153,7 @@ import {
   getCategories,
   getFaxes,
 } from 'src/utils/FrequentlyCalledFunctions';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import SquareBtn from 'src/components/Buttons/SquareBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
@@ -167,7 +167,7 @@ import DateComponent from 'src/components/Date.vue';
 export default {
   name: 'DialogAddCargoDebtEntry',
   components: {
-    Dialog,
+    DialogComponent,
     RoundBtn,
     SquareBtn,
     BaseInput,

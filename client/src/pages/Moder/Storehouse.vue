@@ -232,7 +232,7 @@
           :list="storehouseData"
           style="max-width: 500px;margin:0 auto;"
       />
-      <Dialog
+      <DialogComponent
           :dialog="dialogHistory"
           :persistent="true"
           :maximized="true"
@@ -253,13 +253,13 @@
             <StorehouseDataHistory :storehouse-history-data="storehouseHistoryData" />
           </q-card-section>
         </q-card>
-      </Dialog>
+      </DialogComponent>
     </PullRefresh>
     <DialogMoveToFax
         v-model:show="showMoveToFaxDialog"
         v-model:values="storehouseTableReactiveProperties.selected"
     />
-    <Dialog
+    <DialogComponent
         :dialog="dialogStorehouseInfo"
         :persistent="true"
         :maximized="true"
@@ -283,7 +283,7 @@
           <StorehouseInfo />
         </q-card-section>
       </q-card>
-    </Dialog>
+    </DialogComponent>
   </q-page>
 </template>
 
@@ -300,7 +300,7 @@ import {
 } from 'src/utils/FrequentlyCalledFunctions';
 import StorehouseDataMixin from 'src/mixins/StorehouseData';
 import Table from 'src/components/Elements/Table/Table.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import DialogAddEntryOnStorehouse from 'src/components/Dialogs/DialogAddEntryOnStorehouse.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
@@ -319,7 +319,7 @@ export default {
   name: 'StorehouseComponent',
   components: {
     Table,
-    Dialog,
+    DialogComponent,
     DialogAddEntryOnStorehouse,
     IconBtn,
     Menu,

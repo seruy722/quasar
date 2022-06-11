@@ -2,8 +2,8 @@
   <div
     data-vue-component-name="AddCode"
   >
-    <Dialog v-model:dialog="dialogAddClientData">
-      <template #body>
+    <DialogComponent v-model:dialog="dialogAddClientData">
+      <template>
         <q-card-section>
           <q-stepper
             ref="stepper"
@@ -97,7 +97,7 @@
           />
         </q-card-actions>
       </template>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
@@ -105,7 +105,7 @@
 import { getUrl } from 'src/tools/url';
 import OnKeyUp from 'src/mixins/OnKeyUp';
 import showNotif from 'src/mixins/showNotif';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import AddCustomers from 'src/components/Dialogs/AddCustomers.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
@@ -114,7 +114,7 @@ import BaseInput from 'src/components/Elements/BaseInput.vue';
 export default {
   name: 'AddCode',
   components: {
-    Dialog,
+    DialogComponent,
     AddCustomers,
     OutlineBtn,
     BaseBtn,

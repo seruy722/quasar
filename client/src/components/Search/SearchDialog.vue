@@ -16,7 +16,7 @@
         tooltip="Очистить"
         @round-btn-click="clearSearchData"
     />
-    <Dialog
+    <DialogComponent
         :dialog="showDialog"
         :persistent="true"
         @keyup.enter="filterMethod(searchValues)"
@@ -64,7 +64,7 @@
           />
         </q-card-actions>
       </q-card>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
@@ -77,7 +77,7 @@ import { useStore } from 'vuex';
 export default {
   name: 'SearchDialog',
   components: {
-    Dialog: defineAsyncComponent(() => import('src/components/Dialogs/Dialog.vue')),
+    DialogComponent: defineAsyncComponent(() => import('src/components/Dialogs/DialogComponent.vue')),
     BaseBtn: defineAsyncComponent(() => import('src/components/Buttons/BaseBtn.vue')),
     Separator: defineAsyncComponent(() => import('src/components/Separator.vue')),
     BaseSelect: defineAsyncComponent(() => import('src/components/Elements/BaseSelect.vue')),

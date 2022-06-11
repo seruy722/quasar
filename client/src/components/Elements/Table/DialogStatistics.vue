@@ -6,7 +6,7 @@
         icon="trending_up"
         @round-btn-click="show = true"
     />
-    <Dialog
+    <DialogComponent
         :dialog="show"
         :persistent="true"
         :maximized="true"
@@ -31,7 +31,7 @@
           <TransfersStatistics />
         </q-card-section>
       </q-card>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
@@ -41,7 +41,7 @@ import { defineAsyncComponent, ref } from 'vue';
 export default {
   name: 'DialogStatistics',
   components: {
-    Dialog: defineAsyncComponent(() => import('src/components/Dialogs/Dialog.vue')),
+    DialogComponent: defineAsyncComponent(() => import('src/components/Dialogs/DialogComponent.vue')),
     TransfersStatistics: defineAsyncComponent(() => import('src/components/Transfers/TransfersStatistics.vue')),
     IconBtn: defineAsyncComponent(() => import('src/components/Buttons/IconBtn.vue')),
     RoundBtn: defineAsyncComponent(() => import('src/components/Buttons/RoundBtn.vue')),

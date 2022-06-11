@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog
+    <DialogComponent
       v-model:dialog="show"
       title="Код"
       :persistent="true"
@@ -49,7 +49,7 @@
           />
         </CardActions>
       </Card>
-    </Dialog>
+    </DialogComponent>
 
     <DialogAddClient
       v-model:show-dialog="showClientDialog"
@@ -68,7 +68,7 @@ import {
 } from 'src/utils/FrequentlyCalledFunctions';
 import { defineAsyncComponent } from 'vue';
 import Card from 'src/components/Elements/Card/Card.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import Separator from 'src/components/Separator.vue';
@@ -79,7 +79,7 @@ import IconBtn from 'src/components/Buttons/IconBtn.vue';
 export default {
   name: 'DialogAddCode',
   components: {
-    Dialog,
+    DialogComponent,
     BaseBtn,
     BaseInput,
     DialogAddClient: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddClient.vue')),

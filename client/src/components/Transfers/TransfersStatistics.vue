@@ -127,7 +127,7 @@
       </q-item>
     </q-list>
 
-    <Dialog
+    <DialogComponent
         :dialog="choosePeriodDialog"
         :persistent="true"
         transition-show="flip-up"
@@ -170,14 +170,14 @@
           />
         </q-card-actions>
       </q-card>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
 <script>
 import { format } from 'date-fns';
 import { numberFormat, statusColor2 } from 'src/utils';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 import DateWithInput from 'src/components/DateWithInput.vue';
 import { getUrl } from 'src/tools/url';
@@ -187,7 +187,7 @@ export default {
   components: {
     DateWithInput,
     OutlineBtn,
-    Dialog,
+    DialogComponent,
   },
   data() {
     return {

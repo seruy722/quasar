@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog
+    <DialogComponent
       :dialog="show"
       title="Код"
       :persistent="true"
@@ -43,13 +43,13 @@
           />
         </q-card-actions>
       </q-card>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
 <script>
 import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import Separator from 'src/components/Separator.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
@@ -58,7 +58,7 @@ export default {
   name: 'DialogChooseDate',
   components: {
     DateWithInputForCargo,
-    Dialog,
+    DialogComponent,
     BaseBtn,
     Separator,
     IconBtn,

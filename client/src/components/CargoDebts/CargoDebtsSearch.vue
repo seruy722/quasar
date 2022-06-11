@@ -40,7 +40,7 @@
         @click="showDialogChooseDate = true"
       />
     </div>
-    <Dialog
+    <DialogComponent
       :dialog="choosePeriodDialog"
       :persistent="true"
       transition-show="flip-up"
@@ -82,8 +82,8 @@
           />
         </q-card-actions>
       </q-card>
-    </Dialog>
-    <Dialog
+    </DialogComponent>
+    <DialogComponent
       :dialog="showDialogChooseDate"
       :persistent="true"
       transition-show="flip-up"
@@ -132,7 +132,7 @@
           </q-list>
         </q-card-section>
       </q-card>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
@@ -140,7 +140,7 @@
 import { format } from 'date-fns';
 import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import Date from 'src/components/Date.vue';
 
 export default {
@@ -148,7 +148,7 @@ export default {
   components: {
     DateWithInputForCargo,
     OutlineBtn,
-    Dialog,
+    DialogComponent,
     Date,
   },
   props: {

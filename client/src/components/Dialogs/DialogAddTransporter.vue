@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
     v-model:dialog="show"
     title="Transporter"
     :persistent="true"
@@ -45,14 +45,14 @@
         />
       </CardActions>
     </Card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
 import { getUrl } from 'src/tools/url';
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import Separator from 'src/components/Separator.vue';
 import Card from 'src/components/Elements/Card/Card.vue';
@@ -64,7 +64,7 @@ import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 export default {
   name: 'DialogAddTransporter',
   components: {
-    Dialog,
+    DialogComponent,
     OutlineBtn,
     BaseInput,
     Card,

@@ -179,7 +179,7 @@
           v-model:show-dialog="showDialogAddNewCodePrice"
       />
 
-      <Dialog
+      <DialogComponent
           :dialog="dialogHistory"
           :persistent="true"
           :maximized="true"
@@ -202,8 +202,8 @@
             <CodePriceHistory :history-data="codePriceHistoryData" />
           </q-card-section>
         </q-card>
-      </Dialog>
-      <Dialog
+      </DialogComponent>
+      <DialogComponent
           :dialog="dialogViewCodeData"
           :persistent="true"
           transition-show="slide-up"
@@ -308,7 +308,7 @@
             </q-item>
           </q-list>
         </q-card>
-      </Dialog>
+      </DialogComponent>
     </PullRefresh>
   </q-page>
 </template>
@@ -331,7 +331,7 @@ import PullRefresh from 'src/components/PullRefresh.vue';
 import DialogAddCodePrice from 'src/components/Dialogs/DialogAddCodePrice.vue';
 import CodePriceHistory from 'src/components/History/CodePriceHistory.vue';
 import DialogAddNewCodePrice from 'src/components/Dialogs/DialogAddNewCodePrice.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 
 export default {
   name: 'CodePrice',
@@ -341,7 +341,7 @@ export default {
     IconBtn,
     DialogAddCodePrice,
     CodePriceHistory,
-    Dialog,
+    DialogComponent,
     DialogAddNewCodePrice,
     PullRefresh,
     RoundBtn,

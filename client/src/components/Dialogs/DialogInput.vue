@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
     :dialog="show"
     title="Удаление доступов"
     :persistent="true"
@@ -33,7 +33,7 @@
         />
       </q-card-actions>
     </q-card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
@@ -42,7 +42,7 @@ import { defineAsyncComponent } from 'vue';
 export default {
   name: 'DialogInput',
   components: {
-    Dialog: defineAsyncComponent(() => import('src/components/Dialogs/Dialog.vue')),
+    DialogComponent: defineAsyncComponent(() => import('src/components/Dialogs/DialogComponent.vue')),
     BaseBtn: defineAsyncComponent(() => import('src/components/Buttons/BaseBtn.vue')),
     Separator: defineAsyncComponent(() => import('src/components/Separator.vue')),
   },

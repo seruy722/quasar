@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
       :dialog="show"
       title="Записи"
       :persistent="true"
@@ -281,12 +281,12 @@
         v-model:entry-data="dialogAddCargoDebtEntryData"
         v-model:show-dialog="showDialogAddCargoDebtEntry"
     />
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import Table from 'src/components/Elements/Table/Table.vue';
 import CountCargoCategories from 'src/components/CargoDebts/CountCargoCategories.vue';
@@ -297,7 +297,7 @@ export default {
   name: 'DialogViewCargoData',
   components: {
     BaseBtn,
-    Dialog,
+    DialogComponent,
     IconBtn,
     Table,
     CountCargoCategories,

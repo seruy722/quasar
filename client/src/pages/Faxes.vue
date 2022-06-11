@@ -238,7 +238,7 @@
         v-model:show-dialog="showFaxDialog"
         v-model:entry-data="localFaxesEditData"
     />
-    <Dialog
+    <DialogComponent
         :dialog="dialogHistory"
         :persistent="true"
         :maximized="true"
@@ -259,7 +259,7 @@
           <FaxesHistory :fax-history-data="faxHistoryData" />
         </q-card-section>
       </q-card>
-    </Dialog>
+    </DialogComponent>
     <DialogNotDeliveredCargo v-model:show="showDialogNotDeliveredCargo" />
   </q-page>
 </template>
@@ -274,7 +274,7 @@ import Table from 'src/components/Elements/Table/Table.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import List from 'src/components/Elements/List/List.vue';
 import DialogAddFax from 'src/components/Dialogs/DialogAddFax.vue';
 import Menu from 'src/components/Menu.vue';
@@ -293,7 +293,7 @@ export default {
     IconBtn,
     Menu,
     FaxesHistory,
-    Dialog,
+    DialogComponent,
     PullRefresh,
     UpdateBtn,
     DialogNotDeliveredCargo,

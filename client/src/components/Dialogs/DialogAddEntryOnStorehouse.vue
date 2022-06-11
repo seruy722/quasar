@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
     v-model:dialog="show"
     :persistent="true"
     title="Запись"
@@ -172,7 +172,7 @@
         />
       </CardActions>
     </Card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
@@ -186,7 +186,7 @@ import {
   setFormatedDate,
   setChangeValue,
 } from 'src/utils/FrequentlyCalledFunctions';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import DialogAddThings from 'src/components/Dialogs/DialogAddThings.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
@@ -207,7 +207,7 @@ import Menu from 'src/components/Menu.vue';
 export default {
   name: 'DialogAddEntryOnStorehouse',
   components: {
-    Dialog,
+    DialogComponent,
     DialogAddThings,
     IconBtn,
     BaseInput,

@@ -183,7 +183,7 @@
         </PageScroller>
       </Fab>
     </PageSticky>
-    <Dialog
+    <DialogComponent
       :dialog="dialog"
       :persistent="true"
     >
@@ -288,7 +288,7 @@
           />
         </q-card-actions>
       </q-card>
-    </Dialog>
+    </DialogComponent>
   </q-page>
 </template>
 
@@ -321,7 +321,7 @@ import Fab from 'src/components/Elements/Fab.vue';
 import FabAction from 'src/components/Elements/FabAction.vue';
 import PageScroller from 'src/components/PageScroller.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import Date from 'src/components/Date.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import Separator from 'src/components/Separator.vue';
@@ -332,7 +332,7 @@ export default {
   name: 'TransfersClient',
   components: {
     Table,
-    Dialog,
+    DialogComponent,
     Date,
     BaseInput,
     IconBtn,

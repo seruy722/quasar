@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
     v-model:dialog="show"
     title="Клиент"
     :persistent="true"
@@ -105,13 +105,13 @@
         />
       </q-card-actions>
     </q-card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
 import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
 import showNotif from 'src/mixins/showNotif';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
@@ -119,7 +119,7 @@ import IconBtn from 'src/components/Buttons/IconBtn.vue';
 export default {
   name: 'DialogAddDocuments',
   components: {
-    Dialog,
+    DialogComponent,
     BaseBtn,
     SearchSelect,
     IconBtn,

@@ -218,7 +218,7 @@
           </q-tr>
         </template>
       </Table>
-      <Dialog
+      <DialogComponent
           :dialog="dialog"
           :persistent="true"
       >
@@ -357,10 +357,10 @@
           </q-item-section>
           <Separator />
         </q-card>
-      </Dialog>
+      </DialogComponent>
       <DialogAddCode v-model:show-dialog="showCodeDialog" />
 
-      <Dialog
+      <DialogComponent
           :dialog="dialogHistory"
           :persistent="true"
           :maximized="true"
@@ -383,7 +383,7 @@
             <CodeHistory :history-data="transferHistoryData" />
           </q-card-section>
         </q-card>
-      </Dialog>
+      </DialogComponent>
     </PullRefresh>
     <DialogAddClient
         v-model:show-dialog="showClientDialog"
@@ -411,7 +411,7 @@ import Table from 'components/Elements/Table/Table.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import PullRefresh from 'src/components/PullRefresh.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import Separator from 'src/components/Separator.vue';
 import DialogAddCode from 'src/components/Dialogs/DialogAddCode.vue';
 import DialogAddClient from 'src/components/Dialogs/DialogAddClient.vue';
@@ -423,7 +423,7 @@ export default {
   name: 'CodesPage',
   components: {
     Table,
-    Dialog,
+    DialogComponent,
     IconBtn,
     Separator,
     DialogAddCode,

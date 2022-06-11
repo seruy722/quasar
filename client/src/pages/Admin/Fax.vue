@@ -390,7 +390,7 @@
         v-model:show-dialog="showFaxDataDialog"
         v-model:entry-data="localFaxEditData"
     />
-    <Dialog
+    <DialogComponent
         :dialog="dialogHistory"
         :persistent="true"
         :maximized="true"
@@ -411,8 +411,8 @@
           <StorehouseDataHistory :storehouse-history-data="storehouseHistoryData" />
         </q-card-section>
       </q-card>
-    </Dialog>
-    <Dialog
+    </DialogComponent>
+    <DialogComponent
         :dialog="dialogTransferFromStorehouse"
         :persistent="true"
         :maximized="true"
@@ -522,8 +522,8 @@
           </q-splitter>
         </q-card-section>
       </q-card>
-    </Dialog>
-    <Dialog
+    </DialogComponent>
+    <DialogComponent
         :dialog="dialogHistory"
         :persistent="true"
         :maximized="true"
@@ -546,7 +546,7 @@
           />
         </q-card-section>
       </q-card>
-    </Dialog>
+    </DialogComponent>
     <q-dialog
         v-model="dialogSelectDeliveredPlace"
         persistent
@@ -613,7 +613,7 @@ import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import DialogFaxData from 'src/components/Dialogs/DialogFaxData.vue';
 import StorehouseDataHistory from 'src/components/History/StorehouseDataHistory.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import CountCategories from 'src/components/CountCategories.vue';
 import PopupEdit from 'src/components/PopupEdit.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
@@ -628,7 +628,7 @@ export default {
     BaseBtn,
     DialogFaxData,
     StorehouseDataHistory,
-    Dialog,
+    DialogComponent,
     CountCategories,
     PopupEdit,
     SearchSelect,

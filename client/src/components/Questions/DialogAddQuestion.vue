@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
     v-model:dialog="show"
     title="Клиент"
     :persistent="true"
@@ -66,7 +66,7 @@
         />
       </q-card-actions>
     </q-card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
@@ -79,7 +79,7 @@ import {
   getClientCodes,
 } from 'src/utils/FrequentlyCalledFunctions';
 import getFromSettings from 'src/tools/settings';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 import Separator from 'src/components/Separator.vue';
@@ -89,7 +89,7 @@ import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 export default {
   name: 'DialogAddQuestion',
   components: {
-    Dialog,
+    DialogComponent,
     BaseInput,
     SearchSelect,
     Separator,

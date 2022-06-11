@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
       v-model:dialog="show"
       :persistent="true"
       title="Опись вложения"
@@ -109,13 +109,13 @@
         </div>
       </CardActions>
     </Card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import { setDefaultData, getThingsList } from 'src/utils/FrequentlyCalledFunctions';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
@@ -130,7 +130,7 @@ import SelectChips from 'src/components/Elements/SelectChips.vue';
 export default {
   name: 'DialogAddThings',
   components: {
-    Dialog,
+    DialogComponent,
     IconBtn,
     OutlineBtn,
     BaseInput,

@@ -17,7 +17,7 @@
     <div>
       <div>Загрузка карго на сервер</div>
       <UploadFileToServer :upload-data="uploadData" />
-      <Dialog v-model:dialog="dialogUploadCargoData">
+      <DialogComponent v-model:dialog="dialogUploadCargoData">
         <q-separator />
 
         <q-card-actions align="right">
@@ -26,12 +26,12 @@
               @click-outline-btn="dialogUploadCargoData.value = false"
           />
         </q-card-actions>
-      </Dialog>
+      </DialogComponent>
     </div>
 
     <div>
       <div>Загрузка долгов на сервер</div>
-      <Dialog v-model:dialog="dialogUploadDebtsData">
+      <DialogComponent v-model:dialog="dialogUploadDebtsData">
         <template #body>
           <q-card-section>
             <UploadFileToServer :upload-data="uploadDebtsData" />
@@ -46,12 +46,12 @@
             />
           </q-card-actions>
         </template>
-      </Dialog>
+      </DialogComponent>
     </div>
 
     <div>
       <div>Загрузка склада на сервер</div>
-      <Dialog v-model:dialog="dialogUploadSkladData">
+      <DialogComponent v-model:dialog="dialogUploadSkladData">
         <template #body>
           <q-card-section>
             <UploadFileToServer :upload-data="uploadSkladData" />
@@ -66,7 +66,7 @@
             />
           </q-card-actions>
         </template>
-      </Dialog>
+      </DialogComponent>
     </div>
 
     <div>
@@ -178,7 +178,7 @@
 <script>
 import { getUrl } from 'src/tools/url';
 import showNotif from 'src/mixins/showNotif';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import AddCode from 'src/components/Dialogs/AddCode.vue';
 import UploadFileToServer from 'src/components/Upload/UploadFileToServer.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
@@ -186,7 +186,7 @@ import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 export default {
   name: 'DraftsComponent',
   components: {
-    Dialog,
+    DialogComponent,
     AddCode,
     UploadFileToServer,
     OutlineBtn,

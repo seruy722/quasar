@@ -1,5 +1,5 @@
 <template>
-  <Dialog
+  <DialogComponent
       v-model:dialog="show"
       :persistent="true"
       title="Оплата"
@@ -137,14 +137,14 @@
         />
       </q-card-actions>
     </q-card>
-  </Dialog>
+  </DialogComponent>
 </template>
 
 <script>
 import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
@@ -157,7 +157,7 @@ import SquareBtn from 'src/components/Buttons/SquareBtn.vue';
 export default {
   name: 'DialogAddDebtPayEntry',
   components: {
-    Dialog,
+    DialogComponent,
     IconBtn,
     BaseInput,
     SearchSelect,

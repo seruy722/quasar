@@ -381,7 +381,7 @@
         v-model:entry-data="dialogAddCargoDebtEntryData"
         v-model:show-dialog="showDialogAddCargoDebtEntry"
     />
-    <Dialog
+    <DialogComponent
         :dialog="dialogCalculateClient"
         :persistent="true"
         :maximized="true"
@@ -402,7 +402,7 @@
           <CalculateClient :calculate-data="calculateData" />
         </q-card-section>
       </q-card>
-    </Dialog>
+    </DialogComponent>
   </div>
 </template>
 
@@ -422,7 +422,7 @@ import DialogAddCargoPayEntry from 'src/components/CargoDebts/Dialogs/DialogAddC
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import CalculateClient from 'src/components/CargoDebts/CalculateClient.vue';
-import Dialog from 'src/components/Dialogs/Dialog.vue';
+import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 
 export default {
   name: 'CargoComponent',
@@ -438,7 +438,7 @@ export default {
     DialogAddCargoPayEntry,
     IconBtn,
     CalculateClient,
-    Dialog,
+    DialogComponent,
     RoundBtn,
   },
   mixins: [ExportDataMixin, showNotif],
