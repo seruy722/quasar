@@ -4,8 +4,6 @@ const webpack = require('webpack');
 
 module.exports = function ctxFunc(ctx) {
     return {
-        // app boot file (/src/boot)
-        // --> boot files are part of "main.js"
         boot: [
             'i18n',
             'axios',
@@ -21,7 +19,6 @@ module.exports = function ctxFunc(ctx) {
         ],
 
         framework: {
-            // iconSet: 'ionicons-v4',
             lang: 'ru', // Quasar language
 
             // Quasar plugins
@@ -40,11 +37,6 @@ module.exports = function ctxFunc(ctx) {
 
         build: {
             scopeHoisting: true,
-            // vueRouterMode: 'history',
-            // vueCompiler: true,
-            // gzip: true,
-            // analyze: true,
-            // extractCSS: false,
             extendWebpack(cfg) {
                 cfg.plugins.push(
                   new webpack.ProvidePlugin({
@@ -60,8 +52,6 @@ module.exports = function ctxFunc(ctx) {
         },
 
         devServer: {
-            // https: true,
-            // port: 8080,
             open: false, // opens browser window automatically
         },
 
