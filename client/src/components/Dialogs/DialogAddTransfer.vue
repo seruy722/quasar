@@ -32,7 +32,10 @@
           />
         </div>
       </q-card-section>
-      <q-card-section>
+      <q-card-section
+          style="max-height: 70vh"
+          class="scroll"
+      >
         <div
             v-for="(item, index) in transferData"
             :key="index"
