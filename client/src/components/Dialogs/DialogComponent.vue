@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'DialogComponent',
   props: {
     dialog: {
@@ -53,5 +53,5 @@ export default {
       modelData,
     };
   },
-};
+});
 </script>

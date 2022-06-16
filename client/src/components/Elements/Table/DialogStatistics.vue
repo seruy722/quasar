@@ -36,9 +36,9 @@
 </template>
 
 <script>
-import { defineAsyncComponent, ref } from 'vue';
+import { defineAsyncComponent, ref, defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'DialogStatistics',
   components: {
     DialogComponent: defineAsyncComponent(() => import('src/components/Dialogs/DialogComponent.vue')),
@@ -46,18 +46,11 @@ export default {
     IconBtn: defineAsyncComponent(() => import('src/components/Buttons/IconBtn.vue')),
     RoundBtn: defineAsyncComponent(() => import('src/components/Buttons/RoundBtn.vue')),
   },
-  props: {
-    values: {
-      type: Array,
-      default: () => [],
-      require: true,
-    },
-  },
   setup() {
     const show = ref(false);
     return {
       show,
     };
   },
-};
+});
 </script>

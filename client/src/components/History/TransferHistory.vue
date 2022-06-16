@@ -1,4 +1,9 @@
 <template>
+  <RoundBtn
+      icon="history"
+      tooltip="История"
+      @round-btn-click="show = true"
+  />
   <DialogComponent
       :dialog="show"
       :maximized="true"
@@ -12,12 +17,11 @@
       <q-card-section class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">История изменения данных</span>
         <div>
-          <IconBtn
+          <CloseBtn
               dense
               icon="clear"
               tooltip="Закрыть"
-              color="negative"
-              @icon-btn-click="close"
+              @close-btn-click="close"
           />
         </div>
       </q-card-section>
@@ -107,7 +111,7 @@ import ListItem from 'src/components/Elements/List/ListItem.vue';
 import Badge from 'src/components/Elements/Badge.vue';
 import Separator from 'src/components/Separator.vue';
 import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import CloseBtn from 'src/components/Buttons/CloseBtn.vue';
 import { getUrl } from 'src/tools/url';
 import {
   prepareHistoryData,
@@ -115,10 +119,11 @@ import {
   setMethodLabel,
   setStatusLabel,
 } from 'src/utils/FrequentlyCalledFunctions';
-import { ref } from 'vue';
+import { ref, defineComponent, watch } from 'vue';
 import { axiosInstance } from 'boot/axios';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 
-export default {
+export default defineComponent({
   name: 'TransferHistory',
   components: {
     TimelineEntry,
@@ -129,18 +134,23 @@ export default {
     Badge,
     Separator,
     DialogComponent,
-    IconBtn,
+    CloseBtn,
+    RoundBtn,
   },
   props: {
-    show: {
-      type: Boolean,
-      default: false,
+    transferId: {
+      type: Number,
+      default: 0,
+    },
+    cols: {
+      type: Array,
+      default: () => [],
     },
   },
-  emits: ['update:show'],
-  setup(props, { emit }) {
+  setup(props) {
     const action = getFromSettings('historyActionForIcon');
     const loading = ref(false);
+    const show = ref(false);
     const transferHistoryData = ref({
       cols: {},
       transferHistory: [],
@@ -151,25 +161,30 @@ export default {
         cols: {},
         transferHistory: [],
       };
-      emit('update:show', false);
+      show.value = false;
     });
 
     const setAdditionalData = ((data) => setMethodLabel(setStatusLabel(setFormatedDate(data, ['created_at', 'issued_by']))));
-    const getTransfersHistory = ((transferID, cols) => {
-      loading.value = true;
-      axiosInstance.get(`${getUrl('transfersHistory')}/${transferID}`)
-          .then(({ data: { transferHistory } }) => {
-            if (!_.isEmpty(transferHistory)) {
-              const historyData = prepareHistoryData(cols, transferHistory);
-              historyData.historyData = setAdditionalData(historyData.historyData);
-              transferHistoryData.value = historyData;
-            }
-            loading.value = false;
-          })
-          .catch(() => {
-            loading.value = false;
-            devlog.error('Ошибка при получении данных истории.');
-          });
+
+    watch(show, (val) => {
+      if (val) {
+        (function getTransfersHistory(transferId, cols) {
+          loading.value = true;
+          axiosInstance.get(`${getUrl('transfersHistory')}/${transferId}`)
+              .then(({ data: { transferHistory } }) => {
+                if (!_.isEmpty(transferHistory)) {
+                  const historyData = prepareHistoryData(cols, transferHistory);
+                  historyData.historyData = setAdditionalData(historyData.historyData);
+                  transferHistoryData.value = historyData;
+                }
+                loading.value = false;
+              })
+              .catch(() => {
+                loading.value = false;
+                devlog.error('Ошибка при получении данных истории.');
+              });
+        }(props.transferId, props.cols));
+      }
     });
     return {
       action,
@@ -178,9 +193,8 @@ export default {
       phoneNumberFilter,
       statusColor,
       close,
-      setAdditionalData,
-      getTransfersHistory,
+      show,
     };
   },
-};
+});
 </script>

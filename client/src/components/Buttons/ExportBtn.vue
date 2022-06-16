@@ -20,13 +20,14 @@
 <script>
 import { getUrl } from 'src/tools/url';
 import exportRequest from 'src/utils/ExportRequest';
-import { ref } from 'vue';
+import { ref, defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'ExportBtn',
   props: {
     url: {
       type: String,
+      default: null,
       require: true,
     },
     title: {
@@ -51,10 +52,11 @@ export default {
               loading.value = false;
             })
             .catch(() => {
+              devlog.error('exportRequest');
               loading.value = false;
             });
       },
     };
   },
-};
+});
 </script>

@@ -4,32 +4,31 @@
       :persistent="true"
       @keyup.enter="checkErrors(transferData, updateData)"
   >
-    <q-card style="min-width: 320px;width: 100%;max-width: 500px;">
+    <q-card
+        data-vue-component-name="DialogAddTransfer"
+        style="min-width: 320px;width: 100%;max-width: 500px;"
+    >
       <q-card-section class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">{{ dialogTitle }}</span>
-        <div>
-          <IconBtn
+        <div class="q-gutter-sm">
+          <TransferHistory
               v-if="localProps.row"
-              dense
-              icon="history"
-              tooltip="История"
-              @icon-btn-click="getTransfersHistory(localProps.row.id, localProps.cols)"
+              :transfer-id="localProps.row.id"
+              :cols="localProps.cols"
           />
 
-          <IconBtn
-              dense
+          <RoundBtn
               icon="save"
               tooltip="Сохранить"
               color="positive"
-              @icon-btn-click="checkErrors(transferData, updateData)"
+              @round-btn-click="checkErrors(transferData, updateData)"
           />
 
-          <IconBtn
-              dense
+          <RoundBtn
               icon="clear"
               tooltip="Закрыть"
               color="negative"
-              @icon-btn-click="confirm(cancel, transferData)"
+              @round-btn-click="confirm(cancel, transferData)"
           />
         </div>
       </q-card-section>
@@ -74,7 +73,7 @@
               :field="item.field"
               :func-load-data="item.funcLoadData"
               :errors="errorsData"
-              @change="changeValue"
+              @change="changeValueFunc"
           />
 
           <BaseSelect
@@ -128,43 +127,48 @@
       v-model:show-dialog="showCodeDialog"
       v-model:new-code-data="newCodeData"
   />
-  <TransferHistory
-      ref="transferHistoryComponent"
-      v-model:show="dialogHistory"
-  />
 </template>
 
 <script>
 import { getUrl } from 'src/tools/url';
-import CheckErrorsMixin from 'src/mixins/CheckErrors';
-import showNotif from 'src/mixins/showNotif';
+import CheckErrorsFunc from 'src/utils/CheckErrors.js';
+import showNotif from 'src/utils/showNotif.js';
 import { setChangeValue } from 'src/utils/FrequentlyCalledFunctions';
 import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import Separator from 'src/components/Separator.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 import BaseSelect from 'src/components/Elements/BaseSelect.vue';
 import { addTime, reverseDate } from 'src/utils/formatDate';
 import { formatISO } from 'date-fns';
-import { defineAsyncComponent } from 'vue';
+import {
+  defineAsyncComponent,
+  defineComponent,
+  ref,
+  reactive,
+  computed,
+  watch,
+} from 'vue';
+import { axiosInstance } from 'boot/axios';
+import { useQuasar } from 'quasar';
+import { useStore } from "vuex";
 
-export default {
+export default defineComponent({
   name: 'DialogAddTransfer',
   components: {
     DialogComponent,
     BaseBtn,
     BaseInput,
     Separator,
-    IconBtn,
+    RoundBtn,
     SearchSelect,
     BaseSelect,
     Date: defineAsyncComponent(() => import('src/components/Date.vue')),
     DialogAddCode: defineAsyncComponent(() => import('src/components/Dialogs/DialogAddCode.vue')),
     TransferHistory: defineAsyncComponent(() => import('src/components/History/TransferHistory.vue')),
   },
-  mixins: [showNotif, CheckErrorsMixin],
   props: {
     showDialog: {
       type: Boolean,
@@ -184,54 +188,49 @@ export default {
     },
   },
   emits: ['update:showDialog', 'update:localProps', 'update:selected'],
-  data() {
-    return {
-      showCodeDialog: false,
-      newCodeData: {},
-      dialogHistory: false,
-    };
-  },
-  computed: {
-    dialogTitle() {
-      return _.get(this.localProps, 'row.client_name') || 'Новый перевод';
-    },
-    show: {
+  setup(props, { emit }) {
+    const $q = useQuasar();
+    const transferHistoryComponent = ref(null);
+    const showCodeDialog = ref(false);
+    const newCodeData = reactive({});
+    const { errorsData, checkErrors } = CheckErrorsFunc();
+
+    const dialogTitle = computed(() => _.get(props.localProps, 'row.client_name') || 'Новый перевод');
+    const show = computed({
       get: function get() {
-        return this.showDialog;
+        return props.showDialog;
       },
       set: function set(val) {
-        this.$emit('update:showDialog', val);
+        emit('update:showDialog', val);
       },
-    },
-  },
-  watch: {
-    newCodeData(val) {
-      devlog.log('$refs', this.$refs);
+    });
+
+    watch(newCodeData, (val) => {
       if (!_.isEmpty(val)) {
-        _.set(this.transferData, 'client_id.value', val.value);
-        _.set(this.transferData, 'client_id.changeValue', true);
+        _.set(props.transferData, 'client_id.value', val.value);
+        _.set(props.transferData, 'client_id.changeValue', true);
       }
-    },
-  },
-  methods: {
-    changeValue(id) {
-      if (_.isEmpty(this.localProps)) {
-        this.$axios.get(`${getUrl('getTransferCodeCommission')}/${id}`)
+    });
+
+    function changeValueFunc(id) {
+      if (_.isEmpty(props.localProps)) {
+        axiosInstance.get(`${getUrl('getTransferCodeCommission')}/${id}`)
             .then(({ data: { transfer } }) => {
               if (transfer) {
-                _.set(this.transferData, 'transfer_commission.value', transfer.transfer_commission || 1);
+                _.set(props.transferData, 'transfer_commission.value', transfer.transfer_commission || 1);
               }
             });
       }
-    },
-    cancel(data) {
-      devlog.log('this.show', this.show);
-      this.show = false;
+    }
+
+    function cancel(data) {
+      show.value = false;
       setChangeValue(data);
-      this.$emit('update:localProps', {});
-    },
-    confirm(func, transferData) {
-      this.$q.dialog({
+      emit('update:localProps', {});
+    }
+
+    function confirm(func, transferData) {
+      $q.dialog({
         title: 'Предупреждение!',
         message: 'Закрыть окно?',
         persistent: true,
@@ -250,47 +249,41 @@ export default {
           .onCancel(() => {
             func(transferData);
           });
-    },
-    updateData(data) {
+    }
+
+    function updateData(data) {
       const sendData = _.cloneDeep(data);
-      devlog.log('DATA_N0', sendData);
       if (!sendData.client_id.value) {
-        devlog.log('NEW_');
-        this.showCodeDialog = true;
-      } else if (_.isEmpty(this.localProps)) {
+        showCodeDialog.value = true;
+      } else if (_.isEmpty(props.localProps)) {
         // ДОБАВЛЕНИЕ ЗАПИСИ
-        this.$q.loading.show();
+        $q.loading.show();
         const values = _.mapValues(sendData, 'value');
         values.receiver_name = _.startCase(_.toLower(values.receiver_name));
         if (_.trim(values.issued_by)) {
           const date = reverseDate(values.issued_by);
           values.issued_by = formatISO(addTime(date));
         }
-        this.$axios.post(getUrl('storeTransfers'), values)
+        axiosInstance.post(getUrl('storeTransfers'), values)
             .then(({ data: { transfer } }) => {
-              devlog.log('DDFR', transfer);
-              // this.$store.dispatch('transfers/addTransfer', transfer);
-              this.cancel(this.transferData);
-              this.$q.loading.hide();
-              this.show = false;
-              this.showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно добавлена.`);
+              cancel(props.transferData);
+              $q.loading.hide();
+              show.value = false;
+              showNotif('success', `Запись клиента - ${_.get(transfer, 'client_name')} успешно добавлена.`);
             })
             .catch((errors) => {
-              this.$q.loading.hide();
-              this.errorsData.errors = _.get(errors, 'response.data.errors');
+              $q.loading.hide();
+              errorsData.errors = _.get(errors, 'response.data.errors');
             });
-      } else if (_.has(this.localProps, 'row.id')) {
+      } else if (_.has(props.localProps, 'row.id')) {
         // ОБНОВЛЕНИЕ ЗАПИСИ
         if (_.some(sendData, 'changeValue')) {
-          this.$q.loading.show();
-          devlog.log('sзащитная endData_', sendData);
+          $q.loading.show();
           const dataToSend = _.reduce(sendData, (result, {
             value,
             changeValue,
           }, index) => {
-            devlog.log('СРФТПУ', changeValue, value);
             if (changeValue && index === 'issued_by') {
-              devlog.log('ISSUUE', value);
               if (value) {
                 const date = reverseDate(value);
                 result[index] = formatISO(addTime(date));
@@ -304,9 +297,8 @@ export default {
             }
             return result;
           }, {});
-          _.assign(dataToSend, { id: _.get(this.localProps, 'row.id') });
-          devlog.log('dataToSend', dataToSend);
-          this.$axios.post(getUrl('updateTransfers'), dataToSend)
+          _.assign(dataToSend, { id: _.get(props.localProps, 'row.id') });
+          axiosInstance.post(getUrl('updateTransfers'), dataToSend)
               .then(({
                        data: {
                          transfer: {
@@ -314,27 +306,35 @@ export default {
                          },
                        },
                      }) => {
-                devlog.log('DDFR', clientName);
-                // this.$store.dispatch('transfers/updateTransfer', transfer);
-                this.cancel(this.transferData);
-                this.$q.loading.hide();
-                this.show = false;
-                this.$emit('update:selected', []);
-                this.showNotif('success', `Запись клиента - ${clientName} успешно обновлена.`);
+                cancel(props.transferData);
+                $q.loading.hide();
+                show.value = false;
+                emit('update:selected', []);
+                showNotif('success', `Запись клиента - ${clientName} успешно обновлена.`);
               })
               .catch((errors) => {
-                this.$q.loading.hide();
-                this.errorsData.errors = _.get(errors, 'response.data.errors');
+                $q.loading.hide();
+                errorsData.errors = _.get(errors, 'response.data.errors');
               });
         } else {
-          devlog.log('item_DDD_FFF', data);
+          show.value = false;
         }
       }
-    },
-    getTransfersHistory(transferID, cols) {
-      this.dialogHistory = true;
-      this.$refs.transferHistoryComponent.getTransfersHistory(transferID, cols);
-    },
+    }
+
+    return {
+      showCodeDialog,
+      newCodeData,
+      errorsData,
+      transferHistoryComponent,
+      checkErrors,
+      dialogTitle,
+      show,
+      changeValueFunc,
+      cancel,
+      confirm,
+      updateData,
+    };
   },
-};
+});
 </script>

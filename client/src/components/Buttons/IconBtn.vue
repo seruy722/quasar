@@ -1,14 +1,14 @@
 <template>
   <q-btn
-    flat
-    round
-    :color="color"
-    :icon="icon"
-    :disable="disable"
-    :size="size"
-    :dense="dense"
-    data-vue-component-name="IconBtn"
-    @click="$emit('icon-btn-click')"
+      flat
+      round
+      :color="color"
+      :icon="icon"
+      :disable="disable"
+      :size="size"
+      :dense="dense"
+      data-vue-component-name="IconBtn"
+      @click="$emit('icon-btn-click')"
   >
     <q-tooltip>{{ tooltip }}</q-tooltip>
     <slot />
@@ -16,7 +16,9 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'IconBtn',
   props: {
     color: {
@@ -45,5 +47,5 @@ export default {
     },
   },
   emits: ['icon-btn-click'],
-};
+});
 </script>

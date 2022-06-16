@@ -1,72 +1,75 @@
 <template>
-  <div>
-    <DialogComponent
+  <DialogComponent
       v-model:dialog="show"
       title="Код"
       :persistent="true"
       data-vue-component-name="DialogAddCode"
-    >
-      <Card style="min-width: 320px;width: 100%;max-width: 500px;">
-        <CardSection class="row justify-between bg-grey q-mb-sm">
-          <span class="text-h6">Новый код клиента</span>
-          <div>
-            <IconBtn
+  >
+    <Card style="min-width: 320px;width: 100%;max-width: 500px;">
+      <CardSection class="row justify-between bg-grey q-mb-sm">
+        <span class="text-h6">Новый код клиента</span>
+        <div>
+          <IconBtn
               dense
               icon="clear"
               tooltip="Закрыть"
               @icon-btn-click="close(codeData)"
-            />
-          </div>
-        </CardSection>
+          />
+        </div>
+      </CardSection>
 
-        <CardSection>
-          <BaseInput
+      <CardSection>
+        <BaseInput
             v-model.trim="codeData.code.value"
             :label="codeData.code.label"
             :dense="$q.screen.xs || $q.screen.sm"
             :field="codeData.code.field"
             :autofocus="codeData.code.autofocus"
             :errors="errorsData"
-          />
-        </CardSection>
+        />
+      </CardSection>
 
-        <Separator />
+      <Separator />
 
-        <CardActions>
-          <BaseBtn
+      <CardActions>
+        <BaseBtn
             label="Отмена"
             color="negative"
             :dense="$q.screen.xs || $q.screen.sm"
             @click-base-btn="close(codeData)"
-          />
+        />
 
-          <BaseBtn
+        <BaseBtn
             label="Сохранить"
             color="positive"
             :loading="loading"
             :dense="$q.screen.xs || $q.screen.sm"
             @click-base-btn="checkErrors(codeData, saveData)"
-          />
-        </CardActions>
-      </Card>
-    </DialogComponent>
+        />
+      </CardActions>
+    </Card>
+  </DialogComponent>
 
-    <DialogAddClient
+  <DialogAddClient
       v-model:show-dialog="showClientDialog"
       :code-id="codeId"
-    />
-  </div>
+  />
 </template>
 
 <script>
 import { getUrl } from 'src/tools/url';
-import CheckErrorsMixin from 'src/mixins/CheckErrors';
-import showNotif from 'src/mixins/showNotif';
+import CheckErrorsFunc from 'src/utils/CheckErrors.js';
 import {
   setDefaultData,
   setFormatedDate,
 } from 'src/utils/FrequentlyCalledFunctions';
-import { defineAsyncComponent } from 'vue';
+import {
+  defineAsyncComponent,
+  defineComponent,
+  ref,
+  computed,
+  reactive,
+} from 'vue';
 import Card from 'src/components/Elements/Card/Card.vue';
 import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
@@ -75,8 +78,10 @@ import Separator from 'src/components/Separator.vue';
 import CardActions from 'src/components/Elements/Card/CardActions.vue';
 import CardSection from 'src/components/Elements/Card/CardSection.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import { axiosInstance } from 'boot/axios';
+import { useStore } from 'vuex';
 
-export default {
+export default defineComponent({
   name: 'DialogAddCode',
   components: {
     DialogComponent,
@@ -89,7 +94,6 @@ export default {
     CardSection,
     IconBtn,
   },
-  mixins: [showNotif, CheckErrorsMixin],
   props: {
     showDialog: {
       type: Boolean,
@@ -101,83 +105,88 @@ export default {
     },
   },
   emits: ['update:showDialog', 'update:newCodeData'],
-  data() {
-    return {
-      loading: false,
-      codeData: {
-        code: {
-          type: 'text',
-          label: 'Код',
-          field: 'code',
-          autofocus: true,
-          rules: [
-            {
-              name: 'isLength',
-              error: 'Минимальное количество символов 2.',
-              options: {
-                min: 2,
-                max: 255,
-              },
-            },
-          ],
-          require: true,
-          requireError: 'Поле обьзательное для заполнения.',
-          default: '',
-          value: '',
-        },
-      },
-      showClientDialog: false,
-      codeId: 0,
-    };
-  },
-  computed: {
-    show: {
+  setup(props, { emit }) {
+    const store = useStore();
+    const { errorsData, checkErrors } = CheckErrorsFunc();
+    const loading = ref(false);
+    const showClientDialog = ref(false);
+    const codeId = ref(0);
+    const show = computed({
       get: function get() {
-        return this.showDialog;
+        return props.showDialog;
       },
       set: function set(val) {
-        this.$emit('update:showDialog', val);
+        emit('update:showDialog', val);
       },
-    },
-  },
-  methods: {
-    saveData({ code: { value } }) {
-      devlog.log('S_VAL', value);
-      // this.$q.loading.show();
-      this.loading = true;
-      this.$axios.post(getUrl('storeCode'), { code: _.startCase(value) })
-        .then(({
-                 data: {
-                   code: addedCode,
-                   codeWithCustomers,
-                 },
-               }) => {
-          devlog.log('C_DATA', addedCode);
-          if (!_.isEmpty(this.$store.getters['codes/getCodes'])) {
-            this.$store.dispatch('codes/addCode', {
-              code: addedCode,
-              codeWithCustomers: _.first(setFormatedDate(codeWithCustomers, ['created_at'])),
-            });
-          } else {
-            this.$store.dispatch('codes/setCodes');
-            this.$emit('update:newCodeData', addedCode);
-          }
+    });
 
-          this.codeId = addedCode.value;
-          this.showClientDialog = true;
-          // this.$q.loading.hide();
-          this.loading = false;
-        })
-        .catch(({ response: { data: { errors } } }) => {
-          this.errorsData.errors = errors;
-          // this.$q.loading.hide();
-          this.loading = false;
-        });
-    },
-    close(data) {
-      this.show = false;
+    const codeData = reactive({
+      code: {
+        type: 'text',
+        label: 'Код',
+        field: 'code',
+        autofocus: true,
+        rules: [
+          {
+            name: 'isLength',
+            error: 'Минимальное количество символов 2.',
+            options: {
+              min: 2,
+              max: 255,
+            },
+          },
+        ],
+        require: true,
+        requireError: 'Поле обьзательное для заполнения.',
+        default: '',
+        value: '',
+      },
+    });
+    const close = ((data) => {
+      show.value = false;
       setDefaultData(data);
-    },
+    });
+
+    function saveData({ code: { value } }) {
+      loading.value = true;
+      axiosInstance.post(getUrl('storeCode'), { code: _.startCase(value) })
+          .then(({
+                   data: {
+                     code: addedCode,
+                     codeWithCustomers,
+                   },
+                 }) => {
+            if (!_.isEmpty(store.getters['codes/getCodes'])) {
+              store.dispatch('codes/addCode', {
+                code: addedCode,
+                codeWithCustomers: _.first(setFormatedDate(codeWithCustomers, ['created_at'])),
+              });
+            } else {
+              store.dispatch('codes/setCodes');
+              emit('update:newCodeData', addedCode);
+            }
+
+            codeId.value = addedCode.value;
+            showClientDialog.value = true;
+            loading.value = false;
+          })
+          .catch(({ response: { data: { errors } } }) => {
+            errorsData.errors = errors;
+            loading.value = false;
+          });
+    }
+
+    return {
+      errorsData,
+      checkErrors,
+      loading,
+      showClientDialog,
+      codeId,
+      show,
+      codeData,
+      close,
+      saveData,
+    };
   },
-};
+});
 </script>

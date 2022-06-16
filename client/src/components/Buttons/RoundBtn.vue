@@ -21,7 +21,9 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'RoundBtn',
   props: {
     color: {
@@ -46,5 +48,5 @@ export default {
     },
   },
   emits: ['round-btn-click'],
-};
+});
 </script>

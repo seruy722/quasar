@@ -1,11 +1,9 @@
 <template>
   <q-btn
-      :color="color || 'primary'"
-      :label="label"
+      :color="color || 'negative'"
       :icon="icon"
-      :loading="loading"
       data-vue-component-name="SquareBtn"
-      @click.stop="$emit('square-btn-click')"
+      @click.stop="$emit('close-btn-click')"
   >
     <q-tooltip
         v-if="tooltip"
@@ -29,10 +27,6 @@ export default defineComponent({
       type: String,
       default: '',
     },
-    label: {
-      type: String,
-      default: '',
-    },
     icon: {
       type: String,
       default: '',
@@ -41,11 +35,7 @@ export default defineComponent({
       type: String,
       default: '',
     },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
   },
-  emits: ['square-btn-click'],
+  emits: ['close-btn-click'],
 });
 </script>

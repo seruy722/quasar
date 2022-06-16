@@ -11,7 +11,9 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'OutlineBtn',
   props: {
     label: {
@@ -32,5 +34,5 @@ export default {
     },
   },
   emits: ['click-outline-btn'],
-};
+});
 </script>

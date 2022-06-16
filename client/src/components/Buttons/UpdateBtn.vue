@@ -18,9 +18,9 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'UpdateBtn',
   props: {
     func: {
@@ -33,7 +33,6 @@ export default {
     return {
       loading,
       refresh() {
-        devlog.log(' props.func', props.func);
         if (_.isFunction(props.func)) {
           loading.value = true;
           props.func()
@@ -44,5 +43,5 @@ export default {
       },
     };
   },
-};
+});
 </script>

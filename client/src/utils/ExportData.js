@@ -1,7 +1,7 @@
 import { axiosInstance } from 'boot/axios';
 import { Notify } from 'quasar';
 
-export default function exportRequest(url, data, fileName) {
+export default function exportDataToExcel(url, data, fileName) {
     return axiosInstance({
         url,
         method: 'POST',
@@ -23,15 +23,8 @@ export default function exportRequest(url, data, fileName) {
           }
           Notify.create({
               position: 'center',
-              message: `${fileName} успешно выгружены.`,
+              message: 'Данные успешно выгружены.',
               color: 'positive',
           });
-      })
-      .catch(() => {
-          Notify.create({
-              position: 'center',
-              message: `Произошла ошибка при выгрузке ${fileName}`,
-              color: 'negative',
-          });
       });
-}
+};

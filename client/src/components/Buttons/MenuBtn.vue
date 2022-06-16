@@ -1,17 +1,17 @@
 <template>
   <q-btn
-    flat
-    round
-    color="info"
-    icon="more_vert"
-    data-vue-component-name="MenuBtn"
-    @click="$emit('menu-btn-click')"
+      flat
+      round
+      color="info"
+      icon="more_vert"
+      data-vue-component-name="MenuBtn"
+      @click="$emit('menu-btn-click')"
   >
     <slot />
     <q-tooltip
-      anchor="bottom middle"
-      self="top middle"
-      :offset="[10, 10]"
+        anchor="bottom middle"
+        self="top middle"
+        :offset="[10, 10]"
     >
       Меню
     </q-tooltip>
@@ -19,8 +19,10 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'MenuBtn',
   emits: ['menu-btn-click'],
-};
+});
 </script>

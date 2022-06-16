@@ -62,6 +62,7 @@ import {
   ref,
   onMounted,
   computed,
+  defineComponent,
 } from 'vue';
 import { useStore } from 'vuex';
 import SearchDialog from 'src/components/Search/SearchDialog.vue';
@@ -69,7 +70,7 @@ import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
 import DialogChooseDate2 from 'src/components/Dialogs/DialogChooseDate2.vue';
 import { useQuasar } from 'quasar';
 
-export default {
+export default defineComponent({
   name: 'NewTable',
   components: {
     SearchDialog,
@@ -117,7 +118,7 @@ export default {
       pagination: { rowsPerPage: 0 },
     };
   },
-};
+});
 </script>
 
 <style lang="sass">

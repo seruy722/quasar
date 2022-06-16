@@ -1,14 +1,16 @@
 <template>
   <q-btn
-    fab
-    :icon="icon"
-    :color="color"
-    data-vue-component-name="FabBtn"
+      fab
+      :icon="icon"
+      :color="color"
+      data-vue-component-name="FabBtn"
   />
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'FabBtn',
   props: {
     icon: {
@@ -20,5 +22,5 @@ export default {
       default: 'primary',
     },
   },
-};
+});
 </script>

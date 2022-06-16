@@ -181,8 +181,9 @@ import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
 import OutlineBtn from 'src/components/Buttons/OutlineBtn.vue';
 import DateWithInput from 'src/components/DateWithInput.vue';
 import { getUrl } from 'src/tools/url';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'TransfersStatistics',
   components: {
     DateWithInput,
@@ -351,5 +352,5 @@ export default {
       this.visible = false;
     },
   },
-};
+});
 </script>

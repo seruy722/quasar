@@ -12,7 +12,9 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'BaseBtn',
   props: {
     color: {
@@ -37,5 +39,5 @@ export default {
     },
   },
   emits: ['click-base-btn'],
-};
+});
 </script>
