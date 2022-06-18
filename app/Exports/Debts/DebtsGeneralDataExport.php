@@ -15,10 +15,10 @@ use Maatwebsite\Excel\Events\AfterSheet;
 
 class DebtsGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings, WithEvents, WithTitle
 {
-    protected $data;
+    protected $countData;
     protected $enterData;
     protected $cityId;
-    protected $headers = ['Дата', 'Тип', 'Деберц', 'Очки', 'Ком', 'Опл', 'Прим', 'Пол'];
+    protected $headers = ['Дата', 'Тип', 'Деберц', 'Очки', 'Ком', 'Прим', 'Пол'];
 
     public function __construct($data, $cityId)
     {
@@ -75,17 +75,11 @@ class DebtsGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
             $query = $data->get();
         }
 
-        $res2 = $query->sort(function ($a, $b) {
-            if ($a['code_client_name'] == $b['code_client_name']) {
-                return 0;
-            }
+        $this->countData = count($query);
 
-            return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
-        })->map(function ($item) {
-            return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'sum' => $item->sum, 'commission' => $item->commission, 'paid' => $item->paid, 'notation' => $item->notation, 'user_name' => $item->user_name];
-        });
-        $this->data = $res2->all();
-        return $this->data;
+        return $query->map(function ($item) {
+            return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'sum' => $item->sum, 'commission' => $item->commission, 'notation' => $item->notation, 'user_name' => $item->user_name];
+        })->all();
     }
 
     public function array(): array
@@ -107,8 +101,8 @@ class DebtsGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $header = 'A1:H1';
-                $cellRange = 'A1:H' . (count($this->data) + 1);
+                $header = 'A1:G1';
+                $cellRange = 'A1:G' . ($this->countData + 1);
 
                 $event->sheet->getDelegate()->getStyle($header)->getFont()->setBold(500);
                 $event->sheet->getDelegate()->getStyle($cellRange)->getAlignment()->applyFromArray(array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));

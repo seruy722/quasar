@@ -3,7 +3,6 @@
 namespace App\Exports\Cargo;
 
 use App\Cargo;
-use App\Code;
 use App\Customer;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromArray;
@@ -15,7 +14,7 @@ use Maatwebsite\Excel\Events\AfterSheet;
 
 class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings, WithEvents, WithTitle
 {
-    protected $data;
+    protected $countData;
     protected $enterData;
     protected $cityId;
     protected $headers = ['Дата', 'Тип', 'Деберц', 'М', 'В', 'За к', 'За м', 'Очки', 'Скд', 'Опл', 'Кат', 'Фак', 'Прим', 'Пол'];
@@ -122,10 +121,10 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
 //            }
 //
 //            return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
-        $this->data = $res->map(function ($item) {
+        $this->countData = count($res);
+        return $res->map(function ($item) {
             return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'place' => $item->place, 'kg' => $item->kg, 'for_kg' => $item->for_kg, 'for_place' => $item->for_place, 'sum' => $item->sum, 'sale' => $item->sale, 'paid' => $item->paid ? 'Да' : 'Нет', 'category_name' => $item->category_name, 'fax_name' => $item->fax_name, 'notation' => $item->notation, 'user_name' => $item->user_name];
         })->all();
-        return $this->data;
     }
 
     public function array(): array
@@ -148,7 +147,7 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $header = 'A1:N1';
-                $cellRange = 'A1:N' . (count($this->data) + 1);
+                $cellRange = 'A1:N' . ($this->countData + 1);
 
                 $event->sheet->getDelegate()->getStyle($header)->getFont()->setBold(500);
                 $event->sheet->getDelegate()->getStyle($cellRange)->getAlignment()->applyFromArray(array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
