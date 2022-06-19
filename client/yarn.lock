@@ -3149,7 +3149,7 @@ __metadata:
     eslint-plugin-vue: ^9.1.1
     lodash: ^4.17.21
     pusher-js: ^7.1.1-beta
-    quasar: ^2.7.2
+    quasar: ^2.7.3
     validator: ^13.7.0
     vue: ^3.2.37
     vue-i18n: ^9.1.10
@@ -7687,10 +7687,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.7.2":
-  version: 2.7.2
-  resolution: "quasar@npm:2.7.2"
-  checksum: 6f1bbed4bf9b5df0067581dd81f1ec751dfed776a6c50394821169825a281d1e9598aa8aa447c48fdae12a9cba8989b1831e72cf8e28128f95cd4c9f2af0c176
+"quasar@npm:^2.7.3":
+  version: 2.7.3
+  resolution: "quasar@npm:2.7.3"
+  checksum: 42ae066c7a7e477731e3063bfa6b097bc89a670dac4781dd3e72d3c16e0db61a909f09eea21ef342592953fd6167f80a4c9add20722d4df0229616d3a86f5810
   languageName: node
   linkType: hard
 

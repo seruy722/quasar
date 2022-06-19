@@ -21,7 +21,7 @@
     "date-fns": "^2.28.0",
     "lodash": "^4.17.21",
     "pusher-js": "^7.1.1-beta",
-    "quasar": "^2.7.2",
+    "quasar": "^2.7.3",
     "validator": "^13.7.0",
     "vue": "^3.2.37",
     "vue-i18n": "^9.1.10",
