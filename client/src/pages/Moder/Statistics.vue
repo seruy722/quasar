@@ -12,7 +12,7 @@
       >
         <q-card>
           <q-card-section>
-            <div id="chart" />
+<!--            <div id="chart" />-->
             <Table
               :table-properties="cargoTableProperties"
               :table-data="tasks"
@@ -313,7 +313,7 @@
 
 <script>
 import showNotif from 'src/mixins/showNotif';
-import ApexCharts from 'apexcharts';
+// import ApexCharts from 'apexcharts';
 import { formatToDotDate } from 'src/utils/formatDate';
 import Table from 'src/components/Elements/Table/Table.vue';
 import MenuBtn from 'src/components/Buttons/MenuBtn.vue';
@@ -329,26 +329,26 @@ export default {
   mixins: [showNotif],
   data() {
     return {
-      options: {
-        chart: {
-          type: 'bar',
-          height: '400px',
-        },
-        colors: ['#06F30CFF', '#F80319FF'],
-        series: [
-          {
-            name: 'Доход',
-            data: [],
-          },
-          {
-            name: 'Затраты',
-            data: [],
-          },
-        ],
-        xaxis: {
-          categories: ['Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-        },
-      },
+      // options: {
+      //   chart: {
+      //     type: 'bar',
+      //     height: '400px',
+      //   },
+      //   colors: ['#06F30CFF', '#F80319FF'],
+      //   series: [
+      //     {
+      //       name: 'Доход',
+      //       data: [],
+      //     },
+      //     {
+      //       name: 'Затраты',
+      //       data: [],
+      //     },
+      //   ],
+      //   xaxis: {
+      //     categories: ['Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+      //   },
+      // },
       cargoTableProperties: {
         columns: [
           {
@@ -388,13 +388,10 @@ export default {
       return this.$store.getters['statistics/getStatistics'];
     },
   },
-  watch: {
-    tasks(val) {
-      this.fillData(val);
-    },
-  },
-  // created() {
-  //   this.fillData(this.tasks);
+  // watch: {
+  //   tasks(val) {
+  //     this.fillData(val);
+  //   },
   // },
   methods: {
     fetchStatistics() {
@@ -413,32 +410,32 @@ export default {
       return (start && end) && end > start ? end - start : 0;
     },
     formatToDotDate,
-    fillData(val) {
-      if (!_.isEmpty(val)) {
-        this.options.series[0].data = [];
-        this.options.series[1].data = [];
-        _.forEach(val, (item) => {
-          if (item.start_sum && item.end_sum) {
-            this.options.series[0].data.push(this.sumProfit(item.end_sum, item.start_sum));
-          }
-          this.options.series[1].data.push(this.sumExpenses(item.data));
-        });
-        const size0 = _.size(this.options.series[0].data);
-        const size1 = _.size(this.options.series[1].data);
-        const sizeCategories = _.size(this.options.xaxis.categories);
-        if (size0 !== sizeCategories) {
-          this.options.series[0].data.push(..._.fill(Array(sizeCategories - size0), 0));
-        }
-        if (size1 !== sizeCategories) {
-          this.options.series[1].data.push(..._.fill(Array(sizeCategories - size1), 0));
-        }
-
-        this.$nextTick(() => {
-          const chart = new ApexCharts(document.getElementById('chart'), this.options);
-          chart.render();
-        });
-      }
-    },
+    // fillData(val) {
+    //   if (!_.isEmpty(val)) {
+    //     this.options.series[0].data = [];
+    //     this.options.series[1].data = [];
+    //     _.forEach(val, (item) => {
+    //       if (item.start_sum && item.end_sum) {
+    //         this.options.series[0].data.push(this.sumProfit(item.end_sum, item.start_sum));
+    //       }
+    //       this.options.series[1].data.push(this.sumExpenses(item.data));
+    //     });
+    //     const size0 = _.size(this.options.series[0].data);
+    //     const size1 = _.size(this.options.series[1].data);
+    //     const sizeCategories = _.size(this.options.xaxis.categories);
+    //     if (size0 !== sizeCategories) {
+    //       this.options.series[0].data.push(..._.fill(Array(sizeCategories - size0), 0));
+    //     }
+    //     if (size1 !== sizeCategories) {
+    //       this.options.series[1].data.push(..._.fill(Array(sizeCategories - size1), 0));
+    //     }
+    //
+    //     this.$nextTick(() => {
+    //       const chart = new ApexCharts(document.getElementById('chart'), this.options);
+    //       chart.render();
+    //     });
+    //   }
+    // },
     destroyEntry(selected, tasks) {
       const items = !_.isEmpty(selected) ? selected : tasks;
       const ids = _.map(items, 'id');
