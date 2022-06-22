@@ -1705,10 +1705,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/extras@npm:^1.14.0":
-  version: 1.14.0
-  resolution: "@quasar/extras@npm:1.14.0"
-  checksum: 60eacf3995172a11c59af6266461f665219488e33e85ab99fb293365fdd95e3dda5427a5ab548b7a5058ee0e3f5d4a6045ad8feeb99e1b0ad9b37f1cbd8d2100
+"@quasar/extras@npm:^1.14.1":
+  version: 1.14.1
+  resolution: "@quasar/extras@npm:1.14.1"
+  checksum: 03e53647d18b6894ec1bcbc3a5258e68bc152ba11a07e2f33b74de9161f60e8277871f847688bb41a4e182d0d125b0a93fcc98665a5b9b4473bb9fc5dc51de85
   languageName: node
   linkType: hard
 
@@ -3126,7 +3126,7 @@ __metadata:
   dependencies:
     "@babel/eslint-parser": ^7.18.2
     "@quasar/app": ^3.3.3
-    "@quasar/extras": ^1.14.0
+    "@quasar/extras": ^1.14.1
     "@vue/eslint-config-airbnb": ^6.0.0
     axios: ^0.27.2
     date-fns: ^2.28.0
