@@ -8,7 +8,7 @@
       :size="size"
       :dense="dense"
       data-vue-component-name="IconBtn"
-      @click="$emit('icon-btn-click')"
+      @click.stop="$emit('icon-btn-click')"
   >
     <q-tooltip>{{ tooltip }}</q-tooltip>
     <slot />

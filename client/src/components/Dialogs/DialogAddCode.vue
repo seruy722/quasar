@@ -3,9 +3,11 @@
       v-model:dialog="show"
       title="Код"
       :persistent="true"
-      data-vue-component-name="DialogAddCode"
   >
-    <Card style="min-width: 320px;width: 100%;max-width: 500px;">
+    <Card
+        data-vue-component-name="DialogAddCode"
+        style="min-width: 320px;width: 100%;max-width: 500px;"
+    >
       <CardSection class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">Новый код клиента</span>
         <div>

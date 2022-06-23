@@ -16,9 +16,12 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Traits\TraitTelegram;
 
 class CommonController extends Controller
 {
+    use TraitTelegram;
+
     public function storeCargoTable(Request $request)
     {
         // CARGO
@@ -410,5 +413,10 @@ class CommonController extends Controller
             'Content-Type' => 'application/json',
             "Authorization" => 'Bearer d4682d75313aaa3b83ac59cfdfdc4c6822610581',
         ]]);
+    }
+
+    public function sendTelegramTestMessage(Request $request)
+    {
+        $this->sendTelegramMessage($request->chatId, $request->message);
     }
 }

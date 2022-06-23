@@ -9,12 +9,13 @@ use App\Transfer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\PushNotifications;
+use App\Traits\TraitTelegram;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class TransferController extends Controller
 {
-    use PushNotifications;
+    use PushNotifications, TraitTelegram;
 
     protected $rules = [
 //        'client_id' => 'required|numeric',
@@ -92,10 +93,27 @@ class TransferController extends Controller
         $transfer = Transfer::create($this->stripData($transferArr));
         $this->storeTransferHistory($transfer->id, $this->stripData($transferArr), 'create');
         $transferData = $this->query()->where('transfers.id', $transfer->id)->first();
-
+        // Реактивное обновление данных на странице
         event(new \App\Events\Transfers(['transfer' => $transferData, 'type' => 'store']));
 
+        $message = 'Добавлен перевод №' . $transferData->id . ' на сумму: ' . $transferData->sum . ', статус: ' . $transferData->status_label;
+        $this->sendToTelegram($transferData->client_id, $message);
+
         return response(['transfer' => $transferData]);
+    }
+
+    public function sendToTelegram($clientId, $message)
+    {
+        // Отправка сообщения в телеграмм
+        $code = Code::with('customers')->where('id', $clientId)->first();
+        if (!empty($code->customers)) {
+            foreach ($code->customers as $customer) {
+                $chatId = $customer->telegram_user_id;
+                if ($chatId && intval($chatId)) {
+                    $this->sendTelegramMessage($chatId, $message);
+                }
+            }
+        }
     }
 
     public function update(Request $request)
@@ -132,7 +150,14 @@ class TransferController extends Controller
         Transfer::where('id', $request->id)->update($data);
         $this->storeTransferHistory($request->id, $data, 'update');
         $transferData = $this->query()->where('transfers.id', $request->id)->first();
+
         event(new \App\Events\Transfers(['transfer' => $transferData, 'type' => 'update']));
+
+        if ($request->has('sum') || $request->has('status')) {
+            $message = 'Обновлен перевод №' . $transferData->id . ' сумма: ' . $transferData->sum . ', статус: ' . $transferData->status_label;
+            $this->sendToTelegram($transferData->client_id, $message);
+        }
+
         return response(['transfer' => $transferData]);
     }
 

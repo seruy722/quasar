@@ -1,4 +1,7 @@
 <?php
+use Illuminate\Support\Facades\Route;
+//use Illuminate\Support\Facades\Notification;
+//use App\Notifications\Telegram;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,3 +17,6 @@
 Route::get('/', function () {
     return view('welcome');
 });
+//
+//Notification::route('telegram', '774874575')
+//    ->notify(new Telegram);

@@ -1,88 +1,106 @@
 <template>
   <DialogComponent
-    v-model:dialog="show"
-    title="Клиент"
-    :persistent="true"
-    data-vue-component-name="DialogAddClient"
+      v-model:dialog="show"
+      title="Клиент"
+      :persistent="true"
   >
-    <Card style="min-width: 320px;width: 100%;max-width: 500px;">
+    <Card
+        data-vue-component-name="DialogAddClient"
+        style="min-width: 320px;width: 100%;max-width: 500px;"
+    >
       <CardSection class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">{{ dialogTitle }}</span>
-        <div>
-          <IconBtn
-            v-show="entryData.id"
-            dense
-            icon="delete"
-            color="negative"
-            tooltip="Удалить"
-            @icon-btn-click="destroyCustomer(entryData)"
+        <div class="q-gutter-sm">
+          <RoundBtn
+              icon="delete"
+              tooltip="Удалить"
+              color="negative"
+              @round-btn-click="destroyCustomer(entryData)"
           />
-          <IconBtn
-            dense
-            icon="clear"
-            tooltip="Закрыть"
-            @icon-btn-click="close(customerData)"
+
+          <RoundBtn
+              icon="clear"
+              tooltip="Закрыть"
+              color="negative"
+              @round-btn-click="close(customerData)"
           />
         </div>
       </CardSection>
 
-      <CardSection>
+      <CardSection
+          style="max-height: 70vh"
+          class="scroll"
+      >
         <div
-          v-for="(item, index) in customerData"
-          :key="index"
+            v-for="(item, index) in customerData"
+            :key="index"
         >
           <SearchSelect
-            v-if="item.type==='searchSelect'"
-            v-model.number="item.value"
-            v-model:change-value="item.changeValue"
-            :label="item.label"
-            :dense="$q.screen.xs || $q.screen.sm"
-            :field="item.field"
-            :options="item.options"
-            :func-load-data="item.funcLoadData"
-            :errors="errorsData"
+              v-if="item.type==='searchSelect'"
+              v-model.number="item.value"
+              v-model:change-value="item.changeValue"
+              :label="item.label"
+              :dense="$q.screen.xs || $q.screen.sm"
+              :field="item.field"
+              :options="item.options"
+              :func-load-data="item.funcLoadData"
+              :errors="errorsData"
           />
 
           <BaseSelect
-            v-else-if="item.type==='select'"
-            v-model.number="item.value"
-            v-model:change-value="item.changeValue"
-            :label="item.label"
-            :dense="$q.screen.xs || $q.screen.sm"
-            :field="item.field"
-            :options="item.options"
-            :errors="errorsData"
+              v-else-if="item.type==='select'"
+              v-model.number="item.value"
+              v-model:change-value="item.changeValue"
+              :label="item.label"
+              :dense="$q.screen.xs || $q.screen.sm"
+              :field="item.field"
+              :options="item.options"
+              :errors="errorsData"
           />
 
           <BaseInput
-            v-else
-            v-model="item.value"
-            v-model:change-value="item.changeValue"
-            :label="item.label"
-            :dense="$q.screen.xs || $q.screen.sm"
-            :field="item.field"
-            :mask="item.mask"
-            :unmasked-value="item.unmaskedValue"
-            :autofocus="item.autofocus"
-            :errors="errorsData"
-          />
+              v-else
+              v-model="item.value"
+              v-model:change-value="item.changeValue"
+              :label="item.label"
+              :dense="$q.screen.xs || $q.screen.sm"
+              :field="item.field"
+              :mask="item.mask"
+              :unmasked-value="item.unmaskedValue"
+              :autofocus="item.autofocus"
+              :errors="errorsData"
+          >
+            <template
+                v-if="item.type==='text' && item.field==='telegram_user_id' && item.value"
+                #append
+            >
+              <IconBtn
+                  :disable="showSendTelegramTestMessageBtn"
+                  dense
+                  icon="send"
+                  color="primary"
+                  @icon-btn-click="sendTelegramTestMessage(item.value)"
+              />
+            </template>
+          </BaseInput>
+
         </div>
       </CardSection>
 
       <Separator />
       <CardActions>
         <BaseBtn
-          label="Отмена"
-          color="negative"
-          :dense="$q.screen.xs || $q.screen.sm"
-          @click-base-btn="close(customerData)"
+            label="Отмена"
+            color="negative"
+            :dense="$q.screen.xs || $q.screen.sm"
+            @click-base-btn="close(customerData)"
         />
 
         <BaseBtn
-          label="Сохранить"
-          color="positive"
-          :dense="$q.screen.xs || $q.screen.sm"
-          @click-base-btn="checkErrors(customerData, saveData)"
+            label="Сохранить"
+            color="positive"
+            :dense="$q.screen.xs || $q.screen.sm"
+            @click-base-btn="checkErrors(customerData, saveData)"
         />
       </CardActions>
     </Card>
@@ -110,6 +128,7 @@ import Separator from 'src/components/Separator.vue';
 import Card from 'src/components/Elements/Card/Card.vue';
 import CardActions from 'src/components/Elements/Card/CardActions.vue';
 import CardSection from 'src/components/Elements/Card/CardSection.vue';
+import RoundBtn from 'src/components/Buttons/RoundBtn.vue';
 import IconBtn from 'src/components/Buttons/IconBtn.vue';
 
 export default {
@@ -125,6 +144,7 @@ export default {
     CardActions,
     CardSection,
     IconBtn,
+    RoundBtn,
   },
   mixins: [OnKeyUp, showNotif, CheckErrorsMixin],
   props: {
@@ -144,6 +164,7 @@ export default {
   emits: ['update:codeId', 'update:entryData', 'update:showDialog'],
   data() {
     return {
+      showSendTelegramTestMessageBtn: false,
       customers: [],
       show: false,
       customerData: {
@@ -225,6 +246,26 @@ export default {
           default: 0,
           value: 0,
         },
+        telegram_user_id: {
+          type: 'text',
+          label: 'Телеграм ID',
+          field: 'telegram_user_id',
+          require: false,
+          requireError: 'Поле обьзательное для заполнения.',
+          rules: [
+            {
+              name: 'isLength',
+              error: 'Максимальное количество символов 50.',
+              options: {
+                min: 0,
+                max: 50,
+              },
+            },
+          ],
+          changeValue: false,
+          default: null,
+          value: null,
+        },
       },
     };
   },
@@ -257,15 +298,15 @@ export default {
     showDialog(val) {
       this.$q.loading.show();
       Promise.all([getClientCodes(this.$store), getCities(this.$store)])
-        .then(() => {
-          this.showAddEntryOnStorehouseDialog = true;
-          this.show = val;
-          this.$q.loading.hide();
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          devlog.warn('Ошибка при получении данных. Edit storehouseData');
-        });
+          .then(() => {
+            this.showAddEntryOnStorehouseDialog = true;
+            this.show = val;
+            this.$q.loading.hide();
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            devlog.warn('Ошибка при получении данных. Edit storehouseData');
+          });
     },
     show(val) {
       this.$emit('update:showDialog', val);
@@ -310,15 +351,15 @@ export default {
         // ДОБАВЛЕНИЕ ЗАПИСИ
         this.$q.loading.show();
         this.$axios.post(getUrl('storeCustomers'), createData)
-          .then(({ data: { customer } }) => {
-            this.$q.loading.hide();
-            this.$store.dispatch('codes/addCustomerToCodeWithCustomers', customer);
-            this.showNotif('success', 'Клиент успешно добавлен.', 'center');
-          })
-          .catch((errors) => {
-            this.errorsData.errors = _.get(errors, 'response.data.errors');
-            this.$q.loading.hide();
-          });
+            .then(({ data: { customer } }) => {
+              this.$q.loading.hide();
+              this.$store.dispatch('codes/addCustomerToCodeWithCustomers', customer);
+              this.showNotif('success', 'Клиент успешно добавлен.', 'center');
+            })
+            .catch((errors) => {
+              this.errorsData.errors = _.get(errors, 'response.data.errors');
+              this.$q.loading.hide();
+            });
       } else {
         // ОБНОВЛЕНИЕ ЗАПИСИ
         const updateData = _.reduce(values, (result, {
@@ -340,23 +381,23 @@ export default {
 
           this.$q.loading.show();
           this.$axios.post(getUrl('updateCustomer'), updateData)
-            .then(({ data: { customer } }) => {
-              this.$q.loading.hide();
-              this.$store.dispatch('codes/updateCustomer', customer);
-              if (_.toNumber(this.entryData.code_id) !== _.toNumber(customer.code_id)) {
-                this.$store.dispatch('codes/deleteCustomerFromStore', {
-                  id: this.entryData.id,
-                  code_id: this.entryData.code_id,
-                });
-              }
-              setChangeValue(values);
-              this.close(this.customerData);
-              this.showNotif('success', 'Данные клиента успешно обновлены.', 'center');
-            })
-            .catch((errors) => {
-              this.errorsData.errors = _.get(errors, 'response.data.errors');
-              this.$q.loading.hide();
-            });
+              .then(({ data: { customer } }) => {
+                this.$q.loading.hide();
+                this.$store.dispatch('codes/updateCustomer', customer);
+                if (_.toNumber(this.entryData.code_id) !== _.toNumber(customer.code_id)) {
+                  this.$store.dispatch('codes/deleteCustomerFromStore', {
+                    id: this.entryData.id,
+                    code_id: this.entryData.code_id,
+                  });
+                }
+                setChangeValue(values);
+                this.close(this.customerData);
+                this.showNotif('success', 'Данные клиента успешно обновлены.', 'center');
+              })
+              .catch((errors) => {
+                this.errorsData.errors = _.get(errors, 'response.data.errors');
+                this.$q.loading.hide();
+              });
         } else {
           this.showNotif('info', 'Нет измененных данных', 'center');
         }
@@ -381,13 +422,13 @@ export default {
               id,
               code_id: this.entryData.code_id,
             })
-              .then(() => {
-                this.close(this.customerData);
-                this.showNotif('success', 'Запись успешно удалена.', 'center');
-              })
-              .catch(() => {
-                devlog.error('Ошибка запроса - destroyCustomerEntry');
-              });
+                .then(() => {
+                  this.close(this.customerData);
+                  this.showNotif('success', 'Запись успешно удалена.', 'center');
+                })
+                .catch(() => {
+                  devlog.error('Ошибка запроса - destroyCustomerEntry');
+                });
           },
         },
       ]);
@@ -398,6 +439,15 @@ export default {
       setChangeValue(data);
       this.$emit('update:entryData', {});
       this.$emit('update:codeId', 0);
+    },
+    sendTelegramTestMessage(chatId) {
+      if (_.toNumber(chatId)) {
+        this.$axios.post(getUrl('sendTelegramTestMessage'), { message: 'Тестовое сообщение!', chatId });
+        this.showSendTelegramTestMessageBtn = true;
+        setTimeout(() => {
+          this.showSendTelegramTestMessageBtn = false;
+        }, 30 * 1000);
+      }
     },
   },
 };

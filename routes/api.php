@@ -159,6 +159,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
         Route::post('/export-codes-places', 'exportCodesPlaces');
         Route::post('/export-codes-places-with-post', 'exportCodesPlacesWithPost');
         Route::post('/search-in-faxes', 'searchInFaxes');
+        Route::post('/send-telegram-test-message', 'sendTelegramTestMessage');
     });
 
     // FAXES

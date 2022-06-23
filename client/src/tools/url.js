@@ -170,6 +170,7 @@ const urls = {
     getStatuses: `${prefix}/get-statuses`,
     serverUrl: 'https://server007cargo.net.ua',
     getTransferCodeCommission: `${prefix}/get-transfer-code-commission`,
+    sendTelegramTestMessage: `${prefix}/send-telegram-test-message`,
     axiosData: {
         baseURL: process.env.API,
     },

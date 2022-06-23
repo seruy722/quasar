@@ -54,6 +54,7 @@ class CustomersController extends Controller
             'name' => 'required|max:255',
             'city_id' => 'nullable|max:255',
             'code_id' => 'required|numeric|max:20000',
+            'telegram_user_id' => 'nullable|string|max:50',
         ]);
 
         $data = $this->stripData($request->all());
