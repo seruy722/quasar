@@ -263,8 +263,8 @@ export default {
             },
           ],
           changeValue: false,
-          default: null,
-          value: null,
+          default: '',
+          value: '',
         },
       },
     };
