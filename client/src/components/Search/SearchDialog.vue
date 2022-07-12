@@ -134,7 +134,7 @@ export default {
     };
 
     const filterMethod = ((val) => {
-      if (!_.isEmpty(_.pickBy(val, (v) => !!v))) {
+      if (val.paid === 0 || !_.isEmpty(_.pickBy(val, (v) => !!v))) {
         showDialog.value = false;
         emit('update:loading', true);
         const { value } = searchField;

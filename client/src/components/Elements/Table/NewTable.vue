@@ -115,7 +115,7 @@ export default defineComponent({
       loading,
       tableHeight,
 
-      pagination: { rowsPerPage: 0 },
+      pagination: { rowsPerPage: 50 },
     };
   },
 });
