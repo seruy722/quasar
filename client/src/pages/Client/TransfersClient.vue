@@ -170,7 +170,7 @@
           </q-tr>
         </template>
       </Table>
-      <CountTransfersDataClient :enter-data="allTransfers" />
+<!--      <CountTransfersDataClient :enter-data="allTransfers" />-->
     </PullRefresh>
     <PageSticky :offset="[18, 200]">
       <Fab color="accent">
@@ -509,12 +509,12 @@ export default {
     dialogTitle() {
       return _.get(this.localProps, 'row.client_name') || 'Новый перевод';
     },
-    countCheckedTransfers() {
-      return _.size(this.transferTableReactiveProperties.selected);
-    },
-    countSumCheckedTransfers() {
-      return _.sumBy(this.transferTableReactiveProperties.selected, 'sum');
-    },
+    // countCheckedTransfers() {
+    //   return _.size(this.transferTableReactiveProperties.selected);
+    // },
+    // countSumCheckedTransfers() {
+    //   return _.sumBy(this.transferTableReactiveProperties.selected, 'sum');
+    // },
   },
   mounted() {
     this.getTransfers();
