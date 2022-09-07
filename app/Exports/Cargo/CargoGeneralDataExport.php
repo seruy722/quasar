@@ -9,10 +9,9 @@ use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings, WithEvents, WithTitle
+class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings, WithEvents
 {
     protected $countData;
     protected $enterData;
@@ -86,41 +85,6 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
             $res = $data->whereIn('cargos.code_client_id', $newCodes)->get();
         }
 
-//        if ($this->enterData['type'] === 0 || $this->enterData['type'] === -1) {
-//            $codes = $res->map(function ($item) {
-//                return $item->code_client_id;
-//            });
-//            $codeRes = [];
-//            foreach ($codes as $key => $code) {
-//                $codeEntries = $res->where('code_client_id', $code)->where('type', false)->where('fax_id', '>', 0)->groupBy('fax_id', 'category_id');
-//                $remainder = $res->where('code_client_id', $code)->where('fax_id', 0);
-//                foreach ($codeEntries->toArray() as $item) {
-//                    $cur = current($item);
-//                    $cur['sum'] = array_sum(array_column($item, 'sum'));
-//                    $cur['place'] = array_sum(array_column($item, 'place'));
-//                    array_push($codeRes, $cur);
-//                }
-//                foreach ($remainder->toArray() as $item) {
-//                    array_push($codeRes, $item);
-//                }
-//            }
-////            usort($codeRes, function ($a, $b) {
-////                if ($a['code_client_name'] == $b['code_client_name']) {
-////                    return 0;
-////                }
-////
-////                return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
-////            });
-//            $this->data = $codeRes;
-//            return $this->data;
-//        }
-
-//        $res2 = $res->sort(function ($a, $b) {
-//            if ($a['code_client_name'] == $b['code_client_name']) {
-//                return 0;
-//            }
-//
-//            return ($a['code_client_name'] < $b['code_client_name']) ? -1 : 1;
         $this->countData = count($res);
         return $res->map(function ($item) {
             return ['created_at' => $this->getDateWithTimeZone($item->created_at, 'd-m-Y'), 'type' => $item->type ? 'Оплата' : 'Долг', 'code_client_name' => $item->code_client_name, 'place' => $item->place, 'kg' => $item->kg, 'for_kg' => $item->for_kg, 'for_place' => $item->for_place, 'sum' => $item->sum, 'sale' => $item->sale, 'paid' => $item->paid ? 'Да' : 'Нет', 'category_name' => $item->category_name, 'fax_name' => $item->fax_name, 'notation' => $item->notation, 'user_name' => $item->user_name];
@@ -155,10 +119,5 @@ class CargoGeneralDataExport implements FromArray, ShouldAutoSize, WithHeadings,
                 $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(10);
             }
         ];
-    }
-
-    public function title(): string
-    {
-        return 'КАРГО';
     }
 }

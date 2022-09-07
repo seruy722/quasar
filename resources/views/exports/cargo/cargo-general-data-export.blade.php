@@ -29,7 +29,7 @@
             <td style="border: 1px solid black;text-align: center;">{{ $elem->for_place === 0 && $elem->type ? null : $elem->for_place }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ round($elem->sum) }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ round($elem->sale) }}</td>
-            <td style="border: 1px solid black;text-align: center;">{{ $elem->paid ? 'Да' : $elem->type ? null : 'Нет' }}</td>
+            <td style="border: 1px solid black;text-align: center;">{{ $elem->paid ? 'Да' : null }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem->category_name }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem->fax_name }}</td>
             <td style="border: 1px solid black;text-align: center;">{{ $elem->notation }}</td>

@@ -105,7 +105,7 @@ const urls = {
     exportCargoData: `${prefix}/export-cargo-data`,
     exportDetailCargoData: `${prefix}/export-detail-cargo-data`,
     exportDebtsData: `${prefix}/export-debts-data`,
-    exportG: `${prefix}/export-cargo`,
+    exportG: `${prefix}/export-cargo1`,
     exportGeneralDebtsData: `${prefix}/export-general-debts-data`,
     exportGeneralDataByClients: `${prefix}/export-general-data-by-clients`,
     cargoPayEntry: `${prefix}/cargo-pay-entry`,
