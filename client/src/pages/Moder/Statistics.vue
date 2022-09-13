@@ -313,7 +313,6 @@
 
 <script>
 import showNotif from 'src/mixins/showNotif';
-// import ApexCharts from 'apexcharts';
 import { formatToDotDate } from 'src/utils/formatDate';
 import Table from 'src/components/Elements/Table/Table.vue';
 import MenuBtn from 'src/components/Buttons/MenuBtn.vue';
