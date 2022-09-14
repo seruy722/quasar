@@ -9,8 +9,10 @@
     "license": "MIT",
     "require": {
         "php": "^7.4",
+        "daaner/turbosms": "^1.35",
         "doctrine/dbal": "^2.10",
         "fideloper/proxy": "^4.0",
+        "fruitcake/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.3",
         "laravel-notification-channels/telegram": "^2.0",
         "laravel/framework": "8.*",

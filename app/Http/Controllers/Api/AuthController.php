@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\User;
+use Daaner\TurboSMS\Facades\TurboSMS;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
@@ -64,9 +65,7 @@ class AuthController extends Controller
             return response(['codeStatus' => 1, 'message' => 'Вы уже зарегестрированы. Выполните вход пожалуйста']);
         } else if ($yesPhoneInDB) {
             $code = $this->getRandCode();
-            $data = $request->obj;
-            $data['sms']['text'] = $data['sms']['text'] . ' ' . $code;
-            $this->sendSms($data);
+            TurboSMS::sendMessages($request->phone, $request->text . ' ' . $code);
             Cache::put($yesPhoneInDB->phone, ['code' => $code, 'code_id' => $yesPhoneInDB->code_id], 300);
             return response(['codeStatus' => 3]);
         }
@@ -83,9 +82,7 @@ class AuthController extends Controller
         $yesPhoneInDB = \App\Customer::where('phone', $request->phone)->first();
         if ($yesPhoneInDB && User::where('code_id', $yesPhoneInDB->code_id)->first()) {
             $code = $this->getRandCode();
-            $data = $request->obj;
-            $data['sms']['text'] = $data['sms']['text'] . ' ' . $code;
-            $this->sendSMS($data);
+            TurboSMS::sendMessages($request->phone, $request->text . ' ' . $code);
             Cache::put($yesPhoneInDB->phone, ['code' => $code, 'code_id' => $yesPhoneInDB->code_id], 300);
             return response(['codeStatus' => 3]);
         }
@@ -137,14 +134,5 @@ class AuthController extends Controller
             return response(['register' => true]);
         }
         return response(['error' => 'Неверный код подтверждения или срок действия кода истек']);
-    }
-
-    public function sendSms($data)
-    {
-        $client = new Client();
-        return $client->post("https://api.turbosms.ua/message/send.json", ['body' => json_encode($data), 'headers' => [
-            'Content-Type' => 'application/json',
-            "Authorization" => 'Bearer d4682d75313aaa3b83ac59cfdfdc4c6822610581',
-        ]]);
     }
 }

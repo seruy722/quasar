@@ -96,13 +96,7 @@ export default {
       const phone = parseInt(this.phone.replace(/[^\d]/g, ''), 10);
       const sendData = {
         phone,
-        obj: {
-          recipients: [phone],
-          sms: {
-            sender: 'Cargo007',
-            text: 'Code for recover: ',
-          },
-        },
+        text: 'Code for recover: ',
       };
       this.$axios.post(getUrl('changePasswordCode'), sendData)
         .then(({

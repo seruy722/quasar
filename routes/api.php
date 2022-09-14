@@ -122,7 +122,7 @@ Route::group(['middleware' => [\App\Http\Middleware\Localization::class, 'auth:a
         Route::post('/export-detail-cargo-data', 'exportDetailCargoData')->name('export detail cargo data')->middleware(['role_or_permission:admin|client|moderator|assistant|export detail cargo data']);
         Route::post('/export-debts-data', 'exportDebtsData')->name('export debts data')->middleware(['role_or_permission:admin|export debts data']);
         Route::post('/export-general-cargo-data', 'exportGeneralCargoData')->name('export general cargo data')->middleware(['role_or_permission:admin|export general cargo data']);
-        Route::post('/export-cargo1', 'exportGeneralCargoData')->name('export cargo')->middleware(['role_or_permission:admin|export cargo']);
+        Route::post('/export-cargo1', 'exportGeneralCargoData')->name('export cargo')->middleware(['role_or_permission:admin|export debts data']);
         Route::post('/export-general-debts-data', 'exportGeneralDebtsData')->name('export general debts data')->middleware(['role_or_permission:admin|export general debts data']);
         Route::post('/export-general-data-by-clients', 'exportGeneralDataByClients');
         Route::post('/export-clients-general-data-odessa', 'exportGeneralDataByClientsOdessa')->name('export clients general data odessa')->middleware(['role_or_permission:admin|export clients general data odessa']);

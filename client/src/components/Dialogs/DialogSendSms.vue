@@ -170,6 +170,7 @@
                     :rules="[ val => val && val.length > 0 || 'Введите номер телефона', val => val && val.length === 19 || 'Некоректный номер телефона']"
                 />
                 <q-option-group
+                    v-if="Array.isArray(props.row.selectedPhones)"
                     v-model="props.row.selectedPhones"
                     :options="props.row.phones"
                     color="green"
@@ -288,7 +289,7 @@
                       <q-item-label>{{ elem.result.req.recipients[0] }}</q-item-label>
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>{{ elem.result.req.sms.text }}</q-item-label>
+                      <q-item-label>{{ elem.result.req.sms ? elem.result.req.sms.text : elem.result.req.text }}</q-item-label>
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>
@@ -497,8 +498,9 @@ export default {
       }
     },
     async getBalance() {
+      devlog.log('THIS', this);
       return await this.$axios.get(getUrl('getSmsBalance'))
-          .then(({ data: { response_result: { balance } } }) => {
+          .then(({ data: { balance } }) => {
             devlog.log('balance', balance);
             this.balance = balance;
             return balance;
@@ -511,19 +513,13 @@ export default {
       const sendData = [];
       // const sendData = [{
       //   recipients: ['380508842290'],
-      //   sms: {
-      //     sender: 'Cargo007',
-      //     text: 'TEXT',
-      //   },
-      //   clientData: { code_client_name: '2555' }
+      //   text: 'TEXT',
+      //   clientData: { code_client_name: '2555' },
       // },
       //   {
       //     recipients: ['380977376062'],
-      //     sms: {
-      //       sender: 'Cargo007',
-      //       text: 'TEXT2',
-      //     },
-      //     clientData: { code_client_name: '2555' }
+      //     text: 'TEXT2',
+      //     clientData: { code_client_name: '2555' },
       //   }];
 
       _.forEach(values, (item) => {
@@ -531,10 +527,7 @@ export default {
           sendData.push({
             recipients: _.isArray(item.selectedPhones) ? item.selectedPhones : _.toString(parseInt(item.selectedPhones.replace(/[^\d]/g, ''), 10)),
             clientData: item,
-            sms: {
-              sender: 'Cargo007',
-              text: item.text,
-            },
+            text: item.text,
           });
         }
       });

@@ -46,7 +46,7 @@
       <q-space />
       <RoundBtn
           :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-          :tooltip="$t(props.inFullscreen ? 'hide' : 'reveal')"
+          :tooltip="props.inFullscreen ? 'hide' : 'reveal'"
           class="q-mr-sm"
           @round-btn-click="props.toggleFullscreen"
       />

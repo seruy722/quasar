@@ -12,6 +12,7 @@ use App\Sklad;
 use App\SmsArchive;
 use App\StorehouseData;
 use App\Test;
+use Daaner\TurboSMS\Facades\TurboSMS;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -381,16 +382,10 @@ class CommonController extends Controller
         $res = [];
 
         foreach ($request->sendData as $sendDatum) {
-            $client = new Client();
-            $response = $client->post("https://api.turbosms.ua/message/send.json", ['body' => json_encode($sendDatum), 'headers' => [
-                'Content-Type' => 'application/json',
-                "Authorization" => 'Bearer d4682d75313aaa3b83ac59cfdfdc4c6822610581',
-            ]]);
+            $response = TurboSMS::sendMessages($sendDatum['recipients'], $sendDatum['text']);
+            array_push($res, ['req' => $sendDatum, 'res' => $response]);
 
-            $content = $response->getBody()->getContents();
-            array_push($res, ['req' => $sendDatum, 'res' => json_decode($content)]);
-
-            SmsArchive::create(['uid' => $request->uid, 'fax_id' => $request->faxId, 'result' => json_encode(['req' => $sendDatum, 'res' => json_decode($content)]), 'user_id' => auth()->user()->id, 'type' => 'sms']);
+            SmsArchive::create(['uid' => $request->uid, 'fax_id' => $request->faxId, 'result' => json_encode(['req' => $sendDatum, 'res' => $response]), 'user_id' => auth()->user()->id, 'type' => 'sms']);
         }
 
         return $res;
@@ -408,11 +403,7 @@ class CommonController extends Controller
 
     public function getSmsBalance()
     {
-        $client = new Client();
-        return $client->get("https://api.turbosms.ua/user/balance.json", ['headers' => [
-            'Content-Type' => 'application/json',
-            "Authorization" => 'Bearer d4682d75313aaa3b83ac59cfdfdc4c6822610581',
-        ]]);
+        return response(['balance' => TurboSMS::getBalance()]);
     }
 
     public function sendTelegramTestMessage(Request $request)
