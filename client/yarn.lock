@@ -54,17 +54,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:^7.18.9":
-  version: 7.18.9
-  resolution: "@babel/eslint-parser@npm:7.18.9"
+"@babel/eslint-parser@npm:^7.19.1":
+  version: 7.19.1
+  resolution: "@babel/eslint-parser@npm:7.19.1"
   dependencies:
-    eslint-scope: ^5.1.1
+    "@nicolo-ribaudo/eslint-scope-5-internals": 5.1.1-v1
     eslint-visitor-keys: ^2.1.0
     semver: ^6.3.0
   peerDependencies:
     "@babel/core": ">=7.11.0"
     eslint: ^7.5.0 || ^8.0.0
-  checksum: ddbe0f9425c61a23069280948c0ad9cd4d6d46087cbc6386dd407a3ae6365c62e20f401ea42608aba21fcc2142b8d3d0878eb2f2192a7e5adbe355bdbc215aad
+  checksum: 6d5360f62f25ed097250657deb1bc4c4f51a5f5f2fe456e98cda13727753fdf7a11a109b4cfa03ef0dd6ced3beaeb703b76193c1141e29434d1f91f1bac0517d
   languageName: node
   linkType: hard
 
@@ -1550,6 +1550,15 @@ __metadata:
     "@jridgewell/resolve-uri": ^3.0.3
     "@jridgewell/sourcemap-codec": ^1.4.10
   checksum: e38254e830472248ca10a6ed1ae75af5e8514f0680245a5e7b53bc3c030fd8691d4d3115d80595b45d3badead68269769ed47ecbbdd67db1343a11f05700e75a
+  languageName: node
+  linkType: hard
+
+"@nicolo-ribaudo/eslint-scope-5-internals@npm:5.1.1-v1":
+  version: 5.1.1-v1
+  resolution: "@nicolo-ribaudo/eslint-scope-5-internals@npm:5.1.1-v1"
+  dependencies:
+    eslint-scope: 5.1.1
+  checksum: f2e3b2d6a6e2d9f163ca22105910c9f850dc4897af0aea3ef0a5886b63d8e1ba6505b71c99cb78a3bba24a09557d601eb21c8dede3f3213753fcfef364eb0e57
   languageName: node
   linkType: hard
 
@@ -3245,7 +3254,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "client2@workspace:."
   dependencies:
-    "@babel/eslint-parser": ^7.18.9
+    "@babel/eslint-parser": ^7.19.1
     "@quasar/app": 3.3.3
     "@quasar/extras": ^1.15.3
     "@vue/eslint-config-airbnb": ^7.0.0
@@ -3255,7 +3264,7 @@ __metadata:
     eslint-plugin-vue: ^9.4.0
     lodash: ^4.17.21
     pusher-js: ^7.4.0
-    quasar: ^2.7.7
+    quasar: ^2.8.2
     validator: ^13.7.0
     vue: ^3.2.39
     vue-i18n: ^9.2.2
@@ -4470,7 +4479,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-scope@npm:5.1.1, eslint-scope@npm:^5.1.1":
+"eslint-scope@npm:5.1.1":
   version: 5.1.1
   resolution: "eslint-scope@npm:5.1.1"
   dependencies:
@@ -7975,10 +7984,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.7.7":
-  version: 2.7.7
-  resolution: "quasar@npm:2.7.7"
-  checksum: cabbd30d47e476e0c39c75a4ea7f8b03ca8857a085d4f466ee31d8f64788acb5b145d94f7fab167fa875ac0794c78f7df4a9d8da0d01726da6e8592f3a1eed6f
+"quasar@npm:^2.8.2":
+  version: 2.8.2
+  resolution: "quasar@npm:2.8.2"
+  checksum: e6f01d0f06a516213befc76ad3f96f9ade42c7f89054cf8dce42f023de32fd623a915aa33d244551168a98f5ad3b8478d7532cccc8e89fe4abc43cab9895a655
   languageName: node
   linkType: hard
 
