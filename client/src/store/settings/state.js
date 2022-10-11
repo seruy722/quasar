@@ -21,20 +21,20 @@ export default {
             },
         },
         {
-            title: 'Карго',
+            title: 'Карго_K',
             field: 'client-cargo-debts',
             icon: 'assignment',
             access: {
-                roles: ['client'],
+                roles: ['client', 'admin'],
                 permissions: [],
             },
         },
         {
-            title: 'Переводы',
+            title: 'Переводы_K',
             field: 'client-transfers',
             icon: 'import_export',
             access: {
-                roles: ['client'],
+                roles: ['client', 'admin'],
                 permissions: [],
             },
         },

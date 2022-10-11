@@ -7,6 +7,11 @@ const settings = {
     },
     transportStatusOptions: [
         {
+            label: 'На складе',
+            value: -1,
+            color: 'none',
+        },
+        {
             label: 'Не выбрано',
             value: 0,
             color: 'none',

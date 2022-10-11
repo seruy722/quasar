@@ -617,11 +617,11 @@ class StorehouseDataController extends Controller
 
     public function getClientStorehouseData()
     {
-        $data = $this->storehouseDataList(1)->where('storehouse_data.code_client_id', auth()->user()->code_id)->where('storehouse_data.fax_id', 0)->get();
+        $data = $this->storehouseDataList(1)->whereIn('storehouse_data.code_client_id', json_decode(auth()->user()->code_ids))->where('storehouse_data.fax_id', 0)->get();
         $faxesIds = $this->storehouseDataList(1)->pluck('fax_id')->unique()->toArray();
         $faxData = Fax::whereIn('id', $faxesIds)->where('status', '!=', 3)->pluck('status', 'id');
         $fIds = array_keys($faxData->all());
-        $data2 = $this->storehouseDataList(1)->where('storehouse_data.code_client_id', auth()->user()->code_id)->whereIn('storehouse_data.fax_id', $fIds)->get();
+        $data2 = $this->storehouseDataList(1)->whereIn('storehouse_data.code_client_id', json_decode(auth()->user()->code_ids))->whereIn('storehouse_data.fax_id', $fIds)->get();
         $data3 = $data->concat($data2);
         $data4 = $data3->map(function ($item) use ($faxData) {
             if (array_key_exists($item->fax_id, $faxData->all())) {

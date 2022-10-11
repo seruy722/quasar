@@ -1,41 +1,38 @@
 <template>
   <div
-    data-vue-component-name="Debts"
+      data-vue-component-name="Debts"
   >
     <Table
-      :table-properties="debtsTableProperties"
-      :table-data="debts"
-      :table-reactive-properties="debtsTableReactiveProperties"
-      :title="titleTable"
+        :table-properties="debtsTableProperties"
+        :table-data="debts"
+        :table-reactive-properties="debtsTableReactiveProperties"
+        :title="titleTable"
     >
       <template #top-buttons>
         <UpdateBtn
-          @update-btn-click="refresh"
+            @update-btn-click="refresh"
         />
         <ExportBtn
-          v-show="false"
-          @export-btn-click="exportFaxData(debtsTableReactiveProperties.selected)"
+            v-show="false"
+            @export-btn-click="exportFaxData(debtsTableReactiveProperties.selected)"
         />
       </template>
       <!--ОТОБРАЖЕНИЕ КОНТЕНТА НА МАЛЕНЬКИХ ЭКРАНАХ-->
       <template #inner-item="{props}">
         <div
-          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-          :style="props.selected ? 'transform: scale(0.95);' : ''"
+            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+            :style="props.selected ? 'transform: scale(0.95);' : ''"
         >
           <q-expansion-item
-            expand-separator
-            class="shadow-1 overflow-hidden"
-            :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
-            :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
-            expand-icon-class="text-white"
+              expand-separator
+              class="shadow-1 overflow-hidden"
+              :header-class="`${props.row.type ? 'bg-green' : 'bg-red'} text-white`"
+              :style="`border-radius: 30px;border: 1px solid ${props.row.type ? 'lightgreen' : 'lightcoral'};`"
+              expand-icon-class="text-white"
           >
             <template #header>
               <q-item-section avatar>
-                <q-checkbox
-                  v-model="props.selected"
-                  dense
-                />
+                <q-badge>{{ props.row.code_client_name }}</q-badge>
               </q-item-section>
 
               <q-item-section>
@@ -51,25 +48,25 @@
               </q-item-section>
 
               <q-item-section
-                avatar
-                side
+                  avatar
+                  side
               >
                 <q-icon
-                  v-if="props.row.paid"
-                  name="money"
-                  size="md"
-                  color="white"
+                    v-if="props.row.paid"
+                    name="money"
+                    size="md"
+                    color="white"
                 />
               </q-item-section>
             </template>
 
             <q-list
-              separator
-              dense
+                separator
+                dense
             >
               <q-item
-                v-for="col in props.cols.filter(col => col.name !== 'desc')"
-                :key="col.name"
+                  v-for="col in props.cols.filter(col => col.name !== 'desc')"
+                  :key="col.name"
               >
                 <q-item-section>
                   <q-item-label>{{ `${col.label}:` }}</q-item-label>
@@ -81,11 +78,14 @@
                   <q-item-label v-else-if="col.field === 'commission'">
                     {{ numberFormat(col.value) }}
                   </q-item-label>
+                  <q-item-label v-else-if="col.field === 'type'">
+                    {{ col.value ? 'Оплата' : 'Долг' }}
+                  </q-item-label>
                   <q-item-label v-else-if="col.field === 'paid'">
                     <q-badge :color="props.row.paid ? 'positive' : 'negative'">
                       {{
                         props.row.paid ? 'Да' :
-                          props.row.type ? null : 'Нет'
+                            props.row.type ? null : 'Нет'
                       }}
                     </q-badge>
                   </q-item-label>
@@ -101,59 +101,59 @@
 
       <template #inner-body="{props}">
         <q-tr
-          :props="props"
-          :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
+            :props="props"
+            :class="{table__tr_bold_text: props.row.brand, table__tr_red_bg: !props.row.type, table__tr_green_bg: props.row.type}"
         >
           <q-td
-            auto-width
+              auto-width
           >
             <q-checkbox
-              v-model="props.selected"
-              dense
+                v-model="props.selected"
+                dense
             />
           </q-td>
 
           <q-td
-            key="created_at"
-            :props="props"
+              key="created_at"
+              :props="props"
           >
             {{ props.row.created_at }}
           </q-td>
 
           <q-td
-            key="type"
-            :props="props"
+              key="type"
+              :props="props"
           >
             {{ props.row.type ? 'Оплата' : 'Долг' }}
           </q-td>
 
           <q-td
-            key="sum"
-            :props="props"
+              key="sum"
+              :props="props"
           >
             {{ numberFormat(props.row.sum) }}
           </q-td>
           <q-td
-            key="commission"
-            :props="props"
+              key="commission"
+              :props="props"
           >
             {{ Math.round(props.row.commission) }}
           </q-td>
           <q-td
-            key="paid"
-            :props="props"
+              key="paid"
+              :props="props"
           >
             <q-badge :color="props.row.paid ? 'positive' : 'negative'">
               {{
                 props.row.paid ? 'Да' :
-                  props.row.type ? null : 'Нет'
+                    props.row.type ? null : 'Нет'
               }}
             </q-badge>
           </q-td>
 
           <q-td
-            key="notation"
-            :props="props"
+              key="notation"
+              :props="props"
           >
             {{ props.row.notation }}
           </q-td>
