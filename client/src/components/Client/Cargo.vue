@@ -32,10 +32,7 @@
           >
             <template #header>
               <q-item-section avatar>
-                <q-checkbox
-                  v-model="props.selected"
-                  dense
-                />
+                <q-badge>{{ props.row.code_client_name }}</q-badge>
               </q-item-section>
               <q-item-section>
                 <q-item-label>

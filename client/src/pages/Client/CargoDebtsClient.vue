@@ -1,39 +1,39 @@
 <template>
   <q-page
-    data-vue-component-name="CargoDebtsClient"
+      data-vue-component-name="CargoDebtsClient"
   >
     <div class="q-gutter-y-md">
       <q-card>
         <q-tabs
-          v-model="tab"
-          dense
-          class="text-grey"
-          active-color="primary"
-          indicator-color="primary"
-          align="justify"
+            v-model="tab"
+            dense
+            class="text-grey"
+            active-color="primary"
+            indicator-color="primary"
+            align="justify"
         >
           <q-tab
-            name="cargo"
-            label="Карго"
+              name="storehouseData"
+              label="Статус"
+          >
+            <q-badge color="red">
+              {{ storehouseData.length }}
+            </q-badge>
+          </q-tab>
+          <q-tab
+              name="cargo"
+              label="Получено"
           >
             <q-badge color="red">
               {{ cargo.length }}
             </q-badge>
           </q-tab>
           <q-tab
-            name="debts"
-            label="Долги"
+              name="debts"
+              label="Переводы"
           >
             <q-badge color="red">
               {{ debts.length }}
-            </q-badge>
-          </q-tab>
-          <q-tab
-            name="storehouseData"
-            label="Склад"
-          >
-            <q-badge color="red">
-              {{ storehouseData.length }}
             </q-badge>
           </q-tab>
         </q-tabs>
@@ -41,33 +41,33 @@
         <q-separator />
 
         <q-tab-panels
-          v-model="tab"
-          animated
-          swipeable
+            v-model="tab"
+            animated
+            swipeable
         >
           <q-tab-panel
-            name="cargo"
-            style="padding: 0;"
+              name="cargo"
+              style="padding: 0;"
           >
             <Cargo
-              :refresh="refresh"
+                :refresh="refresh"
             />
           </q-tab-panel>
           <q-tab-panel
-            name="debts"
-            style="padding: 0;"
+              name="debts"
+              style="padding: 0;"
           >
             <Debts
-              :refresh="refresh"
+                :refresh="refresh"
             />
           </q-tab-panel>
           <q-tab-panel
-            name="storehouseData"
-            style="padding: 0;"
+              name="storehouseData"
+              style="padding: 0;"
           >
             <Storehouse
-              :storehouse-data="storehouseData"
-              :func="getStorehouseData"
+                :storehouse-data="storehouseData"
+                :func="getStorehouseData"
             />
           </q-tab-panel>
         </q-tab-panels>
@@ -122,10 +122,10 @@ export default {
     async getStorehouseData() {
       const { getUrl } = await import('src/tools/url');
       return this.$axios.get(getUrl('getClientStorehouseData'))
-        .then(({ data: { clientStorehouseData } }) => {
-          this.storehouseData = _.uniqBy(clientStorehouseData, 'code_place');
-          this.$q.loading.hide();
-        });
+          .then(({ data: { clientStorehouseData } }) => {
+            this.storehouseData = _.uniqBy(clientStorehouseData, 'code_place');
+            this.$q.loading.hide();
+          });
     },
     async refresh(done) {
       if (!done) {
@@ -133,15 +133,15 @@ export default {
       }
       const { callFunction } = await import('src/utils/index');
       this.getClientData()
-        .then(() => {
-          callFunction(done);
-          this.$q.loading.hide();
-          this.showNotif('success', 'Данные успешно обновлены.', 'center');
-        })
-        .catch(() => {
-          this.$q.loading.hide();
-          callFunction(done);
-        });
+          .then(() => {
+            callFunction(done);
+            this.$q.loading.hide();
+            this.showNotif('success', 'Данные успешно обновлены.', 'center');
+          })
+          .catch(() => {
+            this.$q.loading.hide();
+            callFunction(done);
+          });
     },
   },
 };

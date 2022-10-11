@@ -71,26 +71,27 @@ class CargoController extends Controller
                 return $item->code_id;
             })->search($id);
             if ($access !== false) {
-                $cargo = $this->query()
-                    ->where('code_client_id', $id)
-                    ->get();
-                $debt = $this->queryDebt()
-                    ->where('code_client_id', $id)
-                    ->get();
+                $cargo = $this->query()->where('code_client_id', $id)->get();
+                $debt = $this->queryDebt()->where('code_client_id', $id)->get();
                 return response(['cargo' => $cargo, 'debts' => $debt]);
             }
 
             return response(['cargo' => [], 'debts' => []]);
         }
-        if ($id == 'null') {
-            $id = auth()->user()->code_id;
+
+        $ids = $id === 'null' ? json_decode(auth()->user()->code_ids) : null;
+
+        $cargo = [];
+        $debt = [];
+
+        if ($ids) {
+            $cargo = $this->query()->whereIn('code_client_id', $ids)->get();
+            $debt = $this->queryDebt()->whereIn('code_client_id', $ids)->get();
+        } else {
+            $cargo = $this->query()->where('code_client_id', $id)->get();
+            $debt = $this->queryDebt()->where('code_client_id', $id)->get();
         }
-        $cargo = $this->query()
-            ->where('code_client_id', $id)
-            ->get();
-        $debt = $this->queryDebt()
-            ->where('code_client_id', $id)
-            ->get();
+
         return response(['cargo' => $cargo, 'debts' => $debt]);
     }
 

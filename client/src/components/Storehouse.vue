@@ -10,12 +10,9 @@
         <UpdateBtn
           @update-btn-click="refresh"
         />
-        <IconBtn
-          v-show="storehouseData.length"
-          color="positive"
-          icon="explicit"
-          tooltip="Excel"
-          @icon-btn-click="exportStorehouseData"
+        <ExportBtn
+            v-show="storehouseData.length"
+            @export-btn-click="exportStorehouseData"
         />
       </template>
 
@@ -199,7 +196,7 @@ import { fullDate, formatToDotDate } from 'src/utils/formatDate';
 import Table from 'src/components/Elements/Table/Table.vue';
 import CountCategories from 'src/components/CountCategories.vue';
 import UpdateBtn from 'src/components/Buttons/UpdateBtn.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
+import ExportBtn from 'src/components/Buttons/ExportBtn.vue';
 
 export default {
   name: 'Storehouse',
@@ -207,7 +204,7 @@ export default {
     Table,
     CountCategories,
     UpdateBtn,
-    IconBtn,
+    ExportBtn,
   },
   mixins: [showNotif, ExportDataMixin],
   props: {
