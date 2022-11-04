@@ -16,7 +16,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\PushNotifications;
 use Illuminate\Validation\ValidationException;
-use function foo\func;
 
 class StorehouseDataController extends Controller
 {
@@ -589,7 +588,7 @@ class StorehouseDataController extends Controller
 
     public function storehouseHistoryDataList()
     {
-        $queryData = StorehouseHistory::select(
+        return StorehouseHistory::select(
             'storehouse_histories.id',
             'storehouse_histories.code_place',
             'storehouse_histories.code_client_id',
@@ -604,7 +603,6 @@ class StorehouseDataController extends Controller
             ->leftJoin('codes', 'codes.id', '=', 'storehouse_histories.code_client_id')
             ->leftJoin('categories', 'categories.id', '=', 'storehouse_histories.category_id')
             ->orderBy('storehouse_histories.id', 'desc');
-        return $queryData;
     }
 
     public function getStorehousePeriodData(Request $request)
