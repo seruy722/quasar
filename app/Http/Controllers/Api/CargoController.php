@@ -188,7 +188,7 @@ class CargoController extends Controller
         $entry = Cargo::create($data);
         if (array_key_exists('for_kg', $data) || array_key_exists('for_place', $data) || array_key_exists('kg', $data) || array_key_exists('place', $data)) {
             if ($entry) {
-                $entry->sum = round($entry->for_kg * $entry->kg + $entry->for_place * $entry->place) * -1;
+                $entry->sum = round($entry->for_kg * $entry->kg + $entry->for_place * $entry->place, 0, PHP_ROUND_HALF_DOWN) * -1;
                 $entry->save();
             }
         }
@@ -223,7 +223,7 @@ class CargoController extends Controller
         if (array_key_exists('for_kg', $data) || array_key_exists('for_place', $data) || array_key_exists('kg', $data) || array_key_exists('place', $data)) {
             $entry = Cargo::find($request->id);
             if ($entry) {
-                $entry->sum = round($entry->for_kg * $entry->kg + $entry->for_place * $entry->place);
+                $entry->sum = round($entry->for_kg * $entry->kg + $entry->for_place * $entry->place, 0, PHP_ROUND_HALF_DOWN);
                 $entry->save();
             }
         }

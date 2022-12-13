@@ -8,7 +8,6 @@ use App\Category;
 use App\Code;
 use App\CodesPrices;
 use App\Customer;
-use App\Fax;
 use App\FaxData;
 use App\History;
 use App\Shop;
@@ -19,7 +18,6 @@ use App\Imports\ImportData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
-use function foo\func;
 
 class FaxDataController extends Controller
 {

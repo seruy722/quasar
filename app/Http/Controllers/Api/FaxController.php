@@ -4,9 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Cargo;
 use App\Fax;
-use App\FaxData;
-use App\Http\Resources\FaxDataCommonExportResource;
-use App\Http\Resources\FaxResource;
 use App\Http\Resources\TransportResource;
 use App\StorehouseData;
 use App\Transport;
@@ -15,7 +12,6 @@ use App\TransporterFaxesPrice;
 use App\TransporterPrice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
 
 class FaxController extends Controller
 {
@@ -187,13 +183,11 @@ class FaxController extends Controller
                 if (array_key_exists('destroyed', $arr)) {
                     unset($arr['destroyed']);
                 }
-//                if (array_key_exists('in_cargo', $arr)) {
-//                    unset($arr['in_cargo']);
-//                }
                 if (array_key_exists('created_at', $arr)) {
                     unset($arr['created_at']);
                 }
-                $arr['sum'] = round($item->for_kg * $item->kg + $item->place * $item->for_place) * -1;
+                $summ = (($item->for_kg * $item->kg) + ($item->place * $item->for_place)) * -1;
+                $arr['sum'] = round($summ, 0, PHP_ROUND_HALF_DOWN);
                 $arr['created_at'] = date('Y-m-d H:i:s', strtotime($date));
                 $arr['in_cargo'] = true;
 
