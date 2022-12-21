@@ -364,6 +364,10 @@ class TransferController extends Controller
             return response(['transfers' => $this->query()->where('transfers.notation', 'like', '%' . $value . '%')->get()]);
         }
 
+        if ($field === 'user_name') {
+            return response(['transfers' => $this->query()->where('users.id', $value)->get()]);
+        }
+
         if ($value) {
             return response(['transfers' => $this->query()
                 ->orWhere('codes.code', 'like', '%' . $value . '%')

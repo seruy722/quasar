@@ -83,6 +83,7 @@ export default {
     BaseSelect: defineAsyncComponent(() => import('src/components/Elements/BaseSelect.vue')),
     RoundBtn: defineAsyncComponent(() => import('src/components/Buttons/RoundBtn.vue')),
     ClientsSelectComponent: defineAsyncComponent(() => import('src/components/Search/ClientsSelectComponent.vue')),
+    UserSelectComponent: defineAsyncComponent(() => import('src/components/Search/UserSelectComponent.vue')),
     StatusSelectComponent: defineAsyncComponent(() => import('src/components/Search/StatusSelectComponent.vue')),
     DateComponent: defineAsyncComponent(() => import('src/components/Search/DateComponent.vue')),
     DateComponent2: defineAsyncComponent(() => import('src/components/Search/DateComponent2.vue')),
@@ -197,6 +198,9 @@ export default {
       }
       if (searchField.value === 'receiver_phone') {
         return 'ReceiverPhoneFieldComponent';
+      }
+      if (searchField.value === 'user_name') {
+        return 'UserSelectComponent';
       }
       return '';
     });

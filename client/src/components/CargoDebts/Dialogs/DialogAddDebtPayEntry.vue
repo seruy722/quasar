@@ -145,7 +145,6 @@ import CheckErrorsMixin from 'src/mixins/CheckErrors';
 import showNotif from 'src/mixins/showNotif';
 import { getClientCodes } from 'src/utils/FrequentlyCalledFunctions';
 import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
 import BaseInput from 'src/components/Elements/BaseInput.vue';
 import SearchSelect from 'src/components/Elements/SearchSelect.vue';
 import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
@@ -158,7 +157,6 @@ export default {
   name: 'DialogAddDebtPayEntry',
   components: {
     DialogComponent,
-    IconBtn,
     BaseInput,
     SearchSelect,
     BaseBtn,
