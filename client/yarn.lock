@@ -3250,8 +3250,8 @@ __metadata:
     eslint: ^8.30.0
     eslint-plugin-vue: ^9.8.0
     lodash: ^4.17.21
-    pusher-js: ^7.6.0
-    quasar: ^2.11.1
+    pusher-js: ^8.0.0
+    quasar: ^2.11.2
     validator: ^13.7.0
     vue: ^3.2.45
     vue-i18n: ^9.2.2
@@ -7962,14 +7962,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pusher-js@npm:^7.6.0":
-  version: 7.6.0
-  resolution: "pusher-js@npm:7.6.0"
+"pusher-js@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "pusher-js@npm:8.0.0"
   dependencies:
     "@types/express-serve-static-core": 4.17.28
     "@types/node": ^14.14.31
     tweetnacl: ^1.0.3
-  checksum: 6859d714ce8392f50cebc71ad8dde1a6ffc129e3cd797a443a17706d5c4fe57942573d0bdc31a6cb317934e9b49d479c0d3e4c36bee8be191b78f3dbf582743e
+  checksum: 421ada81d02e834f4bd5f1614c1a8e2477d1095f61f43056eb54c82477279f9fbf6c3ebce9e7ccfa210eadccefb9f55fabcc763fd0dceaadbf346388a8b17d0d
   languageName: node
   linkType: hard
 
@@ -7989,10 +7989,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.11.1":
-  version: 2.11.1
-  resolution: "quasar@npm:2.11.1"
-  checksum: c371750643c8a3f5569c423bbf50e6742b35153022aef5b4028c556c442a099b8e3d85e7e7d81676ca65aa2b808815fd80ebc59a5184afba7201841052ae3a57
+"quasar@npm:^2.11.2":
+  version: 2.11.2
+  resolution: "quasar@npm:2.11.2"
+  checksum: d4c6c430a5a6b6eda5d29cdaa8494ff4260fcfce8c2374bc47b583130c137a7c366dbddf4b7d5ee7f98d4f61461a63ebc1419f488be678e4e9cbbc6724de7670
   languageName: node
   linkType: hard
 

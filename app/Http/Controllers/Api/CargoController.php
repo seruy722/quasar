@@ -319,7 +319,7 @@ class CargoController extends Controller
         }
         if (array_key_exists('commission', $data) && $data['commission'] > 0) {
             $data['commission'] = $data['commission'] * -1;
-        } else {
+        } else if (!$data['paid']) {
             $data['commission'] = ($data['sum'] / 100) * 1;
         }
 
