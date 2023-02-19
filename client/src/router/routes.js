@@ -305,7 +305,7 @@ const routes = [
                     ],
                     accessData: {
                         roles: ['admin'],
-                        permissions: [],
+                        permissions: ['view tasks page'],
                     },
                 },
                 component: () => import('pages/Moder/Tasks.vue'),
@@ -320,7 +320,7 @@ const routes = [
                     ],
                     accessData: {
                         roles: ['admin'],
-                        permissions: [],
+                        permissions: ['get task comments'],
                     },
                 },
                 component: () => import('pages/Moder/Task.vue'),

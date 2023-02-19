@@ -129,7 +129,7 @@ export default {
             icon: 'business',
             access: {
                 roles: ['admin'],
-                permissions: [],
+                permissions: ['view tasks page'],
             },
         },
         {

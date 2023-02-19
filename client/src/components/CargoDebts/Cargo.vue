@@ -98,17 +98,13 @@
               </q-item-section>
               <q-item-section avatar>
                 <q-item-label>
-                  {{ numberFormat(props.row.sum) }}
+                  {{ numberFormat(Math.round(props.row.sum)) }}
                 </q-item-label>
               </q-item-section>
 
               <q-item-section>
                 <q-item-label :lines="2">
-                  {{
-                    props.row.kg ? `${props.row.place}м/${props.row.kg}кг ${props.row.fax_name || ''}` : props.row.type
-                        ?
-                        props.row.sum : props.row.notation
-                  }}
+                  {{ props.row.kg ? `${props.row.place}м/${props.row.kg}кг` : '' }}
                 </q-item-label>
               </q-item-section>
 
@@ -152,7 +148,7 @@
                   <q-item-label
                       v-else-if="col.field === 'sum'"
                   >
-                    {{ numberFormat(col.value) }}
+                    {{ numberFormat(Math.round(col.value)) }}
                   </q-item-label>
                   <q-item-label
                       v-else-if="col.field === 'paid'"
@@ -264,7 +260,7 @@
               key="sum"
               :props="props"
           >
-            {{ numberFormat(props.row.sum) }}
+            {{ numberFormat(Math.round(props.row.sum)) }}
           </q-td>
           <q-td
               key="sale"
@@ -625,7 +621,7 @@ export default {
       return this.$store.getters['cargoDebts/getCurrentCodeClientId'];
     },
     titleTable() {
-      return `Сумма: ${_.sumBy(this.cargo, 'sum')}, Скидки: ${_.sumBy(this.cargo, 'sale')}`;
+      return `Сумма: ${_.round(_.sumBy(this.cargo, 'sum'))}, Скидки: ${_.round(_.sumBy(this.cargo, 'sale'))}`;
     },
   },
   methods: {

@@ -187,7 +187,7 @@ class FaxController extends Controller
                     unset($arr['created_at']);
                 }
                 $summ = (($item->for_kg * $item->kg) + ($item->place * $item->for_place)) * -1;
-                $arr['sum'] = round($summ, 0, PHP_ROUND_HALF_DOWN);
+                $arr['sum'] = number_format($summ, 2, '.', '');
                 $arr['created_at'] = date('Y-m-d H:i:s', strtotime($date));
                 $arr['in_cargo'] = true;
 
