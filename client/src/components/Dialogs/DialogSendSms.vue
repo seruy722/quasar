@@ -293,7 +293,7 @@
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>
-                        {{ elem.result.res.response_code === 801 ? 'Отправлено' : 'Не отправлено' }}
+                        {{ elem.result.res.success ? 'Отправлено' : 'Не отправлено' }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
