@@ -46,7 +46,7 @@
     "last 5 Opera versions"
   ],
   "volta": {
-    "node": "18.15.0",
-    "yarn": "4.0.0-rc.40"
+    "node": "18.16.0",
+    "yarn": "4.0.0-rc.43"
   }
 }
