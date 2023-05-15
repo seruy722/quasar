@@ -58,9 +58,9 @@ class TransferController extends Controller
         $yesterday = Carbon::yesterday();
         $yesterdayTransfers = $this->query()->whereDate('transfers.created_at', '>=', $yesterday->toDateString())->get();
         if ($yesterdayTransfers->count() >= 10) {
-            return response(['transfers' => $yesterdayTransfers]);
+            return response(['transfers' => $yesterdayTransfers->unique()]);
         }
-        return response(['transfers' => $this->query()->take(50)->get()]);
+        return response(['transfers' => $this->query()->take(50)->unique()->get()]);
     }
 
     public function store(Request $request)
