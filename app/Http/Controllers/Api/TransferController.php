@@ -60,7 +60,8 @@ class TransferController extends Controller
         if ($yesterdayTransfers->count() >= 10) {
             return response(['transfers' => $yesterdayTransfers->unique()]);
         }
-        return response(['transfers' => $this->query()->take(50)->unique()->get()]);
+        $transfers = $this->query()->take(50)->get();
+        return response(['transfers' => $transfers->unique()]);
     }
 
     public function store(Request $request)
