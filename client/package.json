@@ -32,7 +32,7 @@
     "@quasar/app": "3.3.3",
     "@vue/eslint-config-airbnb": "^7.0.0",
     "eslint": "^8.43.0",
-    "eslint-plugin-vue": "^9.15.0"
+    "eslint-plugin-vue": "^9.15.1"
   },
   "browserslist": [
     "last 10 Chrome versions",
@@ -47,6 +47,6 @@
   ],
   "volta": {
     "node": "18.16.0",
-    "yarn": "4.0.0-rc.43"
+    "yarn": "4.0.0-rc.46"
   }
 }
