@@ -91,7 +91,7 @@
                         <!--                  {{ props.row.start_sum }}-->
                         <!--                </q-item-label>-->
                         <q-item-label>
-                          <q-badge color="positive">
+                          <q-badge :color="sumProfit(props.row.end_sum, props.row.start_sum) > 0 ? 'positive' : 'warning'">
                             {{ sumProfit(props.row.end_sum, props.row.start_sum) }}
                           </q-badge>
                         </q-item-label>
@@ -192,7 +192,7 @@
                     key="start_sum"
                     :props="props"
                   >
-                    <q-badge color="positive">
+                    <q-badge :color="sumProfit(props.row.end_sum, props.row.start_sum) > 0 ? 'positive' : 'warning'">
                       {{ sumProfit(props.row.end_sum, props.row.start_sum) }}
                     </q-badge>
                   </q-td>
@@ -406,7 +406,8 @@ export default {
       return _.sumBy(data, 'sum') * -1;
     },
     sumProfit(end, start) {
-      return (start && end) && end > start ? end - start : 0;
+      // return (start && end) && end > start ? end - start : 0;
+      return end - start;
     },
     formatToDotDate,
     // fillData(val) {
