@@ -61,9 +61,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:^7.22.11":
-  version: 7.22.11
-  resolution: "@babel/eslint-parser@npm:7.22.11"
+"@babel/eslint-parser@npm:^7.22.15":
+  version: 7.22.15
+  resolution: "@babel/eslint-parser@npm:7.22.15"
   dependencies:
     "@nicolo-ribaudo/eslint-scope-5-internals": 5.1.1-v1
     eslint-visitor-keys: ^2.1.0
@@ -71,7 +71,7 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.11.0
     eslint: ^7.5.0 || ^8.0.0
-  checksum: a7d4406ac021a192c8e2d2dd5a9ebe6352dc4c0c842c0971080e5ac1bcb81eb6dceb72899ec611b82ab4356c658649a0a4f85815f6245ab1674cd329dde06369
+  checksum: efdc749164a40de1b68e3ed395f441dfb7864c85d0a2ee3e4bc4f06dd0b7f675acb9be97cdc9025b88b3e80d38749a2b30e392ce7f6a79313c3aaf82ba8ccd68
   languageName: node
   linkType: hard
 
@@ -3302,7 +3302,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "client2@workspace:."
   dependencies:
-    "@babel/eslint-parser": ^7.22.11
+    "@babel/eslint-parser": ^7.22.15
     "@quasar/app": 3.3.3
     "@quasar/extras": ^1.16.6
     "@vue/eslint-config-airbnb": ^7.0.0
@@ -3312,7 +3312,7 @@ __metadata:
     eslint-plugin-vue: ^9.17.0
     lodash: ^4.17.21
     pusher-js: ^8.3.0
-    quasar: ^2.12.5
+    quasar: ^2.12.6
     validator: ^13.11.0
     vue: ^3.3.4
     vue-i18n: ^9.2.2
@@ -8084,10 +8084,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.12.5":
-  version: 2.12.5
-  resolution: "quasar@npm:2.12.5"
-  checksum: 804f0c35a87e72e7bb880d91a83d224f01cbf8b1969e04b39bc26e8ab7a88a483359a1a00970daeb5066c4a366d7a326cdb45352c8508eb9f3e373311f34acd9
+"quasar@npm:^2.12.6":
+  version: 2.12.6
+  resolution: "quasar@npm:2.12.6"
+  checksum: ffb46bf5a665c2c47022a3ff30de2d18233195c1e4ae5c0cb69b284d56c61e762707ec0eb0c1bbbf0fc1babe04964f2f63582a944725f76acf46ddf6b69b2ac5
   languageName: node
   linkType: hard
 
