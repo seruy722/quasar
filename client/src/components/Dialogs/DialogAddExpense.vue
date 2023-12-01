@@ -5,7 +5,7 @@
     :persistent="true"
     data-vue-component-name="DialogAddExpense"
   >
-    <Card style="min-width: 320px;width: 100%;max-width: 600px;">
+    <Card style="min-width: 320px; width: 100%; max-width: 600px">
       <CardSection class="row justify-between bg-grey q-mb-sm">
         <span class="text-h6">{{ title }}</span>
         <div>
@@ -43,6 +43,15 @@
             v-model:value="expenseData.date.value"
             v-model:change-value="expenseData.date.changeValue"
           />
+          <BaseInput
+            v-model="expenseData.description.value"
+            v-model:change-value="expenseData.description.changeValue"
+            type="text"
+            :label="expenseData.description.label"
+            :dense="$q.screen.xs || $q.screen.sm"
+            :field="expenseData.description.field"
+            :errors="errorsData"
+          />
         </div>
       </CardSection>
 
@@ -68,23 +77,23 @@
 </template>
 
 <script>
-import { getUrl } from 'src/tools/url';
-import CheckErrorsMixin from 'src/mixins/CheckErrors';
-import showNotif from 'src/mixins/showNotif';
-import { setDefaultData } from 'src/utils/FrequentlyCalledFunctions';
-import DialogComponent from 'src/components/Dialogs/DialogComponent.vue';
-import BaseBtn from 'src/components/Buttons/BaseBtn.vue';
-import BaseInput from 'src/components/Elements/BaseInput.vue';
-import Separator from 'src/components/Separator.vue';
-import Card from 'src/components/Elements/Card/Card.vue';
-import CardActions from 'src/components/Elements/Card/CardActions.vue';
-import CardSection from 'src/components/Elements/Card/CardSection.vue';
-import IconBtn from 'src/components/Buttons/IconBtn.vue';
-import SelectChips from 'src/components/Elements/SelectChips.vue';
-import DateWithInputForCargo from 'src/components/DateWithInputForCargo.vue';
+import { getUrl } from "src/tools/url";
+import CheckErrorsMixin from "src/mixins/CheckErrors";
+import showNotif from "src/mixins/showNotif";
+import { setDefaultData } from "src/utils/FrequentlyCalledFunctions";
+import DialogComponent from "src/components/Dialogs/DialogComponent.vue";
+import BaseBtn from "src/components/Buttons/BaseBtn.vue";
+import BaseInput from "src/components/Elements/BaseInput.vue";
+import Separator from "src/components/Separator.vue";
+import Card from "src/components/Elements/Card/Card.vue";
+import CardActions from "src/components/Elements/Card/CardActions.vue";
+import CardSection from "src/components/Elements/Card/CardSection.vue";
+import IconBtn from "src/components/Buttons/IconBtn.vue";
+import SelectChips from "src/components/Elements/SelectChips.vue";
+import DateWithInputForCargo from "src/components/DateWithInputForCargo.vue";
 
 export default {
-  name: 'DialogAddExpense',
+  name: "DialogAddExpense",
   components: {
     DialogComponent,
     BaseBtn,
@@ -108,55 +117,59 @@ export default {
       default: () => ({}),
     },
   },
-  emits: ['update:entryData', 'update:showDialog'],
+  emits: ["update:entryData", "update:showDialog"],
   data() {
     return {
       show: false,
       expenseData: {
         expense: {
-          type: 'chips',
-          label: 'Статья расходов',
-          field: 'expense',
+          type: "chips",
+          label: "Статья расходов",
+          field: "expense",
           require: true,
-          requireError: 'Поле обьзательное для заполнения.',
+          requireError: "Поле обьзательное для заполнения.",
           changeValue: false,
           options: [],
           funcLoadData: this.getExpenses,
           default: null,
           value: null,
         },
+        description: {
+          type: "text",
+          label: "Описание",
+          field: "description",
+          require: false,
+          requireError: "Поле обьзательное для заполнения.",
+          changeValue: false,
+          default: null,
+          value: null,
+        },
         sum: {
-          type: 'number',
-          label: 'Сумма',
-          field: 'sum',
+          type: "number",
+          label: "Сумма",
+          field: "sum",
           changeValue: false,
           require: true,
-          requireError: 'Поле обьзательное для заполнения.',
+          requireError: "Поле обьзательное для заполнения.",
           default: 0,
           value: 0,
         },
         date: {
-          type: 'text',
-          label: 'Дата',
-          field: 'date',
+          type: "text",
+          label: "Дата",
+          field: "date",
           changeValue: false,
           require: false,
-          requireError: 'Поле обьзательное для заполнения.',
-          default: new Date().toISOString()
-            .slice(0, 10)
-            .split('-')
-            .join('-'),
-          value: new Date().toISOString()
-            .slice(0, 10)
-            .split('-')
-            .join('-'),
+          requireError: "Поле обьзательное для заполнения.",
+          default: new Date().toISOString().slice(0, 10).split("-").join("-"),
+          value: new Date().toISOString().slice(0, 10).split("-").join("-"),
         },
       },
     };
   },
   computed: {
     title() {
-      return _.isEmpty(this.entryData) ? 'Добавление' : 'Редактирование';
+      return _.isEmpty(this.entryData) ? "Добавление" : "Редактирование";
     },
   },
   watch: {
@@ -164,14 +177,14 @@ export default {
       this.show = val;
     },
     show(val) {
-      this.$emit('update:showDialog', val);
+      this.$emit("update:showDialog", val);
     },
     entryData(val) {
       if (!_.isEmpty(val)) {
-        devlog.log('vALIN_ADD', val);
+        devlog.log("vALIN_ADD", val);
         _.forEach(this.expenseData, (item, index) => {
           if (_.get(this.entryData, index)) {
-            _.set(item, 'value', _.get(this.entryData, index));
+            _.set(item, "value", _.get(this.entryData, index));
           }
         });
         this.expenseData.category_id.require = false;
@@ -180,85 +193,108 @@ export default {
   },
   methods: {
     getExpenses() {
-      return this.$axios.get(getUrl('getExpenses'))
-        .then(({ data }) => {
-          devlog.log('getExpenses', data);
-          this.expenseData.expense.options = data;
-        });
+      return this.$axios.get(getUrl("getExpenses")).then(({ data }) => {
+        devlog.log("getExpenses", data);
+        this.expenseData.expense.options = data;
+      });
     },
     saveData(values) {
-      devlog.log('S_VAL', values);
-      const sendData = _.reduce(values, (result, item) => {
-        if (item.changeValue) {
-          result[item.field] = item.value;
-        }
-        if (item.field === 'date' && item.changeValue) {
-          result[item.field] = new Date(item.value.split('-')
-            .join(',')).toISOString();
-        }
-        return result;
-      }, {});
-      devlog.log('dd', sendData);
+      devlog.log("S_VAL", values);
+      const sendData = _.reduce(
+        values,
+        (result, item) => {
+          if (item.changeValue) {
+            result[item.field] = item.value;
+          }
+          if (item.field === "date" && item.changeValue) {
+            result[item.field] = new Date(
+              item.value.split("-").join(",")
+            ).toISOString();
+          }
+          return result;
+        },
+        {}
+      );
+      devlog.log("dd", sendData);
 
       if (!_.isEmpty(sendData)) {
         this.$q.loading.show();
         // UPDATE
         if (!_.isEmpty(this.entryData)) {
           sendData.id = this.entryData.id;
-          this.$axios.post(getUrl('updateCodePrice'), sendData)
-            .then(({
-                     data: {
-                       updatedCodePrice,
-                       error,
-                     },
-                   }) => {
+          this.$axios
+            .post(getUrl("updateCodePrice"), sendData)
+            .then(({ data: { updatedCodePrice, error } }) => {
               if (error) {
                 this.$q.loading.hide();
-                this.showNotif('error', error, 'center');
+                this.showNotif("error", error, "center");
               } else {
-                devlog.log('C_DATA', updatedCodePrice);
-                this.$store.dispatch('codesPrices/updateCodePrice', updatedCodePrice);
+                devlog.log("C_DATA", updatedCodePrice);
+                this.$store.dispatch(
+                  "codesPrices/updateCodePrice",
+                  updatedCodePrice
+                );
                 this.close(this.expenseData);
                 this.$q.loading.hide();
-                this.showNotif('success', `Категория <<${this.entryData.category_name}>> успешно обновлена`, 'center');
+                this.showNotif(
+                  "success",
+                  `Категория <<${this.entryData.category_name}>> успешно обновлена`,
+                  "center"
+                );
               }
             })
-            .catch(({ response: { data: { errors } } }) => {
-              this.errorsData.errors = errors;
-              this.$q.loading.hide();
-            });
+            .catch(
+              ({
+                response: {
+                  data: { errors },
+                },
+              }) => {
+                this.errorsData.errors = errors;
+                this.$q.loading.hide();
+              }
+            );
         } else {
           // CREATE
-          this.$axios.post(getUrl('addExpense'), sendData)
-            .then(({
-                     data: {
-                       expenseData,
-                       expense,
-                     },
-                   }) => {
-              if (_.indexOf(_.get(this, 'expenseData.expense.options'), expense) === -1) {
+          this.$axios
+            .post(getUrl("addExpense"), sendData)
+            .then(({ data: { expenseData, expense } }) => {
+              if (
+                _.indexOf(
+                  _.get(this, "expenseData.expense.options"),
+                  expense
+                ) === -1
+              ) {
                 this.expenseData.expense.options.push(expense);
               }
-              devlog.log('C_DATA', expenseData);
-              this.$store.dispatch('statistics/addStatistic', expenseData);
-              this.showNotif('success', 'Запись успешно добавлена');
+              devlog.log("C_DATA", expenseData);
+              this.$store.dispatch("statistics/addStatistic", expenseData);
+              this.showNotif("success", "Запись успешно добавлена");
               // this.$store.dispatch('codesPrices/addNewCodePrice', expenseData);
               // this.close(this.expenseData);
               this.$q.loading.hide();
               // this.showNotif('success', `Категория <<${expenseData.category_name}>> успешно добавлена клиенту - ${expenseData.code_client_name}`, 'center');
             })
-            .catch(({ response: { data: { errors } } }) => {
-              this.errorsData.errors = errors;
-              this.$q.loading.hide();
-              this.showNotif('error', 'Произошла ошибка при добавлении записи');
-            });
+            .catch(
+              ({
+                response: {
+                  data: { errors },
+                },
+              }) => {
+                this.errorsData.errors = errors;
+                this.$q.loading.hide();
+                this.showNotif(
+                  "error",
+                  "Произошла ошибка при добавлении записи"
+                );
+              }
+            );
         }
       }
     },
     close(data) {
       this.show = false;
       setDefaultData(data);
-      this.$emit('update:entryData', {});
+      this.$emit("update:entryData", {});
     },
   },
 };

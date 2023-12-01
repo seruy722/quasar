@@ -14,24 +14,24 @@
     "build:android": "quasar build -m android"
   },
   "dependencies": {
-    "@quasar/extras": "^1.16.8",
-    "axios": "^1.6.1",
+    "@quasar/extras": "^1.16.9",
+    "axios": "^1.6.2",
     "date-fns": "^2.30.0",
     "lodash": "^4.17.21",
     "pusher-js": "^8.3.0",
     "quasar": "^2.13.1",
     "validator": "^13.11.0",
-    "vue": "^3.3.8",
-    "vue-i18n": "^9.6.5",
+    "vue": "^3.3.9",
+    "vue-i18n": "^9.8.0",
     "vue-router": "^4.2.5",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.3",
     "@quasar/app": "3.3.3",
-    "@vue/eslint-config-airbnb": "^7.0.0",
-    "eslint": "^8.53.0",
-    "eslint-plugin-vue": "^9.18.1"
+    "@vue/eslint-config-airbnb": "^7.0.1",
+    "eslint": "^8.54.0",
+    "eslint-plugin-vue": "^9.19.2"
   },
   "browserslist": [
     "last 10 Chrome versions",
@@ -45,7 +45,7 @@
     "last 5 Opera versions"
   ],
   "volta": {
-    "node": "20.9.0",
-    "yarn": "4.0.1"
+    "node": "20.10.0",
+    "yarn": "4.0.2"
   }
 }

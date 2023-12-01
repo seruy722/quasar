@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Statistics extends Model
 {
-    protected $fillable = ['expense_id', 'sum', 'created_at'];
+    protected $fillable = ['expense_id', 'sum', 'created_at', 'description'];
 
     public function getCreatedAtAttribute($value)
     {

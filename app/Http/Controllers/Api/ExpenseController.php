@@ -32,6 +32,7 @@ class ExpenseController extends Controller
         $data = [
             'expense_id' => $expense->id,
             'sum' => $request->sum,
+            'description'=> $request->description
         ];
 
         if ($request->date) {
