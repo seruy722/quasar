@@ -169,9 +169,7 @@ export default {
   },
   computed: {
     title() {
-      return _.isEmpty(this.entryData)
-        ? "Добавление расхода"
-        : "Редактирование";
+      return _.isEmpty(this.entryData) ? "Добавление дохода" : "Редактирование";
     },
   },
   watch: {
@@ -257,6 +255,7 @@ export default {
             );
         } else {
           // CREATE
+          sendData.sum = sendData.sum * -1;
           this.$axios
             .post(getUrl("addExpense"), sendData)
             .then(({ data: { expenseData, expense } }) => {

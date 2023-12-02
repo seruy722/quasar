@@ -23,11 +23,7 @@ class ExpenseController extends Controller
 
     public function store(Request $request)
     {
-        $expense = Expense::where('name', $request->expense)->first();
-
-        if (!$expense) {
-            $expense = Expense::create(['name' => $request->expense]);
-        }
+        $expense = Expense::firstOrCreate(['name' => $request->expense]);
 
         $data = [
             'expense_id' => $expense->id,
