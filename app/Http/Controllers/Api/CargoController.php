@@ -499,6 +499,11 @@ class CargoController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoExport($request->data), 'transfers.xlsx');
     }
 
+    public function exportZeroCargoData(Request $request)
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoExport($request->data), 'cargo.xlsx');
+    }
+
     public function exportDetailCargoData(Request $request)
     {
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\Cargo\CargoGeneralDataExportByClient($request->ids), 'transfers.xlsx');
